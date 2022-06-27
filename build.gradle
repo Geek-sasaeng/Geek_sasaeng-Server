@@ -1,0 +1,39 @@
+plugins {
+	id 'org.springframework.boot' version '2.7.1'
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id 'java'
+}
+
+group = 'shop'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	//데이터 소스를 설정하지 않아 애플리케이션 구동 불가. 잠시 주석 처리
+	//implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	//JWT
+	implementation 'io.jsonwebtoken:jjwt:0.9.1'
+
+	//테스트에서 lombok 사용.
+	testCompileOnly 'org.projectlombok:lombok'
+	testAnnotationProcessor 'org.projectlombok:lombok'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
