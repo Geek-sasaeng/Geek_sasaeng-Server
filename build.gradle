@@ -19,11 +19,20 @@ repositories {
 }
 
 dependencies {
-	//데이터 소스를 설정하지 않아 애플리케이션 구동 불가. 잠시 주석 처리
-	//implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	//jpa
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+	//mysql
+	runtimeOnly ('mysql:mysql-connector-java')
+
+	//spring boot
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	//lombok
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
+
+	//test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
 	//JWT
