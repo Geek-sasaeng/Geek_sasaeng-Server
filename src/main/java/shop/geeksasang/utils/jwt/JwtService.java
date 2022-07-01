@@ -11,9 +11,11 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
+import java.util.LinkedHashMap;
 
 import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.config.secret.Secret;
+import shop.geeksasang.dto.login.JwtInfo;
 
 import static shop.geeksasang.config.exception.BaseResponseStatus.*;
 
@@ -25,11 +27,11 @@ public class JwtService {
     @param userIdx
     @return String
      */
-    public String createJwt(int userIdx){
+    public String createJwt(JwtInfo jwtInfo){
         Date now = new Date();
         return Jwts.builder()
                 .setHeaderParam("type","jwt")
-                .claim("userIdx",userIdx)
+                .claim("jwtInfo", jwtInfo)
                 .setIssuedAt(now)
                 .setExpiration(new Date(System.currentTimeMillis()+1*(1000*60*60*24*365)))
                 .signWith(SignatureAlgorithm.HS256, Secret.JWT_SECRET_KEY)
@@ -50,7 +52,7 @@ public class JwtService {
     @return int
     @throws BaseException
      */
-    public int getUserIdx() throws BaseException {
+    public LinkedHashMap getJwtInfo() throws BaseException {
         //1. JWT 추출
         String accessToken = getJwt();
         if(accessToken == null || accessToken.length() == 0){
@@ -58,17 +60,18 @@ public class JwtService {
         }
 
         // 2. JWT parsing
-        Jws<Claims> claims;
+        Claims body;
         try{
-            claims = Jwts.parser()
+            body = Jwts.parser()
                     .setSigningKey(Secret.JWT_SECRET_KEY)
-                    .parseClaimsJws(accessToken);
+                    .parseClaimsJws(accessToken)
+                    .getBody();
         } catch (Exception ignored) {
             throw new BaseException(INVALID_JWT);
         }
 
-        // 3. userIdx 추출
-        return claims.getBody().get("userIdx",Integer.class);
+        System.out.println("body = " + body.get("jwtInfo"));
+        return body.get("jwtInfo", LinkedHashMap.class);
     }
 
 }
