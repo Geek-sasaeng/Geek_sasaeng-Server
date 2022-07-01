@@ -1,10 +1,16 @@
 package shop.geeksasang.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import shop.geeksasang.config.domain.BaseEntity;
 
 import javax.persistence.*;
 
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 @Getter
 public class Member extends BaseEntity {

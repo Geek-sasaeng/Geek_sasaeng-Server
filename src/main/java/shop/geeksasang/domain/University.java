@@ -1,14 +1,20 @@
 package shop.geeksasang.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 import javax.persistence.*;
 
+import lombok.NoArgsConstructor;
 import shop.geeksasang.config.domain.BaseEntity;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 @Getter
 public class University extends BaseEntity {
