@@ -33,12 +33,10 @@ public class MemberService {
         Member member = dto.toEntity();
         University university = universityRepository
                 .findUniversitiesByName(dto.getUniversityName()).orElseThrow(() -> new RuntimeException(""));
+
         member.connectUniversity(university);
-
+        member.changeStatusToActive();
         memberRepository.save(member);
-
-        System.out.println("member.toString() = " + member.toString());
-
         return member;
     }
 }

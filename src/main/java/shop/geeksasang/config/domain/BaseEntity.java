@@ -11,6 +11,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Getter
 @MappedSuperclass
@@ -18,23 +19,30 @@ import java.time.LocalDateTime;
 public class BaseEntity {
 
     @CreatedDate
-    private LocalDateTime createdAt;
+    private String createdAt;
 
     @LastModifiedDate
-    private LocalDateTime updatedAt;
+    private String updatedAt;
 
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    public void setStatus(Status status) {
+    protected void setStatus(Status status) {
         this.status = status;
+    }
+
+    @PrePersist
+    public void onPrePersist(){
+        this.createdAt = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
+        this.updatedAt = this.createdAt;
+    }
+
+    @PreUpdate
+    public void onPreUpdate(){
+        this.updatedAt = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
     }
 }
 
 
-
-/**
- * 변경이나 생성을 추적 하기 위한 기본 클래스
- */
-
-//데이터 소스를 입력하면 주석 삭제
+//@PrePersist : 엔티티 insert 이전 실행
+//@PreUpdate : 엔티티 update 이전 실행
