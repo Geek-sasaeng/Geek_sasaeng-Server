@@ -1,13 +1,19 @@
 package shop.geeksasang.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 import javax.persistence.*;
 
+import lombok.NoArgsConstructor;
 import shop.geeksasang.config.domain.BaseEntity;
 import shop.geeksasang.domain.DeliveryParty;
 import shop.geeksasang.domain.Member;
 
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Getter
 @Entity
 public class DeliveryPartyRoom extends BaseEntity {
