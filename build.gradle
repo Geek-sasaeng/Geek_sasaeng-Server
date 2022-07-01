@@ -47,6 +47,11 @@ dependencies {
 
 	//Swagger
 	implementation 'io.springfox:springfox-boot-starter:3.0.0'
+
+	// 이메일 인증
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+	implementation 'javax.mail:mail:1.4.7'
+
 }
 
 tasks.named('test') {
