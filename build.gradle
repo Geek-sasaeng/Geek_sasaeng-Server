@@ -35,12 +35,19 @@ dependencies {
 	//test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
-	//JWT
+	//jwt
 	implementation 'io.jsonwebtoken:jjwt:0.9.1'
 
 	//테스트에서 lombok 사용.
 	testCompileOnly 'org.projectlombok:lombok'
 	testAnnotationProcessor 'org.projectlombok:lombok'
+
+	//validation
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	//Swagger
+	implementation group: 'io.springfox', name: 'springfox-boot-starter', version: '3.0.0'
+
 }
 
 tasks.named('test') {
