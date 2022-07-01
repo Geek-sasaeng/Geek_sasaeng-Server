@@ -18,6 +18,7 @@ public class CreateMemberRes {
         return CreateMemberRes.builder()
                 .loginId(member.getLoginId())
                 .nickname(member.getNickName())
+                .universityName(member.getUniversity().getName())
                 .email(member.getEmail())
                 .phoneNumber(member.getPhoneNumber())
                 .build();
