@@ -34,6 +34,7 @@ public class PostDeliveryPartyReq {
         return DeliveryParty.builder()
                 .title(getTitle())
                 .content(getContent())
+                .orderTime(getOrderTime())
                 .currentMatching(getCurrentMatching())
                 .maxMatching(getMaxMatching())
                 .location(getLocation())
