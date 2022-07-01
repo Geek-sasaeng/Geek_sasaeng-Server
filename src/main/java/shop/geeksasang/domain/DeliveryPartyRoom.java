@@ -1,12 +1,9 @@
 package shop.geeksasang.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 import javax.persistence.*;
 
-import lombok.NoArgsConstructor;
 import shop.geeksasang.config.domain.BaseEntity;
 import shop.geeksasang.domain.DeliveryParty;
 import shop.geeksasang.domain.Member;
@@ -16,6 +13,7 @@ import shop.geeksasang.domain.Member;
 @Builder
 @Getter
 @Entity
+@Setter
 public class DeliveryPartyRoom extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,4 +27,31 @@ public class DeliveryPartyRoom extends BaseEntity {
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="delivery_party_id")
     private DeliveryParty party;
+
+    //-// connect 메서드 //-//
+    public void connectParticipant(Member participant){
+        this.participant = participant;
+    }
+    public void connectParty(DeliveryParty party){
+        this.party=party;
+    }
+
+
+
+    //== 생성 메소드 ==//
+    public static DeliveryPartyRoom deliveryPartyRoom(Member participant, DeliveryParty party) {
+
+        DeliveryPartyRoom deliveryPartyRoom = new DeliveryPartyRoom();
+        deliveryPartyRoom.setParticipant(participant);
+        deliveryPartyRoom.setParty(party);
+
+        return deliveryPartyRoom;
+
+    }
+
+
+
+
+
+
 }
