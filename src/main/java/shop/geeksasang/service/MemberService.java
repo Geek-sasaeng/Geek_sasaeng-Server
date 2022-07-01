@@ -24,7 +24,6 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final UniversityRepository universityRepository;
-    private final JavaMailSender javaMailSender;
     private final RedisUtil redisUtil;
 
     private final long expireTime = 60 * 5L; // 이메일 유효 기간
