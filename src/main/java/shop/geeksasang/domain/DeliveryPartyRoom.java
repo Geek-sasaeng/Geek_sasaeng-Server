@@ -28,6 +28,16 @@ public class DeliveryPartyRoom extends BaseEntity {
     @JoinColumn(name="delivery_party_id")
     private DeliveryParty party;
 
+    //-// connect 메서드 //-//
+    public void connectParticipant(Member participant){
+        this.participant = participant;
+    }
+    public void connectParty(DeliveryParty party){
+        this.party=party;
+    }
+
+
+
     //== 생성 메소드 ==//
     public static DeliveryPartyRoom deliveryPartyRoom(Member participant, DeliveryParty party) {
 

@@ -25,6 +25,9 @@ public enum BaseResponseStatus {
     DUPLICATE_USER_LOGIN_ID(false, 2005, "중복되는 유저 아이디입니다"),
     DUPLICATE_USER_EMAIL(false, 2006, "중복되는 유저 이메일입니다"),
     NOT_EXISTS_UNIVERSITY(false, 2007, "존재하지 않는 학교 이름입니다"),
+    NOT_EXISTS_PARTICIPANT(false,2008,"존재하지 않는 멤버입니다"),
+    NOT_EXISTS_PARTY(false,2009,"존재하지 않는 파티입니다"),
+
 
 
     /**

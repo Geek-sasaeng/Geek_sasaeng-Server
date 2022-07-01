@@ -12,13 +12,11 @@ import shop.geeksasang.domain.Member;
 @NoArgsConstructor
 @Data
 public class PostDeliveryPartyRoomReq {
-    private Member participant;
-    private DeliveryParty party;
+    private int participant;
+    private int party;
 
     public DeliveryPartyRoom toEntity() {
         return DeliveryPartyRoom.builder()
-                .participant(getParticipant())
-                .party(getParty())
                 .build();
     }
 
