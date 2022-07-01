@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.domain.Member;
 import shop.geeksasang.domain.University;
-import shop.geeksasang.dto.CreateMemberReq;
+import shop.geeksasang.dto.member.CreateMemberReq;
 import shop.geeksasang.repository.MemberRepository;
 import shop.geeksasang.repository.UniversityRepository;
 import shop.geeksasang.utils.encrypt.SHA256;
