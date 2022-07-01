@@ -6,6 +6,8 @@ import javax.persistence.*;
 
 import shop.geeksasang.config.domain.BaseEntity;
 
+import java.util.List;
+
 @Getter
 @Entity
 public class HashTag extends BaseEntity {
@@ -17,5 +19,5 @@ public class HashTag extends BaseEntity {
     private String title;
 
     @ManyToMany
-    private DeliveryParty deliveryParty;
+    private List<DeliveryParty> deliveryParty;
 }
