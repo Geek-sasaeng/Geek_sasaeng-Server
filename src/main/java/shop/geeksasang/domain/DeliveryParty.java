@@ -20,7 +20,7 @@ import java.util.List;
 @Entity
 public class DeliveryParty extends BaseEntity {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="delivery_party_id")
     private int id;
 
