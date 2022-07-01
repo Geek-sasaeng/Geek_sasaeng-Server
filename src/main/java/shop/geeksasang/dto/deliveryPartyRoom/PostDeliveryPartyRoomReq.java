@@ -12,8 +12,8 @@ import shop.geeksasang.domain.Member;
 @NoArgsConstructor
 @Data
 public class PostDeliveryPartyRoomReq {
-    private int participant;
-    private int party;
+    private int participantId;
+    private int partyId;
 
     public DeliveryPartyRoom toEntity() {
         return DeliveryPartyRoom.builder()

@@ -12,7 +12,7 @@ import java.util.Optional;
 @Repository
 public interface DeliveryPartyRepository extends JpaRepository<DeliveryParty,Integer> {
 
-    Optional<Member> findMemebrsById(int id);
+    Optional<Member> findMembersById(int id);
     List<DeliveryParty> findDeliveryPartiesByDomitoryId(int domitoryId);
 
 }

@@ -12,16 +12,15 @@ import shop.geeksasang.dto.deliveryPartyRoom.PostDeliveryPartyRoomRes;
 import shop.geeksasang.service.DeliveryPartyRoomService;
 
 @RestController
-@RequestMapping("/deliveryPartyRoom")
+@RequestMapping
 @RequiredArgsConstructor
 public class DeliveryPartyRoomController {
     DeliveryPartyRoomService deliveryPartyRoomService;
 
-    @PostMapping
+    @PostMapping("/deliveryPartyRoom")
     public BaseResponse<PostDeliveryPartyRoomRes> joinDeliveryPartyRoom(@RequestBody PostDeliveryPartyRoomReq dto){
 
         DeliveryPartyRoom deliveryPartyRoom= deliveryPartyRoomService.joinDeliveryPartyRoom(dto);
-
         PostDeliveryPartyRoomRes postDeliveryPartyRoomRes = PostDeliveryPartyRoomRes.toDto(deliveryPartyRoom);
         return new BaseResponse<>(postDeliveryPartyRoomRes);
     }

@@ -8,6 +8,7 @@ import shop.geeksasang.domain.DeliveryPartyRoom;
 import shop.geeksasang.domain.Member;
 import shop.geeksasang.dto.member.CreateMemberReq;
 import shop.geeksasang.dto.deliveryPartyRoom.PostDeliveryPartyRoomReq;
+import shop.geeksasang.repository.DeliveryPartyRepository;
 import shop.geeksasang.repository.DeliveryPartyRoomRepository;
 import shop.geeksasang.repository.MemberRepository;
 
@@ -19,27 +20,23 @@ import static shop.geeksasang.config.exception.BaseResponseStatus.*;
 public class DeliveryPartyRoomService {
     private final DeliveryPartyRoomRepository deliveryPartyRoomRepository;
     private final MemberRepository memberRepository;
-    //private final DeliveryPartyRepository deliveryPartyRepository;
+    private final DeliveryPartyRepository deliveryPartyRepository;
 
     @Transactional(readOnly = false)
     public DeliveryPartyRoom joinDeliveryPartyRoom(PostDeliveryPartyRoomReq dto){
 
         DeliveryPartyRoom deliveryPartyRoom = dto.toEntity();
         //엔티티 조회
-        Member participant = memberRepository.findById(dto.getParticipant())
+        Member participant = memberRepository.findById(dto.getParticipantId())
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTICIPANT));
 
-//        DeliveryParty party= deliveryPartyRepository.find(dto.getParty())
-//        .orElseThrow(() -> new BaseException(NOT_EXISTSㄴ_PARTY));
-
-        //추후 이거 삭제하고 위에 주석 풀어서 사용.
-        DeliveryParty party= new DeliveryParty();
+        DeliveryParty party= deliveryPartyRepository.findById(dto.getPartyId())
+        .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTY));
 
         deliveryPartyRoom.connectParticipant(participant);
         deliveryPartyRoom.connectParty(party);
 
         deliveryPartyRoomRepository.save(deliveryPartyRoom);
-
         return deliveryPartyRoom;
     }
 }
