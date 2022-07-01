@@ -3,27 +3,22 @@ plugins {
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
 }
-
 group = 'shop'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
-configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
-}
 
 repositories {
 	mavenCentral()
 }
+apply plugin: "io.spring.dependency-management"
 
 dependencies {
 	//jpa
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
 	//mysql
-	runtimeOnly ('mysql:mysql-connector-java')
+	runtimeOnly('mysql:mysql-connector-java')
 
 	//spring boot
 	implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -48,10 +43,14 @@ dependencies {
 	//Swagger
 	implementation 'io.springfox:springfox-boot-starter:3.0.0'
 
-	// 이메일 인증
+	// Mail
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
-	implementation 'javax.mail:mail:1.4.7'
 
+	// redis
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+	// AWS SES (Mail)
+	implementation 'com.amazonaws:aws-java-sdk-ses:1.12.3'
 }
 
 tasks.named('test') {
