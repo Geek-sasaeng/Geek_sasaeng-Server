@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import shop.geeksasang.domain.DeliveryParty;
 import shop.geeksasang.domain.DeliveryPartyRoom;
 import shop.geeksasang.domain.Member;
-import shop.geeksasang.dto.CreateMemberReq;
+import shop.geeksasang.dto.member.CreateMemberReq;
 
 import javax.persistence.EntityManager;
 
