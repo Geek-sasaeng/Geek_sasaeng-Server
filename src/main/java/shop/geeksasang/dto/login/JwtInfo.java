@@ -10,14 +10,8 @@ import shop.geeksasang.domain.University;
 @Builder
 @AllArgsConstructor
 public class JwtInfo {
-    private University university;
+    private int universityId;
     private int userId;
 
-    @Override
-    public String toString() {
-        return "LoginVO{" +
-                "university=" + university +
-                ", userId=" + userId +
-                '}';
-    }
+
 }

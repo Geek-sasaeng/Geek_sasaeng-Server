@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import shop.geeksasang.domain.Member;
+import shop.geeksasang.domain.University;
 import shop.geeksasang.dto.login.LoginReq;
 import shop.geeksasang.dto.login.LoginRes;
 import shop.geeksasang.dto.login.JwtInfo;
@@ -32,11 +33,9 @@ public class LoginService {
 
         JwtInfo vo = JwtInfo.builder()
                 .userId(member.getId())
-                .university(null)
+                .universityId(1) //차후에 수정할
                 .build();
         String jwt = jwtService.createJwt(vo);
-        System.out.println("vo.toString() = " + vo.toString());
-        System.out.println("jwt = " + jwt.toString());
 
         return LoginRes.builder().jwt(jwt).build();
     }
