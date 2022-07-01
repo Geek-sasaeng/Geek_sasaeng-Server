@@ -8,6 +8,7 @@ import shop.geeksasang.config.domain.BaseEntity;
 import shop.geeksasang.config.domain.MatchingStatus;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Entity
@@ -27,7 +28,7 @@ public class DeliveryParty extends BaseEntity {
 
     //나중에 수정 가능.
     @ManyToMany()
-    private HashTag hashTag;
+    private List<HashTag> hashTag;
 
     @OneToOne(fetch=FetchType.LAZY)
     private Category category;
