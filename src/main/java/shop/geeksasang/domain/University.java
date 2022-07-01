@@ -19,7 +19,7 @@ import java.util.List;
 @Getter
 public class University extends BaseEntity {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="university_id")
     private int id;
 

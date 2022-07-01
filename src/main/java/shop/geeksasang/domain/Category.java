@@ -4,14 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 import lombok.NoArgsConstructor;
 import shop.geeksasang.config.domain.BaseEntity;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,7 +16,7 @@ import javax.persistence.GeneratedValue;
 @Entity
 public class Category extends BaseEntity {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="category_id")
     private int id;
 

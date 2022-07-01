@@ -16,7 +16,7 @@ import shop.geeksasang.config.domain.BaseEntity;
 @Entity
 public class Domitory extends BaseEntity {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="domitory_id")
     private int id;
 

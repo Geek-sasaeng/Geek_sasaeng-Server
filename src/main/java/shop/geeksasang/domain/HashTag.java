@@ -18,7 +18,7 @@ import java.util.List;
 @Entity
 public class HashTag extends BaseEntity {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="hash_tag_id")
     private int id;
 

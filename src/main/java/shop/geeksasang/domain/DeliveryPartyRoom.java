@@ -18,7 +18,7 @@ import shop.geeksasang.domain.Member;
 @Entity
 public class DeliveryPartyRoom extends BaseEntity {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="delivery_party_room_id")
     private int id;
 
