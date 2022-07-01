@@ -1,26 +1,18 @@
 package shop.geeksasang.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.domain.Member;
 import shop.geeksasang.domain.University;
-import shop.geeksasang.dto.CreateMemberReq;
-import shop.geeksasang.dto.EmailReq;
+
 import shop.geeksasang.dto.member.CreateMemberReq;
 import shop.geeksasang.repository.MemberRepository;
 import shop.geeksasang.repository.UniversityRepository;
 import shop.geeksasang.utils.jwt.RedisUtil;
-
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
-import java.util.Random;
 import shop.geeksasang.utils.encrypt.SHA256;
 
 import static shop.geeksasang.config.exception.BaseResponseStatus.*;
