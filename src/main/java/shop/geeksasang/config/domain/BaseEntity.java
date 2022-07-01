@@ -2,7 +2,7 @@ package shop.geeksasang.config.domain;
 
 import lombok.Getter;
 
-/*
+
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -25,7 +25,6 @@ public class BaseTimeEntity {
     private LocalDateTime updatedAt;
 }
 
-*/
 
 
 /**
