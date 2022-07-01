@@ -60,4 +60,21 @@ public class DeliveryPartyService {
         // 반환
         return deliveryParty;
     }
+
+
+    //배달파티 조회: 전체목록
+    @Transactional(readOnly = false) // ?
+    public List<DeliveryParty> getAllDeliveryParty(){
+        List<DeliveryParty> getDliveryPartyRes = deliveryPartyRepository.findAll();
+        return getDliveryPartyRes;
+    }
+
+
+
+    //배달파티 조회: 전체목록
+    @Transactional(readOnly = false) // ?
+    public List<DeliveryParty> getDeliveryPartyById(int domitoryId){
+        List<DeliveryParty> getDliveryPartyRes = deliveryPartyRepository.findDeliveryPartiesByDomitoryId(domitoryId);
+        return getDliveryPartyRes;
+    }
 }

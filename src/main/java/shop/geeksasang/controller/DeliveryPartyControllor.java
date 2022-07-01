@@ -1,10 +1,7 @@
 package shop.geeksasang.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import shop.geeksasang.config.response.BaseResponse;
 import shop.geeksasang.domain.DeliveryParty;
 import shop.geeksasang.dto.deliveryParty.PostDeliveryPartyReq;
@@ -29,5 +26,24 @@ public class DeliveryPartyControllor {
 
         return new BaseResponse<>(postDeliveryPartyRes);
     }
+
+    //배달파티 조회: 전체목록
+    @GetMapping
+    public BaseResponse<List<DeliveryParty>> getAllDeliveryParty(){
+        List<DeliveryParty> getDeliveryPartyRes = deliveryPartyService.getAllDeliveryParty();
+
+        return new BaseResponse<>(getDeliveryPartyRes);
+    }
+
+
+    //배달파티 조회:
+    @GetMapping("/get")
+    public BaseResponse<List<DeliveryParty>> getDeliveryPartyById(@RequestParam int domitoryId){
+        List<DeliveryParty> getDeliveryPartyRes = deliveryPartyService.getDeliveryPartyById(domitoryId);
+
+        return new BaseResponse<>(getDeliveryPartyRes);
+    }
+
+
 
 }

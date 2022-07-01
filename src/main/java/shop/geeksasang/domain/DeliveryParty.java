@@ -1,5 +1,6 @@
 package shop.geeksasang.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,10 +27,12 @@ public class DeliveryParty extends BaseEntity {
 
     @ManyToOne(fetch =FetchType.LAZY)
     @JoinColumn(name="member_id")
+    @JsonIgnore
     private Member chief;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="domitory_id")
+    @JsonIgnore
     private Domitory domitory;
 
     //나중에 수정 가능.
@@ -40,6 +43,7 @@ public class DeliveryParty extends BaseEntity {
 //    private HashTag hashTag;
 
     @OneToOne(fetch=FetchType.LAZY)
+    @JsonIgnore
     private Category category;
 
     private String title;
