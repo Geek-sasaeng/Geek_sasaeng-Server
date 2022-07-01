@@ -49,5 +49,30 @@ public class Member extends BaseEntity {
         this.nickName = nickName;
         this.email = email;
         this.password = password;
+
+    }
+
+    //-// 연관 관계 편의 메서드 //-//
+    public void connectUniversity(University university){
+        this.university = university;
+        university.getMemberList().add(this);
+    }
+
+    @Override
+    public String toString() {
+        return "Member{" +
+                "id=" + id +
+                ", loginId='" + loginId + '\'' +
+                ", nickName='" + nickName + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", university=" + university +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", phoneValidKey='" + phoneValidKey + '\'' +
+                ", profileImgUrl='" + profileImgUrl + '\'' +
+                ", emailValidKey='" + emailValidKey + '\'' +
+                ", emailValidStatus='" + emailValidStatus + '\'' +
+                ", jwtToken='" + jwtToken + '\'' +
+                '}';
     }
 }

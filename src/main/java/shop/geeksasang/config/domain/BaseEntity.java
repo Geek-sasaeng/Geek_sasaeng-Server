@@ -25,6 +25,10 @@ public class BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private Status status;
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
 }
 
 
