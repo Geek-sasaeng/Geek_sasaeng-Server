@@ -44,4 +44,10 @@ public class Member extends BaseEntity {
 
     private String jwtToken;
 
+    public Member(String loginId, String nickName, String email, String password) {
+        this.loginId = loginId;
+        this.nickName = nickName;
+        this.email = email;
+        this.password = password;
+    }
 }
