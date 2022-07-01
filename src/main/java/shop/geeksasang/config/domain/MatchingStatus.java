@@ -1,2 +1,5 @@
-package shop.geeksasang.config.domain;public enum MatchingStatus {
+package shop.geeksasang.config.domain;
+
+public enum MatchingStatus {
+    ONGOING, FINISH
 }
