@@ -40,7 +40,7 @@ public class MemberService {
         Member member = dto.toEntity();
         University university = universityRepository
                 .findUniversitiesByName(dto.getUniversityName())
-                .orElseThrow(() -> new RuntimeException(""));
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_UNIVERSITY));
 
         member.connectUniversity(university);
         member.changeStatusToActive();
