@@ -24,9 +24,9 @@ public class MemberService {
          *         }
          */
 
-        //로그인 아이디 중복
+        //ToDo 로그인 아이디 중복
 
-        //email 중복
+        //ToDo email 중복
 
         Member member = dto.toEntity();
         memberRepository.save(member);
