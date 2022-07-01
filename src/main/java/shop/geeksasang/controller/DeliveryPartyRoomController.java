@@ -15,7 +15,7 @@ import shop.geeksasang.service.DeliveryPartyRoomService;
 @RequestMapping
 @RequiredArgsConstructor
 public class DeliveryPartyRoomController {
-    DeliveryPartyRoomService deliveryPartyRoomService;
+    private final DeliveryPartyRoomService deliveryPartyRoomService;
 
     @PostMapping("/deliveryPartyRoom")
     public BaseResponse<PostDeliveryPartyRoomRes> joinDeliveryPartyRoom(@RequestBody PostDeliveryPartyRoomReq dto){
