@@ -11,6 +11,7 @@ import shop.geeksasang.domain.University;
 import shop.geeksasang.dto.CreateMemberReq;
 import shop.geeksasang.repository.MemberRepository;
 import shop.geeksasang.repository.UniversityRepository;
+import shop.geeksasang.utils.encrypt.SHA256;
 
 import static shop.geeksasang.config.exception.BaseResponseStatus.*;
 
@@ -37,6 +38,7 @@ public class MemberService {
             throw new BaseException(DUPLICATE_USER_EMAIL);
         }
 
+        dto.setPassword(SHA256.encrypt(dto.getPassword()));
         Member member = dto.toEntity();
         University university = universityRepository
                 .findUniversitiesByName(dto.getUniversityName())
