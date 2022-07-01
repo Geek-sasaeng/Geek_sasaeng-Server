@@ -1,4 +1,4 @@
-package shop.geeksasang.utils.jwt;
+package shop.geeksasang.utils.encrypt;
 
 import java.security.MessageDigest;
 

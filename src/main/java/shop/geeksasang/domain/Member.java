@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import shop.geeksasang.config.domain.BaseEntity;
+import shop.geeksasang.config.domain.Status;
 
 import javax.persistence.*;
 
@@ -44,10 +45,31 @@ public class Member extends BaseEntity {
 
     private String jwtToken;
 
-    public Member(String loginId, String nickName, String email, String password) {
-        this.loginId = loginId;
-        this.nickName = nickName;
-        this.email = email;
-        this.password = password;
+    public void changeStatusToActive(){
+        super.setStatus(Status.ACTIVE);
+    }
+
+    //-// 연관 관계 편의 메서드 //-//
+    public void connectUniversity(University university){
+        this.university = university;
+        university.getMemberList().add(this);
+    }
+
+    @Override
+    public String toString() {
+        return "Member{" +
+                "id=" + id +
+                ", loginId='" + loginId + '\'' +
+                ", nickName='" + nickName + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", university=" + university +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", phoneValidKey='" + phoneValidKey + '\'' +
+                ", profileImgUrl='" + profileImgUrl + '\'' +
+                ", emailValidKey='" + emailValidKey + '\'' +
+                ", emailValidStatus='" + emailValidStatus + '\'' +
+                ", jwtToken='" + jwtToken + '\'' +
+                '}';
     }
 }
