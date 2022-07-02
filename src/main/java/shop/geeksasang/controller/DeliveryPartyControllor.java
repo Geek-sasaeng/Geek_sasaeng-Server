@@ -7,6 +7,7 @@ import shop.geeksasang.domain.DeliveryParty;
 import shop.geeksasang.dto.deliveryParty.GetDeliveryPartyRes;
 import shop.geeksasang.dto.deliveryParty.PostDeliveryPartyReq;
 import shop.geeksasang.dto.deliveryParty.PostDeliveryPartyRes;
+import shop.geeksasang.dto.deliveryParty.TempDto;
 import shop.geeksasang.service.DeliveryPartyService;
 
 import java.util.List;
@@ -50,4 +51,12 @@ public class DeliveryPartyControllor {
         DeliveryParty deliveryParty = deliveryPartyService.getDeliveryParty(partyId);
         return new BaseResponse<>(deliveryParty);
     }
+
+    //배달파티 상세조회:
+    @GetMapping("/v2/get/detail")
+    public BaseResponse<TempDto> getDeliveryPartyDetailByIdV2(@RequestParam int partyId){
+        TempDto temp = deliveryPartyService.getDeliveryPartyV2(partyId);
+        return new BaseResponse<>(temp);
+    }
+
 }
