@@ -11,6 +11,8 @@ import shop.geeksasang.repository.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static java.util.stream.Collectors.toList;
+
 @Transactional
 @Service
 @RequiredArgsConstructor // final로 선언 된 것 자동으로 @Autowired와 같은 기능
@@ -70,6 +72,15 @@ public class DeliveryPartyService {
         return getDliveryPartyRes;
     }
 
+    //배달파티 조회: 전체목록
+    @Transactional(readOnly = false) // ?
+    public List<TempDto> getDeliveryPartyByIdV2(int domitoryId){
+        List<DeliveryParty> getDeliveryPartyRes = deliveryPartyRepository.findDeliveryPartiesByDomitoryId(domitoryId);
+        List<TempDto> tempDtos = getDeliveryPartyRes.stream()
+                .map(o -> new TempDto(o))
+                .collect(toList());
+        return tempDtos;
+    }
 
 
     //배달파티 조회: 전체목록
@@ -78,6 +89,9 @@ public class DeliveryPartyService {
         List<DeliveryParty> getDliveryPartyRes = deliveryPartyRepository.findDeliveryPartiesByDomitoryId(domitoryId);
         return getDliveryPartyRes;
     }
+
+
+
 
     //배달파티 상세조회:
     @Transactional(readOnly = false)

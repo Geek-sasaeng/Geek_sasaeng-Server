@@ -33,7 +33,6 @@ public class DeliveryPartyControllor {
     @GetMapping
     public BaseResponse<List<DeliveryParty>> getAllDeliveryParty(){
         List<DeliveryParty> getDeliveryPartyRes = deliveryPartyService.getAllDeliveryParty();
-
         return new BaseResponse<>(getDeliveryPartyRes);
     }
 
@@ -43,6 +42,13 @@ public class DeliveryPartyControllor {
     public BaseResponse<List<DeliveryParty>> getDeliveryPartyById(@RequestParam int domitoryId){
         List<DeliveryParty> getDeliveryPartyRes = deliveryPartyService.getDeliveryPartyById(domitoryId);
         return new BaseResponse<>(getDeliveryPartyRes);
+    }
+
+    //배달파티 조회 : 전체목록
+    @GetMapping("/v2/get")
+    public BaseResponse<List<TempDto>> getDeliveryPartyByIdV2(@RequestParam int domitoryId){
+        List<TempDto> tempDtos = deliveryPartyService.getDeliveryPartyByIdV2(domitoryId);
+        return new BaseResponse<>(tempDtos);
     }
 
     //배달파티 상세조회:
