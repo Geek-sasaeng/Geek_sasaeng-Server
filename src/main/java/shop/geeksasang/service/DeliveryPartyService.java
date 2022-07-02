@@ -77,4 +77,12 @@ public class DeliveryPartyService {
         List<DeliveryParty> getDliveryPartyRes = deliveryPartyRepository.findDeliveryPartiesByDomitoryId(domitoryId);
         return getDliveryPartyRes;
     }
+
+    //배달파티 상세조회:
+    @Transactional(readOnly = false)
+    public DeliveryParty getDeliveryParty(int partyId){
+        DeliveryParty deliveryParty= deliveryPartyRepository.findById(partyId)
+                .orElseThrow(() -> new RuntimeException(""));
+        return deliveryParty;
+    }
 }

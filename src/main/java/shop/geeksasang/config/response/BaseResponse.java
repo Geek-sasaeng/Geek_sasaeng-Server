@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import shop.geeksasang.config.exception.BaseResponseStatus;
+import shop.geeksasang.domain.DeliveryParty;
 
 import static shop.geeksasang.config.exception.BaseResponseStatus.SUCCESS;
 
