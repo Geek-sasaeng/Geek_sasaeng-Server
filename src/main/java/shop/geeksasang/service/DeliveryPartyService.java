@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.geeksasang.domain.*;
 import shop.geeksasang.dto.deliveryParty.PostDeliveryPartyReq;
+import shop.geeksasang.dto.deliveryParty.TempDto;
 import shop.geeksasang.repository.*;
 
 import java.time.LocalDateTime;
@@ -84,5 +85,12 @@ public class DeliveryPartyService {
         DeliveryParty deliveryParty= deliveryPartyRepository.findById(partyId)
                 .orElseThrow(() -> new RuntimeException(""));
         return deliveryParty;
+    }
+
+    public TempDto getDeliveryPartyV2(int partyId) {
+        DeliveryParty deliveryParty= deliveryPartyRepository.findById(partyId)
+                .orElseThrow(() -> new RuntimeException(""));
+        TempDto tempDto = new TempDto(deliveryParty);
+        return tempDto;
     }
 }
