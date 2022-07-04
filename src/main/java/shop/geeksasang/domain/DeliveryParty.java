@@ -12,6 +12,7 @@ import shop.geeksasang.config.domain.BaseEntity;
 import shop.geeksasang.config.domain.MatchingStatus;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -27,17 +28,15 @@ public class DeliveryParty extends BaseEntity {
 
     @ManyToOne(fetch =FetchType.LAZY)
     @JoinColumn(name="member_id")
-    @JsonIgnore
     private Member chief;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="domitory_id")
-    @JsonIgnore
     private Domitory domitory;
 
     //나중에 수정 가능.
     @ManyToMany()
-    private List<HashTag> hashTag;
+    private List<HashTag> hashTag = new ArrayList<>();
 //    @ManyToOne()
 //    @JoinColumn(name="hashtag_id")
 //    private HashTag hashTag;

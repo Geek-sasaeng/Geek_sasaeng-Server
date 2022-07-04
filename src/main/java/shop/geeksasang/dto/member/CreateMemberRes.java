@@ -14,9 +14,7 @@ public class CreateMemberRes {
     private  String loginId;
     private  String nickname;
     private  String universityName;
-    @Email
     private  String email;
-
     private  String phoneNumber;
 
     static public CreateMemberRes toDto(Member member) {

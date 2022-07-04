@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.geeksasang.domain.*;
 import shop.geeksasang.dto.deliveryParty.PostDeliveryPartyReq;
-import shop.geeksasang.dto.deliveryParty.TempDto;
 import shop.geeksasang.repository.*;
 
 import java.time.LocalDateTime;
@@ -73,14 +72,7 @@ public class DeliveryPartyService {
     }
 
     //배달파티 조회: 전체목록
-    @Transactional(readOnly = false) // ?
-    public List<TempDto> getDeliveryPartyByIdV2(int domitoryId){
-        List<DeliveryParty> getDeliveryPartyRes = deliveryPartyRepository.findDeliveryPartiesByDomitoryId(domitoryId);
-        List<TempDto> tempDtos = getDeliveryPartyRes.stream()
-                .map(o -> new TempDto(o))
-                .collect(toList());
-        return tempDtos;
-    }
+
 
 
     //배달파티 조회: 전체목록
@@ -101,10 +93,4 @@ public class DeliveryPartyService {
         return deliveryParty;
     }
 
-    public TempDto getDeliveryPartyV2(int partyId) {
-        DeliveryParty deliveryParty= deliveryPartyRepository.findById(partyId)
-                .orElseThrow(() -> new RuntimeException(""));
-        TempDto tempDto = new TempDto(deliveryParty);
-        return tempDto;
-    }
 }
