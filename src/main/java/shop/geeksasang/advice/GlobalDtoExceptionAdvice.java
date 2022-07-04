@@ -18,9 +18,9 @@ import shop.geeksasang.config.response.BaseResponse;
 @RequiredArgsConstructor
 public class GlobalDtoExceptionAdvice {
 
-    private final MessageSource ms;
+    private final MessageSource ms; // 메시지 클래스
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ExceptionHandler(MethodArgumentNotValidException.class) // DTO validation 에서 에러 발생하면 포착한다.
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse MemberNotFoundException(MethodArgumentNotValidException exception){
         BindingResult bindingResult = exception.getBindingResult();

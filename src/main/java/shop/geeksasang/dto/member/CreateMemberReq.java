@@ -14,8 +14,8 @@ import javax.validation.constraints.Size;
 @Data
 public class CreateMemberReq {
 
-    @ApiModelProperty(value = "로그인 아이디, 최소 6자")
-    @Size(min = 6)
+    @ApiModelProperty(value = "로그인 아이디, 최소 6자") // swagger 용 어노테이션
+    @Size(min = 6) // validation: 최소길이 6자
     private  String loginId;
 
     @ApiModelProperty(value = "비밀번호, 최소 8자")

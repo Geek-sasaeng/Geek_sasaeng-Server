@@ -10,10 +10,13 @@ import shop.geeksasang.domain.Member;
 import shop.geeksasang.domain.University;
 
 import shop.geeksasang.dto.member.CreateMemberReq;
+import shop.geeksasang.dto.member.PatchMemberPhoneNumberReq;
 import shop.geeksasang.repository.MemberRepository;
 import shop.geeksasang.repository.UniversityRepository;
 import shop.geeksasang.utils.jwt.RedisUtil;
 import shop.geeksasang.utils.encrypt.SHA256;
+
+import java.util.Optional;
 
 import static shop.geeksasang.config.exception.BaseResponseStatus.*;
 
@@ -53,5 +56,20 @@ public class MemberService {
         member.changeStatusToActive();
         memberRepository.save(member);
         return member;
+    }
+
+
+    // 수정: 폰 번호
+    @Transactional(readOnly = false) // readOnly = false : 생성, 수정하는 작업에 적용
+    public Member updateMemberPhoneNumber(int id, PatchMemberPhoneNumberReq dto){
+
+        // 멤버 아이디로 조회
+        Member findMember = memberRepository
+                .findById(id)
+                .orElseThrow(() -> new BaseException(INTERNAL_SERVER_ERROR));
+        // 폰 번호 수정
+        findMember.connectPhoneNumber(dto.getPhoneNumber());
+
+        return findMember;
     }
 }
