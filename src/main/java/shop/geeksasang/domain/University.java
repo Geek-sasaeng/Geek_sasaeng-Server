@@ -23,9 +23,6 @@ public class University extends BaseEntity {
     @Column(name="university_id")
     private int id;
 
-    @OneToMany(mappedBy = "university")
-    private List<Member> memberList = new ArrayList<>();
-
     private String name;
 
     private String universityImgUrl;

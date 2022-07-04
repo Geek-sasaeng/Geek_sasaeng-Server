@@ -52,7 +52,6 @@ public class Member extends BaseEntity {
     //-// 연관 관계 편의 메서드 //-//
     public void connectUniversity(University university){
         this.university = university;
-        university.getMemberList().add(this);
     }
 
     @Override

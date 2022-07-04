@@ -8,6 +8,7 @@ import shop.geeksasang.domain.DeliveryPartyRoom;
 @Getter
 @Setter
 @Builder
+
 public class PostDeliveryPartyRoomRes {
     private int deliveryPartyRoomId;
     private int deliveryPartyId;

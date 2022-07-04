@@ -4,10 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import shop.geeksasang.config.response.BaseResponse;
 import shop.geeksasang.domain.DeliveryParty;
-import shop.geeksasang.dto.deliveryParty.GetDeliveryPartyRes;
 import shop.geeksasang.dto.deliveryParty.PostDeliveryPartyReq;
 import shop.geeksasang.dto.deliveryParty.PostDeliveryPartyRes;
-import shop.geeksasang.dto.deliveryParty.TempDto;
 import shop.geeksasang.service.DeliveryPartyService;
 
 import java.util.List;
@@ -44,25 +42,11 @@ public class DeliveryPartyControllor {
         return new BaseResponse<>(getDeliveryPartyRes);
     }
 
-    //배달파티 조회 : 전체목록
-    @GetMapping("/v2/get")
-    public BaseResponse<List<TempDto>> getDeliveryPartyByIdV2(@RequestParam int domitoryId){
-        List<TempDto> tempDtos = deliveryPartyService.getDeliveryPartyByIdV2(domitoryId);
-        return new BaseResponse<>(tempDtos);
-    }
-
     //배달파티 상세조회:
     @GetMapping("/get/detail")
     public BaseResponse<DeliveryParty> getDeliveryPartyDetailById(@RequestParam int partyId){
         DeliveryParty deliveryParty = deliveryPartyService.getDeliveryParty(partyId);
         return new BaseResponse<>(deliveryParty);
-    }
-
-    //배달파티 상세조회:
-    @GetMapping("/v2/get/detail")
-    public BaseResponse<TempDto> getDeliveryPartyDetailByIdV2(@RequestParam int partyId){
-        TempDto temp = deliveryPartyService.getDeliveryPartyV2(partyId);
-        return new BaseResponse<>(temp);
     }
 
 }

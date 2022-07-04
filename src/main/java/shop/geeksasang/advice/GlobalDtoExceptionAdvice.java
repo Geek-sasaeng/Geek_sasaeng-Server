@@ -25,10 +25,9 @@ public class GlobalDtoExceptionAdvice {
     public ErrorResponse MemberNotFoundException(MethodArgumentNotValidException exception){
         BindingResult bindingResult = exception.getBindingResult();
         String[] codes = bindingResult.getAllErrors().get(0).getCodes();
-
-        //for (String code : codes) {
-        //    System.out.println("code = " + code);
-        //}
+        for (String code : codes) {
+            System.out.println("code = " + code);
+        }
 
         String code = codes[1];
         return new ErrorResponse(ms.getMessage(code,null,null));

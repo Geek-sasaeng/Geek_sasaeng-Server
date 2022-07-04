@@ -9,6 +9,7 @@ import javax.persistence.*;
 import lombok.NoArgsConstructor;
 import shop.geeksasang.config.domain.BaseEntity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -25,5 +26,5 @@ public class HashTag extends BaseEntity {
     private String title;
 
     @ManyToMany
-    private List<DeliveryParty> deliveryParty;
+    private List<DeliveryParty> deliveryParty = new ArrayList<>();;
 }
