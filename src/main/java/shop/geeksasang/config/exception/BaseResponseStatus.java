@@ -20,13 +20,17 @@ public enum BaseResponseStatus {
     REQUEST_ERROR(false, 2000, "입력값을 확인해주세요."),
     EMPTY_JWT(false, 2001, "JWT를 입력해주세요."),
     INVALID_JWT(false, 2002, "유효하지 않은 JWT입니다."),
-    INVALID_USER_JWT(false,2003,"권한이 없는 유저의 접근입니다."),
-    DIFFRENT_PASSWORDS(false,2004,"입력하신 두 비밀번호가 다릅니다."),
-    DUPLICATE_USER_LOGIN_ID(false, 2005, "중복되는 유저 아이디입니다"),
-    DUPLICATE_USER_EMAIL(false, 2006, "중복되는 유저 이메일입니다"),
-    NOT_EXISTS_UNIVERSITY(false, 2007, "존재하지 않는 학교 이름입니다"),
-    NOT_EXISTS_PARTICIPANT(false,2008,"존재하지 않는 멤버입니다"),
-    NOT_EXISTS_PARTY(false,2009,"존재하지 않는 파티입니다"),
+    EXPIRED_JWT(false, 2003,"만료기간이 지난 JWT입니다."),
+    INVALID_USER_JWT(false,2004,"권한이 없는 유저의 접근입니다."),
+    DIFFRENT_PASSWORDS(false,2005, "입력하신 두 비밀번호가 다릅니다."),
+    DUPLICATE_USER_LOGIN_ID(false, 2006, "중복되는 유저 아이디입니다"),
+    DUPLICATE_USER_EMAIL(false, 2007, "중복되는 유저 이메일입니다"),
+    NOT_EXISTS_UNIVERSITY(false, 2008, "존재하지 않는 학교 이름입니다"),
+    NOT_EXISTS_PARTICIPANT(false,2009,"존재하지 않는 멤버입니다"),
+    NOT_EXISTS_PARTY(false,2010,"존재하지 않는 파티입니다"),
+    NOT_EXISTS_PASSWORD(false, 2011,"비밀번호가 틀립니다. "),
+    INACTIVE_STATUS(false,2012,"회원 status가 INACITVE 입니다."),
+
 
 
 
@@ -38,6 +42,7 @@ public enum BaseResponseStatus {
     /**
      * 4000 : Database, Server 오류
      */
+
 
     INTERNAL_SERVER_ERROR(false,4000,"서버 오류입니다.");
 

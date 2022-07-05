@@ -13,6 +13,7 @@ import shop.geeksasang.dto.member.CreateMemberReq;
 import shop.geeksasang.dto.member.CreateMemberRes;
 import shop.geeksasang.service.MemberService;
 import shop.geeksasang.service.SendEmailService;
+import shop.geeksasang.utils.jwt.NoIntercept;
 
 import javax.validation.Valid;
 
@@ -25,6 +26,7 @@ public class MemberController {
     private final SendEmailService sendEmailService;
 
     @PostMapping
+    @NoIntercept
     public BaseResponse<CreateMemberRes> createMember(@Validated @RequestBody CreateMemberReq dto){
         Member member = memberService.createMember(dto);
 
@@ -34,6 +36,7 @@ public class MemberController {
 
     // 이메일 인증 번호 보내기
     @PostMapping("/email")
+    @NoIntercept
     public BaseResponse<String> authEmail(@RequestBody @Valid EmailReq req){
         sendEmailService.authEmail(req);
         String response = "성공적으로 인증 메일을 보냈습니다.";

@@ -5,6 +5,7 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
+import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -21,6 +22,7 @@ import static shop.geeksasang.config.exception.BaseResponseStatus.*;
 
 
 @Service
+@NoArgsConstructor
 public class JwtService {
     /*
     JWT 생성
@@ -70,8 +72,24 @@ public class JwtService {
             throw new BaseException(INVALID_JWT);
         }
 
+        //3. JWT 유효기간 확인
+        if(!validateToken(accessToken))
+            throw new BaseException(EXPIRED_JWT);
+
         System.out.println("body = " + body.get("jwtInfo"));
         return body.get("jwtInfo", LinkedHashMap.class);
     }
+
+    //토큰 유효기간 확인
+    public boolean validateToken(String token){
+         boolean expiration= Jwts.parser()
+                .setSigningKey(Secret.JWT_SECRET_KEY)
+                .parseClaimsJws(token)
+                .getBody()
+                .getExpiration().before(new Date());
+        return !expiration;
+    }
+
+
 
 }
