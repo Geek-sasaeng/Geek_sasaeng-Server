@@ -60,4 +60,15 @@ public class MemberController {
         return new BaseResponse<>(patchMemberPhoneValidKeyRes);
     }
 
+
+    // 수정: 프로필 이미지
+    @PatchMapping("prifile-img-url/{id}")
+    public BaseResponse<PatchProfileImgUrlRes> updateProfileImgUrl(@PathVariable("id") int id,@Validated @RequestBody PatchProfileImgUrlReq dto){
+        Member member = memberService.updateProfileImgUrl(id,dto);
+
+        //응답 형식으로 변환
+        PatchProfileImgUrlRes patchProfileImgUrlRes = PatchProfileImgUrlRes.toDto(member);
+        return new BaseResponse<>(patchProfileImgUrlRes);
+    }
+
 }

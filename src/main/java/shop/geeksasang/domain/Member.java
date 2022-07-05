@@ -65,6 +65,11 @@ public class Member extends BaseEntity {
         this.phoneValidKey = phoneValidKey;
     }
 
+    // 수정: 폰 번호
+    public void updateProfileImgUrl(String profileImgUrl){
+        this.profileImgUrl = profileImgUrl;
+    }
+
     // 값 확인용 메서드
     @Override
     public String toString() {

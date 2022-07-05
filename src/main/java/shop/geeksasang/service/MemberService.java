@@ -12,6 +12,7 @@ import shop.geeksasang.domain.University;
 import shop.geeksasang.dto.member.CreateMemberReq;
 import shop.geeksasang.dto.member.PatchMemberPhoneNumberReq;
 import shop.geeksasang.dto.member.PatchMemberPhoneValidKeyReq;
+import shop.geeksasang.dto.member.PatchProfileImgUrlReq;
 import shop.geeksasang.repository.MemberRepository;
 import shop.geeksasang.repository.UniversityRepository;
 import shop.geeksasang.utils.jwt.RedisUtil;
@@ -84,6 +85,20 @@ public class MemberService {
                 .orElseThrow(()-> new BaseException(INTERNAL_SERVER_ERROR));
         //폰 인증번호 수정
         findMember.updatePhoneValidKey(dto.getPhoneValidKey());
+
+        return findMember;
+    }
+
+    // 수정: 프로필 이미지
+    @Transactional(readOnly = false)
+    public Member updateProfileImgUrl(int id, PatchProfileImgUrlReq dto){
+
+        //멤버 아이디로 조회
+        Member findMember = memberRepository
+                .findById(id)
+                .orElseThrow(() -> new BaseException(INTERNAL_SERVER_ERROR));
+        //프로필 이미지 수정
+        findMember.updateProfileImgUrl(dto.getProfileImgUrl());
 
         return findMember;
     }
