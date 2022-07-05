@@ -5,7 +5,7 @@ import lombok.Data;
 import shop.geeksasang.domain.Member;
 
 @Builder // .builder() 사용
-@Data
+@Data// Getter, Setter 포함
 public class PatchMemberPhoneNumberRes {
 
     private int id;

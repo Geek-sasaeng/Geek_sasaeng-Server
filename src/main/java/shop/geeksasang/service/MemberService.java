@@ -11,6 +11,7 @@ import shop.geeksasang.domain.University;
 
 import shop.geeksasang.dto.member.CreateMemberReq;
 import shop.geeksasang.dto.member.PatchMemberPhoneNumberReq;
+import shop.geeksasang.dto.member.PatchMemberPhoneValidKeyReq;
 import shop.geeksasang.repository.MemberRepository;
 import shop.geeksasang.repository.UniversityRepository;
 import shop.geeksasang.utils.jwt.RedisUtil;
@@ -68,7 +69,21 @@ public class MemberService {
                 .findById(id)
                 .orElseThrow(() -> new BaseException(INTERNAL_SERVER_ERROR));
         // 폰 번호 수정
-        findMember.connectPhoneNumber(dto.getPhoneNumber());
+        findMember.updatePhoneNumber(dto.getPhoneNumber());
+
+        return findMember;
+    }
+
+    // 수정: 폰 인증 번호
+    @Transactional(readOnly = false)
+    public Member updateMemberPhoneValidKey(int id, PatchMemberPhoneValidKeyReq dto){
+
+        //멤버 아이디로 조회
+        Member findMember = memberRepository
+                .findById(id)
+                .orElseThrow(()-> new BaseException(INTERNAL_SERVER_ERROR));
+        //폰 인증번호 수정
+        findMember.updatePhoneValidKey(dto.getPhoneValidKey());
 
         return findMember;
     }

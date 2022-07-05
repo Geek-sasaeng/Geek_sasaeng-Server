@@ -56,8 +56,13 @@ public class Member extends BaseEntity {
     }
 
     // 수정: 폰번호 저장
-    public void connectPhoneNumber(String phoneNumber){
+    public void updatePhoneNumber(String phoneNumber){
         this.phoneNumber = phoneNumber;
+    }
+
+    //수정: 폰 인증번호 수정
+    public void updatePhoneValidKey(String phoneValidKey){
+        this.phoneValidKey = phoneValidKey;
     }
 
     // 값 확인용 메서드

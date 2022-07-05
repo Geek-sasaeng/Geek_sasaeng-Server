@@ -6,10 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import shop.geeksasang.config.response.BaseResponse;
 import shop.geeksasang.domain.Member;
 import shop.geeksasang.dto.EmailReq;
-import shop.geeksasang.dto.member.CreateMemberReq;
-import shop.geeksasang.dto.member.CreateMemberRes;
-import shop.geeksasang.dto.member.PatchMemberPhoneNumberReq;
-import shop.geeksasang.dto.member.PatchMemberPhoneNumberRes;
+import shop.geeksasang.dto.member.*;
 import shop.geeksasang.service.MemberService;
 import shop.geeksasang.service.SendEmailService;
 
@@ -42,7 +39,7 @@ public class MemberController {
 
     // 수정: 폰 번호
     @PatchMapping("phone-number/{id}")
-    public BaseResponse<PatchMemberPhoneNumberRes> updateMemberPhoneNumber(@PathVariable("id") int id, @RequestBody PatchMemberPhoneNumberReq dto){
+    public BaseResponse<PatchMemberPhoneNumberRes> updateMemberPhoneNumber(@PathVariable("id") int id,@Validated @RequestBody PatchMemberPhoneNumberReq dto){
         Member member = memberService.updateMemberPhoneNumber(id,dto);
 
         //응답 형식으로 변환
@@ -53,5 +50,14 @@ public class MemberController {
 
 
     // 수정: 폰 인증 번호
+    @PatchMapping("phone-vaid-key/{id}")
+    public BaseResponse<PatchMemberPhoneValidKeyRes> updateMemberPhoneValidKey(@PathVariable("id") int id,@Validated @RequestBody PatchMemberPhoneValidKeyReq dto){
+        // 서비스에 폰 인증번호 수정 요청
+        Member member = memberService.updateMemberPhoneValidKey(id,dto);
+        //응답 형식으로 변환
+        PatchMemberPhoneValidKeyRes patchMemberPhoneValidKeyRes = PatchMemberPhoneValidKeyRes.toDto(member);
+        //반환
+        return new BaseResponse<>(patchMemberPhoneValidKeyRes);
+    }
 
 }
