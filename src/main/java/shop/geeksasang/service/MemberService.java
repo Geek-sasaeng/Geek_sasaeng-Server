@@ -10,6 +10,7 @@ import shop.geeksasang.domain.Member;
 import shop.geeksasang.domain.University;
 
 import shop.geeksasang.dto.member.CreateMemberReq;
+import shop.geeksasang.dto.member.PatchNicknameReq;
 import shop.geeksasang.repository.MemberRepository;
 import shop.geeksasang.repository.UniversityRepository;
 import shop.geeksasang.utils.jwt.RedisUtil;
@@ -52,6 +53,19 @@ public class MemberService {
         member.connectUniversity(university);
         member.changeStatusToActive();
         memberRepository.save(member);
+        return member;
+    }
+
+    @Transactional(readOnly = false)
+    public Member UpdateNickname(int id, PatchNicknameReq dto) {
+        if(!memberRepository.findMemberByNickName(dto.getNickName()).isEmpty()){
+            throw new BaseException(DUPLICATE_USER_NICKNAME);
+        }
+
+        Member member = memberRepository.findMemberById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저는 존재하지 않습니다. id="+ id));
+
+        member.updateNickname(dto.getNickName());
         return member;
     }
 }

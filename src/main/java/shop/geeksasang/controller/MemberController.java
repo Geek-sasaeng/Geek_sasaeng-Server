@@ -2,15 +2,14 @@ package shop.geeksasang.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import shop.geeksasang.config.response.BaseResponse;
 import shop.geeksasang.domain.Member;
 import shop.geeksasang.dto.EmailReq;
 import shop.geeksasang.dto.member.CreateMemberReq;
 import shop.geeksasang.dto.member.CreateMemberRes;
+import shop.geeksasang.dto.member.PatchNicknameReq;
+import shop.geeksasang.dto.member.PatchNicknameRes;
 import shop.geeksasang.service.MemberService;
 import shop.geeksasang.service.SendEmailService;
 
@@ -24,6 +23,7 @@ public class MemberController {
     private final MemberService memberService;
     private final SendEmailService sendEmailService;
 
+    // 회원가입
     @PostMapping
     public BaseResponse<CreateMemberRes> createMember(@Validated @RequestBody CreateMemberReq dto){
         Member member = memberService.createMember(dto);
@@ -38,5 +38,14 @@ public class MemberController {
         sendEmailService.authEmail(req);
         String response = "성공적으로 인증 메일을 보냈습니다.";
         return new BaseResponse<String>(response);
+    }
+
+    // 닉네임 수정하기
+    @PatchMapping("/nickName/{id}")
+    public BaseResponse<PatchNicknameRes> updateNickname(@Validated @PathVariable("id") int id, @RequestBody @Valid PatchNicknameReq dto) {
+        Member member = memberService.UpdateNickname(id, dto);
+
+        PatchNicknameRes patchNicknameRes = PatchNicknameRes.toDto(member);
+       return new BaseResponse<>(patchNicknameRes);
     }
 }
