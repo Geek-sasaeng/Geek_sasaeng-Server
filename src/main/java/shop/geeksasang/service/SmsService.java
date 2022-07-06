@@ -142,7 +142,7 @@ public class SmsService {
             throw new BaseException(INVALID_SMS_VERIFY_NUMBER);
         }
         smsRedisRepository.removeSmsCertification(phoneNumber);
-        return new PostVerifySmsRes("success");
+        return new PostVerifySmsRes("Verification Success");
     }
 
     private boolean isVerify(String verifyRandomNumber, String phoneNumber){
