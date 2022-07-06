@@ -32,7 +32,7 @@ public class SmsController {
         return new BaseResponse<>(smsResponse);
     }
 
-    @PostMapping("/validation")
+    @PostMapping("/verification")
     public BaseResponse<Object> verifySms(@Validated @RequestBody PostVerifySmsReq request){
         PostVerifySmsRes smsResponse = smsService.verifySms(request.getVerifyRandomNumber(), request.getRecipientPhoneNumber());
         return new BaseResponse<>(smsResponse);

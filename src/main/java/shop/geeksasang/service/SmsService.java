@@ -146,7 +146,7 @@ public class SmsService {
     }
 
     private boolean isVerify(String verifyRandomNumber, String phoneNumber){
-        return smsRedisRepository.hasKey(phoneNumber) ||
+        return smsRedisRepository.hasKey(phoneNumber) &&
                 smsRedisRepository.getSmsCertification(phoneNumber).equals(verifyRandomNumber);
     }
 }
