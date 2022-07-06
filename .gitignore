@@ -6,7 +6,8 @@ build/
 !**/src/test/**/build/
 logs
 *.yml
-secret/
+src/main/java/shop/geeksasang/config/secret/Secret.java
+
 
 ### STS ###
 .apt_generated

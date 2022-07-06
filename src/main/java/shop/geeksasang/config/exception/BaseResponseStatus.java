@@ -7,6 +7,7 @@ import lombok.Getter;
  */
 @Getter
 public enum BaseResponseStatus {
+
     /**
      * 1000 : 요청 성공
      */
@@ -34,6 +35,9 @@ public enum BaseResponseStatus {
     NOT_EXISTS_PARTY(false,2010,"존재하지 않는 파티입니다"),
     NOT_EXISTS_PASSWORD(false, 2011,"비밀번호가 틀립니다. "),
     INACTIVE_STATUS(false,2012,"회원 status가 INACITVE 입니다."),
+    INVALID_SMS_VERIFY_NUMBER(false,2199,"SMS 인증 번호가 다릅니다."),
+
+
     /**
      * 토마스최
      * code : 2200~2399
@@ -45,16 +49,19 @@ public enum BaseResponseStatus {
      * code : 2400~2599
      */
 
+
     /**
      * 제로
      * code : 2600~2799
      */
+    DUPLICATE_USER_NICKNAME(false, 2600, "중복되는 유저 닉네임입니다"),
+    ALREADY_INACTIVE_USER(false, 2601, "이미 탈퇴한 회원입니다"),
+    SAME_PASSWORDS(false, 2602, "기존 비밀번호와 동일합니다"),
 
     /**
      * 네오
      * code : 2800~2999
      */
-
 
 
     /**
