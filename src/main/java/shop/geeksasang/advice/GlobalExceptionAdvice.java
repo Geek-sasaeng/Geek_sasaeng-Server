@@ -15,16 +15,16 @@ import shop.geeksasang.config.response.BaseResponse;
 @RestControllerAdvice
 public class GlobalExceptionAdvice {
 
-//    @ExceptionHandler(BaseException.class)
-//    public BaseResponse<BaseResponseStatus> baseException(BaseException e) {
-//        log.error("Handle CommonException: {}", e.getMessage());
-//        return new BaseResponse<>(e.getStatus());
-//    }
-//
-//    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-//    @ExceptionHandler(Exception.class)
-//    public BaseResponse<BaseResponseStatus> allHandleException(Exception e) {
-//        log.error("Handle All Exception: {}", e.getMessage());
-//        return new BaseResponse<>(BaseResponseStatus.INTERNAL_SERVER_ERROR);
-//    }
+    @ExceptionHandler(BaseException.class)
+    public BaseResponse<BaseResponseStatus> baseException(BaseException e) {
+        log.error("Handle CommonException: {}", e.getMessage());
+        return new BaseResponse<>(e.getStatus());
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(Exception.class)
+    public BaseResponse<BaseResponseStatus> allHandleException(Exception e) {
+        log.error("Handle All Exception: {}", e.getMessage());
+        return new BaseResponse<>(BaseResponseStatus.INTERNAL_SERVER_ERROR);
+    }
 }

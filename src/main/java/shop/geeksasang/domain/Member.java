@@ -37,6 +37,8 @@ public class Member extends BaseEntity {
 
     private String phoneValidKey;
 
+    private String phoneValidStatus;
+
     private String profileImgUrl;
 
     private String emailValidKey;
@@ -54,6 +56,16 @@ public class Member extends BaseEntity {
         this.university = university;
     }
 
+    public void updateNickname(String nickName) { this.nickName = nickName; }
+
+    public void updatePassword(String password) { this.password = password; }
+
+
+    // 회원 탈퇴
+    public void changeStatusToInactive(){
+        super.setStatus(Status.INACTIVE);
+    }
+
     @Override
     public String toString() {
         return "Member{" +
@@ -65,6 +77,7 @@ public class Member extends BaseEntity {
                 ", university=" + university +
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", phoneValidKey='" + phoneValidKey + '\'' +
+                ", phoneValidStatus='" + phoneValidStatus + '\'' +
                 ", profileImgUrl='" + profileImgUrl + '\'' +
                 ", emailValidKey='" + emailValidKey + '\'' +
                 ", emailValidStatus='" + emailValidStatus + '\'' +
