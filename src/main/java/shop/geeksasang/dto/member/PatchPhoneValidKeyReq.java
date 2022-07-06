@@ -10,7 +10,7 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor // 모든 파라미터 생성자
 @NoArgsConstructor// 빈 생성자
 @Data
-public class PatchMemberPhoneValidKeyReq {
+public class PatchPhoneValidKeyReq {
 
     @ApiModelProperty(value = "휴대폰 인증 번호 입력. 6자리 필수")
     @Size(min=6, max=6)

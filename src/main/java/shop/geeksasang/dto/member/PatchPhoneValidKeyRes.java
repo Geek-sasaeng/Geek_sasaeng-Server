@@ -6,7 +6,7 @@ import shop.geeksasang.domain.Member;
 
 @Builder // .builder() 사용
 @Data // Getter, Setter 포함
-public class PatchMemberPhoneValidKeyRes {
+public class PatchPhoneValidKeyRes {
 
     private int id;
     private String loginId;
@@ -17,8 +17,8 @@ public class PatchMemberPhoneValidKeyRes {
     private String phoneValidKey;
 
     // 빌더
-    static public PatchMemberPhoneValidKeyRes toDto(Member member){
-        return PatchMemberPhoneValidKeyRes.builder()
+    static public PatchPhoneValidKeyRes toDto(Member member){
+        return PatchPhoneValidKeyRes.builder()
                 .id(member.getId())
                 .loginId(member.getLoginId())
                 .nickName(member.getNickName())

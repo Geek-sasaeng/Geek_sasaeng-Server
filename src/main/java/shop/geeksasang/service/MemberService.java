@@ -1,7 +1,6 @@
 package shop.geeksasang.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,8 +13,6 @@ import shop.geeksasang.repository.MemberRepository;
 import shop.geeksasang.repository.UniversityRepository;
 import shop.geeksasang.utils.jwt.RedisUtil;
 import shop.geeksasang.utils.encrypt.SHA256;
-
-import java.util.Optional;
 
 import static shop.geeksasang.config.exception.BaseResponseStatus.*;
 
@@ -65,7 +62,7 @@ public class MemberService {
 
     // 수정: 폰 번호
     @Transactional(readOnly = false) // readOnly = false : 생성, 수정하는 작업에 적용
-    public Member updateMemberPhoneNumber(int id, PatchMemberPhoneNumberReq dto){
+    public Member updatePhoneNumber(int id, PatchPhoneNumberReq dto){
 
         // 멤버 아이디로 조회
         Member findMember = memberRepository
@@ -79,7 +76,7 @@ public class MemberService {
 
     // 수정: 폰 인증 번호
     @Transactional(readOnly = false)
-    public Member updateMemberPhoneValidKey(int id, PatchMemberPhoneValidKeyReq dto){
+    public Member updatePhoneValidKey(int id, PatchPhoneValidKeyReq dto){
 
         //멤버 아이디로 조회
         Member findMember = memberRepository

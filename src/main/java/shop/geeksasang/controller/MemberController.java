@@ -39,25 +39,25 @@ public class MemberController {
 
     // 수정: 폰 번호
     @PatchMapping("/phone-number/{id}")
-    public BaseResponse<PatchMemberPhoneNumberRes> updateMemberPhoneNumber(@PathVariable("id") int id,@Validated @RequestBody PatchMemberPhoneNumberReq dto){
-        Member member = memberService.updateMemberPhoneNumber(id,dto);
+    public BaseResponse<PatchPhoneNumberRes> updatePhoneNumber(@PathVariable("id") int id, @Validated @RequestBody PatchPhoneNumberReq dto){
+        Member member = memberService.updatePhoneNumber(id,dto);
 
         //응답 형식으로 변환
-        PatchMemberPhoneNumberRes patchMemberPhoneNumberRes = PatchMemberPhoneNumberRes.toDto(member);
+        PatchPhoneNumberRes patchPhoneNumberRes = PatchPhoneNumberRes.toDto(member);
         //반환
-        return new BaseResponse<>(patchMemberPhoneNumberRes);
+        return new BaseResponse<>(patchPhoneNumberRes);
     }
 
 
     // 수정: 폰 인증 번호
     @PatchMapping("/phone-vaid-key/{id}")
-    public BaseResponse<PatchMemberPhoneValidKeyRes> updateMemberPhoneValidKey(@PathVariable("id") int id,@Validated @RequestBody PatchMemberPhoneValidKeyReq dto){
+    public BaseResponse<PatchPhoneValidKeyRes> updatePhoneValidKey(@PathVariable("id") int id, @Validated @RequestBody PatchPhoneValidKeyReq dto){
         // 서비스에 폰 인증번호 수정 요청
-        Member member = memberService.updateMemberPhoneValidKey(id,dto);
+        Member member = memberService.updatePhoneValidKey(id,dto);
         //응답 형식으로 변환
-        PatchMemberPhoneValidKeyRes patchMemberPhoneValidKeyRes = PatchMemberPhoneValidKeyRes.toDto(member);
+        PatchPhoneValidKeyRes patchPhoneValidKeyRes = PatchPhoneValidKeyRes.toDto(member);
         //반환
-        return new BaseResponse<>(patchMemberPhoneValidKeyRes);
+        return new BaseResponse<>(patchPhoneValidKeyRes);
     }
 
 
