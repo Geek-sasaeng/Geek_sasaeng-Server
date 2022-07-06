@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 import shop.geeksasang.config.response.BaseResponse;
 import shop.geeksasang.dto.sms.PostSmsReq;
 import shop.geeksasang.dto.sms.NaverApiSmsRes;
+import shop.geeksasang.dto.sms.PostVerifySmsReq;
+import shop.geeksasang.dto.sms.PostVerifySmsRes;
 import shop.geeksasang.service.SmsService;
 
 import java.io.UnsupportedEncodingException;
@@ -25,8 +27,14 @@ public class SmsController {
     private final SmsService smsService;
 
     @PostMapping
-    public BaseResponse<NaverApiSmsRes> sms(@Validated @RequestBody PostSmsReq request) throws UnsupportedEncodingException, NoSuchAlgorithmException, URISyntaxException, InvalidKeyException, JsonProcessingException {
+    public BaseResponse<NaverApiSmsRes> sendSms(@Validated @RequestBody PostSmsReq request) throws UnsupportedEncodingException, NoSuchAlgorithmException, URISyntaxException, InvalidKeyException, JsonProcessingException {
         NaverApiSmsRes smsResponse = smsService.sendSms(request.getRecipientPhoneNumber());
+        return new BaseResponse<>(smsResponse);
+    }
+
+    @PostMapping("/validation")
+    public BaseResponse<Object> verifySms(@Validated @RequestBody PostVerifySmsReq request){
+        PostVerifySmsRes smsResponse = smsService.verifySms(request.getVerifyRandomNumber(), request.getRecipientPhoneNumber());
         return new BaseResponse<>(smsResponse);
     }
 }

@@ -3,6 +3,7 @@ package shop.geeksasang.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.codec.binary.Base64;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -28,12 +29,18 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
+import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.dto.sms.MessagesDto;
 import shop.geeksasang.dto.sms.NaverApiSmsReq;
 import shop.geeksasang.dto.sms.NaverApiSmsRes;
+import shop.geeksasang.dto.sms.PostVerifySmsRes;
+import shop.geeksasang.repository.SmsRedisRepository;
+
+import static shop.geeksasang.config.exception.BaseResponseStatus.*;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class SmsService {
 
     @Value("#{environment['sms.service_id']}") //.yml 파일의 값을 가져온다.
@@ -48,11 +55,14 @@ public class SmsService {
     @Value("#{environment['sms.phone_number']}")
     private String fromPhoneNumber;
 
+    private final SmsRedisRepository smsRedisRepository;
+
     public NaverApiSmsRes sendSms(String recipientPhoneNumber) throws JsonProcessingException, UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException, URISyntaxException {
         //기초 세팅
         List<MessagesDto> messages = new ArrayList<>();
         String randomNumber = makeRandomNumber();
-        messages.add(new MessagesDto(recipientPhoneNumber, randomNumber));
+        String smsContentMessage = makeSmsContentMessage(randomNumber);
+        messages.add(new MessagesDto(recipientPhoneNumber, smsContentMessage));
 
         //바디와 헤더 생성
         NaverApiSmsReq smsRequest = new NaverApiSmsReq("SMS", "COMM", "82", fromPhoneNumber, "내용", messages);
@@ -68,6 +78,8 @@ public class SmsService {
         //네이버 api에 요청을 보낸다.
         NaverApiSmsRes smsResponse = restTemplate.postForObject(new URI("https://sens.apigw.ntruss.com/sms/v2/services/"+this.serviceId+"/messages"), body, NaverApiSmsRes.class);
 
+        //redis에 저장
+        smsRedisRepository.createSmsCertification(recipientPhoneNumber, randomNumber);
         return smsResponse;
     }
 
@@ -118,10 +130,23 @@ public class SmsService {
     }
 
     private String makeRandomNumber(){
-        int num = (int) (Math.random() * 899999) + 100000;
-        String result = "인증번호[" + String.valueOf(num)+"]를 입력해주세요";
-        return result;
+        return String.valueOf((int) (Math.random() * 899999) + 100000);
+    }
+
+    private String makeSmsContentMessage(String randomNumber){
+        return "인증번호[" + randomNumber + "]를 입력해주세요";
+    }
+
+    public PostVerifySmsRes verifySms(String verifyRandomNumber, String phoneNumber) {
+        if(!isVerify(verifyRandomNumber, phoneNumber)){
+            throw new BaseException(INVALID_SMS_VERIFY_NUMBER);
+        }
+        smsRedisRepository.removeSmsCertification(phoneNumber);
+        return new PostVerifySmsRes("success");
+    }
+
+    private boolean isVerify(String verifyRandomNumber, String phoneNumber){
+        return smsRedisRepository.hasKey(phoneNumber) ||
+                smsRedisRepository.getSmsCertification(phoneNumber).equals(verifyRandomNumber);
     }
 }
-
-//TODO 멤버에게 생성한 인증번호를 저장해야한다. 그럴려면 컬럼을 추가해야한다.
