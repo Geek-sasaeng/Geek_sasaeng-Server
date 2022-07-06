@@ -17,6 +17,10 @@ public enum BaseResponseStatus {
      * 2000 : Request 오류
      */
 
+    /**
+     * 데빈
+     * code : 2000~2199
+     */
     REQUEST_ERROR(false, 2000, "입력값을 확인해주세요."),
     EMPTY_JWT(false, 2001, "JWT를 입력해주세요."),
     INVALID_JWT(false, 2002, "유효하지 않은 JWT입니다."),
@@ -30,7 +34,26 @@ public enum BaseResponseStatus {
     NOT_EXISTS_PARTY(false,2010,"존재하지 않는 파티입니다"),
     NOT_EXISTS_PASSWORD(false, 2011,"비밀번호가 틀립니다. "),
     INACTIVE_STATUS(false,2012,"회원 status가 INACITVE 입니다."),
+    /**
+     * 토마스최
+     * code : 2200~2399
+     */
 
+
+    /**
+     * 미니
+     * code : 2400~2599
+     */
+
+    /**
+     * 제로
+     * code : 2600~2799
+     */
+
+    /**
+     * 네오
+     * code : 2800~2999
+     */
 
 
 
@@ -44,7 +67,9 @@ public enum BaseResponseStatus {
      */
 
 
-    INTERNAL_SERVER_ERROR(false,4000,"서버 오류입니다.");
+    INTERNAL_SERVER_ERROR(false,4000,"서버 오류입니다."),
+    SMS_API_ERROR(false,4001,"SMS 네이버 API 연동 오류입니다.");
+
 
 
     // 5000 : 필요시 만들어서 쓰세요

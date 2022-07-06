@@ -17,6 +17,7 @@ import java.util.LinkedHashMap;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
+@NoIntercept
 public class LoginController {
 
     private final LoginService loginService;
@@ -24,14 +25,8 @@ public class LoginController {
     @PostMapping
     @NoIntercept
     public BaseResponse<LoginRes> login(@Validated @RequestBody LoginReq dto){
-
         LoginRes login = loginService.login(dto);
         return new BaseResponse<>(login);
     }
 
-    @GetMapping
-    public BaseResponse<LinkedHashMap> test(){
-        LinkedHashMap test = loginService.test();
-        return new BaseResponse<>(test);
-    }
 }

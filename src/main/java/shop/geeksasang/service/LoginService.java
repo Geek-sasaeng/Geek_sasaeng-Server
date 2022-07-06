@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import shop.geeksasang.config.domain.Status;
 import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.config.exception.BaseResponseStatus;
+import shop.geeksasang.config.response.BaseResponse;
 import shop.geeksasang.domain.Member;
 import shop.geeksasang.domain.University;
 import shop.geeksasang.dto.login.LoginReq;
@@ -44,7 +45,7 @@ public class LoginService {
 
         JwtInfo vo = JwtInfo.builder()
                 .userId(member.getId())
-                .universityId(1) //차후에 수정할
+                .universityId(member.getUniversity().getId())
                 .build();
 
         String jwt = jwtService.createJwt(vo);

@@ -29,7 +29,6 @@ public class MemberController {
     @NoIntercept
     public BaseResponse<CreateMemberRes> createMember(@Validated @RequestBody CreateMemberReq dto){
         Member member = memberService.createMember(dto);
-
         CreateMemberRes createMemberRes = CreateMemberRes.toDto(member);
         return new BaseResponse<>(createMemberRes);
     }

@@ -1,6 +1,7 @@
 package shop.geeksasang.interceptor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ser.Serializers;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.method.HandlerMethod;
@@ -28,17 +29,22 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
 
         if(check) return true;
 
+
+        LinkedHashMap jwtInfo = jwtService.getJwtInfo();
+        request.setAttribute("jwtInfo",jwtInfo);
+
+        /*
         try{
             //parsing 후 jwtInfo(userId, dormitoryId0 request에 넘김
             LinkedHashMap jwtInfo = jwtService.getJwtInfo();
             request.setAttribute("jwtInfo",jwtInfo);
-
         }
         catch(BaseException exception){
             //URL로 이동되도록 & 정확한 exception 보여주기
-            throw new BaseException(BaseResponseStatus.INACTIVE_STATUS);
-
+            throw new BaseException(BaseResponseStatus.INVALID_USER_JWT);
         }
+        */
+
 
         return true;
     }
