@@ -62,4 +62,12 @@ public class MemberController {
         PatchPasswordRes patchPasswordRes = PatchPasswordRes.toDto(member);
         return new BaseResponse<>(patchPasswordRes);
     }
+
+    // 아이디 중복 확인하기
+    @GetMapping("/id_duplicated")
+    public BaseResponse<String> checkIdDuplicated(@RequestBody @Valid CheckIdReq dto) {
+        String response = memberService.checkId(dto);
+
+        return new BaseResponse<>(response);
+    }
 }

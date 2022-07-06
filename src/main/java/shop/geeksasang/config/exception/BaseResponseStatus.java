@@ -53,6 +53,7 @@ public enum BaseResponseStatus {
     DUPLICATE_USER_NICKNAME(false, 2600, "중복되는 유저 닉네임입니다"),
     ALREADY_INACTIVE_USER(false, 2601, "이미 탈퇴한 회원입니다"),
     SAME_PASSWORDS(false, 2602, "기존 비밀번호와 동일합니다"),
+    EXISTS_LOGIN_ID(false, 2603, "존재하는 아이디입니다"),
 
     /**
      * 네오

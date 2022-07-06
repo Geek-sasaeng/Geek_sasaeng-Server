@@ -6,13 +6,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import shop.geeksasang.config.exception.BaseException;
+import shop.geeksasang.domain.DeliveryParty;
 import shop.geeksasang.domain.Member;
 import shop.geeksasang.domain.University;
 
-import shop.geeksasang.dto.member.CreateMemberReq;
-import shop.geeksasang.dto.member.PatchMemberStatusReq;
-import shop.geeksasang.dto.member.PatchNicknameReq;
-import shop.geeksasang.dto.member.PatchPasswordReq;
+import shop.geeksasang.dto.member.*;
 import shop.geeksasang.repository.MemberRepository;
 import shop.geeksasang.repository.UniversityRepository;
 import shop.geeksasang.utils.jwt.RedisUtil;
@@ -139,4 +137,17 @@ public class MemberService {
         member.updatePassword(dto.getNewPassword());
         return member;
     }
+
+    // 로그인 아이디 중복 확인하기
+    @Transactional(readOnly = false)
+    public String checkId(CheckIdReq dto) {
+        if(!memberRepository.findMemberByLoginId(dto.getLoginId()).isEmpty()){
+            throw new BaseException(EXISTS_LOGIN_ID);
+        }
+//        Member member = memberRepository.findMemberByLoginId(dto.getLoginId())
+//                .orElseThrow(() -> new RuntimeException(""));
+        return "사용 가능한 아이디입니다.";
+    }
+
+
 }
