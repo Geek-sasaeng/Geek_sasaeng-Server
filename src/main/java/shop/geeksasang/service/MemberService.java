@@ -45,6 +45,11 @@ public class MemberService {
             throw new BaseException(DUPLICATE_USER_EMAIL);
         }
 
+        // 검증: 동의여부가 Y 가 이닌 경우
+        if(!dto.getInformationAgreeStatus().equals("Y")){
+            throw new BaseException(INVALID_INFORMATIONAGREE_STATUS);
+        }
+
         dto.setPassword(SHA256.encrypt(dto.getPassword()));
         Member member = dto.toEntity();
         University university = universityRepository

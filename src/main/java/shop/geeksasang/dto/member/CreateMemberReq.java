@@ -42,6 +42,10 @@ public class CreateMemberReq {
     @Size(min = 10, max = 11)
     private  String phoneNumber;
 
+    @ApiModelProperty(value = "회원 정보동의 여부 입력, Null, 빈 문자열, 스페이스만 있는 문자열 불가")
+    @NotBlank //Null, 빈 문자열, 스페이스만 있는 문자열 불가
+    private String informationAgreeStatus;
+
     public Member toEntity() {
         return Member.builder()
                 .loginId(getLoginId())
@@ -49,6 +53,7 @@ public class CreateMemberReq {
                 .nickName(getNickname())
                 .email(getEmail())
                 .phoneNumber(getPhoneNumber())
+                .informationAgreeStatus(getInformationAgreeStatus())
                 .build();
     }
 }

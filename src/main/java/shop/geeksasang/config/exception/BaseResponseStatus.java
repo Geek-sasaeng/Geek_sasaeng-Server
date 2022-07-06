@@ -38,6 +38,7 @@ public enum BaseResponseStatus {
      * 토마스최
      * code : 2200~2399
      */
+    INVALID_INFORMATIONAGREE_STATUS(false,2201,"회원 정보동의 status가 Y가 아닙니다."),
 
 
     /**

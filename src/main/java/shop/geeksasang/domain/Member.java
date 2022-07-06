@@ -51,7 +51,6 @@ public class Member extends BaseEntity {
         super.setStatus(Status.ACTIVE);
     }
 
-    //-// 연관 관계 편의 메서드 //-//
     // 대학교 정보 저장
     public void connectUniversity(University university){
         this.university = university;
