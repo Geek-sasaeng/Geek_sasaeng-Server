@@ -1,4 +1,4 @@
-package shop.geeksasang.dto;
+package shop.geeksasang.dto.email;
 
 import lombok.Builder;
 import lombok.Data;
@@ -10,7 +10,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 /*
-    이메일 주소 받아오는 DTO
+     [이메일 인증]
+    이메일 주소 DTO
  */
 @Data
 public class EmailReq {

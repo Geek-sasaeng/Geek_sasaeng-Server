@@ -10,7 +10,8 @@ import java.time.Duration;
 @Service
 @RequiredArgsConstructor
 /*
-    이메일 인증번호 저장을 위한 Redis 클래스
+     [이메일 인증]
+    Redis 설정 클래스
  */
 public class RedisUtil {
     private final StringRedisTemplate redisTemplate;

@@ -5,7 +5,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import shop.geeksasang.config.response.BaseResponse;
 import shop.geeksasang.domain.Member;
-import shop.geeksasang.dto.EmailReq;
+import shop.geeksasang.dto.email.EmailReq;
 import shop.geeksasang.dto.member.*;
 import shop.geeksasang.service.MemberService;
 import shop.geeksasang.service.SendEmailService;
@@ -22,19 +22,11 @@ public class MemberController {
 
     // 회원가입
     @PostMapping
-    public BaseResponse<CreateMemberRes> createMember(@Validated @RequestBody CreateMemberReq dto){
+    public BaseResponse<CreateMemberRes> createMember(@Validated @RequestBody CreateMemberReq dto) {
         Member member = memberService.createMember(dto);
 
         CreateMemberRes createMemberRes = CreateMemberRes.toDto(member);
         return new BaseResponse<>(createMemberRes);
-    }
-
-    // 이메일 인증 번호 보내기
-    @PostMapping("/email")
-    public BaseResponse<String> authEmail(@RequestBody @Valid EmailReq req){
-        sendEmailService.authEmail(req);
-        String response = "성공적으로 인증 메일을 보냈습니다.";
-        return new BaseResponse<String>(response);
     }
 
     // 닉네임 수정하기
@@ -43,7 +35,7 @@ public class MemberController {
         Member member = memberService.UpdateNickname(id, dto);
 
         PatchNicknameRes patchNicknameRes = PatchNicknameRes.toDto(member);
-       return new BaseResponse<>(patchNicknameRes);
+        return new BaseResponse<>(patchNicknameRes);
     }
 
     // 회원 탈퇴하기 - status "INACTIVE"로 수정
@@ -61,5 +53,13 @@ public class MemberController {
 
         PatchPasswordRes patchPasswordRes = PatchPasswordRes.toDto(member);
         return new BaseResponse<>(patchPasswordRes);
+    }
+
+    // 이메일 인증 번호 보내기
+    @PostMapping("/email")
+    public BaseResponse<String> authEmail(@RequestBody @Valid EmailReq req) {
+        sendEmailService.authEmail(req);
+        String response = "성공적으로 인증 메일을 보냈습니다.";
+        return new BaseResponse<String>(response);
     }
 }

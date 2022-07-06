@@ -17,7 +17,6 @@ import java.security.NoSuchAlgorithmException;
 //@Slf4j
 @RestController
 public class SmsApiExceptionAdvice {
-
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler({ UnsupportedEncodingException.class, NoSuchAlgorithmException.class, InvalidKeyException.class, JsonProcessingException.class} )
     public BaseResponse<BaseResponseStatus> allHandleException(Exception e) {
