@@ -45,6 +45,8 @@ public class Member extends BaseEntity {
 
     private String jwtToken;
 
+    private String informationAgreeStatus; // 회원 정보 동의 여부
+
     public void changeStatusToActive(){
         super.setStatus(Status.ACTIVE);
     }
@@ -68,6 +70,11 @@ public class Member extends BaseEntity {
     // 수정: 폰 번호
     public void updateProfileImgUrl(String profileImgUrl){
         this.profileImgUrl = profileImgUrl;
+    }
+
+    // 수정: 회원정보 동의 수정
+    public void updateInformationAgreeStatus(String informationAgreeStatus){
+        this.informationAgreeStatus = informationAgreeStatus;
     }
 
     // 값 확인용 메서드

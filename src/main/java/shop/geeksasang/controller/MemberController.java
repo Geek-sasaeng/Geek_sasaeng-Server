@@ -38,7 +38,7 @@ public class MemberController {
 
 
     // 수정: 폰 번호
-    @PatchMapping("phone-number/{id}")
+    @PatchMapping("/phone-number/{id}")
     public BaseResponse<PatchMemberPhoneNumberRes> updateMemberPhoneNumber(@PathVariable("id") int id,@Validated @RequestBody PatchMemberPhoneNumberReq dto){
         Member member = memberService.updateMemberPhoneNumber(id,dto);
 
@@ -50,7 +50,7 @@ public class MemberController {
 
 
     // 수정: 폰 인증 번호
-    @PatchMapping("phone-vaid-key/{id}")
+    @PatchMapping("/phone-vaid-key/{id}")
     public BaseResponse<PatchMemberPhoneValidKeyRes> updateMemberPhoneValidKey(@PathVariable("id") int id,@Validated @RequestBody PatchMemberPhoneValidKeyReq dto){
         // 서비스에 폰 인증번호 수정 요청
         Member member = memberService.updateMemberPhoneValidKey(id,dto);
@@ -62,13 +62,24 @@ public class MemberController {
 
 
     // 수정: 프로필 이미지
-    @PatchMapping("prifile-img-url/{id}")
+    @PatchMapping("/profile-img-url/{id}")
     public BaseResponse<PatchProfileImgUrlRes> updateProfileImgUrl(@PathVariable("id") int id,@Validated @RequestBody PatchProfileImgUrlReq dto){
         Member member = memberService.updateProfileImgUrl(id,dto);
 
         //응답 형식으로 변환
         PatchProfileImgUrlRes patchProfileImgUrlRes = PatchProfileImgUrlRes.toDto(member);
         return new BaseResponse<>(patchProfileImgUrlRes);
+    }
+
+
+    // 수정: 회원정보 동의 수정
+    @PatchMapping("/information-agree-status/{id}")
+    public BaseResponse<PatchInformationAgreeStatusRes> updateInformationAgreeStatus(@PathVariable("id") int id,@Validated @RequestBody PatchInformationAgreeStatusReq dto){
+        Member member = memberService.updateInformationAgreeStatus(id,dto);
+
+        //응답 형식으로 변환
+        PatchInformationAgreeStatusRes patchInformationAgreeStatusRes = PatchInformationAgreeStatusRes.toDto(member);
+        return new BaseResponse<>(patchInformationAgreeStatusRes);
     }
 
 }

@@ -9,10 +9,7 @@ import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.domain.Member;
 import shop.geeksasang.domain.University;
 
-import shop.geeksasang.dto.member.CreateMemberReq;
-import shop.geeksasang.dto.member.PatchMemberPhoneNumberReq;
-import shop.geeksasang.dto.member.PatchMemberPhoneValidKeyReq;
-import shop.geeksasang.dto.member.PatchProfileImgUrlReq;
+import shop.geeksasang.dto.member.*;
 import shop.geeksasang.repository.MemberRepository;
 import shop.geeksasang.repository.UniversityRepository;
 import shop.geeksasang.utils.jwt.RedisUtil;
@@ -102,4 +99,18 @@ public class MemberService {
 
         return findMember;
     }
+
+    // 수정: 회원정보 동의 수정
+    public Member updateInformationAgreeStatus(int id, PatchInformationAgreeStatusReq dto){
+
+        //멤버 아이디로 조회
+        Member findMember = memberRepository
+                .findById(id)
+                .orElseThrow(()-> new BaseException(INTERNAL_SERVER_ERROR));
+        //동의 여부 수정
+        findMember.updateInformationAgreeStatus(dto.getInformationAgreeStatus());
+
+        return findMember;
+    }
+
 }
