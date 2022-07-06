@@ -6,7 +6,7 @@ build/
 !**/src/test/**/build/
 logs
 *.yml
-src/main/java/shop/geeksasang/config/secret/Secret.java
+Secret.java
 
 
 ### STS ###
