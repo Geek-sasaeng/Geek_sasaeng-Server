@@ -58,6 +58,12 @@ public class Member extends BaseEntity {
 
     public void updateNickname(String nickName) { this.nickName = nickName; }
 
+
+    // 회원 탈퇴
+    public void changeStatusToInactive(){
+        super.setStatus(Status.INACTIVE);
+    }
+
     @Override
     public String toString() {
         return "Member{" +

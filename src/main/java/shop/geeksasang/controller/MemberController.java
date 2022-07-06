@@ -6,10 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import shop.geeksasang.config.response.BaseResponse;
 import shop.geeksasang.domain.Member;
 import shop.geeksasang.dto.EmailReq;
-import shop.geeksasang.dto.member.CreateMemberReq;
-import shop.geeksasang.dto.member.CreateMemberRes;
-import shop.geeksasang.dto.member.PatchNicknameReq;
-import shop.geeksasang.dto.member.PatchNicknameRes;
+import shop.geeksasang.dto.member.*;
 import shop.geeksasang.service.MemberService;
 import shop.geeksasang.service.SendEmailService;
 
@@ -47,5 +44,13 @@ public class MemberController {
 
         PatchNicknameRes patchNicknameRes = PatchNicknameRes.toDto(member);
        return new BaseResponse<>(patchNicknameRes);
+    }
+
+    // 회원 탈퇴하기 - status "INACTIVE"로 수정
+    @PatchMapping("/account_delete/{id}")
+    public BaseResponse<String> updateMemberStatus(@PathVariable("id") int id, @RequestBody @Valid PatchMemberStatusReq dto) {
+        memberService.UpdateMemberStatus(id, dto);
+        String response = "회원 탈퇴가 성공하였습니다.";
+        return new BaseResponse<String>(response);
     }
 }

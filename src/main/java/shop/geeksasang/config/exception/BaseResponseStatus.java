@@ -51,6 +51,7 @@ public enum BaseResponseStatus {
      * code : 2600~2799
      */
     DUPLICATE_USER_NICKNAME(false, 2600, "중복되는 유저 닉네임입니다"),
+    ALREADY_INACTIVE_USER(false, 2601, "이미 탈퇴한 회원입니다"),
 
     /**
      * 네오
