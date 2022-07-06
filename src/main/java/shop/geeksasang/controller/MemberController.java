@@ -53,4 +53,13 @@ public class MemberController {
         String response = "회원 탈퇴가 성공하였습니다.";
         return new BaseResponse<String>(response);
     }
+
+    // 비밀번호 수정하기
+    @PatchMapping("/modify_password/{id}")
+    public BaseResponse<PatchPasswordRes> updatePassword(@PathVariable("id") int id, @RequestBody @Valid PatchPasswordReq dto) {
+        Member member = memberService.UpdatePassword(id, dto);
+
+        PatchPasswordRes patchPasswordRes = PatchPasswordRes.toDto(member);
+        return new BaseResponse<>(patchPasswordRes);
+    }
 }

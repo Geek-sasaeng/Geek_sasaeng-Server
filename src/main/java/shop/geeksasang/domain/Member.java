@@ -58,6 +58,8 @@ public class Member extends BaseEntity {
 
     public void updateNickname(String nickName) { this.nickName = nickName; }
 
+    public void updatePassword(String password) { this.password = password; }
+
 
     // 회원 탈퇴
     public void changeStatusToInactive(){
