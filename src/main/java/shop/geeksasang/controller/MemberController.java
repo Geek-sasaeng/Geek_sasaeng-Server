@@ -1,16 +1,20 @@
 package shop.geeksasang.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import shop.geeksasang.config.response.BaseResponse;
+import shop.geeksasang.domain.DeliveryParty;
 import shop.geeksasang.domain.Member;
+import shop.geeksasang.domain.University;
 import shop.geeksasang.dto.EmailReq;
 import shop.geeksasang.dto.member.*;
 import shop.geeksasang.service.MemberService;
 import shop.geeksasang.service.SendEmailService;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/members")
@@ -70,4 +74,5 @@ public class MemberController {
 
         return new BaseResponse<>(response);
     }
+
 }
