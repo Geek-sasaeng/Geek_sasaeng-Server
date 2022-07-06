@@ -79,18 +79,18 @@ public class MemberService {
         if(memberRepository.findMemberById(id).isEmpty()){
             throw new BaseException(NOT_EXISTS_PARTICIPANT);
         }
+        // 이미 탈퇴한 회원
+        if(memberEntity.get().getStatus().toString().equals("INACTIVE")){
+            throw new BaseException(ALREADY_INACTIVE_USER);
+        }
         // 입력한 두 비밀번호가 다를 때
         if(!dto.getCheckPassword().equals(dto.getPassword())) {
             throw new BaseException(DIFFRENT_PASSWORDS);
         }
         // 입력한 비밀번호가 틀렸을 때
         String password = SHA256.encrypt(dto.getPassword());
-        if(memberEntity.get().getPassword() == password) {
+        if(!memberEntity.get().getPassword().equals(password)) {
             throw new BaseException(NOT_EXISTS_PASSWORD);
-        }
-        // 이미 탈퇴한 회원
-        if(memberEntity.get().getStatus().equals("INACTIVE")){
-            throw new BaseException(ALREADY_INACTIVE_USER);
         }
 
         Member member = memberRepository.findMemberById(id)
