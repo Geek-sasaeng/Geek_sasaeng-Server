@@ -1,7 +1,6 @@
 package shop.geeksasang.utils.jwt;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
@@ -15,7 +14,6 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 
 import shop.geeksasang.config.exception.BaseException;
-import shop.geeksasang.config.secret.Secret;
 import shop.geeksasang.dto.login.JwtInfo;
 
 import static shop.geeksasang.config.exception.BaseResponseStatus.*;
@@ -35,7 +33,7 @@ public class JwtService {
                 .setHeaderParam("type","jwt")
                 .claim("jwtInfo", jwtInfo)
                 .setIssuedAt(now)
-                .setExpiration(new Date(System.currentTimeMillis()+1*(1000*60*60*24*365)))
+                .setExpiration(new Date(System.currentTimeMillis()+1*(1000*60*60*24*60)))
                 .signWith(SignatureAlgorithm.HS256, Secret.JWT_SECRET_KEY)
                 .compact();
     }
@@ -69,6 +67,7 @@ public class JwtService {
                     .parseClaimsJws(accessToken)
                     .getBody();
         } catch (Exception ignored) {
+            System.out.println("여기서 에러");
             throw new BaseException(INVALID_JWT);
         }
 
