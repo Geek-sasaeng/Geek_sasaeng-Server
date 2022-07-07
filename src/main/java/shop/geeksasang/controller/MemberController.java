@@ -11,6 +11,8 @@ import shop.geeksasang.dto.email.EmailReq;
 import shop.geeksasang.dto.member.*;
 import shop.geeksasang.service.MemberService;
 import shop.geeksasang.service.EmailService;
+import shop.geeksasang.service.SendEmailService;
+import shop.geeksasang.utils.jwt.NoIntercept;
 
 import javax.validation.Valid;
 
@@ -25,8 +27,9 @@ public class MemberController {
     // 회원가입
     @PostMapping
     public BaseResponse<CreateMemberRes> createMember(@Validated @RequestBody CreateMemberReq dto) {
+    @NoIntercept
+    public BaseResponse<CreateMemberRes> createMember(@Validated @RequestBody CreateMemberReq dto){
         Member member = memberService.createMember(dto);
-
         CreateMemberRes createMemberRes = CreateMemberRes.toDto(member);
         return new BaseResponse<>(createMemberRes);
     }

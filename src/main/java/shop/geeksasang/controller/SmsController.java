@@ -13,7 +13,10 @@ import shop.geeksasang.dto.sms.NaverApiSmsRes;
 import shop.geeksasang.dto.sms.PostVerifySmsReq;
 import shop.geeksasang.dto.sms.PostVerifySmsRes;
 import shop.geeksasang.service.SmsService;
+import shop.geeksasang.utils.clientip.ClientIpUtils;
+import shop.geeksasang.utils.jwt.NoIntercept;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.security.InvalidKeyException;
@@ -26,15 +29,27 @@ public class SmsController {
 
     private final SmsService smsService;
 
+    @NoIntercept
     @PostMapping
-    public BaseResponse<NaverApiSmsRes> sendSms(@Validated @RequestBody PostSmsReq request) throws UnsupportedEncodingException, NoSuchAlgorithmException, URISyntaxException, InvalidKeyException, JsonProcessingException {
-        NaverApiSmsRes smsResponse = smsService.sendSms(request.getRecipientPhoneNumber());
+    public BaseResponse<NaverApiSmsRes> sendSms(@Validated @RequestBody PostSmsReq request, HttpServletRequest servletRequest) throws UnsupportedEncodingException, NoSuchAlgorithmException, URISyntaxException, InvalidKeyException, JsonProcessingException {
+        String clientIp = ClientIpUtils.getClientIp(servletRequest);
+        NaverApiSmsRes smsResponse = smsService.firstSendSms(request.getRecipientPhoneNumber(), clientIp);
         return new BaseResponse<>(smsResponse);
     }
 
-    @PostMapping("/validation")
-    public BaseResponse<Object> verifySms(@Validated @RequestBody PostVerifySmsReq request){
+    @NoIntercept
+    @PostMapping("/repetition")
+    public BaseResponse<Object> verifySmsRepetition(@Validated @RequestBody PostVerifySmsReq request, HttpServletRequest servletRequest) throws UnsupportedEncodingException, NoSuchAlgorithmException, URISyntaxException, InvalidKeyException, JsonProcessingException {
+        String clientIp = ClientIpUtils.getClientIp(servletRequest);
+        NaverApiSmsRes smsResponse = smsService.repeatSendSms(request.getRecipientPhoneNumber(), clientIp);
+        return new BaseResponse<>(smsResponse);
+    }
+
+    @NoIntercept
+    @PostMapping("/verification")
+    public BaseResponse<PostVerifySmsRes> verifySms(@Validated @RequestBody PostVerifySmsReq request){
         PostVerifySmsRes smsResponse = smsService.verifySms(request.getVerifyRandomNumber(), request.getRecipientPhoneNumber());
         return new BaseResponse<>(smsResponse);
     }
+
 }

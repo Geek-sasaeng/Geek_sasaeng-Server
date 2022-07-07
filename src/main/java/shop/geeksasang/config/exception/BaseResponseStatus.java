@@ -23,9 +23,9 @@ public enum BaseResponseStatus {
      * code : 2000~2199
      */
     REQUEST_ERROR(false, 2000, "입력값을 확인해주세요."),
-    EMPTY_JWT(false, 2001, "JWT를 입력해주세요."),
-    INVALID_JWT(false, 2002, "유효하지 않은 JWT입니다."),
-    EXPIRED_JWT(false, 2003,"만료기간이 지난 JWT입니다."),
+    EMPTY_JWT(false, 2001, "header에 JWT가 없습니다."),
+    INVALID_JWT(false, 2002, "유효하지 않은 JWT입니다. 재로그인 바랍니다."),
+    EXPIRED_JWT(false, 2003,"만료기간이 지난 JWT입니다. 재로그인 바랍니다."),
     INVALID_USER_JWT(false,2004,"권한이 없는 유저의 접근입니다."),
     DIFFRENT_PASSWORDS(false,2005, "입력하신 두 비밀번호가 다릅니다."),
     DUPLICATE_USER_LOGIN_ID(false, 2006, "중복되는 유저 아이디입니다"),
@@ -35,7 +35,11 @@ public enum BaseResponseStatus {
     NOT_EXISTS_PARTY(false,2010,"존재하지 않는 파티입니다"),
     NOT_EXISTS_PASSWORD(false, 2011,"비밀번호가 틀립니다. "),
     INACTIVE_STATUS(false,2012,"회원 status가 INACITVE 입니다."),
-    INVALID_SMS_VERIFY_NUMBER(false,2199,"SMS 인증 번호가 다릅니다."),
+    INVALID_SMS_VERIFY_NUMBER(false,2013,"SMS 인증 번호가 다릅니다."),
+    INVALID_SMS_PHONE_NUMBER(false,2014,"입력하신 핸드폰 번호와 다릅니다."),
+    INVALID_SMS_COUNT(false,2015,"SMS 인증은 하루 최대 5번입니다 내일 시도해주세요."),
+    INVALID_SMS_CLIENT_IP(false,2016,"인증번호 재전송을 눌러주세요."),
+
 
     /**
      * 토마스최
