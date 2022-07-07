@@ -3,12 +3,14 @@ package shop.geeksasang.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import shop.geeksasang.config.exception.BaseResponseStatus;
 import shop.geeksasang.config.response.BaseResponse;
 import shop.geeksasang.domain.Member;
+import shop.geeksasang.dto.email.EmailCertificationReq;
 import shop.geeksasang.dto.email.EmailReq;
 import shop.geeksasang.dto.member.*;
 import shop.geeksasang.service.MemberService;
-import shop.geeksasang.service.SendEmailService;
+import shop.geeksasang.service.EmailService;
 
 import javax.validation.Valid;
 
@@ -18,7 +20,7 @@ import javax.validation.Valid;
 public class MemberController {
 
     private final MemberService memberService;
-    private final SendEmailService sendEmailService;
+    private final EmailService emailService;
 
     // 회원가입
     @PostMapping
@@ -58,8 +60,18 @@ public class MemberController {
     // 이메일 인증 번호 보내기
     @PostMapping("/email")
     public BaseResponse<String> authEmail(@RequestBody @Valid EmailReq req) {
-        sendEmailService.authEmail(req);
-        String response = "성공적으로 인증 메일을 보냈습니다.";
-        return new BaseResponse<String>(response);
+        emailService.authEmail(req);
+        return new BaseResponse<>(BaseResponseStatus.SEND_MAIL_SUCCESS);
+    }
+
+    // 이메일 인증 번호 확인하기
+    @PostMapping("/email/check")
+    public BaseResponse<String> checkEmail(@RequestBody @Valid EmailCertificationReq req) {
+        boolean check = emailService.checkEmailCertification(req);
+        if(check){
+            return new BaseResponse<>(BaseResponseStatus.VALID_EMAIL_NUMBER);
+        }else{
+            return new BaseResponse<>(BaseResponseStatus.NOT_VALID_EMAIL_NUMBER);
+        }
     }
 }

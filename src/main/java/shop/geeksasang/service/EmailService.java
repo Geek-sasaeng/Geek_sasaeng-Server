@@ -4,8 +4,10 @@ import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.model.SendEmailResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
+import shop.geeksasang.dto.email.EmailCertificationReq;
 import shop.geeksasang.dto.email.EmailReq;
 import shop.geeksasang.dto.email.EmailSenderDto;
 import shop.geeksasang.utils.jwt.RedisUtil;
@@ -18,22 +20,26 @@ import java.util.Random;
 @Service
 @RequiredArgsConstructor
 @ComponentScan("shop.geeksasang.config")
-public class SendEmailService {
+public class EmailService {
     private final long expireTime = 60 * 5L; // 이메일 유효 기간
 
     private final AmazonSimpleEmailService amazonSimpleEmailService;
     private final RedisUtil redisUtil;
 
-    public void authEmail(EmailReq req){
-        // 임의의 authKey 생성
+    // 인증번호 이메일 전송
+    public void authEmail(EmailReq request){
         Random random = new Random();
         String authKey = String.valueOf(random.nextInt(888888) + 111111);
-
-        // 이메일 발송
-        sendAuthEmail(req.getEmail(), authKey);
+        sendAuthEmail(request.getEmail(), authKey);
     }
 
-    // AWS SES로 이메일 전송
+    // 인증번호가 일치하는지 체크
+    public boolean checkEmailCertification(EmailCertificationReq request){
+        String email = request.getEmail();
+        String key = request.getKey();
+        return redisUtil.checkNumber(email, key);
+    }
+
     void send(final String subject, final String content, final List<String> receivers) {
         final EmailSenderDto senderDto = EmailSenderDto.builder() // 1
                 .to(receivers)
