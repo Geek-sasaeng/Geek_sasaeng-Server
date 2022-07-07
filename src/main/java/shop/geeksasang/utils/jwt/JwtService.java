@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 
 import shop.geeksasang.config.exception.BaseException;
+import shop.geeksasang.config.secret.Secret;
 import shop.geeksasang.dto.login.JwtInfo;
 
 import static shop.geeksasang.config.exception.BaseResponseStatus.*;
