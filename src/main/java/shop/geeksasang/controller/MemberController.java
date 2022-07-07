@@ -9,6 +9,7 @@ import shop.geeksasang.dto.EmailReq;
 import shop.geeksasang.dto.member.*;
 import shop.geeksasang.service.MemberService;
 import shop.geeksasang.service.SendEmailService;
+import shop.geeksasang.utils.jwt.NoIntercept;
 
 import javax.validation.Valid;
 
@@ -22,15 +23,16 @@ public class MemberController {
 
     // 회원가입
     @PostMapping
+    @NoIntercept
     public BaseResponse<CreateMemberRes> createMember(@Validated @RequestBody CreateMemberReq dto){
         Member member = memberService.createMember(dto);
-
         CreateMemberRes createMemberRes = CreateMemberRes.toDto(member);
         return new BaseResponse<>(createMemberRes);
     }
 
     // 이메일 인증 번호 보내기
     @PostMapping("/email")
+    @NoIntercept
     public BaseResponse<String> authEmail(@RequestBody @Valid EmailReq req){
         sendEmailService.authEmail(req);
         String response = "성공적으로 인증 메일을 보냈습니다.";
