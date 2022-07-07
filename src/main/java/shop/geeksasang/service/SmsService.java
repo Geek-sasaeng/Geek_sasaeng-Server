@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import shop.geeksasang.config.exception.BaseException;
-import shop.geeksasang.domain.SmsVerificationCount;
+import shop.geeksasang.domain.VerificationCount;
 import shop.geeksasang.dto.sms.MessagesDto;
 import shop.geeksasang.dto.sms.NaverApiSmsReq;
 import shop.geeksasang.dto.sms.NaverApiSmsRes;
@@ -64,9 +64,9 @@ public class SmsService {
         String randomNumber = makeRandomNumber();
 
         //아이피가 이미 있다면 재전송을 요청
-        if(!smsVerificationCountRepository.findSmsVerificationCountByClientIp(clientIp).isEmpty()){
-            throw new BaseException(INVALID_SMS_CLIENT_IP);
-        }
+        //if(!smsVerificationCountRepository.findSmsVerificationCountByClientIp(clientIp).isEmpty()){
+        //    throw new BaseException(INVALID_SMS_CLIENT_IP);
+        //}
 
         //전화번호 인증
         NaverApiSmsRes naverApiSmsRes = sendSms(recipientPhoneNumber, randomNumber);
@@ -75,7 +75,7 @@ public class SmsService {
         smsRedisRepository.createSmsCertification(recipientPhoneNumber, randomNumber);
 
         //새로운 클라이언트 아이디 생성
-        smsVerificationCountRepository.save(new SmsVerificationCount(clientIp,0));
+        smsVerificationCountRepository.save(new VerificationCount(clientIp,0));
 
         return naverApiSmsRes;
     }
@@ -85,10 +85,10 @@ public class SmsService {
         String randomNumber = makeRandomNumber();
 
         //하루에 5번 넘었는지 검사
-        SmsVerificationCount smsVerificationCount = smsVerificationCountRepository.findSmsVerificationCountByClientIp(clientIp)
+        VerificationCount smsVerificationCount = smsVerificationCountRepository.findSmsVerificationCountByClientIp(clientIp)
                 .orElseThrow(() -> new BaseException(INVALID_SMS_PHONE_NUMBER));
 
-        if(smsVerificationCount.getCount() >= 4 ){
+        if(smsVerificationCount.getSmsVerificationCount() >= 4 ){
             throw new BaseException(INVALID_SMS_COUNT);
         }
 
@@ -102,7 +102,7 @@ public class SmsService {
         smsRedisRepository.createSmsCertification(recipientPhoneNumber, randomNumber);
 
         //count + 1
-        smsVerificationCount.increaseVerificationCount();
+        smsVerificationCount.increaseSmsVerificationCount();
 
         return naverApiSmsRes;
     }
@@ -124,7 +124,7 @@ public class SmsService {
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
 
-        //네이버 api에 요청을 보낸다.
+        //네이버 api에 요청을 보낸다. //나중에 비동기로 바꾸면 좋을 듯
         NaverApiSmsRes smsResponse = restTemplate.postForObject(new URI("https://sens.apigw.ntruss.com/sms/v2/services/"+this.serviceId+"/messages"), body, NaverApiSmsRes.class);
 
         return smsResponse;

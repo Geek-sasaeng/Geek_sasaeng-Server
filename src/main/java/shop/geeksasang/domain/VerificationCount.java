@@ -1,6 +1,5 @@
 package shop.geeksasang.domain;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -11,18 +10,21 @@ import javax.persistence.Id;
 @Getter
 @Entity
 @NoArgsConstructor
-public class SmsVerificationCount {
-    @Id @GeneratedValue
+public class VerificationCount {
+
+    @Id
+    @GeneratedValue
     private int id;
     private String clientIp;
-    private int count;
+    private int smsVerificationCount;
 
-    public SmsVerificationCount(String clientIp, int count) {
+
+    public VerificationCount(String clientIp, int count) {
         this.clientIp = clientIp;
-        this.count = count;
+        this.smsVerificationCount = count;
     }
 
-    public void increaseVerificationCount(){
-        this.count++;
+    public void increaseSmsVerificationCount(){
+        this.smsVerificationCount++;
     }
 }
