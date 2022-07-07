@@ -17,6 +17,7 @@ public class VerificationCount {
     private int id;
     private String clientIp;
     private int smsVerificationCount;
+    private int emailVerificationCount;
 
 
     public VerificationCount(String clientIp, int count) {

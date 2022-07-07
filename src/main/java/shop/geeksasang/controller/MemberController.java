@@ -61,7 +61,7 @@ public class MemberController {
     @NoIntercept
     @PostMapping("/email")
     public BaseResponse<String> authEmail(@RequestBody @Valid EmailReq req) {
-        emailService.authEmail(req);
+        emailService.sendEmail(req);
         return new BaseResponse<>(BaseResponseStatus.SEND_MAIL_SUCCESS);
     }
 

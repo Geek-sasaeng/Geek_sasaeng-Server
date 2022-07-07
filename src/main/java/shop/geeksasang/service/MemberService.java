@@ -25,7 +25,6 @@ import static shop.geeksasang.config.exception.BaseResponseStatus.*;
 @Service
 @RequiredArgsConstructor
 public class MemberService {
-
     private final MemberRepository memberRepository;
     private final UniversityRepository universityRepository;
     private final RedisUtil redisUtil;
@@ -50,7 +49,7 @@ public class MemberService {
         dto.setPassword(SHA256.encrypt(dto.getPassword()));
         Member member = dto.toEntity();
         University university = universityRepository
-                .findUniversitiesByName(dto.getUniversityName())
+                .findUniversityByName(dto.getUniversityName())
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_UNIVERSITY));
 
         member.connectUniversity(university);

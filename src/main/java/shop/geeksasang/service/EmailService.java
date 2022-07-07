@@ -7,9 +7,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import shop.geeksasang.config.exception.BaseException;
+import shop.geeksasang.config.exception.BaseResponseStatus;
+import shop.geeksasang.domain.University;
 import shop.geeksasang.dto.email.EmailCertificationReq;
 import shop.geeksasang.dto.email.EmailReq;
 import shop.geeksasang.dto.email.EmailSenderDto;
+import shop.geeksasang.repository.UniversityRepository;
 import shop.geeksasang.utils.jwt.RedisUtil;
 
 import java.util.ArrayList;
@@ -21,13 +26,28 @@ import java.util.Random;
 @RequiredArgsConstructor
 @ComponentScan("shop.geeksasang.config")
 public class EmailService {
+    final UniversityRepository universityRepository;
+
     private final long expireTime = 60 * 5L; // 이메일 유효 기간
 
     private final AmazonSimpleEmailService amazonSimpleEmailService;
     private final RedisUtil redisUtil;
 
-    // 인증번호 이메일 전송
-    public void authEmail(EmailReq request) {
+    // 인증번호 이메일 전송v
+    public void sendEmail(EmailReq request) {
+        // 대학교 이메일 주소 검증
+        String universityName = request.getUniversity();
+        University university = universityRepository.findUniversityByName(universityName)
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_UNIVERSITY));
+        String universityEmailAdress = university.getEmailAddress();
+        String email = request.getEmail();
+        String[] emailAddresses = email.split("@");
+        String emailAddress = emailAddresses[1];
+        // 대학교 이메일 주소가 같지 않으면
+        if(!universityEmailAdress.equals(emailAddress)){
+            throw new BaseException(BaseResponseStatus.NOT_MATCH_EMAIL);
+        }
+        // 난수 생성
         Random random = new Random();
         String authKey = String.valueOf(random.nextInt(888888) + 111111);
         sendAuthEmail(request.getEmail(), authKey);
@@ -40,7 +60,8 @@ public class EmailService {
         return redisUtil.checkNumber(email, key);
     }
 
-    void send(final String subject, final String content, final List<String> receivers) {
+    // AWS SES로 이메일 전송
+    void sendSES(final String subject, final String content, final List<String> receivers) {
         final EmailSenderDto senderDto = EmailSenderDto.builder() // 1
                 .to(receivers)
                 .subject(subject)
@@ -59,7 +80,7 @@ public class EmailService {
         List<String> receiver = new ArrayList<>();
         receiver.add(email);
         String content = getContent(authKey);
-        send(subject, content, receiver); // SES 이메일 보내기
+        sendSES(subject, content, receiver); // SES 이메일 보내기
         // 유효 시간 (5분)동안 {email, authKey} 저장
         redisUtil.setDataExpire(email, authKey, expireTime);
     }
