@@ -6,6 +6,8 @@ build/
 !**/src/test/**/build/
 logs
 *.yml
+Secret.java
+
 
 ### STS ###
 .apt_generated

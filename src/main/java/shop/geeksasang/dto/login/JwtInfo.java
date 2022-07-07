@@ -12,6 +12,4 @@ import shop.geeksasang.domain.University;
 public class JwtInfo {
     private int universityId;
     private int userId;
-
-
 }
