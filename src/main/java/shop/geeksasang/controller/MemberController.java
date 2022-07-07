@@ -11,7 +11,6 @@ import shop.geeksasang.dto.email.EmailReq;
 import shop.geeksasang.dto.member.*;
 import shop.geeksasang.service.MemberService;
 import shop.geeksasang.service.EmailService;
-import shop.geeksasang.service.SendEmailService;
 import shop.geeksasang.utils.jwt.NoIntercept;
 
 import javax.validation.Valid;
@@ -20,13 +19,11 @@ import javax.validation.Valid;
 @RequestMapping("/members")
 @RequiredArgsConstructor
 public class MemberController {
-
     private final MemberService memberService;
     private final EmailService emailService;
 
     // 회원가입
     @PostMapping
-    public BaseResponse<CreateMemberRes> createMember(@Validated @RequestBody CreateMemberReq dto) {
     @NoIntercept
     public BaseResponse<CreateMemberRes> createMember(@Validated @RequestBody CreateMemberReq dto){
         Member member = memberService.createMember(dto);
@@ -61,6 +58,7 @@ public class MemberController {
     }
 
     // 이메일 인증 번호 보내기
+    @NoIntercept
     @PostMapping("/email")
     public BaseResponse<String> authEmail(@RequestBody @Valid EmailReq req) {
         emailService.authEmail(req);
@@ -68,6 +66,7 @@ public class MemberController {
     }
 
     // 이메일 인증 번호 확인하기
+    @NoIntercept
     @PostMapping("/email/check")
     public BaseResponse<String> checkEmail(@RequestBody @Valid EmailCertificationReq req) {
         boolean check = emailService.checkEmailCertification(req);
