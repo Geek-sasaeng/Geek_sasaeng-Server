@@ -30,16 +30,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import shop.geeksasang.config.exception.BaseException;
+import shop.geeksasang.domain.VerificationCount;
 import shop.geeksasang.dto.sms.MessagesDto;
 import shop.geeksasang.dto.sms.NaverApiSmsReq;
 import shop.geeksasang.dto.sms.NaverApiSmsRes;
 import shop.geeksasang.dto.sms.PostVerifySmsRes;
 import shop.geeksasang.repository.SmsRedisRepository;
+import shop.geeksasang.repository.SmsVerificationCountRepository;
 
 import static shop.geeksasang.config.exception.BaseResponseStatus.*;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class SmsService {
 
@@ -56,11 +57,59 @@ public class SmsService {
     private String fromPhoneNumber;
 
     private final SmsRedisRepository smsRedisRepository;
+    private final SmsVerificationCountRepository smsVerificationCountRepository;
 
-    public NaverApiSmsRes sendSms(String recipientPhoneNumber) throws JsonProcessingException, UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException, URISyntaxException {
+    @Transactional(readOnly = false)
+    public NaverApiSmsRes firstSendSms(String recipientPhoneNumber, String clientIp) throws UnsupportedEncodingException, NoSuchAlgorithmException, URISyntaxException, InvalidKeyException, JsonProcessingException {
+        String randomNumber = makeRandomNumber();
+
+        //아이피가 이미 있다면 재전송을 요청
+        //if(!smsVerificationCountRepository.findSmsVerificationCountByClientIp(clientIp).isEmpty()){
+        //    throw new BaseException(INVALID_SMS_CLIENT_IP);
+        //}
+
+        //전화번호 인증
+        NaverApiSmsRes naverApiSmsRes = sendSms(recipientPhoneNumber, randomNumber);
+
+        //redis에 저장
+        smsRedisRepository.createSmsCertification(recipientPhoneNumber, randomNumber);
+
+        //새로운 클라이언트 아이디 생성
+        smsVerificationCountRepository.save(new VerificationCount(clientIp,0));
+
+        return naverApiSmsRes;
+    }
+
+    @Transactional(readOnly = false)
+    public NaverApiSmsRes repeatSendSms(String recipientPhoneNumber, String clientIp) throws UnsupportedEncodingException, NoSuchAlgorithmException, URISyntaxException, InvalidKeyException, JsonProcessingException {
+        String randomNumber = makeRandomNumber();
+
+        //하루에 5번 넘었는지 검사
+        VerificationCount smsVerificationCount = smsVerificationCountRepository.findSmsVerificationCountByClientIp(clientIp)
+                .orElseThrow(() -> new BaseException(INVALID_SMS_PHONE_NUMBER));
+
+        if(smsVerificationCount.getSmsVerificationCount() >= 4 ){
+            throw new BaseException(INVALID_SMS_COUNT);
+        }
+
+        //기존에 키 삭제
+        smsRedisRepository.removeSmsCertification(recipientPhoneNumber);
+
+        //전화번호 인증
+        NaverApiSmsRes naverApiSmsRes = sendSms(recipientPhoneNumber, randomNumber);
+
+        //redis에 저장
+        smsRedisRepository.createSmsCertification(recipientPhoneNumber, randomNumber);
+
+        //count + 1
+        smsVerificationCount.increaseSmsVerificationCount();
+
+        return naverApiSmsRes;
+    }
+
+    public NaverApiSmsRes sendSms(String recipientPhoneNumber,String randomNumber) throws JsonProcessingException, UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException, URISyntaxException {
         //기초 세팅
         List<MessagesDto> messages = new ArrayList<>();
-        String randomNumber = makeRandomNumber();
         String smsContentMessage = makeSmsContentMessage(randomNumber);
         messages.add(new MessagesDto(recipientPhoneNumber, smsContentMessage));
 
@@ -75,11 +124,9 @@ public class SmsService {
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
 
-        //네이버 api에 요청을 보낸다.
+        //네이버 api에 요청을 보낸다. //나중에 비동기로 바꾸면 좋을 듯
         NaverApiSmsRes smsResponse = restTemplate.postForObject(new URI("https://sens.apigw.ntruss.com/sms/v2/services/"+this.serviceId+"/messages"), body, NaverApiSmsRes.class);
 
-        //redis에 저장
-        smsRedisRepository.createSmsCertification(recipientPhoneNumber, randomNumber);
         return smsResponse;
     }
 
@@ -137,6 +184,8 @@ public class SmsService {
         return "인증번호[" + randomNumber + "]를 입력해주세요";
     }
 
+
+    @Transactional(readOnly = true)
     public PostVerifySmsRes verifySms(String verifyRandomNumber, String phoneNumber) {
         if(!isVerify(verifyRandomNumber, phoneNumber)){
             throw new BaseException(INVALID_SMS_VERIFY_NUMBER);
@@ -146,7 +195,6 @@ public class SmsService {
     }
 
     private boolean isVerify(String verifyRandomNumber, String phoneNumber){
-        return smsRedisRepository.hasKey(phoneNumber) &&
-                smsRedisRepository.getSmsCertification(phoneNumber).equals(verifyRandomNumber);
+        return smsRedisRepository.hasKey(phoneNumber) && smsRedisRepository.getSmsCertification(phoneNumber).equals(verifyRandomNumber);
     }
 }
