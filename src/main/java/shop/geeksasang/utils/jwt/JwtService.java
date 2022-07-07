@@ -67,7 +67,6 @@ public class JwtService {
                     .parseClaimsJws(accessToken)
                     .getBody();
         } catch (Exception ignored) {
-            System.out.println("여기서 에러");
             throw new BaseException(INVALID_JWT);
         }
 

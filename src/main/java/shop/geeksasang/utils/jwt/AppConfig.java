@@ -23,7 +23,7 @@ public class AppConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry)
     {
-        //인터셉터 등록 -> "/login","/members"는 인터셉터 제외
+        //인터셉터 등록
         registry.addInterceptor(new AuthenticationInterceptor(jwtService,objectMapper))
                 .order(1)
                 .addPathPatterns("/**");
