@@ -15,4 +15,5 @@ public class BaseExceptionAdvice {
         log.error("Handle CommonException: {}", e.getMessage());
         return new BaseResponse<>(e.getStatus());
     }
+
 }
