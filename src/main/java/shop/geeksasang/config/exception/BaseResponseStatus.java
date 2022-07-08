@@ -44,7 +44,12 @@ public enum BaseResponseStatus {
      * 토마스최
      * code : 2200~2399
      */
-
+    INVALID_INFORMATIONAGREE_STATUS(false,2201,"회원 정보동의 status가 Y가 아닙니다."),
+    VALID_NICKNAME(true,2202,"사용 가능한 닉네임 입니다."),
+    DUPLICATE_USER_PHONENUMBER(false, 2203, "이미 등록된 전호번호입니다."),
+    DIFFERENT_PHONEVALIDKEY(false, 2204, "폰 인증번호가 다릅니다."),
+    NOT_EXIST_USER(false,2205,"존재하지 않는 회원 id 입니다."),
+    VALID_PHONEVALIDKEY(true,2206,"폰 인증번호가 일치합니다."),
 
     /**
      * 미니
@@ -61,6 +66,8 @@ public enum BaseResponseStatus {
     DUPLICATE_USER_NICKNAME(false, 2600, "중복되는 유저 닉네임입니다"),
     ALREADY_INACTIVE_USER(false, 2601, "이미 탈퇴한 회원입니다"),
     SAME_PASSWORDS(false, 2602, "기존 비밀번호와 동일합니다"),
+    EXISTS_LOGIN_ID(false, 2603, "존재하는 아이디입니다"),
+    VALID_ID(true, 2604, "사용가능한 아이디입니다"),
 
     /**
      * 네오

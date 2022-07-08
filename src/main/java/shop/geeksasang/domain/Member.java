@@ -47,15 +47,39 @@ public class Member extends BaseEntity {
 
     private String jwtToken;
 
+    private String informationAgreeStatus; // 회원 정보 동의 여부
+
     public void changeStatusToActive(){
         super.setStatus(Status.ACTIVE);
     }
 
     //-// 연관 관계 편의 메서드 //-//
+    // 대학교 정보 저장
     public void connectUniversity(University university){
         this.university = university;
     }
 
+    // 수정: 폰번호 저장
+    public void updatePhoneNumber(String phoneNumber){
+        this.phoneNumber = phoneNumber;
+    }
+
+    //수정: 폰 인증번호 수정
+    public void updatePhoneValidKey(String phoneValidKey){
+        this.phoneValidKey = phoneValidKey;
+    }
+
+    // 수정: 폰 번호
+    public void updateProfileImgUrl(String profileImgUrl){
+        this.profileImgUrl = profileImgUrl;
+    }
+
+    // 수정: 회원정보 동의 수정
+    public void updateInformationAgreeStatus(String informationAgreeStatus){
+        this.informationAgreeStatus = informationAgreeStatus;
+    }
+
+    // 값 확인용 메서드
     public void updateNickname(String nickName) { this.nickName = nickName; }
 
     public void updatePassword(String password) { this.password = password; }
