@@ -9,6 +9,9 @@ import javax.persistence.*;
 import lombok.NoArgsConstructor;
 import shop.geeksasang.config.domain.BaseEntity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -20,9 +23,13 @@ public class Domitory extends BaseEntity {
     @Column(name="domitory_id")
     private int id;
 
+    private String name;
+
+
+//    @OneToMany(mappedBy = "university")
+//    private List<University> universities = new ArrayList<>();
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="university_id")
     private University university;
 
-    private String name;
 }
