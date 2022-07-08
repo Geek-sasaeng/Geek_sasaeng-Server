@@ -22,6 +22,7 @@ public class LoginController {
 
     private final LoginService loginService;
 
+
     @NoIntercept
     @ApiOperation(
             value="로그인",

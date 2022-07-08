@@ -33,15 +33,7 @@ public class SmsController {
     @PostMapping
     public BaseResponse<NaverApiSmsRes> sendSms(@Validated @RequestBody PostSmsReq request, HttpServletRequest servletRequest) throws UnsupportedEncodingException, NoSuchAlgorithmException, URISyntaxException, InvalidKeyException, JsonProcessingException {
         String clientIp = ClientIpUtils.getClientIp(servletRequest);
-        NaverApiSmsRes smsResponse = smsService.firstSendSms(request.getRecipientPhoneNumber(), clientIp);
-        return new BaseResponse<>(smsResponse);
-    }
-
-    @NoIntercept
-    @PostMapping("/repetition")
-    public BaseResponse<Object> verifySmsRepetition(@Validated @RequestBody PostVerifySmsReq request, HttpServletRequest servletRequest) throws UnsupportedEncodingException, NoSuchAlgorithmException, URISyntaxException, InvalidKeyException, JsonProcessingException {
-        String clientIp = ClientIpUtils.getClientIp(servletRequest);
-        NaverApiSmsRes smsResponse = smsService.repeatSendSms(request.getRecipientPhoneNumber(), clientIp);
+        NaverApiSmsRes smsResponse = smsService.sendSms(request.getRecipientPhoneNumber(), clientIp);
         return new BaseResponse<>(smsResponse);
     }
 
