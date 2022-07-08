@@ -103,6 +103,7 @@ public class MemberService {
     }
 
     // 수정: 회원정보 동의 수정
+    @Transactional(readOnly = false)
     public Member updateInformationAgreeStatus(int id, PatchInformationAgreeStatusReq dto){
 
         //멤버 아이디로 조회
@@ -113,6 +114,16 @@ public class MemberService {
         findMember.updateInformationAgreeStatus(dto.getInformationAgreeStatus());
 
         return findMember;
+    }
+
+    // 중복 확인: 닉네임
+    @Transactional(readOnly = false)
+    public void checkNickNameDuplicated(GetCheckNickNameDuplicatedReq dto){
+
+        //멤버 닉네임으로 조회되면 중복 처리
+        if(!memberRepository.findMemberByNickName(dto.getNickName()).isEmpty()){
+            throw new BaseException(DUPLICATE_USER_NICKNAME);
+        }
     }
 
 }

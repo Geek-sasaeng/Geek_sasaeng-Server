@@ -1,8 +1,10 @@
 package shop.geeksasang.controller;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import shop.geeksasang.config.exception.BaseResponseStatus;
 import shop.geeksasang.config.response.BaseResponse;
 import shop.geeksasang.domain.Member;
 import shop.geeksasang.dto.EmailReq;
@@ -80,6 +82,16 @@ public class MemberController {
         //응답 형식으로 변환
         PatchInformationAgreeStatusRes patchInformationAgreeStatusRes = PatchInformationAgreeStatusRes.toDto(member);
         return new BaseResponse<>(patchInformationAgreeStatusRes);
+    }
+
+
+    // 중복 확인: 닉네임
+    @GetMapping("/nickname-duplicated")
+    public BaseResponse<String> checkNickNameDuplicated(@Validated @RequestBody GetCheckNickNameDuplicatedReq dto){
+
+        memberService.checkNickNameDuplicated(dto);
+
+        return new BaseResponse<>(BaseResponseStatus.VALID_NICKNAME);
     }
 
 }

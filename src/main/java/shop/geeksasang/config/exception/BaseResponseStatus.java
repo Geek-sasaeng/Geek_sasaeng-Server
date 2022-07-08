@@ -39,7 +39,7 @@ public enum BaseResponseStatus {
      * code : 2200~2399
      */
     INVALID_INFORMATIONAGREE_STATUS(false,2201,"회원 정보동의 status가 Y가 아닙니다."),
-
+    VALID_NICKNAME(true,2202,"사용 가능한 닉네임 입니다."),
 
     /**
      * 미니
@@ -50,6 +50,7 @@ public enum BaseResponseStatus {
      * 제로
      * code : 2600~2799
      */
+    DUPLICATE_USER_NICKNAME(false, 2600, "중복되는 유저 닉네임입니다"),
 
     /**
      * 네오
