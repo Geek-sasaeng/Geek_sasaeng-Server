@@ -68,7 +68,7 @@ public class MemberService {
         // 멤버 아이디로 조회
         Member findMember = memberRepository
                 .findById(id)
-                .orElseThrow(() -> new BaseException(INTERNAL_SERVER_ERROR));
+                .orElseThrow(() -> new BaseException(NOT_EXIST_USER));
         // 폰 번호 수정
         findMember.updatePhoneNumber(dto.getPhoneNumber());
 
@@ -82,7 +82,7 @@ public class MemberService {
         //멤버 아이디로 조회
         Member findMember = memberRepository
                 .findById(id)
-                .orElseThrow(()-> new BaseException(INTERNAL_SERVER_ERROR));
+                .orElseThrow(()-> new BaseException(NOT_EXIST_USER));
         //폰 인증번호 수정
         findMember.updatePhoneValidKey(dto.getPhoneValidKey());
 
@@ -96,7 +96,7 @@ public class MemberService {
         //멤버 아이디로 조회
         Member findMember = memberRepository
                 .findById(id)
-                .orElseThrow(() -> new BaseException(INTERNAL_SERVER_ERROR));
+                .orElseThrow(() -> new BaseException(NOT_EXIST_USER));
         //프로필 이미지 수정
         findMember.updateProfileImgUrl(dto.getProfileImgUrl());
 
@@ -110,7 +110,7 @@ public class MemberService {
         //멤버 아이디로 조회
         Member findMember = memberRepository
                 .findById(id)
-                .orElseThrow(()-> new BaseException(INTERNAL_SERVER_ERROR));
+                .orElseThrow(()-> new BaseException(NOT_EXIST_USER));
         //동의 여부 수정
         findMember.updateInformationAgreeStatus(dto.getInformationAgreeStatus());
 

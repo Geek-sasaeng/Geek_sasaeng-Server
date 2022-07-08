@@ -42,7 +42,7 @@ public class CreateMemberReq {
     private  String phoneNumber;
 
     @ApiModelProperty(value = "회원 정보동의 여부 입력, Null, 빈 문자열, 스페이스만 있는 문자열 불가")
-    @NotBlank //Null, 빈 문자열, 스페이스만 있는 문자열 불가
+    @NotBlank(message = "회원정보동의는 Y 를 입력해야 합니다.") //Null, 빈 문자열, 스페이스만 있는 문자열 불가
     private String informationAgreeStatus;
 
     public Member toEntity() {
