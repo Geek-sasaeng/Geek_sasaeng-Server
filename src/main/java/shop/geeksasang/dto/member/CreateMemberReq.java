@@ -45,7 +45,7 @@ public class CreateMemberReq {
 
     @ApiModelProperty(value = "휴대폰 번호만 입력. 최소 입력 10, 최대 11")
     @Size(min = 10, max = 11)
-    @Pattern(regexp = "^\\d{2,3}\\d{3,4}\\d{4}$")
+    @Pattern(regexp = "^01(?:0|1|[6-9])(?:\\\\d{3}|\\\\d{4})\\\\d{4}$")
     private  String phoneNumber;
 
     public Member toEntity() {
