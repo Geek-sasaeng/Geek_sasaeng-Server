@@ -149,6 +149,7 @@ public class MemberController {
 
 
     // 이메일 인증 번호 확인하기
+    @ApiOperation(value = "이메일 인증번호 확인하기", notes = "사용자의 이메일과, 수신한 이메일 인증번호를 이용해서 일치하는지 확인한다.")
     @NoIntercept
     @PostMapping("/email/check")
     public BaseResponse<String> checkEmail(@RequestBody @Valid EmailCertificationReq req) {
