@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import shop.geeksasang.config.response.BaseResponse;
 import shop.geeksasang.domain.University;
 import shop.geeksasang.service.UniversityService;
+import shop.geeksasang.utils.jwt.NoIntercept;
 
 import java.util.List;
 
@@ -19,6 +20,7 @@ public class UniversityController {
 
     // 대학교 조회: 전체 목록
     @ApiOperation(value = "조회: 대학교 전체 목록 조회", notes = "회원가입 시 대학교 선택에서 대학교 전체 목록을 조회한다.")
+    @NoIntercept
     @GetMapping
     public BaseResponse<List<University>> getAllUniversity(){
         List<University> getUniversityRes = universityService.getAllUniversity();

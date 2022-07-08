@@ -11,7 +11,7 @@ import shop.geeksasang.domain.Member;
 import shop.geeksasang.dto.email.EmailCertificationReq;
 import shop.geeksasang.dto.email.EmailReq;
 import shop.geeksasang.domain.University;
-import shop.geeksasang.dto.EmailReq;
+import shop.geeksasang.dto.email.EmailReq;
 import shop.geeksasang.dto.member.*;
 import shop.geeksasang.service.MemberService;
 import shop.geeksasang.service.EmailService;
@@ -65,6 +65,7 @@ public class MemberController {
     }
 
     // 아이디 중복 확인하기
+    @NoIntercept
     @GetMapping("/id_duplicated")
     public BaseResponse<String> checkIdDuplicated(@RequestBody @Valid CheckIdReq dto) {
         memberService.checkId(dto);
@@ -72,7 +73,7 @@ public class MemberController {
         return new BaseResponse<>(BaseResponseStatus.VALID_ID);
     }
 
-}
+
 
     // 이메일 인증 번호 보내기
     @NoIntercept
