@@ -47,6 +47,7 @@ public class EmailService {
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_UNIVERSITY));
         String universityEmailAdress = university.getEmailAddress();
         String email = request.getEmail();
+        String UUID = request.getUUID();
         String[] emailAddresses = email.split("@");
         String emailAddress = emailAddresses[1];
         // 대학교 이메일 주소 같지 않으면
@@ -54,10 +55,10 @@ public class EmailService {
             throw new BaseException(BaseResponseStatus.NOT_MATCH_EMAIL);
         }
         // 하루 10번 제한 검증
-        VerificationCount emailVerificationCount = verificationCountRepository.findEmailVerificationCountByClientIp(clientIp)
+        VerificationCount emailVerificationCount = verificationCountRepository.findEmailVerificationCountByUUID(UUID)
                 .orElseGet(VerificationCount::new);
-        if(emailVerificationCount.getClientIp() == null){
-            emailVerificationCount.setClientIp(clientIp);
+        if(emailVerificationCount.getUUID() == null){
+            emailVerificationCount.setUUID(UUID);
             verificationCountRepository.save(emailVerificationCount);
         }
         //count + 1
