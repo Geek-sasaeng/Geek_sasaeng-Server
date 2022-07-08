@@ -11,8 +11,10 @@ import shop.geeksasang.dto.email.EmailReq;
 import shop.geeksasang.dto.member.*;
 import shop.geeksasang.service.MemberService;
 import shop.geeksasang.service.EmailService;
+import shop.geeksasang.utils.clientip.ClientIpUtils;
 import shop.geeksasang.utils.jwt.NoIntercept;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @RestController
@@ -60,8 +62,9 @@ public class MemberController {
     // 이메일 인증 번호 보내기
     @NoIntercept
     @PostMapping("/email")
-    public BaseResponse<String> authEmail(@RequestBody @Valid EmailReq req) {
-        emailService.sendEmail(req);
+    public BaseResponse<String> authEmail(@RequestBody @Valid EmailReq req, HttpServletRequest servletRequest) {
+        String clientIp = ClientIpUtils.getClientIp(servletRequest);
+        emailService.sendEmail(req, clientIp);
         return new BaseResponse<>(BaseResponseStatus.SEND_MAIL_SUCCESS);
     }
 
@@ -73,7 +76,7 @@ public class MemberController {
         if(check){
             return new BaseResponse<>(BaseResponseStatus.VALID_EMAIL_NUMBER);
         }else{
-            return new BaseResponse<>(BaseResponseStatus.NOT_VALID_EMAIL_NUMBER);
+            return new BaseResponse<>(BaseResponseStatus.INVALID_EMAIL_NUMBER);
         }
     }
 }

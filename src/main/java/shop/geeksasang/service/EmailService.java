@@ -4,22 +4,26 @@ import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.model.SendEmailResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.config.exception.BaseResponseStatus;
 import shop.geeksasang.domain.University;
+import shop.geeksasang.domain.VerificationCount;
 import shop.geeksasang.dto.email.EmailCertificationReq;
 import shop.geeksasang.dto.email.EmailReq;
 import shop.geeksasang.dto.email.EmailSenderDto;
 import shop.geeksasang.repository.UniversityRepository;
+import shop.geeksasang.repository.VerificationCountRepository;
 import shop.geeksasang.utils.jwt.RedisUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import static shop.geeksasang.config.exception.BaseResponseStatus.INVALID_EMAIL_COUNT;
+import static shop.geeksasang.config.exception.BaseResponseStatus.INVALID_SMS_COUNT;
 
 @Slf4j
 @Service
@@ -27,14 +31,16 @@ import java.util.Random;
 @ComponentScan("shop.geeksasang.config")
 public class EmailService {
     final UniversityRepository universityRepository;
+    final VerificationCountRepository verificationCountRepository;
 
     private final long expireTime = 60 * 5L; // 이메일 유효 기간
 
     private final AmazonSimpleEmailService amazonSimpleEmailService;
     private final RedisUtil redisUtil;
 
-    // 인증번호 이메일 전송v
-    public void sendEmail(EmailReq request) {
+    // 인증번호 이메일 전송
+    @Transactional(readOnly = false)
+    public void sendEmail(EmailReq request, String clientIp) {
         // 대학교 이메일 주소 검증
         String universityName = request.getUniversity();
         University university = universityRepository.findUniversityByName(universityName)
@@ -43,9 +49,21 @@ public class EmailService {
         String email = request.getEmail();
         String[] emailAddresses = email.split("@");
         String emailAddress = emailAddresses[1];
-        // 대학교 이메일 주소가 같지 않으면
+        // 대학교 이메일 주소 같지 않으면
         if(!universityEmailAdress.equals(emailAddress)){
             throw new BaseException(BaseResponseStatus.NOT_MATCH_EMAIL);
+        }
+        // 하루 10번 제한 검증
+        VerificationCount emailVerificationCount = verificationCountRepository.findEmailVerificationCountByClientIp(clientIp)
+                .orElseGet(VerificationCount::new);
+        if(emailVerificationCount.getClientIp() == null){
+            emailVerificationCount.setClientIp(clientIp);
+            verificationCountRepository.save(emailVerificationCount);
+        }
+        //count + 1
+        emailVerificationCount.increaseEmailVerificationCount();
+        if(emailVerificationCount.getEmailVerificationCount() >= 10){
+            throw new BaseException(INVALID_EMAIL_COUNT);
         }
         // 난수 생성
         Random random = new Random();
