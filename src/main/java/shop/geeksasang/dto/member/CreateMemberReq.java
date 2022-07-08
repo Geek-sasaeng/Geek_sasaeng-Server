@@ -14,23 +14,23 @@ import javax.validation.constraints.Size;
 @Data
 public class CreateMemberReq {
 
-    @ApiModelProperty(value = "로그인 아이디, 최소 6자") // swagger 용 어노테이션
-    @Size(min = 6) // validation: 최소길이 6자
+    @ApiModelProperty(value = "로그인 아이디, 최소 6자")
+    @Size(min = 6, max = 20)// validation: 최소길이 6자
     private  String loginId;
 
     @ApiModelProperty(value = "비밀번호, 최소 8자")
-    @Size(min = 8)
+    @Size(min = 8, max = 15)
     private  String password;
 
     @ApiModelProperty(value = "비밀번호 확인용, 최소 8자")
-    @Size(min = 8)
+    @Size(min = 8, max = 15)
     private  String checkPassword;
 
-    @ApiModelProperty(value = "닉네임, 최소 6자")
-    @Size(min = 6)
+    @ApiModelProperty(value = "닉네임, 최소 5자")
+    @Size(min = 5, max = 10)
     private  String nickname;
 
-    @ApiModelProperty(value = "대학 이름, 해커톤에서는 'Gachon University'를 사용")
+    @ApiModelProperty(value = "대학 이름")
     @NotBlank
     private  String universityName;
 
