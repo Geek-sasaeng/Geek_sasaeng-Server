@@ -25,8 +25,10 @@ public class AppConfig implements WebMvcConfigurer {
     {
         //인터셉터 등록
         registry.addInterceptor(new AuthenticationInterceptor(jwtService,objectMapper))
-                .order(1)
-                .addPathPatterns("/**");
+                .order(0)
+                .addPathPatterns("/**")
+                .excludePathPatterns("/swagger-ui/**", "/swagger-resources/**", "/v2/api-docs");
+
     }
 
 }
