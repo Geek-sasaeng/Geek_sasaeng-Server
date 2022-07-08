@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import shop.geeksasang.config.exception.BaseResponseStatus;
 import shop.geeksasang.config.response.BaseResponse;
 import shop.geeksasang.domain.DeliveryParty;
 import shop.geeksasang.domain.Member;
@@ -70,9 +71,9 @@ public class MemberController {
     // 아이디 중복 확인하기
     @GetMapping("/id_duplicated")
     public BaseResponse<String> checkIdDuplicated(@RequestBody @Valid CheckIdReq dto) {
-        String response = memberService.checkId(dto);
+        memberService.checkId(dto);
 
-        return new BaseResponse<>(response);
+        return new BaseResponse<>(BaseResponseStatus.VALID_ID);
     }
 
 }

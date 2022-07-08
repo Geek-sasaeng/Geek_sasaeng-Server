@@ -140,13 +140,11 @@ public class MemberService {
 
     // 로그인 아이디 중복 확인하기
     @Transactional(readOnly = false)
-    public String checkId(CheckIdReq dto) {
+    public void checkId(CheckIdReq dto) {
+        // 아이디가 조회될때
         if(!memberRepository.findMemberByLoginId(dto.getLoginId()).isEmpty()){
             throw new BaseException(EXISTS_LOGIN_ID);
         }
-//        Member member = memberRepository.findMemberByLoginId(dto.getLoginId())
-//                .orElseThrow(() -> new RuntimeException(""));
-        return "사용 가능한 아이디입니다.";
     }
 
 
