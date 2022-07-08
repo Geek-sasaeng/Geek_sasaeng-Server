@@ -1,12 +1,16 @@
 package shop.geeksasang.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import shop.geeksasang.config.exception.BaseResponseStatus;
 import shop.geeksasang.config.response.BaseResponse;
+import shop.geeksasang.domain.DeliveryParty;
 import shop.geeksasang.domain.Member;
 import shop.geeksasang.dto.email.EmailCertificationReq;
+import shop.geeksasang.dto.email.EmailReq;
+import shop.geeksasang.domain.University;
 import shop.geeksasang.dto.email.EmailReq;
 import shop.geeksasang.dto.member.*;
 import shop.geeksasang.service.MemberService;
@@ -16,6 +20,7 @@ import shop.geeksasang.utils.jwt.NoIntercept;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/members")
@@ -58,6 +63,17 @@ public class MemberController {
         PatchPasswordRes patchPasswordRes = PatchPasswordRes.toDto(member);
         return new BaseResponse<>(patchPasswordRes);
     }
+
+    // 아이디 중복 확인하기
+    @NoIntercept
+    @GetMapping("/id_duplicated")
+    public BaseResponse<String> checkIdDuplicated(@RequestBody @Valid CheckIdReq dto) {
+        memberService.checkId(dto);
+
+        return new BaseResponse<>(BaseResponseStatus.VALID_ID);
+    }
+
+
 
     // 이메일 인증 번호 보내기
     @NoIntercept
