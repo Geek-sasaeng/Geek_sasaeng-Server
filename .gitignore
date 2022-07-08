@@ -6,7 +6,6 @@ build/
 !**/src/test/**/build/
 logs
 *.yml
-Secret.java
 dump.rdb
 
 

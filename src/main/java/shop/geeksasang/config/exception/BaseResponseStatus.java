@@ -51,6 +51,8 @@ public enum BaseResponseStatus {
      * 미니
      * code : 2400~2599
      */
+    NOT_EXISTS_LOGINID(false,2400,"존재하지 않는 아이디입니다."),
+
 
 
     /**
