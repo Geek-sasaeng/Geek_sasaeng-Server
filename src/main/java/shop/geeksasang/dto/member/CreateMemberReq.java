@@ -11,7 +11,6 @@ import javax.validation.constraints.*;
 @NoArgsConstructor
 @Data
 public class CreateMemberReq {
-
     @ApiModelProperty(value = "로그인 아이디, 최소 6자")
     @Size(min = 6, max = 20)
     @Pattern(regexp="^(?=.*[a-zA-Z])[-a-zA-Z0-9_.]{6,20}$",

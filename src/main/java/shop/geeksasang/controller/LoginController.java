@@ -1,5 +1,6 @@
 package shop.geeksasang.controller;
 
+import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -11,7 +12,6 @@ import shop.geeksasang.dto.login.LoginRes;
 import shop.geeksasang.service.LoginService;
 import shop.geeksasang.utils.jwt.NoIntercept;
 
-import java.util.LinkedHashMap;
 
 @RequestMapping("/login")
 @RestController
@@ -22,6 +22,27 @@ public class LoginController {
 
     private final LoginService loginService;
 
+//    @ApiOperation(
+//            value="로그인",
+//            notes="사용자의 id,비밀번호를 입력받아 jwt토큰을 반환한다. "
+//    )
+//    @ApiResponses({
+//            @ApiResponse(code =1000 ,message ="요청에 성공하셨습니다."),
+//            @ApiResponse(code =2011 ,message ="비밀번호가 틀립니다."),
+//            @ApiResponse(code =2400 ,message ="존재하지 않는 아이디입니다."),
+//    })
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(
+//                    name= "loginId",
+//                    required = true,
+//                    dataType = "String"
+//            ),
+//            @ApiImplicitParam(
+//                    name= "password",
+//                    required = true,
+//                    dataType = "String"
+//            )
+//    })
     @PostMapping
     @NoIntercept
     public BaseResponse<LoginRes> login(@Validated @RequestBody LoginReq dto){

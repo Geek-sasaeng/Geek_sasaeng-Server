@@ -30,16 +30,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import shop.geeksasang.config.exception.BaseException;
+import shop.geeksasang.domain.VerificationCount;
 import shop.geeksasang.dto.sms.MessagesDto;
 import shop.geeksasang.dto.sms.NaverApiSmsReq;
 import shop.geeksasang.dto.sms.NaverApiSmsRes;
 import shop.geeksasang.dto.sms.PostVerifySmsRes;
 import shop.geeksasang.repository.SmsRedisRepository;
+import shop.geeksasang.repository.VerificationCountRepository;
 
 import static shop.geeksasang.config.exception.BaseResponseStatus.*;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class SmsService {
 
@@ -56,11 +57,39 @@ public class SmsService {
     private String fromPhoneNumber;
 
     private final SmsRedisRepository smsRedisRepository;
+    private final VerificationCountRepository smsVerificationCountRepository;
 
-    public NaverApiSmsRes sendSms(String recipientPhoneNumber) throws JsonProcessingException, UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException, URISyntaxException {
+    @Transactional(readOnly = false)
+    public NaverApiSmsRes sendSms(String recipientPhoneNumber, String clientIp) throws UnsupportedEncodingException, NoSuchAlgorithmException, URISyntaxException, InvalidKeyException, JsonProcessingException {
+
+        String randomNumber = makeRandomNumber();
+
+        //IP가 없다면 이메일 인증을 하지 않은 것이므로 오류 발생
+        VerificationCount smsVerificationCount = smsVerificationCountRepository.findSmsVerificationCountByClientIp(clientIp)
+                .orElseThrow(() -> new BaseException(INVALID_SMS_CLIENT_IP));
+
+        //하루에 5번 넘었는지 검사
+        if(smsVerificationCount.getSmsVerificationCount() >= 4 ){
+            throw new BaseException(INVALID_SMS_COUNT);
+        }
+
+        //기존에 요청을 했다면 남아 있는 키 삭제
+        if(smsRedisRepository.hasKey(recipientPhoneNumber)){
+            smsRedisRepository.removeSmsCertification(recipientPhoneNumber);
+        }
+
+        NaverApiSmsRes naverApiSmsRes = userSmsApi(recipientPhoneNumber, randomNumber);
+
+        smsRedisRepository.createSmsCertification(recipientPhoneNumber, randomNumber);
+
+        smsVerificationCount.increaseSmsVerificationCount();
+
+        return naverApiSmsRes;
+    }
+
+    public NaverApiSmsRes userSmsApi(String recipientPhoneNumber,String randomNumber) throws JsonProcessingException, UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException, URISyntaxException {
         //기초 세팅
         List<MessagesDto> messages = new ArrayList<>();
-        String randomNumber = makeRandomNumber();
         String smsContentMessage = makeSmsContentMessage(randomNumber);
         messages.add(new MessagesDto(recipientPhoneNumber, smsContentMessage));
 
@@ -75,11 +104,9 @@ public class SmsService {
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
 
-        //네이버 api에 요청을 보낸다.
+        //네이버 api에 요청을 보낸다. //나중에 비동기로 바꾸면 좋을 듯
         NaverApiSmsRes smsResponse = restTemplate.postForObject(new URI("https://sens.apigw.ntruss.com/sms/v2/services/"+this.serviceId+"/messages"), body, NaverApiSmsRes.class);
 
-        //redis에 저장
-        smsRedisRepository.createSmsCertification(recipientPhoneNumber, randomNumber);
         return smsResponse;
     }
 
@@ -137,6 +164,8 @@ public class SmsService {
         return "인증번호[" + randomNumber + "]를 입력해주세요";
     }
 
+
+    @Transactional(readOnly = true)
     public PostVerifySmsRes verifySms(String verifyRandomNumber, String phoneNumber) {
         if(!isVerify(verifyRandomNumber, phoneNumber)){
             throw new BaseException(INVALID_SMS_VERIFY_NUMBER);
@@ -146,7 +175,6 @@ public class SmsService {
     }
 
     private boolean isVerify(String verifyRandomNumber, String phoneNumber){
-        return smsRedisRepository.hasKey(phoneNumber) &&
-                smsRedisRepository.getSmsCertification(phoneNumber).equals(verifyRandomNumber);
+        return smsRedisRepository.hasKey(phoneNumber) && smsRedisRepository.getSmsCertification(phoneNumber).equals(verifyRandomNumber);
     }
 }

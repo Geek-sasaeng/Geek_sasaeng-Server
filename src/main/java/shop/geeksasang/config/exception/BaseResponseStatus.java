@@ -35,7 +35,9 @@ public enum BaseResponseStatus {
     NOT_EXISTS_PARTY(false,2010,"존재하지 않는 파티입니다"),
     NOT_EXISTS_PASSWORD(false, 2011,"비밀번호가 틀립니다. "),
     INACTIVE_STATUS(false,2012,"회원 status가 INACITVE 입니다."),
-    INVALID_SMS_VERIFY_NUMBER(false,2199,"SMS 인증 번호가 다릅니다."),
+    INVALID_SMS_VERIFY_NUMBER(false,2013,"SMS 인증 번호가 다릅니다."),
+    INVALID_SMS_COUNT(false,2015,"SMS 인증은 하루 최대 5번입니다 내일 시도해주세요."),
+    INVALID_SMS_CLIENT_IP(false,2016,"이메일 인증을 하지 못한 유저입니다. 이메일 인증을 해주세요."),
 
 
     /**
@@ -48,6 +50,8 @@ public enum BaseResponseStatus {
      * 미니
      * code : 2400~2599
      */
+    NOT_EXISTS_LOGINID(false,2400,"존재하지 않는 아이디입니다."),
+
 
 
     /**
@@ -64,7 +68,12 @@ public enum BaseResponseStatus {
      * 네오
      * code : 2800~2999
      */
-
+    INVALID_EMAIL_NUMBER(false, 2800,"유효하지 않은 인증번호 입니다."),
+    VALID_EMAIL_NUMBER(true, 2801,"이메일 인증이 완료되었습니다."),
+    SEND_MAIL_SUCCESS(true, 2802,"이메일이 성공적으로 전송 되었습니다."),
+    NOT_MATCH_EMAIL(false, 2803,"이메일이 주소가 올바르지 않습니다."),
+    INVALID_IP(false, 2803,"등록되지 않은 아이피 주소입니다."),
+    INVALID_EMAIL_COUNT(false,2015,"이메일 인증은 하루 최대 10번입니다. 내일 다시 시도해주세요."),
 
     /**
      * 3000 : Response 오류

@@ -5,6 +5,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
 import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -12,7 +13,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.LinkedHashMap;
-
 import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.dto.login.JwtInfo;
 
@@ -22,6 +22,13 @@ import static shop.geeksasang.config.exception.BaseResponseStatus.*;
 @Service
 @NoArgsConstructor
 public class JwtService {
+
+
+
+    @Value("${secret.jwt_secret_key}")
+    private String secretKey;
+
+
     /*
     JWT 생성
     @param userIdx
@@ -34,7 +41,7 @@ public class JwtService {
                 .claim("jwtInfo", jwtInfo)
                 .setIssuedAt(now)
                 .setExpiration(new Date(System.currentTimeMillis()+1*(1000*60*60*24*60)))
-                .signWith(SignatureAlgorithm.HS256, Secret.JWT_SECRET_KEY)
+                .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
     }
 
@@ -63,7 +70,7 @@ public class JwtService {
         Claims body;
         try{
             body = Jwts.parser()
-                    .setSigningKey(Secret.JWT_SECRET_KEY)
+                    .setSigningKey(secretKey)
                     .parseClaimsJws(accessToken)
                     .getBody();
         } catch (Exception ignored) {
@@ -81,13 +88,11 @@ public class JwtService {
     //토큰 유효기간 확인
     public boolean validateToken(String token){
          boolean expiration= Jwts.parser()
-                .setSigningKey(Secret.JWT_SECRET_KEY)
+                .setSigningKey(secretKey)
                 .parseClaimsJws(token)
                 .getBody()
                 .getExpiration().before(new Date());
         return !expiration;
     }
-
-
 
 }
