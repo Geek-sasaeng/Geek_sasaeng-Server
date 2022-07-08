@@ -36,9 +36,8 @@ public enum BaseResponseStatus {
     NOT_EXISTS_PASSWORD(false, 2011,"비밀번호가 틀립니다. "),
     INACTIVE_STATUS(false,2012,"회원 status가 INACITVE 입니다."),
     INVALID_SMS_VERIFY_NUMBER(false,2013,"SMS 인증 번호가 다릅니다."),
-    INVALID_SMS_PHONE_NUMBER(false,2014,"입력하신 핸드폰 번호와 다릅니다."),
     INVALID_SMS_COUNT(false,2015,"SMS 인증은 하루 최대 5번입니다 내일 시도해주세요."),
-    INVALID_SMS_CLIENT_IP(false,2016,"인증번호 재전송을 눌러주세요."),
+    INVALID_SMS_CLIENT_IP(false,2016,"이메일 인증을 하지 못한 유저입니다. 이메일 인증을 해주세요."),
 
 
     /**
@@ -67,6 +66,8 @@ public enum BaseResponseStatus {
     DUPLICATE_USER_NICKNAME(false, 2600, "중복되는 유저 닉네임입니다"),
     ALREADY_INACTIVE_USER(false, 2601, "이미 탈퇴한 회원입니다"),
     SAME_PASSWORDS(false, 2602, "기존 비밀번호와 동일합니다"),
+    EXISTS_LOGIN_ID(false, 2603, "존재하는 아이디입니다"),
+    VALID_ID(true, 2604, "사용가능한 아이디입니다"),
 
     /**
      * 네오

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import shop.geeksasang.config.exception.BaseException;
+import shop.geeksasang.domain.DeliveryParty;
 import shop.geeksasang.domain.Member;
 import shop.geeksasang.domain.University;
 
@@ -224,4 +225,15 @@ public class MemberService {
         member.updatePassword(dto.getNewPassword());
         return member;
     }
+
+    // 로그인 아이디 중복 확인하기
+    @Transactional(readOnly = false)
+    public void checkId(CheckIdReq dto) {
+        // 아이디가 조회될때
+        if(!memberRepository.findMemberByLoginId(dto.getLoginId()).isEmpty()){
+            throw new BaseException(EXISTS_LOGIN_ID);
+        }
+    }
+
+
 }
