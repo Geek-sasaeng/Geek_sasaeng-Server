@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.geeksasang.domain.Domitory;
+import shop.geeksasang.domain.Member;
 import shop.geeksasang.repository.DomitoryRepository;
 import shop.geeksasang.repository.UniversityRepository;
 
@@ -17,8 +18,10 @@ public class DomitoryService {
     private final DomitoryRepository domitoryRepository;
 
     @Transactional(readOnly = false)
-    public List<Domitory> getDomitoriesByUniversityId(int universityId){
-        List<Domitory> getDomitoryRes = domitoryRepository.findDomitoriesByUniversityId(universityId);
-        return getDomitoryRes;
+    public List<Domitory> getDomitories(int university_id){
+        List<Domitory> domitory = domitoryRepository.findDomiByUniversity_id(university_id);
+
+        return domitory;
     }
+
 }
