@@ -60,54 +60,34 @@ public class SmsService {
     private final SmsVerificationCountRepository smsVerificationCountRepository;
 
     @Transactional(readOnly = false)
-    public NaverApiSmsRes firstSendSms(String recipientPhoneNumber, String clientIp) throws UnsupportedEncodingException, NoSuchAlgorithmException, URISyntaxException, InvalidKeyException, JsonProcessingException {
+    public NaverApiSmsRes sendSms(String recipientPhoneNumber, String clientIp) throws UnsupportedEncodingException, NoSuchAlgorithmException, URISyntaxException, InvalidKeyException, JsonProcessingException {
+
         String randomNumber = makeRandomNumber();
 
-        //아이피가 이미 있다면 재전송을 요청
-        //if(!smsVerificationCountRepository.findSmsVerificationCountByClientIp(clientIp).isEmpty()){
-        //    throw new BaseException(INVALID_SMS_CLIENT_IP);
-        //}
-
-        //전화번호 인증
-        NaverApiSmsRes naverApiSmsRes = sendSms(recipientPhoneNumber, randomNumber);
-
-        //redis에 저장
-        smsRedisRepository.createSmsCertification(recipientPhoneNumber, randomNumber);
-
-        //새로운 클라이언트 아이디 생성
-        smsVerificationCountRepository.save(new VerificationCount(clientIp,0));
-
-        return naverApiSmsRes;
-    }
-
-    @Transactional(readOnly = false)
-    public NaverApiSmsRes repeatSendSms(String recipientPhoneNumber, String clientIp) throws UnsupportedEncodingException, NoSuchAlgorithmException, URISyntaxException, InvalidKeyException, JsonProcessingException {
-        String randomNumber = makeRandomNumber();
+        //IP가 없다면 이메일 인증을 하지 않은 것이므로 오류 발생
+        VerificationCount smsVerificationCount = smsVerificationCountRepository.findSmsVerificationCountByClientIp(clientIp)
+                .orElseThrow(() -> new BaseException(INVALID_SMS_CLIENT_IP));
 
         //하루에 5번 넘었는지 검사
-        VerificationCount smsVerificationCount = smsVerificationCountRepository.findSmsVerificationCountByClientIp(clientIp)
-                .orElseThrow(() -> new BaseException(INVALID_SMS_PHONE_NUMBER));
-
         if(smsVerificationCount.getSmsVerificationCount() >= 4 ){
             throw new BaseException(INVALID_SMS_COUNT);
         }
 
-        //기존에 키 삭제
-        smsRedisRepository.removeSmsCertification(recipientPhoneNumber);
+        //기존에 요청을 했다면 남아 있는 키 삭제
+        if(smsRedisRepository.hasKey(recipientPhoneNumber)){
+            smsRedisRepository.removeSmsCertification(recipientPhoneNumber);
+        }
 
-        //전화번호 인증
-        NaverApiSmsRes naverApiSmsRes = sendSms(recipientPhoneNumber, randomNumber);
+        NaverApiSmsRes naverApiSmsRes = userSmsApi(recipientPhoneNumber, randomNumber);
 
-        //redis에 저장
         smsRedisRepository.createSmsCertification(recipientPhoneNumber, randomNumber);
 
-        //count + 1
         smsVerificationCount.increaseSmsVerificationCount();
 
         return naverApiSmsRes;
     }
 
-    public NaverApiSmsRes sendSms(String recipientPhoneNumber,String randomNumber) throws JsonProcessingException, UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException, URISyntaxException {
+    public NaverApiSmsRes userSmsApi(String recipientPhoneNumber,String randomNumber) throws JsonProcessingException, UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException, URISyntaxException {
         //기초 세팅
         List<MessagesDto> messages = new ArrayList<>();
         String smsContentMessage = makeSmsContentMessage(randomNumber);
