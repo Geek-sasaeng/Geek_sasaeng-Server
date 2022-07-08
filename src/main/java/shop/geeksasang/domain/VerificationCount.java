@@ -15,22 +15,20 @@ public class VerificationCount {
     @Id
     @GeneratedValue
     private int id;
-    private String clientIp;
+    private String uuid;
     private int smsVerificationCount;
     private int emailVerificationCount;
 
-    public VerificationCount(String clientIp, int count) {
-        this.clientIp = clientIp;
-        this.emailVerificationCount = count;
+    public VerificationCount(String uuid) {
+        this.uuid = uuid;
     }
 
     public void increaseSmsVerificationCount(){
         this.smsVerificationCount++;
     }
+
     public void increaseEmailVerificationCount(){
         this.emailVerificationCount++;
     }
-    public void setClientIp(String clientIp){
-        this.clientIp = clientIp;
-    }
+
 }
