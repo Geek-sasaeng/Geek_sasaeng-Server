@@ -67,7 +67,12 @@ public enum BaseResponseStatus {
      * 네오
      * code : 2800~2999
      */
-
+    INVALID_EMAIL_NUMBER(false, 2800,"유효하지 않은 인증번호 입니다."),
+    VALID_EMAIL_NUMBER(true, 2801,"이메일 인증이 완료되었습니다."),
+    SEND_MAIL_SUCCESS(true, 2802,"이메일이 성공적으로 전송 되었습니다."),
+    NOT_MATCH_EMAIL(false, 2803,"이메일이 주소가 올바르지 않습니다."),
+    INVALID_IP(false, 2803,"등록되지 않은 아이피 주소입니다."),
+    INVALID_EMAIL_COUNT(false,2015,"이메일 인증은 하루 최대 10번입니다. 내일 다시 시도해주세요."),
 
     /**
      * 3000 : Response 오류

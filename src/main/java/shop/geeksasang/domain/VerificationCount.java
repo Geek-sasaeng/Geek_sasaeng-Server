@@ -17,14 +17,20 @@ public class VerificationCount {
     private int id;
     private String clientIp;
     private int smsVerificationCount;
-
+    private int emailVerificationCount;
 
     public VerificationCount(String clientIp, int count) {
         this.clientIp = clientIp;
-        this.smsVerificationCount = count;
+        this.emailVerificationCount = count;
     }
 
     public void increaseSmsVerificationCount(){
         this.smsVerificationCount++;
+    }
+    public void increaseEmailVerificationCount(){
+        this.emailVerificationCount++;
+    }
+    public void setClientIp(String clientIp){
+        this.clientIp = clientIp;
     }
 }
