@@ -119,6 +119,23 @@ public class MemberService {
         return findMember;
     }
 
+    //확인: 새로 입력한 폰 인증번호 맞는지 확인
+    @Transactional(readOnly = false)
+    public void checkPhoneValidKey(int id,GetCheckPhoneValidKeyReq dto){
+        // 검증: 전화번호 중복확인
+        if(memberRepository.findMemberByPhoneNumber(dto.getPhoneNumber()).isPresent()){
+            throw new BaseException(DUPLICATE_USER_PHONENUMBER);
+        }
+
+        // 확인: 기존 폰 인증번호 조회 -> dto 번호롸 일치하진 않으면 에러
+        Member findMember = memberRepository
+                .findById(id)
+                .orElseThrow(() -> new BaseException(NOT_EXIST_USER));
+        if(!dto.getPhoneValidKey().equals(findMember.getPhoneValidKey())){
+            throw new BaseException(DIFFERENT_PHONEVALIDKEY);
+        }
+    }
+
     // 중복 확인: 닉네임
     @Transactional(readOnly = false)
     public void checkNickNameDuplicated(GetCheckNickNameDuplicatedReq dto){

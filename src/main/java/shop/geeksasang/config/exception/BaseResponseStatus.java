@@ -47,8 +47,10 @@ public enum BaseResponseStatus {
      */
     INVALID_INFORMATIONAGREE_STATUS(false,2201,"회원 정보동의 status가 Y가 아닙니다."),
     VALID_NICKNAME(true,2202,"사용 가능한 닉네임 입니다."),
-
-
+    DUPLICATE_USER_PHONENUMBER(false, 2203, "이미 등록된 전호번호입니다."),
+    DIFFERENT_PHONEVALIDKEY(false, 2204, "폰 인증번호가 다릅니다."),
+    NOT_EXIST_USER(false,2205,"회원 id가 존재하지 않습니다."),
+    VALID_PHONEVALIDKEY(true,2206,"폰 인증번호가 일치합니다."),
 
     /**
      * 미니

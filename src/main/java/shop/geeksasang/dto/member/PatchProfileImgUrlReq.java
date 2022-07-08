@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -13,8 +14,8 @@ import javax.validation.constraints.Size;
 @Data
 public class PatchProfileImgUrlReq {
 
-    @ApiModelProperty(value ="프로필 이미지 url 입력. 빈 값 허용 안함, 최소 1길이 이상")
-    @NotNull // null 값 허용 안함
+    @ApiModelProperty(value ="수정할 프로필 이미지 url")
+    @NotBlank(message = "프로필 이미지 url 빈 값 허용 안함, 최소 1길이 이상")
     @Size(min=1)
     private String profileImgUrl;
 }
