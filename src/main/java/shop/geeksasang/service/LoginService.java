@@ -20,6 +20,9 @@ import shop.geeksasang.utils.jwt.JwtService;
 
 import java.util.LinkedHashMap;
 
+import static shop.geeksasang.config.exception.BaseResponseStatus.NOT_EXISTS_LOGINID;
+import static shop.geeksasang.config.exception.BaseResponseStatus.NOT_EXISTS_PARTICIPANT;
+
 @Transactional
 @Service
 @RequiredArgsConstructor
@@ -30,7 +33,8 @@ public class LoginService {
 
     public LoginRes login(LoginReq dto){
 
-        Member member = memberRepository.findMemberByLoginId(dto.getLoginId()).orElseThrow(RuntimeException::new);
+        Member member = memberRepository.findMemberByLoginId(dto.getLoginId())
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_LOGINID));
 
         String password = SHA256.encrypt(dto.getPassword());
 

@@ -1,4 +1,4 @@
-package shop.geeksasang.dto;
+package shop.geeksasang.dto.email;
 
 import com.amazonaws.services.simpleemail.model.*;
 import lombok.Builder;
@@ -7,11 +7,10 @@ import lombok.Getter;
 import java.util.List;
 
 /*
-    AWS SES 양식에 맞게 보내는 DTO
+    AWS SES DTO
  */
 @Getter
 public class EmailSenderDto {
-
     public static final String FROM_EMAIL = "geeksasaeng@gmail.com"; // 보내는 사람
 
     private final List<String> to; // 받는 사람

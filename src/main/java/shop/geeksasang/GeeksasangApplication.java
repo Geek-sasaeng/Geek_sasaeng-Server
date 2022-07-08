@@ -12,7 +12,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableJpaAuditing
 @SpringBootApplication
 public class GeeksasangApplication {
-
 	public static void main(String[] args) {
 		SpringApplication.run(GeeksasangApplication.class, args);
 	}

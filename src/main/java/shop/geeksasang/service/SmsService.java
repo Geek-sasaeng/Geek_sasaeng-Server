@@ -36,7 +36,7 @@ import shop.geeksasang.dto.sms.NaverApiSmsReq;
 import shop.geeksasang.dto.sms.NaverApiSmsRes;
 import shop.geeksasang.dto.sms.PostVerifySmsRes;
 import shop.geeksasang.repository.SmsRedisRepository;
-import shop.geeksasang.repository.SmsVerificationCountRepository;
+import shop.geeksasang.repository.VerificationCountRepository;
 
 import static shop.geeksasang.config.exception.BaseResponseStatus.*;
 
@@ -57,7 +57,7 @@ public class SmsService {
     private String fromPhoneNumber;
 
     private final SmsRedisRepository smsRedisRepository;
-    private final SmsVerificationCountRepository smsVerificationCountRepository;
+    private final VerificationCountRepository smsVerificationCountRepository;
 
     @Transactional(readOnly = false)
     public NaverApiSmsRes sendSms(String recipientPhoneNumber, String clientIp) throws UnsupportedEncodingException, NoSuchAlgorithmException, URISyntaxException, InvalidKeyException, JsonProcessingException {
