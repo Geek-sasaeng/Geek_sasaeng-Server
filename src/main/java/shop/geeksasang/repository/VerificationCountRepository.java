@@ -7,7 +7,8 @@ import shop.geeksasang.domain.VerificationCount;
 import java.util.Optional;
 
 @Repository
-public interface SmsVerificationCountRepository extends JpaRepository<VerificationCount, Integer> {
+public interface VerificationCountRepository extends JpaRepository<VerificationCount, Integer> {
 
     Optional<VerificationCount> findSmsVerificationCountByClientIp(String clientIp);
+    Optional<VerificationCount> findEmailVerificationCountByClientIp(String clientIp);
 }

@@ -25,5 +25,7 @@ public class University extends BaseEntity {
 
     private String name;
 
+    private String emailAddress;
+
     private String universityImgUrl;
 }
