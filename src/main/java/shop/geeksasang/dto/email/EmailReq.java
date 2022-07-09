@@ -23,4 +23,7 @@ public class EmailReq {
 
     @ApiModelProperty(value = "대학교 이름")
     private String university;
+
+    @ApiModelProperty(value = "핸드폰 UUID")
+    private String UUID;
 }

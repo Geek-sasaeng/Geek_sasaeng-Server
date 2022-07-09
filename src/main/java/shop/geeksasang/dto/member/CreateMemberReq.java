@@ -12,7 +12,7 @@ import javax.validation.constraints.*;
 @Data
 public class CreateMemberReq {
     @ApiModelProperty(value = "로그인 아이디, 최소 6자")
-    @Size(min = 6, max = 20)
+    @Size(min = 6, max = 20)// validation: 최소길이 6자
     @Pattern(regexp="^(?=.*[a-zA-Z])[-a-zA-Z0-9_.]{6,20}$",
             message = "아이디는 6-20자의 영문과 숫자, 일부 특수문자(._-)만 입력 가능합니다.")
     private  String loginId;
@@ -48,6 +48,10 @@ public class CreateMemberReq {
     @Pattern(regexp = "^01(?:0|1|[6-9])(?:\\\\d{3}|\\\\d{4})\\\\d{4}$")
     private  String phoneNumber;
 
+    @ApiModelProperty(value = "회원 정보동의 여부 입력, Null, 빈 문자열, 스페이스만 있는 문자열 불가")
+    @NotBlank(message = "회원정보동의는 Y 를 입력해야 합니다.") //Null, 빈 문자열, 스페이스만 있는 문자열 불가
+    private String informationAgreeStatus;
+
     public Member toEntity() {
         return Member.builder()
                 .loginId(getLoginId())
@@ -55,6 +59,7 @@ public class CreateMemberReq {
                 .nickName(getNickname())
                 .email(getEmail())
                 .phoneNumber(getPhoneNumber())
+                .informationAgreeStatus(getInformationAgreeStatus())
                 .build();
     }
 }

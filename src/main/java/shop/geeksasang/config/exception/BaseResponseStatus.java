@@ -44,7 +44,12 @@ public enum BaseResponseStatus {
      * 토마스최
      * code : 2200~2399
      */
-
+    INVALID_INFORMATIONAGREE_STATUS(false,2201,"회원 정보동의 status가 Y가 아닙니다."),
+    VALID_NICKNAME(true,2202,"사용 가능한 닉네임 입니다."),
+    DUPLICATE_USER_PHONENUMBER(false, 2203, "이미 등록된 전호번호입니다."),
+    DIFFERENT_PHONEVALIDKEY(false, 2204, "폰 인증번호가 다릅니다."),
+    NOT_EXIST_USER(false,2205,"존재하지 않는 회원 id 입니다."),
+    VALID_PHONEVALIDKEY(true,2206,"폰 인증번호가 일치합니다."),
 
     /**
      * 미니
@@ -73,7 +78,8 @@ public enum BaseResponseStatus {
     SEND_MAIL_SUCCESS(true, 2802,"이메일이 성공적으로 전송 되었습니다."),
     NOT_MATCH_EMAIL(false, 2803,"이메일이 주소가 올바르지 않습니다."),
     INVALID_IP(false, 2803,"등록되지 않은 아이피 주소입니다."),
-    INVALID_EMAIL_COUNT(false,2015,"이메일 인증은 하루 최대 10번입니다. 내일 다시 시도해주세요."),
+    INVALID_EMAIL_COUNT(false,2804,"이메일 인증은 하루 최대 10번입니다. 내일 다시 시도해주세요."),
+    THREAD_OVER_REQUEST(false, 2805, "잠시 후에 다시 시도해주세요"),
 
     /**
      * 3000 : Response 오류
