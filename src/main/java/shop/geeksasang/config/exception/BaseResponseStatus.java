@@ -37,7 +37,7 @@ public enum BaseResponseStatus {
     INACTIVE_STATUS(false,2012,"회원 status가 INACITVE 입니다."),
     INVALID_SMS_VERIFY_NUMBER(false,2013,"SMS 인증 번호가 다릅니다."),
     INVALID_SMS_COUNT(false,2015,"SMS 인증은 하루 최대 5번입니다 내일 시도해주세요."),
-    INVALID_SMS_CLIENT_IP(false,2016,"이메일 인증을 하지 못한 유저입니다. 이메일 인증을 해주세요."),
+    INVALID_SMS_UUID(false,2016,"이메일 인증을 하지 못한 유저입니다. 이메일 인증을 해주세요."),
 
 
     /**

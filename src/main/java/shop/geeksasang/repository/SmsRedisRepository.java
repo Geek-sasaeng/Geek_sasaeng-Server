@@ -11,7 +11,7 @@ import java.time.Duration;
 public class SmsRedisRepository {
 
     private final String PREFIX = "sms:";
-    private final int LIMIT_TIME = 3 * 60; //유효시간 설정
+    private final int LIMIT_TIME = 5 * 60; //유효시간 설정
 
     private final StringRedisTemplate stringRedisTemplate;
 

@@ -60,16 +60,16 @@ public class SmsService {
     private final VerificationCountRepository smsVerificationCountRepository;
 
     @Transactional(readOnly = false)
-    public NaverApiSmsRes sendSms(String recipientPhoneNumber, String clientIp) throws UnsupportedEncodingException, NoSuchAlgorithmException, URISyntaxException, InvalidKeyException, JsonProcessingException {
+    public NaverApiSmsRes sendSms(String recipientPhoneNumber, String uuid) throws UnsupportedEncodingException, NoSuchAlgorithmException, URISyntaxException, InvalidKeyException, JsonProcessingException {
 
         String randomNumber = makeRandomNumber();
 
-        //IP가 없다면 이메일 인증을 하지 않은 것이므로 오류 발생
-        VerificationCount smsVerificationCount = smsVerificationCountRepository.findSmsVerificationCountByClientIp(clientIp)
-                .orElseThrow(() -> new BaseException(INVALID_SMS_CLIENT_IP));
+        //uuid가 없다면 이메일 인증을 하지 않은 것이므로 오류 발생
+        VerificationCount smsVerificationCount = smsVerificationCountRepository.findVerificationCountByUUID(uuid)
+                .orElseThrow(() -> new BaseException(INVALID_SMS_UUID));
 
         //하루에 5번 넘었는지 검사
-        if(smsVerificationCount.getSmsVerificationCount() >= 4 ){
+        if(smsVerificationCount.checkSmsVerificationCountIsMoreThan5()){
             throw new BaseException(INVALID_SMS_COUNT);
         }
 
