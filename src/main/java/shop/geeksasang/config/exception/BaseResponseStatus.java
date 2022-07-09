@@ -13,6 +13,10 @@ public enum BaseResponseStatus {
      */
     SUCCESS(true, 1000, "요청에 성공하였습니다."),
 
+    // 토마스최
+    VALID_PHONEVALIDKEY(true,1201,"폰 인증번호가 일치합니다."),
+    VALID_NICKNAME(true,1202,"사용 가능한 닉네임 입니다."),
+
 
     /**
      * 2000 : Request 오류
@@ -45,11 +49,10 @@ public enum BaseResponseStatus {
      * code : 2200~2399
      */
     INVALID_INFORMATIONAGREE_STATUS(false,2201,"회원 정보동의 status가 Y가 아닙니다."),
-    VALID_NICKNAME(true,2202,"사용 가능한 닉네임 입니다."),
-    DUPLICATE_USER_PHONENUMBER(false, 2203, "이미 등록된 전호번호입니다."),
-    DIFFERENT_PHONEVALIDKEY(false, 2204, "폰 인증번호가 다릅니다."),
-    NOT_EXIST_USER(false,2205,"존재하지 않는 회원 id 입니다."),
-    VALID_PHONEVALIDKEY(true,2206,"폰 인증번호가 일치합니다."),
+    DUPLICATE_USER_PHONENUMBER(false, 2202, "이미 등록된 전호번호입니다."),
+    DIFFERENT_PHONEVALIDKEY(false, 2203, "폰 인증번호가 다릅니다."),
+    NOT_EXIST_USER(false,2204,"존재하지 않는 회원 id 입니다."),
+
 
     /**
      * 미니
