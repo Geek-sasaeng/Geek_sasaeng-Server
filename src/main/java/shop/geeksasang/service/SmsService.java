@@ -11,6 +11,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -60,6 +61,7 @@ public class SmsService {
     private final VerificationCountRepository smsVerificationCountRepository;
 
     @Transactional(readOnly = false)
+    @Async
     public void sendSms(String recipientPhoneNumber, String uuid) throws URISyntaxException, JsonProcessingException {
 
         String randomNumber = makeRandomNumber();
@@ -86,6 +88,7 @@ public class SmsService {
 
     }
 
+    @Async
     public void userSmsApi(String recipientPhoneNumber,String randomNumber) throws JsonProcessingException, URISyntaxException {
         List<MessagesDto> messages = new ArrayList<>();
         String smsContentMessage = makeSmsContentMessage(randomNumber);
