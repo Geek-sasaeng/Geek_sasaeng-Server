@@ -183,6 +183,13 @@ public class MemberController {
 
     // 이메일 인증 번호 보내기
     @ApiOperation(value = "이메일 인증번호 보내기", notes = "사용자의 이메일을 입력받아 인증번호를 보낸다.")
+    @ApiResponses({
+            @ApiResponse(code = 2802, message = "이메일이 성공적으로 전송 되었습니다.")
+            ,@ApiResponse(code = 2803, message = "유효하지 않은 인증번호 입니다.")
+            ,@ApiResponse(code = 2804, message = "이메일 인증은 하루 최대 10번입니다.")
+            ,@ApiResponse(code = 2805, message = "잠시 후에 다시 시도해주세요.")
+    }
+    )
     @NoIntercept
     @PostMapping("/email")
     public BaseResponse<String> authEmail(@RequestBody @Valid EmailReq req, HttpServletRequest servletRequest) {
@@ -194,6 +201,11 @@ public class MemberController {
 
     // 이메일 인증 번호 확인하기
     @ApiOperation(value = "이메일 인증번호 확인하기", notes = "사용자의 이메일과, 수신한 이메일 인증번호를 이용해서 일치하는지 확인한다.")
+    @ApiResponses({
+            @ApiResponse(code = 2800, message = "이메일 인증이 완료되었습니다.")
+            ,@ApiResponse(code = 2801, message = "유효하지 않은 인증번호 입니다.")
+    }
+    )
     @NoIntercept
     @PostMapping("/email/check")
     public BaseResponse<String> checkEmail(@RequestBody @Valid EmailCertificationReq req) {

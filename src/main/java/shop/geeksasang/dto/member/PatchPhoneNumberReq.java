@@ -16,7 +16,7 @@ import javax.validation.constraints.Size;
 @Data
 public class PatchPhoneNumberReq {
 
-    @ApiModelProperty(value = "휴대폰 번호만 입력. 최소 입력 10, 최대 11",example = "01012345678")
+    @ApiModelProperty(example = "01010101010")
     @ApiParam(value = "변경할 폰 번호")
     @Pattern(regexp = "^01(?:0|1|[6-9])(?:\\\\d{3}|\\\\d{4})\\\\d{4}$") // 폰 번호 정규식
     @Size(min=10, max=11)
