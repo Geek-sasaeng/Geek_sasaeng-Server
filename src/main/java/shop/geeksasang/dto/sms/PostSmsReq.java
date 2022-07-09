@@ -16,7 +16,7 @@ import javax.validation.constraints.Size;
 public class PostSmsReq {
 
     @ApiModelProperty(value = "휴대폰 번호만 입력. 최소 입력 10, 최대 11")
-    //@Pattern(regexp = "^01(?:0|1|[6-9])(?:\\\\d{3}|\\\\d{4})\\\\d{4}$")
+    @Pattern(regexp = "^01(?:0|1|[6-9])(\\d{3}|\\d{4})(\\d{4})$")
     @Size(min = 10, max = 11)
     private String recipientPhoneNumber;
 

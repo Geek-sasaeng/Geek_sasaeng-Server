@@ -105,9 +105,9 @@ public class SmsService {
         restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
 
         //네이버 api에 요청을 보낸다. //나중에 비동기로 바꾸면 좋을 듯
-        NaverApiSmsRes smsResponse = restTemplate.postForObject(new URI("https://sens.apigw.ntruss.com/sms/v2/services/"+this.serviceId+"/messages"), body, NaverApiSmsRes.class);
+        //NaverApiSmsRes smsResponse = restTemplate.postForObject(new URI("https://sens.apigw.ntruss.com/sms/v2/services/"+this.serviceId+"/messages"), body, NaverApiSmsRes.class);
 
-        return smsResponse;
+        return null;
     }
 
     private HttpHeaders makeHeaders() throws UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException {
