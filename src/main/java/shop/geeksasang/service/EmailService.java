@@ -5,6 +5,8 @@ import com.amazonaws.services.simpleemail.model.SendEmailResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.core.task.TaskRejectedException;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.geeksasang.config.exception.BaseException;
@@ -22,8 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import static shop.geeksasang.config.exception.BaseResponseStatus.INVALID_EMAIL_COUNT;
-import static shop.geeksasang.config.exception.BaseResponseStatus.INVALID_SMS_COUNT;
+import static shop.geeksasang.config.exception.BaseResponseStatus.*;
 
 @Slf4j
 @Service
@@ -47,6 +48,7 @@ public class EmailService {
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_UNIVERSITY));
         String universityEmailAdress = university.getEmailAddress();
         String email = request.getEmail();
+        String UUID = request.getUUID();
         String[] emailAddresses = email.split("@");
         String emailAddress = emailAddresses[1];
         // 대학교 이메일 주소 같지 않으면
@@ -54,10 +56,10 @@ public class EmailService {
             throw new BaseException(BaseResponseStatus.NOT_MATCH_EMAIL);
         }
         // 하루 10번 제한 검증
-        VerificationCount emailVerificationCount = verificationCountRepository.findEmailVerificationCountByClientIp(clientIp)
+        VerificationCount emailVerificationCount = verificationCountRepository.findEmailVerificationCountByUUID(UUID)
                 .orElseGet(VerificationCount::new);
-        if(emailVerificationCount.getClientIp() == null){
-            emailVerificationCount.setClientIp(clientIp);
+        if(emailVerificationCount.getUUID() == null){
+            emailVerificationCount.setUUID(UUID);
             verificationCountRepository.save(emailVerificationCount);
         }
         //count + 1
@@ -78,18 +80,23 @@ public class EmailService {
         return redisUtil.checkNumber(email, key);
     }
 
-    // AWS SES로 이메일 전송
-    void sendSES(final String subject, final String content, final List<String> receivers) {
-        final EmailSenderDto senderDto = EmailSenderDto.builder() // 1
-                .to(receivers)
-                .subject(subject)
-                .content(content)
-                .build();
+    // AWS SES로 이메일 전송, 비동기
+    @Async
+    public void sendSES(final String subject, final String content, final List<String> receivers) {
+        try {
+            final EmailSenderDto senderDto = EmailSenderDto.builder() // 1
+                    .to(receivers)
+                    .subject(subject)
+                    .content(content)
+                    .build();
 
-        final SendEmailResult sendEmailResult = amazonSimpleEmailService // 2
-                .sendEmail(senderDto.toSendRequestDto());
+            final SendEmailResult sendEmailResult = amazonSimpleEmailService // 2
+                    .sendEmail(senderDto.toSendRequestDto());
 
-        sendingResultMustSuccess(sendEmailResult); // 3
+            sendingResultMustSuccess(sendEmailResult); // 3
+        }catch(TaskRejectedException e){
+            throw new BaseException(THREAD_OVER_REQUEST);
+        }
     }
 
     // 이메일 전송 (Redis에 인증 번호 저장, 5분 유효)
