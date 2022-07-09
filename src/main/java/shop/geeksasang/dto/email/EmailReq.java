@@ -1,10 +1,7 @@
 package shop.geeksasang.dto.email;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -15,6 +12,7 @@ import javax.validation.constraints.NotNull;
     Body: 이메일 주소, 학교 이름
  */
 @Data
+@AllArgsConstructor
 public class EmailReq {
     @Email
     @NotBlank(message = "이메일은 필수로 입력해야합니다 ")

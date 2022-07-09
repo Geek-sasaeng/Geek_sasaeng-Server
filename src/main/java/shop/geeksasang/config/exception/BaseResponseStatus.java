@@ -11,7 +11,14 @@ public enum BaseResponseStatus {
     /**
      * 1000 : 요청 성공
      */
+
+    /**
+     * 데빈
+     * code : 1000~1199
+     */
     SUCCESS(true, 1000, "요청에 성공하였습니다."),
+    SMS_SEND_SUCCESS(true, 1001, "SMS 요청에 성공했습니다."),
+    SMS_VERIFICATION_SUCCESS(true, 1002, "SMS 인증에 성공했습니다."),
 
     // 토마스최
     VALID_PHONEVALIDKEY(true,1201,"폰 인증번호가 일치합니다."),
@@ -39,9 +46,9 @@ public enum BaseResponseStatus {
     NOT_EXISTS_PARTY(false,2010,"존재하지 않는 파티입니다"),
     NOT_EXISTS_PASSWORD(false, 2011,"비밀번호가 틀립니다. "),
     INACTIVE_STATUS(false,2012,"회원 status가 INACITVE 입니다."),
-    INVALID_SMS_VERIFY_NUMBER(false,2013,"SMS 인증 번호가 다릅니다."),
-    INVALID_SMS_COUNT(false,2015,"SMS 인증은 하루 최대 5번입니다 내일 시도해주세요."),
-    INVALID_SMS_CLIENT_IP(false,2016,"이메일 인증을 하지 못한 유저입니다. 이메일 인증을 해주세요."),
+    INVALID_SMS_VERIFY_NUMBER(false,2013,"인증번호가 틀렸습니다."),
+    INVALID_SMS_COUNT(false,2015,"일일 최대 전송 횟수를 초과했습니다."),
+    INVALID_SMS_UUID(false,2016,"이메일 인증을 하지 못한 유저입니다. 이메일 인증을 해주세요."),
 
 
     /**
@@ -93,9 +100,13 @@ public enum BaseResponseStatus {
      * 4000 : Database, Server 오류
      */
 
-
+    /**
+     * 데빈
+     * code : 4000~4199
+     */
     INTERNAL_SERVER_ERROR(false,4000,"서버 오류입니다."),
-    SMS_API_ERROR(false,4001,"SMS 네이버 API 연동 오류입니다.");
+    SMS_API_ERROR(false,4001,"SMS API 연동 오류입니다."),
+    FAIL_MAKE_SIGNATURE(false,4002,"SMS API 연동 준비 오류입니다.");
 
 
 

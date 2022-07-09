@@ -9,6 +9,7 @@ import java.util.Optional;
 @Repository
 public interface VerificationCountRepository extends JpaRepository<VerificationCount, Integer> {
 
-    Optional<VerificationCount> findSmsVerificationCountByClientIp(String clientIp);
     Optional<VerificationCount> findEmailVerificationCountByUUID(String uuid);
+
+    Optional<VerificationCount> findVerificationCountByUUID(String uuid);
 }

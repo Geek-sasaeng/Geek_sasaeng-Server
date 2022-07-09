@@ -13,11 +13,11 @@ import javax.validation.constraints.Size;
 @Getter
 @Setter
 public class PostVerifySmsReq {
-    @ApiModelProperty(value = "보안을 위한 랜덤 6자리 숫자")
+    @ApiModelProperty(value = "SMS 인증 메세지로 받은 6자리 숫자", example = "567843")
     @Size(min = 6, max = 6)
     private String verifyRandomNumber;
 
-    @ApiModelProperty(value = "휴대폰 번호만 입력. 최소 입력 10, 최대 11")
+    @ApiModelProperty(value = "휴대폰 번호만 입력. 최소 입력 10, 최대 11", example = "01012341234")
     @Size(min = 10, max = 11)
     private String recipientPhoneNumber;
 }
