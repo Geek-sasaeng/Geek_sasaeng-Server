@@ -11,7 +11,13 @@ public enum BaseResponseStatus {
     /**
      * 1000 : 요청 성공
      */
+
+    /**
+     * 데빈
+     * code : 1000~1199
+     */
     SUCCESS(true, 1000, "요청에 성공하였습니다."),
+    SMS_VERIFICATION_SUCCESS(true, 1001, "SMS 인증에 성공했습니다."),
 
 
     /**
@@ -90,9 +96,13 @@ public enum BaseResponseStatus {
      * 4000 : Database, Server 오류
      */
 
-
+    /**
+     * 데빈
+     * code : 4000~4199
+     */
     INTERNAL_SERVER_ERROR(false,4000,"서버 오류입니다."),
-    SMS_API_ERROR(false,4001,"SMS 네이버 API 연동 오류입니다.");
+    SMS_API_ERROR(false,4001,"SMS 네이버 API 연동 오류입니다."),
+    FAIL_MAKE_SIGNATURE(false,4002,"네이버 API 연동 준비 오류입니다.");
 
 
 

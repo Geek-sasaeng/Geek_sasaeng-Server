@@ -60,7 +60,7 @@ public class SmsService {
     private final VerificationCountRepository smsVerificationCountRepository;
 
     @Transactional(readOnly = false)
-    public NaverApiSmsRes sendSms(String recipientPhoneNumber, String uuid) throws UnsupportedEncodingException, NoSuchAlgorithmException, URISyntaxException, InvalidKeyException, JsonProcessingException {
+    public void sendSms(String recipientPhoneNumber, String uuid) throws URISyntaxException, JsonProcessingException {
 
         String randomNumber = makeRandomNumber();
 
@@ -78,17 +78,15 @@ public class SmsService {
             smsRedisRepository.removeSmsCertification(recipientPhoneNumber);
         }
 
-        NaverApiSmsRes naverApiSmsRes = userSmsApi(recipientPhoneNumber, randomNumber);
+        userSmsApi(recipientPhoneNumber, randomNumber);
 
         smsRedisRepository.createSmsCertification(recipientPhoneNumber, randomNumber);
 
         smsVerificationCount.increaseSmsVerificationCount();
 
-        return naverApiSmsRes;
     }
 
-    public NaverApiSmsRes userSmsApi(String recipientPhoneNumber,String randomNumber) throws JsonProcessingException, UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException, URISyntaxException {
-        //기초 세팅
+    public void userSmsApi(String recipientPhoneNumber,String randomNumber) throws JsonProcessingException, URISyntaxException {
         List<MessagesDto> messages = new ArrayList<>();
         String smsContentMessage = makeSmsContentMessage(randomNumber);
         messages.add(new MessagesDto(recipientPhoneNumber, smsContentMessage));
@@ -105,55 +103,59 @@ public class SmsService {
         restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
 
         //네이버 api에 요청을 보낸다. //나중에 비동기로 바꾸면 좋을 듯
-        //NaverApiSmsRes smsResponse = restTemplate.postForObject(new URI("https://sens.apigw.ntruss.com/sms/v2/services/"+this.serviceId+"/messages"), body, NaverApiSmsRes.class);
+        restTemplate.postForObject(new URI("https://sens.apigw.ntruss.com/sms/v2/services/"+this.serviceId+"/messages"), body, NaverApiSmsRes.class);
 
-        return null;
     }
 
-    private HttpHeaders makeHeaders() throws UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException {
-        Long time = System.currentTimeMillis();
-        HttpHeaders headers = new HttpHeaders();
+    private HttpHeaders makeHeaders() {
+            Long time = System.currentTimeMillis();
+            HttpHeaders headers = new HttpHeaders();
 
-        //암호화
-        String signature = makeSignature(time);
+            //암호화
+            String signature = makeSignature(time);
 
-        //헤더 설정
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("x-ncp-apigw-timestamp", time.toString());
-        headers.set("x-ncp-iam-access-key", this.accessKey);
-        headers.set("x-ncp-apigw-signature-v2", signature);
+            //헤더 설정
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.set("x-ncp-apigw-timestamp", time.toString());
+            headers.set("x-ncp-iam-access-key", this.accessKey);
+            headers.set("x-ncp-apigw-signature-v2", signature);
 
-        return headers;
+            return headers;
     }
 
-    private String makeSignature(Long time) throws NoSuchAlgorithmException, InvalidKeyException, UnsupportedEncodingException {
-        String space = " ";
-        String newLine = "\n";
-        String method = "POST";
-        String url = "/sms/v2/services/"+ this.serviceId+"/messages";
-        String timestamp = time.toString();
-        String accessKey = this.accessKey;
-        String secretKey = this.secretKey;
+    private String makeSignature(Long time){
+        try{
+            String space = " ";
+            String newLine = "\n";
+            String method = "POST";
+            String url = "/sms/v2/services/"+ this.serviceId+"/messages";
+            String timestamp = time.toString();
+            String accessKey = this.accessKey;
+            String secretKey = this.secretKey;
 
-        String message = new StringBuilder()
-                .append(method)
-                .append(space)
-                .append(url)
-                .append(newLine)
-                .append(timestamp)
-                .append(newLine)
-                .append(accessKey)
-                .toString();
+            String message = new StringBuilder()
+                    .append(method)
+                    .append(space)
+                    .append(url)
+                    .append(newLine)
+                    .append(timestamp)
+                    .append(newLine)
+                    .append(accessKey)
+                    .toString();
 
-        SecretKeySpec signingKey = new SecretKeySpec(secretKey.getBytes("UTF-8"), "HmacSHA256");
+            SecretKeySpec signingKey = new SecretKeySpec(secretKey.getBytes("UTF-8"), "HmacSHA256");
 
-        Mac mac = Mac.getInstance("HmacSHA256");
-        mac.init(signingKey);
+            Mac mac = Mac.getInstance("HmacSHA256");
+            mac.init(signingKey);
 
-        byte[] rawHmac = mac.doFinal(message.getBytes("UTF-8"));
-        String encodeBase64String = Base64.encodeBase64String(rawHmac);
+            byte[] rawHmac = mac.doFinal(message.getBytes("UTF-8"));
+            String encodeBase64String = Base64.encodeBase64String(rawHmac);
 
-        return encodeBase64String;
+            return encodeBase64String;
+        }
+        catch(UnsupportedEncodingException | NoSuchAlgorithmException | InvalidKeyException e){
+            throw new BaseException(FAIL_MAKE_SIGNATURE);
+        }
     }
 
     private String makeRandomNumber(){
