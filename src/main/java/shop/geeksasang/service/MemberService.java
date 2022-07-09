@@ -29,6 +29,7 @@ public class MemberService {
 
     private final long expireTime = 60 * 5L; // 이메일 유효 기간
 
+    // 회원 가입하기
     @Transactional(readOnly = false)
     public Member createMember(CreateMemberReq dto){
 
