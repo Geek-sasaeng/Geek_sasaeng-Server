@@ -15,11 +15,11 @@ import javax.validation.constraints.Size;
 @Getter
 public class PostSmsReq {
 
-    @ApiModelProperty(value = "휴대폰 번호만 입력. 최소 입력 10, 최대 11")
+    @ApiModelProperty(value = "휴대폰 번호만 입력. 최소 입력 10, 최대 11", example = "01012341234")
     @Pattern(regexp = "^01(?:0|1|[6-9])(\\d{3}|\\d{4})(\\d{4})$")
     @Size(min = 10, max = 11)
     private String recipientPhoneNumber;
 
-    @ApiModelProperty(value = "핸드폰 UUID")
+    @ApiModelProperty(value = "핸드폰이 가지고 있는 UUID")
     private String uuid;
 }
