@@ -1,6 +1,8 @@
 package shop.geeksasang.controller;
 
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,6 +46,10 @@ public class MemberController {
 
     // 수정: 폰 번호
     @ApiOperation(value = "수정: 폰 번호", notes = "사용자의 폰번호를 입력받아 폰번호를 수정한다.")
+    @ApiResponses({
+            @ApiResponse(code =1000 ,message ="요청에 성공하셨습니다."),
+            @ApiResponse(code =2205 ,message ="존재하지 않는 회원 id 입니다."),
+    })
     @PatchMapping("/phone-number/{id}")
     public BaseResponse<PatchPhoneNumberRes> updatePhoneNumber(@PathVariable("id") int id, @Validated @RequestBody PatchPhoneNumberReq dto){
         Member member = memberService.updatePhoneNumber(id,dto);
@@ -57,6 +63,10 @@ public class MemberController {
 
     // 수정: 폰 인증 번호
     @ApiOperation(value = "수정: 폰 인증 번호", notes = "사용자의 폰 인증번호 입력받아 수정.")
+    @ApiResponses({
+            @ApiResponse(code =1000 ,message ="요청에 성공하셨습니다."),
+            @ApiResponse(code =2205 ,message ="존재하지 않는 회원 id 입니다."),
+    })
     @PatchMapping("/phone-vaid-key/{id}")
     public BaseResponse<PatchPhoneValidKeyRes> updatePhoneValidKey(@PathVariable("id") int id, @Validated @RequestBody PatchPhoneValidKeyReq dto){
         // 서비스에 폰 인증번호 수정 요청
@@ -70,6 +80,10 @@ public class MemberController {
 
     // 수정: 프로필 이미지
     @ApiOperation(value = "수정: 프로필 이미지", notes = "사용자의 프로필 이미지 url을 입력받아 수정.")
+    @ApiResponses({
+            @ApiResponse(code =1000 ,message ="요청에 성공하셨습니다."),
+            @ApiResponse(code =2205 ,message ="존재하지 않는 회원 id 입니다."),
+    })
     @PatchMapping("/profile-img-url/{id}")
     public BaseResponse<PatchProfileImgUrlRes> updateProfileImgUrl(@PathVariable("id") int id,@Validated @RequestBody PatchProfileImgUrlReq dto){
         Member member = memberService.updateProfileImgUrl(id,dto);
@@ -82,6 +96,10 @@ public class MemberController {
 
     // 수정: 회원정보 동의 수정
     @ApiOperation(value = "수정: 회원정보 동의 수정", notes = "사용자의 동의여부 Y 를 입력받아 수정.")
+    @ApiResponses({
+            @ApiResponse(code =1000 ,message ="요청에 성공하셨습니다."),
+            @ApiResponse(code =2205 ,message ="존재하지 않는 회원 id 입니다."),
+    })
     @PatchMapping("/information-agree-status/{id}")
     public BaseResponse<PatchInformationAgreeStatusRes> updateInformationAgreeStatus(@PathVariable("id") int id,@Validated @RequestBody PatchInformationAgreeStatusReq dto){
         Member member = memberService.updateInformationAgreeStatus(id,dto);
@@ -93,6 +111,12 @@ public class MemberController {
 
     //확인: 새로 입력한 폰 인증번호 맞는지 확인
     @ApiOperation(value = "확인: 새로 입력한 폰 인증번호 맞는지 확인", notes = "사용자의 폰번호, 폰 인증번호를 이용해서 인증번호 일치 확인.")
+    @ApiResponses({
+            @ApiResponse(code =1201 ,message ="폰 인증번호가 일치합니다."),
+            @ApiResponse(code =2205 ,message ="존재하지 않는 회원 id 입니다."),
+            @ApiResponse(code =2203 ,message ="이미 등록된 전호번호입니다."),
+            @ApiResponse(code =2204 ,message ="폰 인증번호가 다릅니다."),
+    })
     @GetMapping("/phone-vaid-key/{id}")
     @NoIntercept
     public BaseResponse<String> checkPhoneValidKey(@PathVariable("id") int id,@Validated @RequestBody GetCheckPhoneValidKeyReq dto){
@@ -103,6 +127,10 @@ public class MemberController {
 
     // 중복 확인: 닉네임
     @ApiOperation(value = "중복 확인: 닉네임", notes = "사용자의 닉네임을 이용해서 중복확인을 한다.")
+    @ApiResponses({
+            @ApiResponse(code =1202 ,message ="사용 가능한 닉네임 입니다."),
+            @ApiResponse(code =2600 ,message ="중복되는 유저 닉네임입니다"),
+    })
     @GetMapping("/nickname-duplicated")
     @NoIntercept // jwt 검사 제외
     public BaseResponse<String> checkNickNameDuplicated(@Validated @RequestBody GetCheckNickNameDuplicatedReq dto){
