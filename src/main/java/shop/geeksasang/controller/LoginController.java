@@ -32,6 +32,8 @@ public class LoginController {
             @ApiResponse(code =1000 ,message ="요청에 성공하셨습니다."),
             @ApiResponse(code =2011 ,message ="비밀번호가 틀립니다."),
             @ApiResponse(code =2400 ,message ="존재하지 않는 아이디입니다."),
+            @ApiResponse(code =2012 ,message ="탈퇴한 회원입니다."),
+            @ApiResponse(code=4000,message = "서버 오류입니다.")
     })
     @PostMapping
     public BaseResponse<LoginRes> login(@Validated @RequestBody LoginReq dto){
