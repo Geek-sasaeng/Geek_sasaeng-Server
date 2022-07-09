@@ -18,6 +18,7 @@ import shop.geeksasang.config.exception.BaseResponseStatus;
 import shop.geeksasang.config.response.BaseResponse;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URISyntaxException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
@@ -56,7 +57,7 @@ public class GlobalExceptionAdvice {
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler({ UnsupportedEncodingException.class, NoSuchAlgorithmException.class, InvalidKeyException.class, JsonProcessingException.class} )
+    @ExceptionHandler({JsonProcessingException.class, URISyntaxException.class} )
     public BaseResponse<BaseResponseStatus> smsHandleException(Exception e) {
         //log.error("Handle All Exception: {}", e.getMessage());
         return new BaseResponse<>(BaseResponseStatus.SMS_API_ERROR);
