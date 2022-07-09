@@ -78,6 +78,8 @@ public enum BaseResponseStatus {
     SAME_PASSWORDS(false, 2602, "기존 비밀번호와 동일합니다"),
     EXISTS_LOGIN_ID(false, 2603, "존재하는 아이디입니다"),
     VALID_ID(true, 2604, "사용가능한 아이디입니다"),
+    NOT_EXISTS_UNIVERSITY_ID(false, 2605, "존재하지 않는 학교입니다"),
+    NOT_EXISTS_DOMITORY(false, 2606, "기숙사가 존재하지 않습니다"),
 
     /**
      * 네오
