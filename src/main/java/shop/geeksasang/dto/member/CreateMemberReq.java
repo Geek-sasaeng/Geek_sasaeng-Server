@@ -53,7 +53,8 @@ public class CreateMemberReq {
     @ApiModelProperty(example = "01012341234")
     @ApiParam(value = "사용자 핸드폰 번호", required = true)
     @Size(min = 10, max = 11)
-    @Pattern(regexp = "^01(?:0|1|[6-9])(?:\\\\d{3}|\\\\d{4})\\\\d{4}$")
+    @Pattern(regexp = "^01(?:0|1|[6-9])(\\d{3}|\\d{4})(\\d{4})$")
+//    @Pattern(regexp = "^01(?:0|1|[6-9])(?:\\\\d{3}|\\\\d{4})\\\\d{4}$")
     private  String phoneNumber;
 
     @ApiModelProperty(example = "Y")

@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import shop.geeksasang.config.domain.BaseEntity;
+import shop.geeksasang.config.domain.LoginStatus;
 import shop.geeksasang.config.domain.Status;
 
 import javax.persistence.*;
@@ -49,6 +50,9 @@ public class Member extends BaseEntity {
 
     private String informationAgreeStatus; // 회원 정보 동의 여부
 
+    @Enumerated(EnumType.STRING)
+    private LoginStatus loginStatus; // 첫 번째 로그인인지 아닌지
+
     public void changeStatusToActive(){
         super.setStatus(Status.ACTIVE);
     }
@@ -88,6 +92,11 @@ public class Member extends BaseEntity {
     // 회원 탈퇴
     public void changeStatusToInactive(){
         super.setStatus(Status.INACTIVE);
+    }
+
+    // 첫 번째 로그인 여부 저장
+    public void changeLoginStatusToFirst(){
+        this.loginStatus = LoginStatus.FIRST;
     }
 
     @Override
