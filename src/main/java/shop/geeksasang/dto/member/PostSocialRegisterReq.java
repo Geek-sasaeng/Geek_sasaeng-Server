@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiParam;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import shop.geeksasang.config.domain.MemberLoginType;
 import shop.geeksasang.domain.Member;
 
 import javax.validation.constraints.Email;
@@ -72,6 +73,7 @@ public class PostSocialRegisterReq {
                 .email(getEmail())
                 .phoneNumber(getPhoneNumber())
                 .informationAgreeStatus(getInformationAgreeStatus())
+                .memberLoginType(MemberLoginType.NAVER_USER)
                 .build();
     }
 
