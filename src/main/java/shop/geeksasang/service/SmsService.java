@@ -61,7 +61,6 @@ public class SmsService {
     private final VerificationCountRepository smsVerificationCountRepository;
 
     @Transactional(readOnly = false)
-    @Async
     public void sendSms(String recipientPhoneNumber, String uuid) throws URISyntaxException, JsonProcessingException {
 
         String randomNumber = makeRandomNumber();
