@@ -6,7 +6,6 @@ import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.domain.DeliveryParty;
 import shop.geeksasang.domain.DeliveryPartyRoom;
 import shop.geeksasang.domain.Member;
-import shop.geeksasang.dto.member.CreateMemberReq;
 import shop.geeksasang.dto.deliveryPartyRoom.PostDeliveryPartyRoomReq;
 import shop.geeksasang.repository.DeliveryPartyRepository;
 import shop.geeksasang.repository.DeliveryPartyRoomRepository;

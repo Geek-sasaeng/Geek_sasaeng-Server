@@ -10,7 +10,7 @@ import javax.validation.constraints.Size;
 
 @NoArgsConstructor
 @Data
-public class CheckIdReq {
+public class GetCheckIdReq {
 
     @ApiModelProperty(example = "geeksasaeng")
     @ApiParam(value = "사용자 ID", required = true)

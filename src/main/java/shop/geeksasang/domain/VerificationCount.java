@@ -36,10 +36,6 @@ public class VerificationCount {
         this.emailVerificationCount++;
     }
 
-    public void setUUID(String UUID){
-        this.UUID = UUID;
-    }
-
     public void resetVerificationCount(){
         this.smsVerificationCount = 0;
         this.emailVerificationCount = 0;

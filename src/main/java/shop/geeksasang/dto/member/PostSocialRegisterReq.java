@@ -2,21 +2,24 @@ package shop.geeksasang.dto.member;
 
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiParam;
-import lombok.*;
-import org.hibernate.validator.constraints.Range;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import shop.geeksasang.domain.Member;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class CreateMemberReq {
-    @ApiModelProperty(example = "geeksasaeng")
+public class PostSocialRegisterReq {
+    @ApiModelProperty(example = "geeksasaeng@naver.com")
     @ApiParam(value = "사용자 ID", required = true)
-    @Size(min = 6, max = 20)// validation: 최소길이 6자
-    @Pattern(regexp="^(?=.*[a-zA-Z])[-a-zA-Z0-9_.]{6,20}$",
-            message = "아이디는 6-20자의 영문과 숫자, 일부 특수문자(._-)만 입력 가능합니다.")
+    @Pattern(regexp="^[a-zA-Z0-9+-\\_.]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$",
+            message = "아이디는 이메일 형식만 지원됩니다.")
     private  String loginId;
 
     @ApiModelProperty(example = "1q2w3e4r!")
@@ -44,7 +47,7 @@ public class CreateMemberReq {
     private  String universityName;
 
     @ApiModelProperty(example = "abc@gachon.ac.kr")
-    @ApiParam(value = "사용자 이메일", required = true)
+    @ApiParam(value = "사용자 학교 이메일", required = true)
     @NotBlank(message = "이메일을 입력해주세요.")
     @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.ac.kr$")
     @Email
@@ -54,9 +57,8 @@ public class CreateMemberReq {
     @ApiParam(value = "사용자 핸드폰 번호", required = true)
     @Size(min = 10, max = 11)
     @Pattern(regexp = "^01(?:0|1|[6-9])(\\d{3}|\\d{4})(\\d{4})$")
-//    @Pattern(regexp = "^01(?:0|1|[6-9])(?:\\\\d{3}|\\\\d{4})\\\\d{4}$")
-    private  String phoneNumber;
 
+    private  String phoneNumber;
     @ApiModelProperty(example = "Y")
     @ApiParam(value = "사용자 회원 정보 동의 여부", required = true)
     @NotBlank(message = "회원정보동의는 Y 를 입력해야 합니다.") //Null, 빈 문자열, 스페이스만 있는 문자열 불가
@@ -72,12 +74,5 @@ public class CreateMemberReq {
                 .informationAgreeStatus(getInformationAgreeStatus())
                 .build();
     }
+
 }
-
-
-
-
-
-
-
-

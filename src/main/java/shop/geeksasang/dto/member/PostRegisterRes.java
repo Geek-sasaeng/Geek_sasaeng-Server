@@ -5,11 +5,9 @@ import lombok.Getter;
 import lombok.Setter;
 import shop.geeksasang.domain.Member;
 
-import javax.validation.constraints.Email;
-
 @Getter @Setter
 @Builder
-public class CreateMemberRes {
+public class PostRegisterRes {
 
     private  String loginId;
     private  String nickname;
@@ -17,8 +15,8 @@ public class CreateMemberRes {
     private  String email;
     private  String phoneNumber;
 
-    static public CreateMemberRes toDto(Member member) {
-        return CreateMemberRes.builder()
+    static public PostRegisterRes toDto(Member member) {
+        return PostRegisterRes.builder()
                 .loginId(member.getLoginId())
                 .nickname(member.getNickName())
                 .universityName(member.getUniversity().getName())

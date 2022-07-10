@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
     Body: 이메일 주소, 이메일 인증번호
  */
 @Data
-public class EmailCertificationReq {
+public class PostEmailCertificationReq {
     @Email
     @NotBlank(message = "이메일은 필수로 입력해야합니다.")
     @ApiModelProperty(example = "abc@gachon.ac.kr")

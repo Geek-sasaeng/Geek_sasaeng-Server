@@ -13,8 +13,8 @@ import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.config.exception.BaseResponseStatus;
 import shop.geeksasang.domain.University;
 import shop.geeksasang.domain.VerificationCount;
-import shop.geeksasang.dto.email.EmailCertificationReq;
-import shop.geeksasang.dto.email.EmailReq;
+import shop.geeksasang.dto.email.PostEmailCertificationReq;
+import shop.geeksasang.dto.email.PostEmailReq;
 import shop.geeksasang.dto.email.EmailSenderDto;
 import shop.geeksasang.repository.UniversityRepository;
 import shop.geeksasang.repository.VerificationCountRepository;
@@ -22,6 +22,7 @@ import shop.geeksasang.utils.jwt.RedisUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 import static shop.geeksasang.config.exception.BaseResponseStatus.*;
@@ -41,7 +42,7 @@ public class EmailService {
 
     // 인증번호 이메일 전송
     @Transactional(readOnly = false)
-    public void sendEmail(EmailReq request, String clientIp) {
+    public void sendEmail(PostEmailReq request) {
         // 대학교 이메일 주소 검증
         String universityName = request.getUniversity();
         University university = universityRepository.findUniversityByName(universityName)
@@ -56,10 +57,10 @@ public class EmailService {
             throw new BaseException(BaseResponseStatus.NOT_MATCH_EMAIL);
         }
         // 하루 10번 제한 검증
-        VerificationCount emailVerificationCount = verificationCountRepository.findEmailVerificationCountByUUID(UUID)
-                .orElseGet(VerificationCount::new);
-        if(emailVerificationCount.getUUID() == null){
-            emailVerificationCount.setUUID(UUID);
+        Optional<VerificationCount> emailVerificationCount_optional = verificationCountRepository.findEmailVerificationCountByUUID(UUID);
+        VerificationCount emailVerificationCount = emailVerificationCount_optional.get();
+        if(emailVerificationCount == null){
+            emailVerificationCount = new VerificationCount(UUID);
             verificationCountRepository.save(emailVerificationCount);
         }
         //count + 1
@@ -74,7 +75,7 @@ public class EmailService {
     }
 
     // 인증번호가 일치하는지 체크
-    public boolean checkEmailCertification(EmailCertificationReq request) {
+    public boolean checkEmailCertification(PostEmailCertificationReq request) {
         String email = request.getEmail();
         String key = request.getKey();
         return redisUtil.checkNumber(email, key);

@@ -7,15 +7,13 @@ import lombok.Getter;
 import lombok.Setter;
 import shop.geeksasang.config.domain.LoginStatus;
 
-import javax.validation.constraints.Size;
-
 
 @Getter @Setter
 @Builder
-public class LoginRes {
+public class PostLoginRes {
     private String jwt;
 
-    @ApiModelProperty(example = "FIRST")
+    @ApiModelProperty(example = "NEVER")
     @ApiParam(value = "로그인 횟수 상태")
     private LoginStatus loginStatus;
 }

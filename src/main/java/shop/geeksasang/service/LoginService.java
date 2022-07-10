@@ -9,11 +9,9 @@ import shop.geeksasang.config.domain.LoginStatus;
 import shop.geeksasang.config.domain.Status;
 import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.config.exception.BaseResponseStatus;
-import shop.geeksasang.config.response.BaseResponse;
 import shop.geeksasang.domain.Member;
-import shop.geeksasang.domain.University;
-import shop.geeksasang.dto.login.LoginReq;
-import shop.geeksasang.dto.login.LoginRes;
+import shop.geeksasang.dto.login.PostLoginReq;
+import shop.geeksasang.dto.login.PostLoginRes;
 import shop.geeksasang.dto.login.JwtInfo;
 import shop.geeksasang.repository.MemberRepository;
 import shop.geeksasang.utils.encrypt.SHA256;
@@ -32,7 +30,7 @@ public class LoginService {
     private final MemberRepository memberRepository;
     private final JwtService jwtService;
 
-    public LoginRes login(LoginReq dto){
+    public PostLoginRes login(PostLoginReq dto){
 
         Member member = memberRepository.findMemberByLoginId(dto.getLoginId())
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_LOGINID));
@@ -63,7 +61,7 @@ public class LoginService {
 
         String jwt = jwtService.createJwt(vo);
 
-        return LoginRes.builder()
+        return PostLoginRes.builder()
                 .jwt(jwt)
                 .loginStatus(loginStatus)
                 .build();

@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import shop.geeksasang.config.exception.BaseException;
-import shop.geeksasang.domain.DeliveryParty;
 import shop.geeksasang.domain.Member;
 import shop.geeksasang.domain.University;
 
@@ -31,16 +30,13 @@ public class MemberService {
 
     // 회원 가입하기
     @Transactional(readOnly = false)
-    public Member createMember(CreateMemberReq dto){
-
+    public Member registerMember(PostRegisterReq dto){
          if(!dto.getCheckPassword().equals(dto.getPassword())) {
              throw new BaseException(DIFFRENT_PASSWORDS);
          }
-
         if(!memberRepository.findMemberByLoginId(dto.getLoginId()).isEmpty()){
             throw new BaseException(DUPLICATE_USER_LOGIN_ID);
         }
-
         if(!memberRepository.findMemberByEmail(dto.getEmail()).isEmpty()){
             throw new BaseException(DUPLICATE_USER_EMAIL);
         }
@@ -49,21 +45,50 @@ public class MemberService {
         if(!dto.getInformationAgreeStatus().equals("Y")){
             throw new BaseException(INVALID_INFORMATIONAGREE_STATUS);
         }
-
         dto.setPassword(SHA256.encrypt(dto.getPassword()));
         Member member = dto.toEntity();
         University university = universityRepository
                 .findUniversityByName(dto.getUniversityName())
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_UNIVERSITY));
-
         member.connectUniversity(university);
         member.changeStatusToActive();
         member.changeLoginStatusToNever(); // 로그인 안해본 상태 디폴트 저장
+        // TODO loginTypeStatus default로 지정
+
         memberRepository.save(member);
         return member;
     }
 
+    // 소셜 회원가입 하기
+    @Transactional(readOnly = false)
+    public Member registerSocialMember(PostSocialRegisterReq dto){
+        if(!dto.getCheckPassword().equals(dto.getPassword())) {
+            throw new BaseException(DIFFRENT_PASSWORDS);
+        }
+        if(!memberRepository.findMemberByLoginId(dto.getLoginId()).isEmpty()){
+            throw new BaseException(DUPLICATE_USER_LOGIN_ID);
+        }
+        if(!memberRepository.findMemberByEmail(dto.getEmail()).isEmpty()){
+            throw new BaseException(DUPLICATE_USER_EMAIL);
+        }
 
+        // 검증: 동의여부가 Y 가 이닌 경우
+        if(!dto.getInformationAgreeStatus().equals("Y")){
+            throw new BaseException(INVALID_INFORMATIONAGREE_STATUS);
+        }
+        dto.setPassword(SHA256.encrypt(dto.getPassword()));
+        Member member = dto.toEntity();
+        University university = universityRepository
+                .findUniversityByName(dto.getUniversityName())
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_UNIVERSITY));
+        member.connectUniversity(university);
+        member.changeStatusToActive();
+        member.changeLoginStatusToNever(); // 로그인 안해본 상태 디폴트 저장
+        // TODO loginTypeStatus naver로 지정
+
+        memberRepository.save(member);
+        return member;
+    }
     // 수정: 폰 번호
     @Transactional(readOnly = false) // readOnly = false : 생성, 수정하는 작업에 적용
     public Member updatePhoneNumber(int id, PatchPhoneNumberReq dto){
@@ -139,7 +164,7 @@ public class MemberService {
 
     // 중복 확인: 닉네임
     @Transactional(readOnly = false)
-    public void checkNickNameDuplicated(GetCheckNickNameDuplicatedReq dto){
+    public void checkNickNameDuplicated(GetNickNameDuplicatedReq dto){
 
         //멤버 닉네임으로 조회되면 중복 처리
         if(!memberRepository.findMemberByNickName(dto.getNickName()).isEmpty()){
@@ -230,7 +255,7 @@ public class MemberService {
 
     // 로그인 아이디 중복 확인하기
     @Transactional(readOnly = false)
-    public void checkId(CheckIdReq dto) {
+    public void checkId(GetCheckIdReq dto) {
         // 아이디가 조회될때
         if(!memberRepository.findMemberByLoginId(dto.getLoginId()).isEmpty()){
             throw new BaseException(EXISTS_LOGIN_ID);

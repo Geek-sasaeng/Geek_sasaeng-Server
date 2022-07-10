@@ -3,19 +3,14 @@ package shop.geeksasang.controller;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import shop.geeksasang.config.exception.BaseResponseStatus;
 import shop.geeksasang.config.response.BaseResponse;
-import shop.geeksasang.domain.DeliveryParty;
 import shop.geeksasang.domain.Member;
-import shop.geeksasang.dto.email.EmailCertificationReq;
-import shop.geeksasang.dto.email.EmailReq;
-import shop.geeksasang.domain.University;
-import shop.geeksasang.dto.email.EmailReq;
+import shop.geeksasang.dto.email.PostEmailCertificationReq;
+import shop.geeksasang.dto.email.PostEmailReq;
 import shop.geeksasang.dto.member.*;
 import shop.geeksasang.service.MemberService;
 import shop.geeksasang.service.EmailService;
@@ -24,7 +19,6 @@ import shop.geeksasang.utils.jwt.NoIntercept;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 @RequestMapping("/members")
@@ -32,7 +26,6 @@ import java.util.List;
 public class MemberController {
     private final MemberService memberService;
     private final EmailService emailService;
-
     // 회원가입
     @ApiOperation(value = "사용자 회원가입", notes = "사용자의 정보들을 이용해서 회원가입을 진행한다.")
     @ApiResponses({
@@ -45,12 +38,27 @@ public class MemberController {
     })
     @PostMapping
     @NoIntercept
-    public BaseResponse<CreateMemberRes> createMember(@Validated @RequestBody CreateMemberReq dto){
-        Member member = memberService.createMember(dto);
-        CreateMemberRes createMemberRes = CreateMemberRes.toDto(member);
-        return new BaseResponse<>(createMemberRes);
+    public BaseResponse<PostRegisterRes> registerMember(@Validated @RequestBody PostRegisterReq dto){
+        Member member = memberService.registerMember(dto);
+        PostRegisterRes postCreateMemberRes = PostRegisterRes.toDto(member);
+        return new BaseResponse<>(postCreateMemberRes);
     }
 
+    // 소셜 회원가입
+    @ApiOperation(value = "사용자 소셜 회원가입", notes = "사용자의 정보들을 이용해서 소셜 회원가입을 진행한다.")
+    @ApiResponses({
+            @ApiResponse(code =2007 ,message ="중복되는 유저 이메일입니다"),
+            @ApiResponse(code =2201 ,message ="회원 정보동의 status가 Y가 아닙니다."),
+            @ApiResponse(code =2008 ,message ="존재하지 않는 학교 이름입니다"),
+            @ApiResponse(code=4000,message = "서버 오류입니다.")
+    })
+    @PostMapping("/social")
+    @NoIntercept
+    public BaseResponse<PostRegisterRes> registerSocialMember(@Validated @RequestBody PostSocialRegisterReq dto){
+        Member member = memberService.registerSocialMember(dto);
+        PostRegisterRes postCreateMemberRes = PostRegisterRes.toDto(member);
+        return new BaseResponse<>(postCreateMemberRes);
+    }
 
     // 수정: 폰 번호
     @ApiOperation(value = "수정: 폰 번호", notes = "사용자의 폰번호를 입력받아 폰번호를 수정한다.")
@@ -148,7 +156,7 @@ public class MemberController {
     })
     @GetMapping("/nickname-duplicated")
     @NoIntercept // jwt 검사 제외
-    public BaseResponse<String> checkNickNameDuplicated(@Validated @RequestBody GetCheckNickNameDuplicatedReq dto){
+    public BaseResponse<String> checkNickNameDuplicated(@Validated @RequestBody GetNickNameDuplicatedReq dto){
 
         memberService.checkNickNameDuplicated(dto);
 
@@ -212,13 +220,11 @@ public class MemberController {
     })
     @NoIntercept
     @GetMapping("/id-duplicated")
-    public BaseResponse<String> checkIdDuplicated(@RequestBody @Valid CheckIdReq dto) {
+    public BaseResponse<String> checkIdDuplicated(@RequestBody @Valid GetCheckIdReq dto) {
         memberService.checkId(dto);
 
         return new BaseResponse<>(BaseResponseStatus.VALID_ID);
     }
-
-
 
     // 이메일 인증 번호 보내기
     @ApiOperation(value = "이메일 인증번호 보내기", notes = "사용자의 이메일을 입력받아 인증번호를 보낸다.")
@@ -231,12 +237,11 @@ public class MemberController {
     )
     @NoIntercept
     @PostMapping("/email")
-    public BaseResponse<String> authEmail(@RequestBody @Valid EmailReq req, HttpServletRequest servletRequest) {
+    public BaseResponse<String> sendAuthEmail(@RequestBody @Valid PostEmailReq req, HttpServletRequest servletRequest) {
         String clientIp = ClientIpUtils.getClientIp(servletRequest);
-        emailService.sendEmail(req, clientIp);
+        emailService.sendEmail(req);
         return new BaseResponse<>(BaseResponseStatus.SEND_MAIL_SUCCESS);
     }
-
 
     // 이메일 인증 번호 확인하기
     @ApiOperation(value = "이메일 인증번호 확인하기", notes = "사용자의 이메일과, 수신한 이메일 인증번호를 이용해서 일치하는지 확인한다.")
@@ -247,7 +252,7 @@ public class MemberController {
     )
     @NoIntercept
     @PostMapping("/email/check")
-    public BaseResponse<String> checkEmail(@RequestBody @Valid EmailCertificationReq req) {
+    public BaseResponse<String> checkEmailValid(@RequestBody @Valid PostEmailCertificationReq req) {
         boolean check = emailService.checkEmailCertification(req);
         if(check){
             return new BaseResponse<>(BaseResponseStatus.VALID_EMAIL_NUMBER);
