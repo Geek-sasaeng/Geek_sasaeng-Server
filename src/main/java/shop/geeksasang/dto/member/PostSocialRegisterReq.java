@@ -56,9 +56,9 @@ public class PostSocialRegisterReq {
     @ApiModelProperty(example = "01012341234")
     @ApiParam(value = "사용자 핸드폰 번호", required = true)
     @Size(min = 10, max = 11)
-    @Pattern(regexp = "^01(?:0|1|[6-9])(?:\\\\d{3}|\\\\d{4})\\\\d{4}$")
-    private  String phoneNumber;
+    @Pattern(regexp = "^01(?:0|1|[6-9])(\\d{3}|\\d{4})(\\d{4})$")
 
+    private  String phoneNumber;
     @ApiModelProperty(example = "Y")
     @ApiParam(value = "사용자 회원 정보 동의 여부", required = true)
     @NotBlank(message = "회원정보동의는 Y 를 입력해야 합니다.") //Null, 빈 문자열, 스페이스만 있는 문자열 불가

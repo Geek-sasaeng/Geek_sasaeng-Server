@@ -13,7 +13,7 @@ import shop.geeksasang.config.domain.LoginStatus;
 public class PostLoginRes {
     private String jwt;
 
-    @ApiModelProperty(example = "FIRST")
+    @ApiModelProperty(example = "NEVER")
     @ApiParam(value = "로그인 횟수 상태")
     private LoginStatus loginStatus;
 }

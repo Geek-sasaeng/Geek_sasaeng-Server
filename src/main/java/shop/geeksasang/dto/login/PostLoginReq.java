@@ -10,9 +10,9 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 @Data
 public class PostLoginReq {
-    @ApiModelProperty(value="로그인 아이디, 최소 6자 이상 20자 이하")
+    @ApiModelProperty(value="로그인 아이디, 최소 6자 이상")
     @ApiParam(value = "사용자 ID", required = true)
-    @Size(min = 6, max = 20)
+    @Size(min = 6)
     private String loginId;
 
     @ApiModelProperty(value="비밀번호, 최소 8자 이상")

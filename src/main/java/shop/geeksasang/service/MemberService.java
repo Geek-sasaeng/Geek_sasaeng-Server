@@ -53,6 +53,8 @@ public class MemberService {
         member.connectUniversity(university);
         member.changeStatusToActive();
         member.changeLoginStatusToNever(); // 로그인 안해본 상태 디폴트 저장
+        // TODO loginTypeStatus default로 지정
+
         memberRepository.save(member);
         return member;
     }
@@ -81,6 +83,9 @@ public class MemberService {
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_UNIVERSITY));
         member.connectUniversity(university);
         member.changeStatusToActive();
+        member.changeLoginStatusToNever(); // 로그인 안해본 상태 디폴트 저장
+        // TODO loginTypeStatus naver로 지정
+
         memberRepository.save(member);
         return member;
     }
