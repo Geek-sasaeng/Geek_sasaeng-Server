@@ -99,14 +99,9 @@ public class Member extends BaseEntity {
         this.loginStatus = LoginStatus.NEVER;
     }
 
-    // 로그인 횟수 상태 첫번째 저장
-    public void changeLoginStatusToFirst(){
-        this.loginStatus = LoginStatus.FIRST;
-    }
-
     // 로그인 횟수 상태 첫번째 초과 저장
-    public void changeLoginStatusToNotFirst(){
-        this.loginStatus = LoginStatus.NOTFIRST;
+    public void changeLoginStatusToNotNever(){
+        this.loginStatus = LoginStatus.NOTNEVER;
     }
 
     @Override

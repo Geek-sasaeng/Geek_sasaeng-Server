@@ -50,17 +50,11 @@ public class LoginService {
             throw new BaseException(BaseResponseStatus.INACTIVE_STATUS);
         }
 
-        // 로그인 횟수 상태 (loginStatus) Never -> First변경
+        // 로그인 횟수 상태 (loginStatus) Never -> NotNever변경
         if(loginStatus.equals(LoginStatus.NEVER)){
-            member.changeLoginStatusToFirst();
-            loginStatus = LoginStatus.FIRST;
+            member.changeLoginStatusToNotNever();
         }
 
-        // 로그인 횟수 상태 (loginStatus) First ->  NotFirst변경
-        else if(loginStatus.equals(LoginStatus.FIRST)){
-            member.changeLoginStatusToNotFirst();
-            loginStatus = LoginStatus.NOTFIRST;
-        }
 
         JwtInfo vo = JwtInfo.builder()
                 .userId(member.getId())
