@@ -58,6 +58,7 @@ public class MemberService {
 
         member.connectUniversity(university);
         member.changeStatusToActive();
+        member.changeLoginStatusToNever(); // 로그인 안해본 상태 디폴트 저장
         memberRepository.save(member);
         return member;
     }
