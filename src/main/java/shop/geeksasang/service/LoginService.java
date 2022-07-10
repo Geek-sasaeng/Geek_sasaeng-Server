@@ -8,11 +8,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import shop.geeksasang.config.domain.Status;
 import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.config.exception.BaseResponseStatus;
-import shop.geeksasang.config.response.BaseResponse;
 import shop.geeksasang.domain.Member;
-import shop.geeksasang.domain.University;
-import shop.geeksasang.dto.login.LoginReq;
-import shop.geeksasang.dto.login.LoginRes;
+import shop.geeksasang.dto.login.PostLoginReq;
+import shop.geeksasang.dto.login.PostLoginRes;
 import shop.geeksasang.dto.login.JwtInfo;
 import shop.geeksasang.repository.MemberRepository;
 import shop.geeksasang.utils.encrypt.SHA256;
@@ -21,7 +19,6 @@ import shop.geeksasang.utils.jwt.JwtService;
 import java.util.LinkedHashMap;
 
 import static shop.geeksasang.config.exception.BaseResponseStatus.NOT_EXISTS_LOGINID;
-import static shop.geeksasang.config.exception.BaseResponseStatus.NOT_EXISTS_PARTICIPANT;
 
 @Transactional
 @Service
@@ -31,7 +28,7 @@ public class LoginService {
     private final MemberRepository memberRepository;
     private final JwtService jwtService;
 
-    public LoginRes login(LoginReq dto){
+    public PostLoginRes login(PostLoginReq dto){
 
         Member member = memberRepository.findMemberByLoginId(dto.getLoginId())
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_LOGINID));
@@ -54,7 +51,7 @@ public class LoginService {
 
         String jwt = jwtService.createJwt(vo);
 
-        return LoginRes.builder().jwt(jwt).build();
+        return PostLoginRes.builder().jwt(jwt).build();
     }
 
     @GetMapping

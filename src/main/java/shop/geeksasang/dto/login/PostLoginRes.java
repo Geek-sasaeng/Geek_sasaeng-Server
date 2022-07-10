@@ -4,11 +4,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.validation.constraints.Size;
-
 
 @Getter @Setter
 @Builder
-public class LoginRes {
+public class PostLoginRes {
     private String jwt;
 }

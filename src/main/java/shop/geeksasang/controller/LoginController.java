@@ -5,10 +5,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import shop.geeksasang.config.domain.BaseEntity;
 import shop.geeksasang.config.response.BaseResponse;
-import shop.geeksasang.dto.login.LoginReq;
-import shop.geeksasang.dto.login.LoginRes;
+import shop.geeksasang.dto.login.PostLoginReq;
+import shop.geeksasang.dto.login.PostLoginRes;
 import shop.geeksasang.service.LoginService;
 import shop.geeksasang.utils.jwt.NoIntercept;
 
@@ -36,8 +35,8 @@ public class LoginController {
             @ApiResponse(code=4000,message = "서버 오류입니다.")
     })
     @PostMapping
-    public BaseResponse<LoginRes> login(@Validated @RequestBody LoginReq dto){
-        LoginRes login = loginService.login(dto);
+    public BaseResponse<PostLoginRes> login(@Validated @RequestBody PostLoginReq dto){
+        PostLoginRes login = loginService.login(dto);
         return new BaseResponse<>(login);
     }
 

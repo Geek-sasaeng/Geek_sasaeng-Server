@@ -3,7 +3,6 @@ package shop.geeksasang.dto.member;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiParam;
 import lombok.*;
-import org.hibernate.validator.constraints.Range;
 import shop.geeksasang.domain.Member;
 
 import javax.validation.constraints.*;
@@ -11,7 +10,7 @@ import javax.validation.constraints.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class CreateMemberReq {
+public class PostRegisterReq {
     @ApiModelProperty(example = "geeksasaeng")
     @ApiParam(value = "사용자 ID", required = true)
     @Size(min = 6, max = 20)// validation: 최소길이 6자
