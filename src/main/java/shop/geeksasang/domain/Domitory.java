@@ -23,13 +23,10 @@ public class Domitory extends BaseEntity {
     @Column(name="domitory_id")
     private int id;
 
-    private String name;
-
-
-//    @OneToMany(mappedBy = "university")
-//    private List<University> universities = new ArrayList<>();
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="university_id")
     private University university;
+
+    private String name;
 
 }

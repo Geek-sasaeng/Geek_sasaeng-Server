@@ -15,7 +15,7 @@ import javax.validation.constraints.Size;
 @Data
 public class PatchProfileImgUrlReq {
 
-    @ApiModelProperty(value ="수정할 프로필 이미지 url",example = "www.site.image")
+    @ApiModelProperty(example = "http://geeksasaeng.shop/s3/neo.jpg")
     @ApiParam(value = "수정할 프로필 이미지 url")
     @NotBlank(message = "프로필 이미지 url 빈 값 허용 안함, 최소 1길이 이상")
     @Size(min=1)

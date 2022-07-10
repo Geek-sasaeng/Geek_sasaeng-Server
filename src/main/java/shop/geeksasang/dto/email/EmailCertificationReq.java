@@ -1,5 +1,6 @@
 package shop.geeksasang.dto.email;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.Email;
@@ -14,8 +15,10 @@ import javax.validation.constraints.NotNull;
 public class EmailCertificationReq {
     @Email
     @NotBlank(message = "이메일은 필수로 입력해야합니다.")
+    @ApiModelProperty(example = "abc@gachon.ac.kr")
     private String email;
 
+    @ApiModelProperty(example = "123456")
     @NotNull(message = "인증번호는 필수로 입력해야합니다.")
     private String key;
 }

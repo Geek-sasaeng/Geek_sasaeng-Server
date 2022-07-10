@@ -78,6 +78,8 @@ public enum BaseResponseStatus {
     SAME_PASSWORDS(false, 2602, "기존 비밀번호와 동일합니다"),
     EXISTS_LOGIN_ID(false, 2603, "존재하는 아이디입니다"),
     VALID_ID(true, 2604, "사용가능한 아이디입니다"),
+    NOT_EXISTS_UNIVERSITY_ID(false, 2605, "존재하지 않는 학교입니다"),
+    NOT_EXISTS_DOMITORY(false, 2606, "기숙사가 존재하지 않습니다"),
 
     /**
      * 네오
@@ -87,7 +89,6 @@ public enum BaseResponseStatus {
     VALID_EMAIL_NUMBER(true, 2801,"이메일 인증이 완료되었습니다."),
     SEND_MAIL_SUCCESS(true, 2802,"이메일이 성공적으로 전송 되었습니다."),
     NOT_MATCH_EMAIL(false, 2803,"이메일이 주소가 올바르지 않습니다."),
-    INVALID_IP(false, 2803,"등록되지 않은 아이피 주소입니다."),
     INVALID_EMAIL_COUNT(false,2804,"이메일 인증은 하루 최대 10번입니다. 내일 다시 시도해주세요."),
     THREAD_OVER_REQUEST(false, 2805, "잠시 후에 다시 시도해주세요"),
 

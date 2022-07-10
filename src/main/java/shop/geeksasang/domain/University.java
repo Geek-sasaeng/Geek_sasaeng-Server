@@ -29,6 +29,8 @@ public class University extends BaseEntity {
 
     private String universityImgUrl;
 
+
     @OneToMany(mappedBy = "university")
     List<Domitory> domitories = new ArrayList<>();
+
 }

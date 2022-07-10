@@ -35,6 +35,14 @@ public class MemberController {
 
     // 회원가입
     @ApiOperation(value = "사용자 회원가입", notes = "사용자의 정보들을 이용해서 회원가입을 진행한다.")
+    @ApiResponses({
+            @ApiResponse(code =2205 ,message ="존재하지 않는 회원 id 입니다."),
+            @ApiResponse(code =2006 ,message ="중복되는 유저 아이디입니다"),
+            @ApiResponse(code =2007 ,message ="중복되는 유저 이메일입니다"),
+            @ApiResponse(code =2201 ,message ="회원 정보동의 status가 Y가 아닙니다."),
+            @ApiResponse(code =2008 ,message ="존재하지 않는 학교 이름입니다"),
+            @ApiResponse(code=4000,message = "서버 오류입니다.")
+    })
     @PostMapping
     @NoIntercept
     public BaseResponse<CreateMemberRes> createMember(@Validated @RequestBody CreateMemberReq dto){
@@ -49,6 +57,7 @@ public class MemberController {
     @ApiResponses({
             @ApiResponse(code =1000 ,message ="요청에 성공하셨습니다."),
             @ApiResponse(code =2205 ,message ="존재하지 않는 회원 id 입니다."),
+            @ApiResponse(code=4000,message = "서버 오류입니다.")
     })
     @PatchMapping("/phone-number/{id}")
     public BaseResponse<PatchPhoneNumberRes> updatePhoneNumber(@PathVariable("id") int id, @Validated @RequestBody PatchPhoneNumberReq dto){
@@ -66,6 +75,7 @@ public class MemberController {
     @ApiResponses({
             @ApiResponse(code =1000 ,message ="요청에 성공하셨습니다."),
             @ApiResponse(code =2205 ,message ="존재하지 않는 회원 id 입니다."),
+            @ApiResponse(code=4000,message = "서버 오류입니다.")
     })
     @PatchMapping("/phone-vaid-key/{id}")
     public BaseResponse<PatchPhoneValidKeyRes> updatePhoneValidKey(@PathVariable("id") int id, @Validated @RequestBody PatchPhoneValidKeyReq dto){
@@ -78,11 +88,13 @@ public class MemberController {
     }
 
 
+
     // 수정: 프로필 이미지
     @ApiOperation(value = "수정: 프로필 이미지", notes = "사용자의 프로필 이미지 url을 입력받아 수정.")
     @ApiResponses({
             @ApiResponse(code =1000 ,message ="요청에 성공하셨습니다."),
             @ApiResponse(code =2205 ,message ="존재하지 않는 회원 id 입니다."),
+            @ApiResponse(code=4000,message = "서버 오류입니다.")
     })
     @PatchMapping("/profile-img-url/{id}")
     public BaseResponse<PatchProfileImgUrlRes> updateProfileImgUrl(@PathVariable("id") int id,@Validated @RequestBody PatchProfileImgUrlReq dto){
@@ -99,6 +111,7 @@ public class MemberController {
     @ApiResponses({
             @ApiResponse(code =1000 ,message ="요청에 성공하셨습니다."),
             @ApiResponse(code =2205 ,message ="존재하지 않는 회원 id 입니다."),
+            @ApiResponse(code=4000,message = "서버 오류입니다.")
     })
     @PatchMapping("/information-agree-status/{id}")
     public BaseResponse<PatchInformationAgreeStatusRes> updateInformationAgreeStatus(@PathVariable("id") int id,@Validated @RequestBody PatchInformationAgreeStatusReq dto){
@@ -116,6 +129,7 @@ public class MemberController {
             @ApiResponse(code =2205 ,message ="존재하지 않는 회원 id 입니다."),
             @ApiResponse(code =2203 ,message ="이미 등록된 전호번호입니다."),
             @ApiResponse(code =2204 ,message ="폰 인증번호가 다릅니다."),
+            @ApiResponse(code=4000,message = "서버 오류입니다.")
     })
     @GetMapping("/phone-vaid-key/{id}")
     @NoIntercept
@@ -130,6 +144,7 @@ public class MemberController {
     @ApiResponses({
             @ApiResponse(code =1202 ,message ="사용 가능한 닉네임 입니다."),
             @ApiResponse(code =2600 ,message ="중복되는 유저 닉네임입니다"),
+            @ApiResponse(code=4000,message = "서버 오류입니다.")
     })
     @GetMapping("/nickname-duplicated")
     @NoIntercept // jwt 검사 제외
@@ -143,6 +158,10 @@ public class MemberController {
 
     // 수정: 닉네임 수정하기
     @ApiOperation(value = "수정: 닉네임 수정하기", notes = "수정할 닉네임을 입력받아 수정한다.")
+    @ApiResponses({
+            @ApiResponse(code =2600 ,message ="중복되는 유저 닉네임입니다"),
+            @ApiResponse(code=4000,message = "서버 오류입니다.")
+    })
     @PatchMapping("/nickName/{id}")
     public BaseResponse<PatchNicknameRes> updateNickname(@Validated @PathVariable("id") int id, @RequestBody @Valid PatchNicknameReq dto) {
         Member member = memberService.UpdateNickname(id, dto);
@@ -153,7 +172,14 @@ public class MemberController {
 
     // 삭제: 회원 탈퇴하기 - status "INACTIVE"로 수정
     @ApiOperation(value = "삭제: 회원 탈퇴하기", notes = "회원 id를 이용해 status \"INACTIVE\"로 수정.")
-    @PatchMapping("/account_delete/{id}")
+    @ApiResponses({
+            @ApiResponse(code =2009 ,message ="존재하지 않는 멤버입니다"),
+            @ApiResponse(code =2601 ,message ="이미 탈퇴한 회원입니다"),
+            @ApiResponse(code =2005 ,message ="입력하신 두 비밀번호가 다릅니다."),
+            @ApiResponse(code =2011 ,message ="비밀번호가 틀립니다."),
+            @ApiResponse(code=4000,message = "서버 오류입니다.")
+    })
+    @PatchMapping("/account-delete/{id}")
     public BaseResponse<String> updateMemberStatus(@PathVariable("id") int id, @RequestBody @Valid PatchMemberStatusReq dto) {
         memberService.UpdateMemberStatus(id, dto);
         String response = "회원 탈퇴가 성공하였습니다.";
@@ -162,7 +188,15 @@ public class MemberController {
 
     // 수정: 비밀번호 수정하기
     @ApiOperation(value = "수정: 비밀번호 수정하기", notes = "수정할 비밀번호를 입력받아 수정.")
-    @PatchMapping("/modify_password/{id}")
+    @ApiResponses({
+            @ApiResponse(code =2009 ,message ="존재하지 않는 멤버입니다"),
+            @ApiResponse(code =2601 ,message ="이미 탈퇴한 회원입니다"),
+            @ApiResponse(code =2005 ,message ="입력하신 두 비밀번호가 다릅니다."),
+            @ApiResponse(code =2011 ,message ="비밀번호가 틀립니다."),
+            @ApiResponse(code =2602 ,message ="기존 비밀번호와 동일합니다"),
+            @ApiResponse(code=4000,message = "서버 오류입니다.")
+    })
+    @PatchMapping("/modify-password/{id}")
     public BaseResponse<PatchPasswordRes> updatePassword(@PathVariable("id") int id, @RequestBody @Valid PatchPasswordReq dto) {
         Member member = memberService.UpdatePassword(id, dto);
 
@@ -171,8 +205,13 @@ public class MemberController {
     }
 
     // 아이디 중복 확인하기
+    @ApiOperation(value = "확인: 아이디 중복 확인하기", notes = "아이디 입력받아 중복 여부 체크.")
+    @ApiResponses({
+            @ApiResponse(code =2603 ,message ="존재하는 아이디입니다"),
+            @ApiResponse(code=4000,message = "서버 오류입니다.")
+    })
     @NoIntercept
-    @GetMapping("/id_duplicated")
+    @GetMapping("/id-duplicated")
     public BaseResponse<String> checkIdDuplicated(@RequestBody @Valid CheckIdReq dto) {
         memberService.checkId(dto);
 
@@ -183,6 +222,13 @@ public class MemberController {
 
     // 이메일 인증 번호 보내기
     @ApiOperation(value = "이메일 인증번호 보내기", notes = "사용자의 이메일을 입력받아 인증번호를 보낸다.")
+    @ApiResponses({
+            @ApiResponse(code = 2802, message = "이메일이 성공적으로 전송 되었습니다.")
+            ,@ApiResponse(code = 2803, message = "유효하지 않은 인증번호 입니다.")
+            ,@ApiResponse(code = 2804, message = "이메일 인증은 하루 최대 10번입니다.")
+            ,@ApiResponse(code = 2805, message = "잠시 후에 다시 시도해주세요.")
+    }
+    )
     @NoIntercept
     @PostMapping("/email")
     public BaseResponse<String> authEmail(@RequestBody @Valid EmailReq req, HttpServletRequest servletRequest) {
@@ -194,6 +240,11 @@ public class MemberController {
 
     // 이메일 인증 번호 확인하기
     @ApiOperation(value = "이메일 인증번호 확인하기", notes = "사용자의 이메일과, 수신한 이메일 인증번호를 이용해서 일치하는지 확인한다.")
+    @ApiResponses({
+            @ApiResponse(code = 2800, message = "이메일 인증이 완료되었습니다.")
+            ,@ApiResponse(code = 2801, message = "유효하지 않은 인증번호 입니다.")
+    }
+    )
     @NoIntercept
     @PostMapping("/email/check")
     public BaseResponse<String> checkEmail(@RequestBody @Valid EmailCertificationReq req) {
