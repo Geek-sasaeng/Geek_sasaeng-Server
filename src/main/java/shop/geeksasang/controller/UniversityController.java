@@ -33,4 +33,5 @@ public class UniversityController {
         return new BaseResponse<>(getUniversityRes);
     }
 
+
 }
