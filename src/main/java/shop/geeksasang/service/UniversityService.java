@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.geeksasang.domain.University;
 import shop.geeksasang.dto.domitory.GetDomitoriesRes;
+import shop.geeksasang.dto.university.GetUniversitiesRes;
 import shop.geeksasang.repository.*;
 
 import java.util.List;
@@ -19,9 +20,11 @@ public class UniversityService {
 
     // 대학교 조회: 전체 목록
     @Transactional(readOnly = false)
-    public List<University> getAllUniversity(){
-        List<University> getAllUniversityRes = universityRepository.findAll();
-        return getAllUniversityRes;
+    public List<GetUniversitiesRes> getAllUniversity(){
+        return universityRepository.findAll().stream()
+                .map(university -> GetUniversitiesRes.of(university))
+                .collect(Collectors.toList());
+
     }
 
     public List<GetDomitoriesRes> getDomitories(int universityId) {

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import shop.geeksasang.config.response.BaseResponse;
 import shop.geeksasang.domain.University;
+import shop.geeksasang.dto.university.GetUniversitiesRes;
 import shop.geeksasang.service.UniversityService;
 import shop.geeksasang.utils.jwt.NoIntercept;
 
@@ -28,10 +29,8 @@ public class UniversityController {
     })
     @NoIntercept
     @GetMapping
-    public BaseResponse<List<University>> getAllUniversity(){
-        List<University> getUniversityRes = universityService.getAllUniversity();
-        return new BaseResponse<>(getUniversityRes);
+    public BaseResponse<List<GetUniversitiesRes>> getAllUniversity(){
+        List<GetUniversitiesRes> allUniversity = universityService.getAllUniversity();
+        return new BaseResponse<>(allUniversity);
     }
-
-
 }
