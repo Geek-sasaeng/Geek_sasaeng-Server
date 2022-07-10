@@ -3,6 +3,7 @@ package shop.geeksasang.dto.member;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiParam;
 import lombok.*;
+import shop.geeksasang.config.domain.MemberLoginType;
 import shop.geeksasang.domain.Member;
 
 import javax.validation.constraints.*;
@@ -69,6 +70,7 @@ public class PostRegisterReq {
                 .email(getEmail())
                 .phoneNumber(getPhoneNumber())
                 .informationAgreeStatus(getInformationAgreeStatus())
+                .memberLoginType(MemberLoginType.NORMAL_USER)
                 .build();
     }
 }
