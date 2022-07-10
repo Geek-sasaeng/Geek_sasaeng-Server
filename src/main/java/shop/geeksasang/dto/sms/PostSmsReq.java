@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
@@ -20,6 +21,8 @@ public class PostSmsReq {
     @Size(min = 10, max = 11)
     private String recipientPhoneNumber;
 
-    @ApiModelProperty(value = "핸드폰이 가지고 있는 UUID")
+
+    @NotBlank
+    @ApiModelProperty(value = "핸드폰이 가지고 있는 UUID", example = "fe2e3a4d-1748-31f1-be0c-92a35bdfcbd5")
     private String uuid;
 }
