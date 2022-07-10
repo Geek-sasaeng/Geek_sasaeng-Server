@@ -58,7 +58,7 @@ public class MemberService {
 
         member.connectUniversity(university);
         member.changeStatusToActive();
-        member.changeLoginStatusToFirst(); // 첫 로그인 상태 저장
+        member.changeLoginStatusToNever(); // 로그인 안해본 상태 디폴트 저장
         memberRepository.save(member);
         return member;
     }

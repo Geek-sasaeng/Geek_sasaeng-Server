@@ -94,9 +94,19 @@ public class Member extends BaseEntity {
         super.setStatus(Status.INACTIVE);
     }
 
-    // 첫 번째 로그인 여부 저장
+    // 로그인 안해본 디폴트 저장
+    public void changeLoginStatusToNever(){
+        this.loginStatus = LoginStatus.NEVER;
+    }
+
+    // 로그인 횟수 상태 첫번째 저장
     public void changeLoginStatusToFirst(){
         this.loginStatus = LoginStatus.FIRST;
+    }
+
+    // 로그인 횟수 상태 첫번째 초과 저장
+    public void changeLoginStatusToNotFirst(){
+        this.loginStatus = LoginStatus.NOTFIRST;
     }
 
     @Override

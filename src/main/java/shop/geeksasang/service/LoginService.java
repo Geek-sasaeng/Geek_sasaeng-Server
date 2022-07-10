@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
+import shop.geeksasang.config.domain.LoginStatus;
 import shop.geeksasang.config.domain.Status;
 import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.config.exception.BaseResponseStatus;
@@ -37,6 +38,8 @@ public class LoginService {
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_LOGINID));
 
         String password = SHA256.encrypt(dto.getPassword());
+        LoginStatus loginStatus = member.getLoginStatus(); // 로그인 횟수 상태
+
 
         //password
         if(!password.equals(member.getPassword())){
@@ -47,6 +50,18 @@ public class LoginService {
             throw new BaseException(BaseResponseStatus.INACTIVE_STATUS);
         }
 
+        // 로그인 횟수 상태 (loginStatus) Never -> First변경
+        if(loginStatus.equals(LoginStatus.NEVER)){
+            member.changeLoginStatusToFirst();
+            loginStatus = LoginStatus.FIRST;
+        }
+
+        // 로그인 횟수 상태 (loginStatus) First ->  NotFirst변경
+        else if(loginStatus.equals(LoginStatus.FIRST)){
+            member.changeLoginStatusToNotFirst();
+            loginStatus = LoginStatus.NOTFIRST;
+        }
+
         JwtInfo vo = JwtInfo.builder()
                 .userId(member.getId())
                 .universityId(member.getUniversity().getId())
@@ -54,7 +69,10 @@ public class LoginService {
 
         String jwt = jwtService.createJwt(vo);
 
-        return LoginRes.builder().jwt(jwt).build();
+        return LoginRes.builder()
+                .jwt(jwt)
+                .loginStatus(loginStatus)
+                .build();
     }
 
     @GetMapping
