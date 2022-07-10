@@ -30,7 +30,7 @@ public class University extends BaseEntity {
     private String universityImgUrl;
 
 
-    @OneToMany(mappedBy = "university")
+    @OneToMany(mappedBy = "university", cascade = CascadeType.ALL)
     List<Domitory> domitories = new ArrayList<>();
 
 }
