@@ -69,23 +69,23 @@ public class MemberController {
         return new BaseResponse<>(patchPhoneNumberRes);
     }
 
-
-    // 수정: 폰 인증 번호
-    @ApiOperation(value = "수정: 폰 인증 번호", notes = "사용자의 폰 인증번호 입력받아 수정.")
-    @ApiResponses({
-            @ApiResponse(code =1000 ,message ="요청에 성공하셨습니다."),
-            @ApiResponse(code =2205 ,message ="존재하지 않는 회원 id 입니다."),
-            @ApiResponse(code=4000,message = "서버 오류입니다.")
-    })
-    @PatchMapping("/phone-vaid-key/{id}")
-    public BaseResponse<PatchPhoneValidKeyRes> updatePhoneValidKey(@PathVariable("id") int id, @Validated @RequestBody PatchPhoneValidKeyReq dto){
-        // 서비스에 폰 인증번호 수정 요청
-        Member member = memberService.updatePhoneValidKey(id,dto);
-        //응답 형식으로 변환
-        PatchPhoneValidKeyRes patchPhoneValidKeyRes = PatchPhoneValidKeyRes.toDto(member);
-        //반환
-        return new BaseResponse<>(patchPhoneValidKeyRes);
-    }
+/*SmsController 와 혼동돼는 부분이 있어 임시 주석처리*/
+//    // 수정: 폰 인증 번호
+//    @ApiOperation(value = "수정: 폰 인증 번호", notes = "사용자의 폰 인증번호 입력받아 수정.")
+//    @ApiResponses({
+//            @ApiResponse(code =1000 ,message ="요청에 성공하셨습니다."),
+//            @ApiResponse(code =2205 ,message ="존재하지 않는 회원 id 입니다."),
+//            @ApiResponse(code=4000,message = "서버 오류입니다.")
+//    })
+//    @PatchMapping("/phone-vaid-key/{id}")
+//    public BaseResponse<PatchPhoneValidKeyRes> updatePhoneValidKey(@PathVariable("id") int id, @Validated @RequestBody PatchPhoneValidKeyReq dto){
+//        // 서비스에 폰 인증번호 수정 요청
+//        Member member = memberService.updatePhoneValidKey(id,dto);
+//        //응답 형식으로 변환
+//        PatchPhoneValidKeyRes patchPhoneValidKeyRes = PatchPhoneValidKeyRes.toDto(member);
+//        //반환
+//        return new BaseResponse<>(patchPhoneValidKeyRes);
+//    }
 
 
 
