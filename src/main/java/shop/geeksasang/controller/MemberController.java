@@ -216,6 +216,7 @@ public class MemberController {
     @ApiOperation(value = "확인: 아이디 중복 확인하기", notes = "아이디 입력받아 중복 여부 체크.")
     @ApiResponses({
             @ApiResponse(code =2603 ,message ="존재하는 아이디입니다"),
+            @ApiResponse(code =2604 ,message ="사용가능한 아이디입니다"),
             @ApiResponse(code=4000,message = "서버 오류입니다.")
     })
     @NoIntercept
