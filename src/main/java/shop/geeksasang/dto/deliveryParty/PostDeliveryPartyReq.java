@@ -18,8 +18,7 @@ import java.util.List;
 public class PostDeliveryPartyReq {
     private int chief;
     private int domitory;
-    private int hashTag; // TODO:#############
-//    private List<Integer> hashTag;
+    private List<Integer> hashTag;
     private int category;
     private String title;
     private String content;

@@ -25,6 +25,11 @@ public class HashTag extends BaseEntity {
 
     private String title;
 
-    @ManyToMany
-    private List<DeliveryParty> deliveryParty = new ArrayList<>();;
+    @OneToMany(mappedBy ="hashTag", targetEntity=DeliveryPartyHashTag.class)
+    private List<DeliveryParty> deliveryParties=new ArrayList<>();
+
+    public void updateDeliveryParties(DeliveryParty deliveryParty){
+        this.deliveryParties.add(deliveryParty);
+    }
+
 }

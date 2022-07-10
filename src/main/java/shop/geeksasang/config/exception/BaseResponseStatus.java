@@ -66,6 +66,7 @@ public enum BaseResponseStatus {
      * code : 2400~2599
      */
     NOT_EXISTS_LOGINID(false,2400,"존재하지 않는 아이디입니다."),
+    NOT_EXISTS_HASHTAG(false,2401,"존재하지 않는 해시태그입니다."),
 
 
 
