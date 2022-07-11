@@ -60,9 +60,9 @@ public class EmailService {
         if(!universityEmailAdress.equals(emailAddress)){
             throw new BaseException(BaseResponseStatus.NOT_MATCH_EMAIL);
         }
-        if(memberRepository.findMemberByEmail(email).get().getEmailValidStatus().equals(EmailValidStatus.SUCCESS)){
-            throw new BaseException(BaseResponseStatus.ALREADY_VALID_EMAIL);
-        }
+//        if(memberRepository.findMemberByEmail(email).get().getEmailValidStatus().equals(EmailValidStatus.SUCCESS)){
+//            throw new BaseException(BaseResponseStatus.ALREADY_VALID_EMAIL);
+//        }
         // 하루 10번 제한 검증
         Optional<VerificationCount> emailVerificationCount_optional = verificationCountRepository.findEmailVerificationCountByUUID(UUID);
 
@@ -91,15 +91,16 @@ public class EmailService {
     public boolean checkEmailCertification(PostEmailCertificationReq request) {
         String email = request.getEmail();
         String key = request.getKey();
-        if (redisUtil.checkNumber(email, key) == true){
+        return redisUtil.checkNumber(email, key);
+//        if (redisUtil.checkNumber(email, key) == true){
 //            Member member = memberRepository.findMemberByEmail(email)
 //                    .orElseThrow(() -> new IllegalArgumentException("해당 유저는 존재하지 않습니다."));
 //            member.changeEmailValidStatusToSuccess();
 //            memberRepository.save(member);
-            return true;
-        }else{
-            return false;
-        }
+//            return true;
+//        }else{
+//            return false;
+//        }
 
     }
 
