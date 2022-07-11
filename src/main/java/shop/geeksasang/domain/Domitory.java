@@ -24,8 +24,11 @@ public class Domitory extends BaseEntity {
     private int id;
 
     @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="university_id")
+    @JoinColumn(name = "university_id")
     private University university;
+
+    @OneToMany(mappedBy = "domitory")
+    private List<DeliveryParty> deliveryParties;
 
     private String name;
 
