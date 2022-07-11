@@ -21,6 +21,7 @@ public class RedisUtil {
     // key를 통해 value 리턴
     public String getData(String email) {
         ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
+
         return valueOperations.get(email);
     }
 
@@ -28,6 +29,8 @@ public class RedisUtil {
     public boolean checkNumber(String email, String value) {
         try {
             String valid_value = getData(email);
+            System.out.println(valid_value);
+            System.out.println(value);
             if (valid_value.equals(value)) {
                 deleteData(email);
                 return true;

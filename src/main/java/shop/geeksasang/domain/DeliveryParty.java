@@ -35,11 +35,9 @@ public class DeliveryParty extends BaseEntity {
     private Domitory domitory;
 
     //나중에 수정 가능.
-    @ManyToMany()
-    private List<HashTag> hashTag = new ArrayList<>();
-//    @ManyToOne()
-//    @JoinColumn(name="hashtag_id")
-//    private HashTag hashTag;
+    @OneToMany(mappedBy ="deliveryParty", targetEntity=DeliveryPartyHashTag.class)
+    private List<HashTag> hashTags=new ArrayList<>();
+
 
     @OneToOne(fetch=FetchType.LAZY)
     @JsonIgnore
@@ -74,8 +72,8 @@ public class DeliveryParty extends BaseEntity {
         this.domitory = domitory;
     }
 
-    public void connectHashTag(){// TODO:해시태그 리스트 받아와서 저장
-        this.hashTag = null;
+    public void connectHashTag(HashTag hashTag){
+        this.hashTags.add(hashTag);
     }
 
     public void connectCategory(Category category){

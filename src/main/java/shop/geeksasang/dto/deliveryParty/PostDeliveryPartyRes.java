@@ -39,7 +39,7 @@ public class PostDeliveryPartyRes {
                 .domitory(deliveryParty.getDomitory().getName())
                 //.hashTags(deliveryParty.getHashTag()) // Req의 메소드와 다름
                 //.hashTags(deliveryParty.getHashTag()) // TODO:#####
-                .hashTags(deliveryParty.getHashTag().stream().map(HashTag::getTitle).collect(Collectors.toList()))
+                .hashTags(deliveryParty.getHashTags().stream().map(HashTag::getTitle).collect(Collectors.toList()))
                 .category(deliveryParty.getCategory().getTitle())
                 .title(deliveryParty.getTitle())
                 .content(deliveryParty.getContent())

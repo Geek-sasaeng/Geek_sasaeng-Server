@@ -223,7 +223,6 @@ public class MemberController {
     @PostMapping("/id-duplicated")
     public BaseResponse<String> checkIdDuplicated(@RequestBody @Valid GetCheckIdReq dto) {
         memberService.checkId(dto);
-
         return new BaseResponse<>(BaseResponseStatus.VALID_ID);
     }
 

@@ -3,6 +3,8 @@ package shop.geeksasang.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import shop.geeksasang.config.exception.BaseException;
+import shop.geeksasang.config.exception.BaseResponseStatus;
 import shop.geeksasang.domain.*;
 import shop.geeksasang.dto.deliveryParty.PostDeliveryPartyReq;
 import shop.geeksasang.repository.*;
@@ -22,15 +24,11 @@ public class DeliveryPartyService {
     private final DomitoryRepository domitoryRepository;
     private final HashTagRepository hashTagRepository;
     private final CategoryRepository categoryRepository;
+    private final DeliveryPartyHashTagRepository deliveryPartyHashTagRepository;
+
 
     @Transactional(readOnly = false) // ?
     public DeliveryParty registerDeliveryParty(PostDeliveryPartyReq dto){
-        System.out.println("ㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇ"+dto.getOrderTime());
-        System.out.println("ㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇ"+dto.getOrderTime().getHour());
-
-
-        LocalDateTime localDateTime = LocalDateTime.of(2021, 1, 1, 0, 0, 0);
-
 
         // 파티 생성 및 저장
         DeliveryParty deliveryParty = dto.toEntity();
@@ -45,20 +43,26 @@ public class DeliveryPartyService {
                 .orElseThrow(() -> new RuntimeException(""));
         deliveryParty.connectDomitory(domitory);
 
-        //해시태그
-//        HashTag hashTag = hashTagRepository.findById(dto.getHashTag())
-//                .orElseThrow(() -> new RuntimeException(""));
-//        deliveryParty.connectHashTag(hashTag);
-        deliveryParty.connectHashTag();
-
-
         //카테고리
         Category category = categoryRepository.findById(dto.getCategory())
                 .orElseThrow(() -> new RuntimeException(""));
         deliveryParty.connectCategory(category);
 
+        //해시태그
+        DeliveryPartyHashTag deliveryPartyHashTag = DeliveryPartyHashTag.builder()
+                .deliveryParty(deliveryParty)
+                .build();
 
+        for(Integer hashTagId : dto.getHashTag()){
+            HashTag hashTag = hashTagRepository.findById(hashTagId)
+                    .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_HASHTAG));
+
+            deliveryPartyHashTag.connectPartyHashTag(deliveryParty,hashTag);
+        }
+        //여기 의문***
         deliveryPartyRepository.save(deliveryParty);
+        deliveryPartyHashTagRepository.save(deliveryPartyHashTag);
+
         // 반환
         return deliveryParty;
     }
