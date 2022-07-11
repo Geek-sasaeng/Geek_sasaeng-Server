@@ -43,6 +43,9 @@ public class DeliveryParty extends BaseEntity {
     @JsonIgnore
     private Category category;
 
+    @OneToMany(mappedBy = "party")
+    private List<DeliveryPartyRoom> deliveryPartyRooms;
+
     private String title;
 
     private String content;
@@ -57,7 +60,6 @@ public class DeliveryParty extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private MatchingStatus matchingStatus;
-
 
     //-// 연관 관계 편의 메서드 //-//
 

@@ -139,7 +139,7 @@ public class MemberController {
             @ApiResponse(code =2204 ,message ="폰 인증번호가 다릅니다."),
             @ApiResponse(code=4000,message = "서버 오류입니다.")
     })
-    @GetMapping("/phone-vaid-key/{id}")
+    @PostMapping("/phone-vaid-key/{id}")
     @NoIntercept
     public BaseResponse<String> checkPhoneValidKey(@PathVariable("id") int id,@Validated @RequestBody GetCheckPhoneValidKeyReq dto){
         memberService.checkPhoneValidKey(id,dto);
@@ -154,7 +154,7 @@ public class MemberController {
             @ApiResponse(code =2600 ,message ="중복되는 유저 닉네임입니다"),
             @ApiResponse(code=4000,message = "서버 오류입니다.")
     })
-    @GetMapping("/nickname-duplicated")
+    @PostMapping("/nickname-duplicated")
     @NoIntercept // jwt 검사 제외
     public BaseResponse<String> checkNickNameDuplicated(@Validated @RequestBody GetNickNameDuplicatedReq dto){
 
@@ -220,7 +220,7 @@ public class MemberController {
             @ApiResponse(code=4000,message = "서버 오류입니다.")
     })
     @NoIntercept
-    @GetMapping("/id-duplicated")
+    @PostMapping("/id-duplicated")
     public BaseResponse<String> checkIdDuplicated(@RequestBody @Valid GetCheckIdReq dto) {
         memberService.checkId(dto);
         return new BaseResponse<>(BaseResponseStatus.VALID_ID);
