@@ -92,10 +92,10 @@ public class EmailService {
         String email = request.getEmail();
         String key = request.getKey();
         if (redisUtil.checkNumber(email, key) == true){
-            Member member = memberRepository.findMemberByEmail(email)
-                    .orElseThrow(() -> new IllegalArgumentException("해당 유저는 존재하지 않습니다."));
-            member.changeEmailValidStatusToSuccess();
-            memberRepository.save(member);
+//            Member member = memberRepository.findMemberByEmail(email)
+//                    .orElseThrow(() -> new IllegalArgumentException("해당 유저는 존재하지 않습니다."));
+//            member.changeEmailValidStatusToSuccess();
+//            memberRepository.save(member);
             return true;
         }else{
             return false;
@@ -132,9 +132,9 @@ public class EmailService {
         // 유효 시간 (5분)동안 {email, authKey} 저장
         redisUtil.setDataExpire(email, authKey, expireTime);
 
-        Member member = memberRepository.findMemberByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("해당 유저는 존재하지 않습니다."));
-        member.updateEmailValidKey(authKey);
+//        Member member = memberRepository.findMemberByEmail(email)
+//                .orElseThrow(() -> new IllegalArgumentException("해당 유저는 존재하지 않습니다."));
+//        member.updateEmailValidKey(authKey);
 
     }
 
