@@ -58,16 +58,22 @@ public class EmailService {
         }
         // 하루 10번 제한 검증
         Optional<VerificationCount> emailVerificationCount_optional = verificationCountRepository.findEmailVerificationCountByUUID(UUID);
-        VerificationCount emailVerificationCount = emailVerificationCount_optional.get();
-        if(emailVerificationCount == null){
-            emailVerificationCount = new VerificationCount(UUID);
+
+        if(!emailVerificationCount_optional.isEmpty()) {
+            if(emailVerificationCount_optional.get().getEmailVerificationCount() >= 10){
+                throw new BaseException(INVALID_EMAIL_COUNT);
+            }
+            VerificationCount emailVerificationCountExist = emailVerificationCount_optional.get();
+            verificationCountRepository.save(emailVerificationCountExist);
+            emailVerificationCountExist.increaseEmailVerificationCount();
+        } else {
+            VerificationCount emailVerificationCount = new VerificationCount(UUID);
             verificationCountRepository.save(emailVerificationCount);
+            //count + 1
+            emailVerificationCount.increaseEmailVerificationCount();
         }
-        //count + 1
-        emailVerificationCount.increaseEmailVerificationCount();
-        if(emailVerificationCount.getEmailVerificationCount() >= 10){
-            throw new BaseException(INVALID_EMAIL_COUNT);
-        }
+
+
         // 난수 생성
         Random random = new Random();
         String authKey = String.valueOf(random.nextInt(888888) + 111111);
@@ -109,6 +115,7 @@ public class EmailService {
         sendSES(subject, content, receiver); // SES 이메일 보내기
         // 유효 시간 (5분)동안 {email, authKey} 저장
         redisUtil.setDataExpire(email, authKey, expireTime);
+        redisUtil.getData(email);
     }
 
     private void sendingResultMustSuccess(final SendEmailResult sendEmailResult) {
