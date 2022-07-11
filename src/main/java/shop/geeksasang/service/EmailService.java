@@ -9,6 +9,7 @@ import org.springframework.core.task.TaskRejectedException;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import shop.geeksasang.config.domain.EmailValidStatus;
 import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.config.exception.BaseResponseStatus;
 import shop.geeksasang.domain.Member;
@@ -58,6 +59,9 @@ public class EmailService {
         // 대학교 이메일 주소 같지 않으면
         if(!universityEmailAdress.equals(emailAddress)){
             throw new BaseException(BaseResponseStatus.NOT_MATCH_EMAIL);
+        }
+        if(memberRepository.findMemberByEmail(email).get().getEmailValidStatus().equals(EmailValidStatus.SUCCESS)){
+            throw new BaseException(BaseResponseStatus.ALREADY_VALID_EMAIL);
         }
         // 하루 10번 제한 검증
         Optional<VerificationCount> emailVerificationCount_optional = verificationCountRepository.findEmailVerificationCountByUUID(UUID);
