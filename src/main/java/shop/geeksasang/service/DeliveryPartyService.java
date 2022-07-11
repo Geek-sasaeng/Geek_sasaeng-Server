@@ -57,10 +57,13 @@ public class DeliveryPartyService {
             HashTag hashTag = hashTagRepository.findById(hashTagId)
                     .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_HASHTAG));
 
+            System.out.println("여기 들어옴ㅋㅋㅋㅋ");
             deliveryPartyHashTag.connectPartyHashTag(deliveryParty,hashTag);
         }
+
         //여기 의문***
         deliveryPartyRepository.save(deliveryParty);
+
         deliveryPartyHashTagRepository.save(deliveryPartyHashTag);
 
         // 반환
@@ -78,15 +81,12 @@ public class DeliveryPartyService {
     //배달파티 조회: 전체목록
 
 
-
     //배달파티 조회: 전체목록
     @Transactional(readOnly = false) // ?
     public List<DeliveryParty> getDeliveryPartyById(int domitoryId){
         List<DeliveryParty> getDliveryPartyRes = deliveryPartyRepository.findDeliveryPartiesByDomitoryId(domitoryId);
         return getDliveryPartyRes;
     }
-
-
 
 
     //배달파티 상세조회:

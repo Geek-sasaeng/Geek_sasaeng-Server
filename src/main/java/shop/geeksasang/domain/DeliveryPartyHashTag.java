@@ -33,10 +33,15 @@ public class DeliveryPartyHashTag extends BaseEntity {
         this.hashTag=hashTag;
 
         if(!party.getHashTags().contains(hashTag)) {
+            System.out.println("여기들어옴");
             party.getHashTags().add(hashTag);
+            System.out.println("나감");
         }
+
         if(!hashTag.getDeliveryParties().contains(party)){
+            System.out.println("풉키풉키");
             hashTag.getDeliveryParties().add(party);
+            System.out.println("풉키");
         }
 
     }

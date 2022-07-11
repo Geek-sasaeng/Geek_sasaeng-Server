@@ -17,8 +17,6 @@ import java.util.stream.Collectors;
 public class PostDeliveryPartyRes {
     private String chief;
     private String domitory;
-//    private List<HashTag> hashTags;
-    //private String hashTag; //TODO:######
     private List<String> hashTags;
     private String category;
     private String title;
@@ -37,8 +35,6 @@ public class PostDeliveryPartyRes {
         return PostDeliveryPartyRes.builder()
                 .chief(deliveryParty.getChief().getNickName())
                 .domitory(deliveryParty.getDomitory().getName())
-                //.hashTags(deliveryParty.getHashTag()) // Req의 메소드와 다름
-                //.hashTags(deliveryParty.getHashTag()) // TODO:#####
                 .hashTags(deliveryParty.getHashTags().stream().map(HashTag::getTitle).collect(Collectors.toList()))
                 .category(deliveryParty.getCategory().getTitle())
                 .title(deliveryParty.getTitle())
