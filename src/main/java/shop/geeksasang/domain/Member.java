@@ -4,10 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import shop.geeksasang.config.domain.BaseEntity;
-import shop.geeksasang.config.domain.LoginStatus;
-import shop.geeksasang.config.domain.MemberLoginType;
-import shop.geeksasang.config.domain.Status;
+import shop.geeksasang.config.domain.*;
 
 import javax.persistence.*;
 
@@ -45,7 +42,8 @@ public class Member extends BaseEntity {
 
     private String emailValidKey;
 
-    private String emailValidStatus;
+    @Enumerated(EnumType.STRING)
+    private EmailValidStatus emailValidStatus;
 
     private String jwtToken;
 
@@ -91,6 +89,13 @@ public class Member extends BaseEntity {
     public void updateNickname(String nickName) { this.nickName = nickName; }
 
     public void updatePassword(String password) { this.password = password; }
+
+    public void updateEmailValidKey(String emailValidKey) { this.emailValidKey = emailValidKey; }
+
+
+    public void changeEmailValidStatusToSuccess() {
+        this.emailValidStatus = EmailValidStatus.SUCCESS;
+    }
 
 
     // 회원 탈퇴
