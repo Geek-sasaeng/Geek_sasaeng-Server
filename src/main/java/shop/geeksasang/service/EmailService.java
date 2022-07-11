@@ -9,13 +9,16 @@ import org.springframework.core.task.TaskRejectedException;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import shop.geeksasang.config.domain.EmailValidStatus;
 import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.config.exception.BaseResponseStatus;
+import shop.geeksasang.domain.Member;
 import shop.geeksasang.domain.University;
 import shop.geeksasang.domain.VerificationCount;
 import shop.geeksasang.dto.email.PostEmailCertificationReq;
 import shop.geeksasang.dto.email.PostEmailReq;
 import shop.geeksasang.dto.email.EmailSenderDto;
+import shop.geeksasang.repository.MemberRepository;
 import shop.geeksasang.repository.UniversityRepository;
 import shop.geeksasang.repository.VerificationCountRepository;
 import shop.geeksasang.utils.jwt.RedisUtil;
@@ -34,6 +37,7 @@ import static shop.geeksasang.config.exception.BaseResponseStatus.*;
 public class EmailService {
     final UniversityRepository universityRepository;
     final VerificationCountRepository verificationCountRepository;
+    final MemberRepository memberRepository;
 
     private final long expireTime = 60 * 5L; // 이메일 유효 기간
 
@@ -55,6 +59,9 @@ public class EmailService {
         // 대학교 이메일 주소 같지 않으면
         if(!universityEmailAdress.equals(emailAddress)){
             throw new BaseException(BaseResponseStatus.NOT_MATCH_EMAIL);
+        }
+        if(memberRepository.findMemberByEmail(email).get().getEmailValidStatus().equals(EmailValidStatus.SUCCESS)){
+            throw new BaseException(BaseResponseStatus.ALREADY_VALID_EMAIL);
         }
         // 하루 10번 제한 검증
         Optional<VerificationCount> emailVerificationCount_optional = verificationCountRepository.findEmailVerificationCountByUUID(UUID);
@@ -84,7 +91,16 @@ public class EmailService {
     public boolean checkEmailCertification(PostEmailCertificationReq request) {
         String email = request.getEmail();
         String key = request.getKey();
-        return redisUtil.checkNumber(email, key);
+        if (redisUtil.checkNumber(email, key) == true){
+            Member member = memberRepository.findMemberByEmail(email)
+                    .orElseThrow(() -> new IllegalArgumentException("해당 유저는 존재하지 않습니다."));
+            member.changeEmailValidStatusToSuccess();
+            memberRepository.save(member);
+            return true;
+        }else{
+            return false;
+        }
+
     }
 
     // AWS SES로 이메일 전송, 비동기
@@ -115,7 +131,11 @@ public class EmailService {
         sendSES(subject, content, receiver); // SES 이메일 보내기
         // 유효 시간 (5분)동안 {email, authKey} 저장
         redisUtil.setDataExpire(email, authKey, expireTime);
-        redisUtil.getData(email);
+
+        Member member = memberRepository.findMemberByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저는 존재하지 않습니다."));
+        member.updateEmailValidKey(authKey);
+
     }
 
     private void sendingResultMustSuccess(final SendEmailResult sendEmailResult) {

@@ -81,6 +81,7 @@ public enum BaseResponseStatus {
     VALID_ID(true, 2604, "사용가능한 아이디입니다"),
     NOT_EXISTS_UNIVERSITY_ID(false, 2605, "존재하지 않는 학교입니다"),
     NOT_EXISTS_DOMITORY(false, 2606, "기숙사가 존재하지 않습니다"),
+    ALREADY_VALID_EMAIL(false, 2607, "이미 인증된 이메일 입니다"),
 
     /**
      * 네오
