@@ -49,22 +49,21 @@ public class DeliveryPartyService {
         deliveryParty.connectCategory(category);
 
         //해시태그
-        DeliveryPartyHashTag deliveryPartyHashTag = DeliveryPartyHashTag.builder()
-                .deliveryParty(deliveryParty)
-                .build();
 
         for(Integer hashTagId : dto.getHashTag()){
+
+            //id로 hashTag 검색
             HashTag hashTag = hashTagRepository.findById(hashTagId)
                     .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_HASHTAG));
 
-            System.out.println("여기 들어옴ㅋㅋㅋㅋ");
-            deliveryPartyHashTag.connectPartyHashTag(deliveryParty,hashTag);
+            //deliveryPartyHashTag 생성
+            DeliveryPartyHashTag deliveryPartyHashTag = new DeliveryPartyHashTag(deliveryParty,hashTag);
+
+            deliveryParty.connectHashTag(hashTag);
         }
 
-        //여기 의문***
+        //저장
         deliveryPartyRepository.save(deliveryParty);
-
-        deliveryPartyHashTagRepository.save(deliveryPartyHashTag);
 
         // 반환
         return deliveryParty;

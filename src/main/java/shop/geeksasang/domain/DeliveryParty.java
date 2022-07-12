@@ -35,7 +35,7 @@ public class DeliveryParty extends BaseEntity {
     private Domitory domitory;
 
     //나중에 수정 가능.
-    @OneToMany(mappedBy ="deliveryParty", targetEntity=DeliveryPartyHashTag.class)
+    @OneToMany(mappedBy ="deliveryParty", targetEntity=DeliveryPartyHashTag.class, cascade = CascadeType.ALL)
     private List<HashTag> hashTags=new ArrayList<>();
 
 

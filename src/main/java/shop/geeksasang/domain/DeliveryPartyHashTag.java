@@ -27,6 +27,12 @@ public class DeliveryPartyHashTag extends BaseEntity {
     @JoinColumn(name="delivery_party_id")
     private DeliveryParty deliveryParty;
 
+    //생성자
+    public DeliveryPartyHashTag(DeliveryParty deliveryParty, HashTag hashTag){
+        this.deliveryParty=deliveryParty;
+        this.hashTag = hashTag;
+    }
+
     public void connectPartyHashTag(DeliveryParty party, HashTag hashTag){
 
         this.deliveryParty=party;
@@ -40,7 +46,8 @@ public class DeliveryPartyHashTag extends BaseEntity {
 
         if(!hashTag.getDeliveryParties().contains(party)){
             System.out.println("풉키풉키");
-            hashTag.getDeliveryParties().add(party);
+            //hashTag.getDeliveryParties().add(party);
+            hashTag.plusParties(party);
             System.out.println("풉키");
         }
 

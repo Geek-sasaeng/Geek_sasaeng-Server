@@ -23,7 +23,6 @@ public class DeliveryPartyControllor {
         DeliveryParty deliveryParty = deliveryPartyService.registerDeliveryParty(dto);
 
         PostDeliveryPartyRes postDeliveryPartyRes = PostDeliveryPartyRes.toDto(deliveryParty);
-
         return new BaseResponse<>(postDeliveryPartyRes);
     }
 

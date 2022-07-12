@@ -25,10 +25,10 @@ public class HashTag extends BaseEntity {
 
     private String title;
 
-    @OneToMany(mappedBy ="hashTag", targetEntity=DeliveryPartyHashTag.class)
+    @OneToMany(mappedBy ="hashTag", targetEntity=DeliveryPartyHashTag.class, cascade = CascadeType.ALL)
     private List<DeliveryParty> deliveryParties=new ArrayList<>();
 
-    public void updateDeliveryParties(DeliveryParty deliveryParty){
+    public void plusParties(DeliveryParty deliveryParty){
         this.deliveryParties.add(deliveryParty);
     }
 
