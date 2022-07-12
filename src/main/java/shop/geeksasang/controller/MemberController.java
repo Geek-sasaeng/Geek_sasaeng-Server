@@ -29,6 +29,7 @@ public class MemberController {
     // 회원가입
     @ApiOperation(value = "사용자 회원가입", notes = "사용자의 정보들을 이용해서 회원가입을 진행한다.")
     @ApiResponses({
+            @ApiResponse(code =1000 ,message ="요청에 성공하였습니다."),
             @ApiResponse(code =2205 ,message ="존재하지 않는 회원 id 입니다."),
             @ApiResponse(code =2006 ,message ="중복되는 유저 아이디입니다"),
             @ApiResponse(code =2007 ,message ="중복되는 유저 이메일입니다"),
@@ -47,6 +48,7 @@ public class MemberController {
     // 소셜 회원가입
     @ApiOperation(value = "사용자 소셜 회원가입", notes = "사용자의 정보들을 이용해서 소셜 회원가입을 진행한다.")
     @ApiResponses({
+            @ApiResponse(code =1000 ,message ="요청에 성공하였습니다."),
             @ApiResponse(code =2007 ,message ="중복되는 유저 이메일입니다"),
             @ApiResponse(code =2201 ,message ="회원 정보동의 status가 Y가 아닙니다."),
             @ApiResponse(code =2008 ,message ="존재하지 않는 학교 이름입니다"),
