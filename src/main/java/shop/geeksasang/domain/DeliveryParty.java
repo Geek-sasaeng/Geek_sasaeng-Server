@@ -44,7 +44,7 @@ public class DeliveryParty extends BaseEntity {
     private Category category;
 
     @OneToMany(mappedBy = "party")
-    private List<DeliveryPartyRoom> deliveryPartyRooms;
+    private List<DeliveryPartyMember> deliveryPartyMembers;
 
     private String title;
 

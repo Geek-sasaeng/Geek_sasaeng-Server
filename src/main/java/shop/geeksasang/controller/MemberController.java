@@ -29,6 +29,7 @@ public class MemberController {
     // 회원가입
     @ApiOperation(value = "사용자 회원가입", notes = "사용자의 정보들을 이용해서 회원가입을 진행한다.")
     @ApiResponses({
+            @ApiResponse(code =1000 ,message ="요청에 성공하였습니다."),
             @ApiResponse(code =2205 ,message ="존재하지 않는 회원 id 입니다."),
             @ApiResponse(code =2006 ,message ="중복되는 유저 아이디입니다"),
             @ApiResponse(code =2007 ,message ="중복되는 유저 이메일입니다"),
@@ -47,6 +48,7 @@ public class MemberController {
     // 소셜 회원가입
     @ApiOperation(value = "사용자 소셜 회원가입", notes = "사용자의 정보들을 이용해서 소셜 회원가입을 진행한다.")
     @ApiResponses({
+            @ApiResponse(code =1000 ,message ="요청에 성공하였습니다."),
             @ApiResponse(code =2007 ,message ="중복되는 유저 이메일입니다"),
             @ApiResponse(code =2201 ,message ="회원 정보동의 status가 Y가 아닙니다."),
             @ApiResponse(code =2008 ,message ="존재하지 않는 학교 이름입니다"),
@@ -216,7 +218,7 @@ public class MemberController {
     @ApiOperation(value = "확인: 아이디 중복 확인하기", notes = "아이디 입력받아 중복 여부 체크.")
     @ApiResponses({
             @ApiResponse(code =2603 ,message ="존재하는 아이디입니다"),
-            @ApiResponse(code =2604 ,message ="사용가능한 아이디입니다"),
+            @ApiResponse(code =1601 ,message ="사용가능한 아이디입니다"),
             @ApiResponse(code=4000,message = "서버 오류입니다.")
     })
     @NoIntercept
@@ -229,7 +231,7 @@ public class MemberController {
     // 이메일 인증 번호 보내기
     @ApiOperation(value = "이메일 인증번호 보내기", notes = "사용자의 이메일을 입력받아 인증번호를 보낸다.")
     @ApiResponses({
-            @ApiResponse(code = 2802, message = "이메일이 성공적으로 전송 되었습니다.")
+            @ApiResponse(code = 1802, message = "이메일이 성공적으로 전송 되었습니다.")
             ,@ApiResponse(code = 2803, message = "유효하지 않은 인증번호 입니다.")
             ,@ApiResponse(code = 2804, message = "이메일 인증은 하루 최대 10번입니다.")
             ,@ApiResponse(code = 2805, message = "잠시 후에 다시 시도해주세요.")
@@ -246,8 +248,8 @@ public class MemberController {
     // 이메일 인증 번호 확인하기
     @ApiOperation(value = "이메일 인증번호 확인하기", notes = "사용자의 이메일과, 수신한 이메일 인증번호를 이용해서 일치하는지 확인한다.")
     @ApiResponses({
-            @ApiResponse(code = 2800, message = "이메일 인증이 완료되었습니다.")
-            ,@ApiResponse(code = 2801, message = "유효하지 않은 인증번호 입니다.")
+            @ApiResponse(code = 1801, message = "이메일 인증이 완료되었습니다.")
+            ,@ApiResponse(code = 2800, message = "유효하지 않은 인증번호 입니다.")
     }
     )
     @NoIntercept
