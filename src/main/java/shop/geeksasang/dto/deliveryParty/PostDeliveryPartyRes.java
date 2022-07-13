@@ -23,7 +23,7 @@ public class PostDeliveryPartyRes {
     private LocalDateTime orderTime;
 
     private String createdAt;
-
+    private String orderTimeCategoryType;
     private int currentMatching;
     private int maxMatching;
     private String location;
@@ -39,6 +39,7 @@ public class PostDeliveryPartyRes {
                 .content(deliveryParty.getContent())
                 .orderTime(deliveryParty.getOrderTime())
                 .createdAt(deliveryParty.getCreatedAt())
+                .orderTimeCategoryType(deliveryParty.getOrderTimeCategory().toString())
                 .currentMatching(deliveryParty.getCurrentMatching())
                 .maxMatching(deliveryParty.getMaxMatching())
                 .location(deliveryParty.getLocation())
