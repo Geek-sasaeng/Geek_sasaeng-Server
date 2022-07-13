@@ -20,9 +20,12 @@ import shop.geeksasang.dto.deliveryParty.GetDeliveryPartyByOrderTimeRes;
 import shop.geeksasang.dto.deliveryParty.PostDeliveryPartyReq;
 import shop.geeksasang.repository.*;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
+
+import static shop.geeksasang.config.exception.BaseResponseStatus.NOT_SPECIFIED_VALUE;
 
 @Transactional
 @Service
@@ -38,6 +41,7 @@ public class DeliveryPartyService {
 
     private static final int PAGING_SIZE = 10;
     private static final String PAGING_STANDARD = "orderTime";
+    private static final List<Integer> MATHCING_NUMBER = Arrays.asList(2, 4, 6, 8, 10);
 
 
     @Transactional(readOnly = false) // ?
@@ -101,6 +105,11 @@ public class DeliveryPartyService {
 
     // 배달파티 조회: 인원수
     public List<GetDeliveryPartyByMaxMatchingRes> getDeliveryPartyByMaxMatching(int domitoryId, int maxMatching, int cursor) {
+
+        // 인원수 입렵값 validation
+        if(!MATHCING_NUMBER.contains(maxMatching)){
+            throw new BaseException(NOT_SPECIFIED_VALUE);
+        }
 
         PageRequest paging = PageRequest.of(cursor, PAGING_SIZE, Sort.by(Sort.Direction.ASC, PAGING_STANDARD));
 
