@@ -20,7 +20,7 @@ public class PostDeliveryPartyRes {
 //    private List<HashTag> hashTags;
     //private String hashTag; //TODO:######
     private List<String> hashTags;
-    private String category;
+    private String foodCategory;
     private String title;
     private String content;
     private LocalDateTime orderTime;
@@ -40,7 +40,7 @@ public class PostDeliveryPartyRes {
                 //.hashTags(deliveryParty.getHashTag()) // Req의 메소드와 다름
                 //.hashTags(deliveryParty.getHashTag()) // TODO:#####
                 .hashTags(deliveryParty.getHashTags().stream().map(HashTag::getTitle).collect(Collectors.toList()))
-                .category(deliveryParty.getCategory().getTitle())
+                .foodCategory(deliveryParty.getFoodCategory().getTitle())
                 .title(deliveryParty.getTitle())
                 .content(deliveryParty.getContent())
                 .orderTime(deliveryParty.getOrderTime())

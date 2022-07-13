@@ -1,22 +1,32 @@
 package shop.geeksasang.service;
 
+import com.sun.xml.bind.v2.model.core.EnumConstant;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import shop.geeksasang.config.domain.OrderTimeCategoryType;
 import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.config.exception.BaseResponseStatus;
 import shop.geeksasang.domain.*;
 import shop.geeksasang.dto.deliveryParty.GetDeliveryPartiesRes;
+import shop.geeksasang.dto.deliveryParty.GetDeliveryPartyByMaxMatchingRes;
+import shop.geeksasang.dto.deliveryParty.GetDeliveryPartyByOrderTimeRes;
 import shop.geeksasang.dto.deliveryParty.PostDeliveryPartyReq;
 import shop.geeksasang.repository.*;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static shop.geeksasang.config.exception.BaseResponseStatus.NOT_EXISTS_ORDER_TIME_CATEGORY;
+import static shop.geeksasang.config.exception.BaseResponseStatus.NOT_SPECIFIED_VALUE;
+
 
 @Transactional
 @Service
@@ -27,11 +37,12 @@ public class DeliveryPartyService {
     private final MemberRepository memberRepository;
     private final DomitoryRepository domitoryRepository;
     private final HashTagRepository hashTagRepository;
-    private final CategoryRepository categoryRepository;
+    private final FoodCategoryRepository foodCategoryRepository;
     private final DeliveryPartyHashTagRepository deliveryPartyHashTagRepository;
 
     private static final int PAGING_SIZE = 10;
     private static final String PAGING_STANDARD = "orderTime";
+    private static final List<Integer> MATHCING_NUMBER = Arrays.asList(2, 4, 6, 8, 10);
 
 
     @Transactional(readOnly = false) // ?
@@ -51,9 +62,9 @@ public class DeliveryPartyService {
         deliveryParty.connectDomitory(domitory);
 
         //카테고리
-        Category category = categoryRepository.findById(dto.getCategory())
+        FoodCategory food_category = foodCategoryRepository.findById(dto.getFood_category())
                 .orElseThrow(() -> new RuntimeException(""));
-        deliveryParty.connectCategory(category);
+        deliveryParty.connectFoodCategory(food_category);
 
         //해시태그
         DeliveryPartyHashTag deliveryPartyHashTag = DeliveryPartyHashTag.builder()
@@ -91,6 +102,37 @@ public class DeliveryPartyService {
         DeliveryParty deliveryParty= deliveryPartyRepository.findById(partyId)
                 .orElseThrow(() -> new RuntimeException(""));
         return deliveryParty;
+    }
+
+    // 배달파티 조회: 인원수
+    public List<GetDeliveryPartyByMaxMatchingRes> getDeliveryPartyByMaxMatching(int domitoryId, int maxMatching, int cursor) {
+
+        // 인원수 입렵값 validation
+        if(!MATHCING_NUMBER.contains(maxMatching)){
+            throw new BaseException(NOT_SPECIFIED_VALUE);
+        }
+
+        PageRequest paging = PageRequest.of(cursor, PAGING_SIZE, Sort.by(Sort.Direction.ASC, PAGING_STANDARD));
+
+        Slice<DeliveryParty> deliveryParties = deliveryPartyRepository.findDeliveryPartiesByMaxMatching(domitoryId, maxMatching, paging);
+
+        return deliveryParties.stream()
+                .map(deliveryParty -> GetDeliveryPartyByMaxMatchingRes.toDto(deliveryParty))
+                .collect(Collectors.toList());
+    }
+
+    // 배달파티 조회: orderTimeCategory 시간대
+    public List<GetDeliveryPartyByOrderTimeRes> getDeliveryPartyByOrderTime(int domitoryId, int cursor, String orderTimeCategory) {
+
+        OrderTimeCategoryType orderTimeCategoryType = OrderTimeCategoryType.valueOf(orderTimeCategory);
+
+        PageRequest paging = PageRequest.of(cursor, PAGING_SIZE, Sort.by(Sort.Direction.ASC, PAGING_STANDARD));
+
+        Slice<DeliveryParty> deliveryParties = deliveryPartyRepository.findDeliveryPartiesByOrderTime(domitoryId, orderTimeCategoryType, paging);
+
+        return deliveryParties.stream()
+                .map(deliveryParty -> GetDeliveryPartyByOrderTimeRes.toDto(deliveryParty))
+                .collect(Collectors.toList());
     }
 
 }

@@ -4,43 +4,35 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import shop.geeksasang.config.domain.MatchingStatus;
+import shop.geeksasang.config.domain.OrderTimeCategoryType;
 import shop.geeksasang.domain.DeliveryParty;
-import shop.geeksasang.domain.HashTag;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
 
-
-@Getter
 @Setter
+@Getter
 @Builder
-public class GetDeliveryPartiesRes {
+public class GetDeliveryPartyByOrderTimeRes {
+
     private int id;
-    private String chief;
-    private String foodCategory;
-    private List<String> hashTags;
     private String title;
-    private String content;
     private LocalDateTime orderTime;
+    private OrderTimeCategoryType orderTimeCategory;
     private int currentMatching;
     private int maxMatching;
-    private String location;
     private MatchingStatus matchingStatus;
+    private String foodCategory;
 
-    static public GetDeliveryPartiesRes toDto(DeliveryParty deliveryParty){
-        return GetDeliveryPartiesRes.builder()
+    static public GetDeliveryPartyByOrderTimeRes toDto(DeliveryParty deliveryParty) {
+        return GetDeliveryPartyByOrderTimeRes.builder()
                 .id(deliveryParty.getId())
-                .chief(deliveryParty.getChief().getNickName())
-                .hashTags(deliveryParty.getHashTags().stream().map(HashTag::getTitle).collect(Collectors.toList()))
-                .foodCategory(deliveryParty.getFoodCategory().getTitle())
                 .title(deliveryParty.getTitle())
-                .content(deliveryParty.getContent())
                 .orderTime(deliveryParty.getOrderTime())
+                .orderTimeCategory(deliveryParty.getOrderTimeCategory())
                 .currentMatching(deliveryParty.getCurrentMatching())
                 .maxMatching(deliveryParty.getMaxMatching())
-                .location(deliveryParty.getLocation())
                 .matchingStatus(deliveryParty.getMatchingStatus())
+                .foodCategory(deliveryParty.getFoodCategory().getTitle())
                 .build();
     }
 }
