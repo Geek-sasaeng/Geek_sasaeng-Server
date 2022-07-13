@@ -33,7 +33,7 @@ public class GetDeliveryPartyDetailRes {
 
     @ApiModelProperty(example = "한식")
     @ApiParam(value = "음식 카테고리")
-    private String category;
+    private String foodCategory;
 
     //TODO: 해시태그 엔티티 수정되면 반영
 //    @ApiModelProperty(example = "")
@@ -78,7 +78,7 @@ public class GetDeliveryPartyDetailRes {
                 .id(deliveryParty.getId())
                 .chief(deliveryParty.getChief().getNickName())
                 .chiefProfileImgUrl(deliveryParty.getChief().getProfileImgUrl())
-                .category(deliveryParty.getFoodCategory().getTitle())
+                .foodCategory(deliveryParty.getFoodCategory().getTitle())
 //                .hashTags(deliveryParty.getHashTags().stream().map(HashTag::getTitle).collect(Collectors.toList()))
                 .title(deliveryParty.getTitle())
                 .content(deliveryParty.getContent())
