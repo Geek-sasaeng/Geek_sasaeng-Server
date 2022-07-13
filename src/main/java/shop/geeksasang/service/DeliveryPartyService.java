@@ -17,6 +17,7 @@ import shop.geeksasang.domain.*;
 import shop.geeksasang.dto.deliveryParty.GetDeliveryPartiesRes;
 import shop.geeksasang.dto.deliveryParty.GetDeliveryPartyByMaxMatchingRes;
 import shop.geeksasang.dto.deliveryParty.GetDeliveryPartyByOrderTimeRes;
+import shop.geeksasang.dto.deliveryParty.GetDeliveryPartyDetailRes;
 import shop.geeksasang.dto.deliveryParty.PostDeliveryPartyReq;
 import shop.geeksasang.repository.*;
 
@@ -62,9 +63,9 @@ public class DeliveryPartyService {
         deliveryParty.connectDomitory(domitory);
 
         //카테고리
-        FoodCategory food_category = foodCategoryRepository.findById(dto.getFood_category())
+        FoodCategory foodCategory = foodCategoryRepository.findById(dto.getFoodCategory())
                 .orElseThrow(() -> new RuntimeException(""));
-        deliveryParty.connectFoodCategory(food_category);
+        deliveryParty.connectFoodCategory(foodCategory);
 
         //해시태그
         DeliveryPartyHashTag deliveryPartyHashTag = DeliveryPartyHashTag.builder()
@@ -85,7 +86,7 @@ public class DeliveryPartyService {
         return deliveryParty;
     }
 
-    //배달파티 조회: 전체목록
+    //배달파티 조회: 기숙사 별 전체목록
     public List<GetDeliveryPartiesRes> getDeliveryPartiesByDomitoryId(int domitoryId, int cursor){
 
         PageRequest paging = PageRequest.of(cursor, PAGING_SIZE, Sort.by(Sort.Direction.ASC, PAGING_STANDARD ));
@@ -97,12 +98,22 @@ public class DeliveryPartyService {
                 .collect(Collectors.toList());
     }
 
+//    //배달파티 상세조회:
+//    public DeliveryParty getDeliveryParty(int partyId){
+//        DeliveryParty deliveryParty= deliveryPartyRepository.findById(partyId)
+//                .orElseThrow(() -> new RuntimeException(""));
+//        return deliveryParty;
+//    }
+
     //배달파티 상세조회:
-    public DeliveryParty getDeliveryParty(int partyId){
-        DeliveryParty deliveryParty= deliveryPartyRepository.findById(partyId)
-                .orElseThrow(() -> new RuntimeException(""));
-        return deliveryParty;
+    public GetDeliveryPartyDetailRes getDeliveryPartyDetailById(int partyId){
+        DeliveryParty deliveryParty = deliveryPartyRepository.findById(partyId)
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTY));
+
+        GetDeliveryPartyDetailRes getDeliveryPartyDetailRes = GetDeliveryPartyDetailRes.toDto(deliveryParty);
+        return getDeliveryPartyDetailRes;
     }
+
 
     // 배달파티 조회: 인원수
     public List<GetDeliveryPartyByMaxMatchingRes> getDeliveryPartyByMaxMatching(int domitoryId, int maxMatching, int cursor) {

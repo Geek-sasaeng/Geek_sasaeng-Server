@@ -1,5 +1,7 @@
 package shop.geeksasang.dto.deliveryParty;
 
+import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiParam;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
