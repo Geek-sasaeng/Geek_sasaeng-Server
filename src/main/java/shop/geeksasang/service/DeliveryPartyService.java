@@ -62,9 +62,9 @@ public class DeliveryPartyService {
         deliveryParty.connectDomitory(domitory);
 
         //카테고리
-        FoodCategory food_category = foodCategoryRepository.findById(dto.getFood_category())
+        FoodCategory foodCategory = foodCategoryRepository.findById(dto.getFoodCategory())
                 .orElseThrow(() -> new RuntimeException(""));
-        deliveryParty.connectFoodCategory(food_category);
+        deliveryParty.connectFoodCategory(foodCategory);
 
         //해시태그
         DeliveryPartyHashTag deliveryPartyHashTag = DeliveryPartyHashTag.builder()
