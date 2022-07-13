@@ -10,6 +10,7 @@ import javax.persistence.*;
 import lombok.NoArgsConstructor;
 import shop.geeksasang.config.domain.BaseEntity;
 import shop.geeksasang.config.domain.MatchingStatus;
+import shop.geeksasang.config.domain.OrderTimeCategoryType;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -41,7 +42,7 @@ public class DeliveryParty extends BaseEntity {
 
     @OneToOne(fetch=FetchType.LAZY)
     @JsonIgnore
-    private Category category;
+    private FoodCategory food_category;
 
     @OneToMany(mappedBy = "party")
     private List<DeliveryPartyMember> deliveryPartyMembers;
@@ -51,6 +52,9 @@ public class DeliveryParty extends BaseEntity {
     private String content;
 
     private LocalDateTime orderTime;
+
+    @Enumerated(EnumType.STRING)
+    private OrderTimeCategoryType orderTimeCategory;
 
     private int currentMatching;
 
@@ -76,7 +80,7 @@ public class DeliveryParty extends BaseEntity {
         this.hashTags.add(hashTag);
     }
 
-    public void connectCategory(Category category){
-        this.category = category;
+    public void connectFoodCategory(FoodCategory food_category){
+        this.food_category = food_category;
     }
 }

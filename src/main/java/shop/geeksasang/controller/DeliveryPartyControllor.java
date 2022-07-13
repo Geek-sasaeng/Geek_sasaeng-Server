@@ -2,11 +2,10 @@ package shop.geeksasang.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import shop.geeksasang.config.domain.OrderTimeCategoryType;
 import shop.geeksasang.config.response.BaseResponse;
 import shop.geeksasang.domain.DeliveryParty;
-import shop.geeksasang.dto.deliveryParty.GetDeliveryPartiesRes;
-import shop.geeksasang.dto.deliveryParty.PostDeliveryPartyReq;
-import shop.geeksasang.dto.deliveryParty.PostDeliveryPartyRes;
+import shop.geeksasang.dto.deliveryParty.*;
 import shop.geeksasang.service.DeliveryPartyService;
 import shop.geeksasang.utils.jwt.NoIntercept;
 
@@ -42,6 +41,22 @@ public class DeliveryPartyControllor {
     public BaseResponse<DeliveryParty> getDeliveryPartyDetailById(@RequestParam int partyId){
         DeliveryParty deliveryParty = deliveryPartyService.getDeliveryParty(partyId);
         return new BaseResponse<>(deliveryParty);
+    }
+
+    // 배달파티 조회: 인원수
+    @NoIntercept
+    @GetMapping("/{domitoryId}/delivery-parties/{maxMatching}")
+    public BaseResponse<List<GetDeliveryPartyByMaxMatchingRes>> getDeliveryPartyByMaxMatching(@PathVariable int domitoryId, @PathVariable int maxMatching, @RequestParam("cursor") int cursor){
+        List<GetDeliveryPartyByMaxMatchingRes> response = deliveryPartyService.getDeliveryPartyByMaxMatching(domitoryId, maxMatching, cursor);
+        return new BaseResponse<>(response);
+    }
+
+    // 배달파티 조회: orderTimeType
+    @NoIntercept
+    @PostMapping("/{domitoryId}/delivery-parties/{orderTimeCategory}")
+    public BaseResponse<List<GetDeliveryPartyByOrderTimeRes>> GetDeliveryPartyByOrderTime(@PathVariable int domitoryId, @PathVariable String orderTimeCategory, @RequestParam("cursor") int cursor){
+        List<GetDeliveryPartyByOrderTimeRes> response = deliveryPartyService.getDeliveryPartyByOrderTime(domitoryId, cursor, orderTimeCategory);
+        return new BaseResponse<>(response);
     }
 
 }
