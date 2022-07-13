@@ -88,6 +88,7 @@ public class DeliveryPartyControllor {
     @NoIntercept
     @GetMapping("/{domitoryId}/delivery-parties/filter/{orderTimeCategory}")
     public BaseResponse<List<GetDeliveryPartyByOrderTimeRes>> GetDeliveryPartyByOrderTime(@PathVariable int domitoryId, @PathVariable String orderTimeCategory, @RequestParam("cursor") int cursor){
+        // enum값 아닌 것 들어올때 처리 - 리팩토링 대상
         try{
             System.out.println(OrderTimeCategoryType.valueOf(orderTimeCategory));
         }catch(IllegalArgumentException e){
