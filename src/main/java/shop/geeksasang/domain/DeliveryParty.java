@@ -42,7 +42,7 @@ public class DeliveryParty extends BaseEntity {
 
     @OneToOne(fetch=FetchType.LAZY)
     @JsonIgnore
-    private FoodCategory food_category;
+    private FoodCategory foodCategory;
 
     @OneToMany(mappedBy = "party")
     private List<DeliveryPartyMember> deliveryPartyMembers;
@@ -80,7 +80,7 @@ public class DeliveryParty extends BaseEntity {
         this.hashTags.add(hashTag);
     }
 
-    public void connectFoodCategory(FoodCategory food_category){
-        this.food_category = food_category;
+    public void connectFoodCategory(FoodCategory foodCategory){
+        this.foodCategory = foodCategory;
     }
 }

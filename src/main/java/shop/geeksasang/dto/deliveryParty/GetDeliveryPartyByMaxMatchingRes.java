@@ -23,7 +23,7 @@ public class GetDeliveryPartyByMaxMatchingRes {
     private int maxMatching;
     private String location;
     private MatchingStatus matchingStatus;
-    private String food_category;
+    private String foodCategory;
 
     static public GetDeliveryPartyByMaxMatchingRes toDto(DeliveryParty deliveryParty) {
         return GetDeliveryPartyByMaxMatchingRes.builder()
@@ -36,7 +36,7 @@ public class GetDeliveryPartyByMaxMatchingRes {
                 .maxMatching(deliveryParty.getMaxMatching())
                 .location(deliveryParty.getLocation())
                 .matchingStatus(deliveryParty.getMatchingStatus())
-                .food_category(deliveryParty.getFood_category().getTitle())
+                .foodCategory(deliveryParty.getFoodCategory().getTitle())
                 .build();
     }
 }

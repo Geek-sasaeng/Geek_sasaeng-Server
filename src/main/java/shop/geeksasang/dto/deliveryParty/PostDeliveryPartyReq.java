@@ -19,7 +19,7 @@ public class PostDeliveryPartyReq {
     private int chief;
     private int domitory;
     private List<Integer> hashTag;
-    private int food_category;
+    private int foodCategory;
     private String title;
     private String content;
     private LocalDateTime orderTime; // TODO: ###########

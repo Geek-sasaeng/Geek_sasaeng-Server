@@ -21,7 +21,7 @@ public class GetDeliveryPartyByOrderTimeRes {
     private int currentMatching;
     private int maxMatching;
     private MatchingStatus matchingStatus;
-    private String food_category;
+    private String foodCategory;
 
     static public GetDeliveryPartyByOrderTimeRes toDto(DeliveryParty deliveryParty) {
         return GetDeliveryPartyByOrderTimeRes.builder()
@@ -32,7 +32,7 @@ public class GetDeliveryPartyByOrderTimeRes {
                 .currentMatching(deliveryParty.getCurrentMatching())
                 .maxMatching(deliveryParty.getMaxMatching())
                 .matchingStatus(deliveryParty.getMatchingStatus())
-                .food_category(deliveryParty.getFood_category().getTitle())
+                .foodCategory(deliveryParty.getFoodCategory().getTitle())
                 .build();
     }
 }

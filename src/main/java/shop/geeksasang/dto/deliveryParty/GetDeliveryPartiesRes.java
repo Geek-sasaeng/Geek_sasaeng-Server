@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class GetDeliveryPartiesRes {
     private int id;
     private String chief;
-    private String food_category;
+    private String foodCategory;
     private List<String> hashTags;
     private String title;
     private String content;
@@ -33,7 +33,7 @@ public class GetDeliveryPartiesRes {
                 .id(deliveryParty.getId())
                 .chief(deliveryParty.getChief().getNickName())
                 .hashTags(deliveryParty.getHashTags().stream().map(HashTag::getTitle).collect(Collectors.toList()))
-                .food_category(deliveryParty.getFood_category().getTitle())
+                .foodCategory(deliveryParty.getFoodCategory().getTitle())
                 .title(deliveryParty.getTitle())
                 .content(deliveryParty.getContent())
                 .orderTime(deliveryParty.getOrderTime())
