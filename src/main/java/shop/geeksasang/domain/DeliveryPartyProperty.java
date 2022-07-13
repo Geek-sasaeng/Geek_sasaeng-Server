@@ -18,10 +18,4 @@ public class DeliveryPartyProperty {
     @Column(name="delivery_party_property_id")
     private int id;
 
-    //private ImmediateOrderType immediateOrderType;
-
-   // private  ithPartyType withPartyType;
-
-    //private DeliveryParty deliveryParty;
-
 }

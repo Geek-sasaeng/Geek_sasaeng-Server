@@ -24,7 +24,6 @@ public class DeliveryPartyControllor {
     private final DeliveryPartyService deliveryPartyService;
 
     //배달 파티 생성
-    @NoIntercept
     @PostMapping("/deliveryParty")
     public BaseResponse<PostDeliveryPartyRes> registerDeliveryParty(@RequestBody PostDeliveryPartyReq dto){
         DeliveryParty deliveryParty = deliveryPartyService.registerDeliveryParty(dto);

@@ -36,11 +36,6 @@ public class DeliveryParty extends BaseEntity {
     @JoinColumn(name="dormitory_id")
     private Dormitory dormitory;
 
-    //나중에 수정 가능.
-    @OneToMany(mappedBy ="deliveryParty", targetEntity=DeliveryPartyHashTag.class, cascade = CascadeType.ALL)
-    private List<HashTag> hashTags=new ArrayList<>();
-
-
     @OneToOne(fetch=FetchType.LAZY)
     @JsonIgnore
     private FoodCategory foodCategory;
