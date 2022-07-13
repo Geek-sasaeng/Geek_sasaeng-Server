@@ -12,9 +12,7 @@ import java.util.Optional;
 @Repository
 public interface DomitoryRepository extends JpaRepository<Domitory, Integer> {
 
-
-    @Query("select d from Domitory d join fetch d.university")
-    List<Domitory> findDomitoryByUniversity_id(int university_id);
-
+    @Query("select d from Domitory d where d.university.id = :universityId")
+    List<Domitory> findDomitoryByUniversityId(int universityId);
 
 }

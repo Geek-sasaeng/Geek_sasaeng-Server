@@ -1,18 +1,22 @@
 package shop.geeksasang.service;
 
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.config.exception.BaseResponseStatus;
 import shop.geeksasang.domain.*;
+import shop.geeksasang.dto.deliveryParty.GetDeliveryPartiesRes;
 import shop.geeksasang.dto.deliveryParty.PostDeliveryPartyReq;
 import shop.geeksasang.repository.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
-
-import static java.util.stream.Collectors.toList;
+import java.util.stream.Collectors;
 
 @Transactional
 @Service
@@ -25,6 +29,9 @@ public class DeliveryPartyService {
     private final HashTagRepository hashTagRepository;
     private final CategoryRepository categoryRepository;
     private final DeliveryPartyHashTagRepository deliveryPartyHashTagRepository;
+
+    private static final int PAGING_SIZE = 10;
+    private static final String PAGING_STANDARD = "orderTime";
 
 
     @Transactional(readOnly = false) // ?
@@ -67,30 +74,19 @@ public class DeliveryPartyService {
         return deliveryParty;
     }
 
-
     //배달파티 조회: 전체목록
-    @Transactional(readOnly = false) // ?
-    public List<DeliveryParty> getAllDeliveryParty(){
-        List<DeliveryParty> getDliveryPartyRes = deliveryPartyRepository.findAll();
-        return getDliveryPartyRes;
+    public List<GetDeliveryPartiesRes> getDeliveryPartiesByDomitoryId(int domitoryId, int cursor){
+
+        PageRequest paging = PageRequest.of(cursor, PAGING_SIZE, Sort.by(Sort.Direction.ASC, PAGING_STANDARD ));
+
+        Slice<DeliveryParty> deliveryParties = deliveryPartyRepository.findDeliveryPartiesByDomitoryId(domitoryId, paging);
+
+        return deliveryParties.stream()
+                .map(deliveryParty -> GetDeliveryPartiesRes.toDto(deliveryParty))
+                .collect(Collectors.toList());
     }
-
-    //배달파티 조회: 전체목록
-
-
-
-    //배달파티 조회: 전체목록
-    @Transactional(readOnly = false) // ?
-    public List<DeliveryParty> getDeliveryPartyById(int domitoryId){
-        List<DeliveryParty> getDliveryPartyRes = deliveryPartyRepository.findDeliveryPartiesByDomitoryId(domitoryId);
-        return getDliveryPartyRes;
-    }
-
-
-
 
     //배달파티 상세조회:
-    @Transactional(readOnly = false)
     public DeliveryParty getDeliveryParty(int partyId){
         DeliveryParty deliveryParty= deliveryPartyRepository.findById(partyId)
                 .orElseThrow(() -> new RuntimeException(""));
