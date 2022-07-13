@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import shop.geeksasang.config.domain.BaseEntity;
 import shop.geeksasang.config.domain.MatchingStatus;
 import shop.geeksasang.config.domain.OrderTimeCategoryType;
+import shop.geeksasang.config.domain.Status;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -77,5 +78,20 @@ public class DeliveryParty extends BaseEntity {
 
     public void connectFoodCategory(FoodCategory foodCategory){
         this.foodCategory = foodCategory;
+    }
+
+    public void connectOrderTimeCategory(OrderTimeCategoryType orderTimeCategory){
+        this.orderTimeCategory = orderTimeCategory;
+    }
+
+    //배달생성시 초기 세팅 메소드
+    public void initialCurrentMatching(){
+        this.currentMatching = 1;
+    }
+    public void initialMatchingStatus(){
+        this.matchingStatus = MatchingStatus.ONGOING;
+    }
+    public void initialStatus(){
+        super.setStatus(Status.ACTIVE);
     }
 }

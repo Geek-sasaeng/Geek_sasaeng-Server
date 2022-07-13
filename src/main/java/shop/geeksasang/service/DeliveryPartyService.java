@@ -19,6 +19,7 @@ import shop.geeksasang.dto.deliveryParty.GetDeliveryPartyDetailRes;
 import shop.geeksasang.dto.deliveryParty.PostDeliveryPartyReq;
 import shop.geeksasang.repository.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,22 +29,20 @@ import static shop.geeksasang.config.exception.BaseResponseStatus.NOT_SPECIFIED_
 
 @Transactional
 @Service
-@RequiredArgsConstructor // final로 선언 된 것 자동으로 @Autowired와 같은 기능
+@RequiredArgsConstructor
 public class DeliveryPartyService {
 
     private final DeliveryPartyRepository deliveryPartyRepository;
     private final MemberRepository memberRepository;
     private final DormitoryRepository dormitoryRepository;
-    private final HashTagRepository hashTagRepository;
     private final FoodCategoryRepository foodCategoryRepository;
-    private final DeliveryPartyHashTagRepository deliveryPartyHashTagRepository;
 
     private static final int PAGING_SIZE = 10;
     private static final String PAGING_STANDARD = "orderTime";
     private static final List<Integer> MATHCING_NUMBER = Arrays.asList(2, 4, 6, 8, 10);
 
 
-    @Transactional(readOnly = false) // ?
+    @Transactional(readOnly = false)
     public DeliveryParty registerDeliveryParty(PostDeliveryPartyReq dto){
 
         // 파티 생성 및 저장
@@ -51,19 +50,50 @@ public class DeliveryPartyService {
 
         //파티장
         Member chief = memberRepository.findById(dto.getChief())
-                .orElseThrow(() -> new RuntimeException(""));
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTICIPANT));
         deliveryParty.connectChief(chief);
 
-        //도미토리
+        //기숙사
         Dormitory dormitory = dormitoryRepository.findById(dto.getDormitory())
-                .orElseThrow(() -> new RuntimeException(""));
+                .orElseThrow(() ->  new BaseException(BaseResponseStatus.NOT_EXISTS_DORMITORY));
         deliveryParty.connectDormitory(dormitory);
 
         //카테고리
         FoodCategory foodCategory = foodCategoryRepository.findById(dto.getFoodCategory())
-                .orElseThrow(() -> new RuntimeException(""));
+                .orElseThrow(() ->  new BaseException(BaseResponseStatus.NOT_EXISTS_CATEGORY));
         deliveryParty.connectFoodCategory(foodCategory);
 
+        //**추후 property 추가해야 함.**
+
+        //orderTime 분류화
+       OrderTimeCategoryType orderTimeCategory = null;
+       int orderHour = dto.getOrderTime().getHour();
+
+       //아침 : 6시 ~ 10시59분
+       if (orderHour >= 6 && orderHour <11){
+           orderTimeCategory = OrderTimeCategoryType.BREAKFAST;
+       }
+       //점심 : 11시 ~ 16시59분
+       if(orderHour>=11 && orderHour<17){
+           orderTimeCategory=OrderTimeCategoryType.DINNER;
+       }
+       //저녁 : 17시 ~ 20시59분
+       if(orderHour>=17 && orderHour<21){
+           orderTimeCategory=OrderTimeCategoryType.DINNER;
+       }
+       //야식 : 21시 ~ 05:59분
+       if((orderHour>=21&&orderHour<24)||(orderHour>=0 && orderHour<6)){
+           orderTimeCategory = OrderTimeCategoryType.MIDNIGHT_SNACKS;
+       }
+
+        //배달파티 orderTimeCategory       
+        deliveryParty.connectOrderTimeCategory(orderTimeCategory);
+       
+        //배달파티 생성시 초기 세팅
+        deliveryParty.initialCurrentMatching();
+        deliveryParty.initialMatchingStatus();
+        deliveryParty.initialStatus();
+        //배달파티 저장
         deliveryPartyRepository.save(deliveryParty);
 
         // 반환
