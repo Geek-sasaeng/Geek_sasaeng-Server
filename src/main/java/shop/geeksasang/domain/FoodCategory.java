@@ -14,10 +14,10 @@ import shop.geeksasang.config.domain.BaseEntity;
 @Builder
 @Getter
 @Entity
-public class Category extends BaseEntity {
+public class FoodCategory extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="category_id")
+    @Column(name="food_category_id")
     private int id;
 
     private String title;

@@ -99,10 +99,11 @@ public enum BaseResponseStatus {
     ALREADY_INACTIVE_USER(false, 2601, "이미 탈퇴한 회원입니다"),
     SAME_PASSWORDS(false, 2602, "기존 비밀번호와 동일합니다"),
     EXISTS_LOGIN_ID(false, 2603, "존재하는 아이디입니다"),
-
+    NOT_SPECIFIED_VALUE(false, 2604, "지정된 값이 아닙니다"),
     NOT_EXISTS_UNIVERSITY_ID(false, 2605, "존재하지 않는 학교입니다"),
     NOT_EXISTS_DOMITORY(false, 2606, "기숙사가 존재하지 않습니다"),
     ALREADY_VALID_EMAIL(false, 2607, "이미 인증된 이메일 입니다"),
+    NOT_EXISTS_ORDER_TIME_CATEGORY(false, 2608, "존재하지 않는 시간 카테고리 입니다"),
 
     /**
      * 네오
