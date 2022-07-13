@@ -1,12 +1,12 @@
 package shop.geeksasang.service;
 
+import com.sun.xml.bind.v2.model.core.EnumConstant;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.querydsl.QPageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,10 +22,11 @@ import shop.geeksasang.repository.*;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Collectors;
 
+import static shop.geeksasang.config.exception.BaseResponseStatus.NOT_EXISTS_ORDER_TIME_CATEGORY;
 import static shop.geeksasang.config.exception.BaseResponseStatus.NOT_SPECIFIED_VALUE;
+
 
 @Transactional
 @Service
@@ -120,7 +121,7 @@ public class DeliveryPartyService {
                 .collect(Collectors.toList());
     }
 
-    // 배달파티 조회: 인원수
+    // 배달파티 조회: orderTimeCategory 시간대
     public List<GetDeliveryPartyByOrderTimeRes> getDeliveryPartyByOrderTime(int domitoryId, int cursor, String orderTimeCategory) {
 
         OrderTimeCategoryType orderTimeCategoryType = OrderTimeCategoryType.valueOf(orderTimeCategory);
