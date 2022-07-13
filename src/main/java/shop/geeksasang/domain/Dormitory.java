@@ -9,28 +9,26 @@ import javax.persistence.*;
 import lombok.NoArgsConstructor;
 import shop.geeksasang.config.domain.BaseEntity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Entity
 @Getter
-public class University extends BaseEntity {
+@Entity
+public class Dormitory extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="university_id")
+    @Column(name="dormitory_id")
     private int id;
 
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name = "university_id")
+    private University university;
+
+    @OneToMany(mappedBy = "dormitory")
+    private List<DeliveryParty> deliveryParties;
+
     private String name;
-
-    private String emailAddress;
-
-    private String universityImgUrl;
-
-
-    @OneToMany(mappedBy = "university", cascade = CascadeType.ALL)
-    List<Dormitory> dormitories = new ArrayList<>();
 
 }

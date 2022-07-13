@@ -16,11 +16,11 @@ import java.util.stream.Collectors;
 @Builder
 public class GetDeliveryPartyRes {
     private String chief;
-    private String domitory;
+    private String dormitory;
     //    private List<HashTag> hashTags;
     //private String hashTag; //TODO:######
     private List<String> hashTags;
-    private String category;
+    private String foodCategory;
     private String title;
     private String content;
     private LocalDateTime orderTime;
@@ -32,11 +32,11 @@ public class GetDeliveryPartyRes {
     static public GetDeliveryPartyRes toDto(DeliveryParty deliveryParty){
         return GetDeliveryPartyRes.builder()
                 .chief(deliveryParty.getChief().getNickName())
-                .domitory(deliveryParty.getDomitory().getName())
+                .dormitory(deliveryParty.getDormitory().getName())
                 //.hashTags(deliveryParty.getHashTag()) // Req의 메소드와 다름
                 //.hashTag(deliveryParty.getHashTag()) // TODO:#####
                 .hashTags(deliveryParty.getHashTags().stream().map(HashTag::getTitle).collect(Collectors.toList()))
-                .category(deliveryParty.getCategory().getTitle())
+                .foodCategory(deliveryParty.getFoodCategory().getTitle())
                 .title(deliveryParty.getTitle())
                 .content(deliveryParty.getContent())
                 .orderTime(deliveryParty.getOrderTime())

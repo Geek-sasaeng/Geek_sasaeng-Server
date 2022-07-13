@@ -10,6 +10,7 @@ import javax.persistence.*;
 import lombok.NoArgsConstructor;
 import shop.geeksasang.config.domain.BaseEntity;
 import shop.geeksasang.config.domain.MatchingStatus;
+import shop.geeksasang.config.domain.OrderTimeCategoryType;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -31,8 +32,8 @@ public class DeliveryParty extends BaseEntity {
     private Member chief;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="domitory_id")
-    private Domitory domitory;
+    @JoinColumn(name="dormitory_id")
+    private Dormitory dormitory;
 
     //나중에 수정 가능.
     @OneToMany(mappedBy ="deliveryParty", targetEntity=DeliveryPartyHashTag.class, cascade = CascadeType.ALL)
@@ -41,7 +42,7 @@ public class DeliveryParty extends BaseEntity {
 
     @OneToOne(fetch=FetchType.LAZY)
     @JsonIgnore
-    private Category category;
+    private FoodCategory foodCategory;
 
     @OneToMany(mappedBy = "party")
     private List<DeliveryPartyMember> deliveryPartyMembers;
@@ -51,6 +52,9 @@ public class DeliveryParty extends BaseEntity {
     private String content;
 
     private LocalDateTime orderTime;
+
+    @Enumerated(EnumType.STRING)
+    private OrderTimeCategoryType orderTimeCategory;
 
     private int currentMatching;
 
@@ -65,18 +69,13 @@ public class DeliveryParty extends BaseEntity {
 
     public void connectChief(Member chief){
         this.chief = chief;
-        //university.getMemberList().add(this); TODO:##파티장 연결하고 이거 해야하나??
     }
 
-    public void connectDomitory(Domitory domitory){
-        this.domitory = domitory;
+    public void connectDormitory(Dormitory dormitory){
+        this.dormitory = dormitory;
     }
 
-    public void connectHashTag(HashTag hashTag){
-        this.hashTags.add(hashTag);
-    }
-
-    public void connectCategory(Category category){
-        this.category = category;
+    public void connectFoodCategory(FoodCategory foodCategory){
+        this.foodCategory = foodCategory;
     }
 }

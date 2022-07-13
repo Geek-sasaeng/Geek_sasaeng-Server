@@ -1,18 +1,30 @@
 package shop.geeksasang.service;
 
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import shop.geeksasang.config.domain.OrderTimeCategoryType;
 import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.config.exception.BaseResponseStatus;
 import shop.geeksasang.domain.*;
+import shop.geeksasang.dto.deliveryParty.GetDeliveryPartiesRes;
+import shop.geeksasang.dto.deliveryParty.GetDeliveryPartyByMaxMatchingRes;
+import shop.geeksasang.dto.deliveryParty.GetDeliveryPartyByOrderTimeRes;
+import shop.geeksasang.dto.deliveryParty.GetDeliveryPartyDetailRes;
 import shop.geeksasang.dto.deliveryParty.PostDeliveryPartyReq;
 import shop.geeksasang.repository.*;
 
-import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.toList;
+import static shop.geeksasang.config.exception.BaseResponseStatus.NOT_SPECIFIED_VALUE;
+
 
 @Transactional
 @Service
@@ -21,10 +33,14 @@ public class DeliveryPartyService {
 
     private final DeliveryPartyRepository deliveryPartyRepository;
     private final MemberRepository memberRepository;
-    private final DomitoryRepository domitoryRepository;
+    private final DormitoryRepository dormitoryRepository;
     private final HashTagRepository hashTagRepository;
-    private final CategoryRepository categoryRepository;
+    private final FoodCategoryRepository foodCategoryRepository;
     private final DeliveryPartyHashTagRepository deliveryPartyHashTagRepository;
+
+    private static final int PAGING_SIZE = 10;
+    private static final String PAGING_STANDARD = "orderTime";
+    private static final List<Integer> MATHCING_NUMBER = Arrays.asList(2, 4, 6, 8, 10);
 
 
     @Transactional(readOnly = false) // ?
@@ -36,64 +52,82 @@ public class DeliveryPartyService {
         //파티장
         Member chief = memberRepository.findById(dto.getChief())
                 .orElseThrow(() -> new RuntimeException(""));
-        deliveryParty.connectChief(chief); // 배달 파티에 파티장 연결
+        deliveryParty.connectChief(chief);
 
         //도미토리
-        Domitory domitory = domitoryRepository.findById(dto.getDomitory())
+        Dormitory dormitory = dormitoryRepository.findById(dto.getDormitory())
                 .orElseThrow(() -> new RuntimeException(""));
-        deliveryParty.connectDomitory(domitory);
+        deliveryParty.connectDormitory(dormitory);
 
         //카테고리
-        Category category = categoryRepository.findById(dto.getCategory())
+        FoodCategory foodCategory = foodCategoryRepository.findById(dto.getFoodCategory())
                 .orElseThrow(() -> new RuntimeException(""));
-        deliveryParty.connectCategory(category);
+        deliveryParty.connectFoodCategory(foodCategory);
 
-        //해시태그
-
-        for(Integer hashTagId : dto.getHashTag()){
-
-            //id로 hashTag 검색
-            HashTag hashTag = hashTagRepository.findById(hashTagId)
-                    .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_HASHTAG));
-
-            //deliveryPartyHashTag 생성
-            DeliveryPartyHashTag deliveryPartyHashTag = new DeliveryPartyHashTag(deliveryParty,hashTag);
-
-            deliveryParty.connectHashTag(hashTag);
-        }
-
-        //저장
         deliveryPartyRepository.save(deliveryParty);
 
         // 반환
         return deliveryParty;
     }
 
+    //배달파티 조회: 기숙사 별 전체목록
+    public List<GetDeliveryPartiesRes> getDeliveryPartiesByDormitoryId(int dormitoryId, int cursor){
 
-    //배달파티 조회: 전체목록
-    @Transactional(readOnly = false) // ?
-    public List<DeliveryParty> getAllDeliveryParty(){
-        List<DeliveryParty> getDliveryPartyRes = deliveryPartyRepository.findAll();
-        return getDliveryPartyRes;
+        PageRequest paging = PageRequest.of(cursor, PAGING_SIZE, Sort.by(Sort.Direction.ASC, PAGING_STANDARD ));
+
+        Slice<DeliveryParty> deliveryParties = deliveryPartyRepository.findDeliveryPartiesByDormitoryId(dormitoryId, paging);
+
+        return deliveryParties.stream()
+                .map(deliveryParty -> GetDeliveryPartiesRes.toDto(deliveryParty))
+                .collect(Collectors.toList());
     }
 
-    //배달파티 조회: 전체목록
-
-
-    //배달파티 조회: 전체목록
-    @Transactional(readOnly = false) // ?
-    public List<DeliveryParty> getDeliveryPartyById(int domitoryId){
-        List<DeliveryParty> getDliveryPartyRes = deliveryPartyRepository.findDeliveryPartiesByDomitoryId(domitoryId);
-        return getDliveryPartyRes;
-    }
-
+//    //배달파티 상세조회:
+//    public DeliveryParty getDeliveryParty(int partyId){
+//        DeliveryParty deliveryParty= deliveryPartyRepository.findById(partyId)
+//                .orElseThrow(() -> new RuntimeException(""));
+//        return deliveryParty;
+//    }
 
     //배달파티 상세조회:
-    @Transactional(readOnly = false)
-    public DeliveryParty getDeliveryParty(int partyId){
-        DeliveryParty deliveryParty= deliveryPartyRepository.findById(partyId)
-                .orElseThrow(() -> new RuntimeException(""));
-        return deliveryParty;
+    public GetDeliveryPartyDetailRes getDeliveryPartyDetailById(int partyId){
+        DeliveryParty deliveryParty = deliveryPartyRepository.findById(partyId)
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTY));
+
+        GetDeliveryPartyDetailRes getDeliveryPartyDetailRes = GetDeliveryPartyDetailRes.toDto(deliveryParty);
+        return getDeliveryPartyDetailRes;
+    }
+
+
+    // 배달파티 조회: 인원수
+    public List<GetDeliveryPartyByMaxMatchingRes> getDeliveryPartyByMaxMatching(int dormitoryId, int maxMatching, int cursor) {
+
+        // 인원수 입렵값 validation
+        if(!MATHCING_NUMBER.contains(maxMatching)){
+            throw new BaseException(NOT_SPECIFIED_VALUE);
+        }
+
+        PageRequest paging = PageRequest.of(cursor, PAGING_SIZE, Sort.by(Sort.Direction.ASC, PAGING_STANDARD));
+
+        Slice<DeliveryParty> deliveryParties = deliveryPartyRepository.findDeliveryPartiesByMaxMatching(dormitoryId, maxMatching, paging);
+
+        return deliveryParties.stream()
+                .map(deliveryParty -> GetDeliveryPartyByMaxMatchingRes.toDto(deliveryParty))
+                .collect(Collectors.toList());
+    }
+
+    // 배달파티 조회: orderTimeCategory 시간대
+    public List<GetDeliveryPartyByOrderTimeRes> getDeliveryPartyByOrderTime(int dormitoryId, int cursor, String orderTimeCategory) {
+
+        OrderTimeCategoryType orderTimeCategoryType = OrderTimeCategoryType.valueOf(orderTimeCategory);
+
+        PageRequest paging = PageRequest.of(cursor, PAGING_SIZE, Sort.by(Sort.Direction.ASC, PAGING_STANDARD));
+
+        Slice<DeliveryParty> deliveryParties = deliveryPartyRepository.findDeliveryPartiesByOrderTime(dormitoryId, orderTimeCategoryType, paging);
+
+        return deliveryParties.stream()
+                .map(deliveryParty -> GetDeliveryPartyByOrderTimeRes.toDto(deliveryParty))
+                .collect(Collectors.toList());
     }
 
 }

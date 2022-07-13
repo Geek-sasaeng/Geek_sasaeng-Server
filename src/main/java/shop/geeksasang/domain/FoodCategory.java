@@ -9,27 +9,16 @@ import javax.persistence.*;
 import lombok.NoArgsConstructor;
 import shop.geeksasang.config.domain.BaseEntity;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Getter
 @Entity
-public class Domitory extends BaseEntity {
+public class FoodCategory extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="domitory_id")
+    @Column(name="food_category_id")
     private int id;
 
-    @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name = "university_id")
-    private University university;
-
-    @OneToMany(mappedBy = "domitory")
-    private List<DeliveryParty> deliveryParties;
-
-    private String name;
-
+    private String title;
 }

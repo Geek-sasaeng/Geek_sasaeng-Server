@@ -16,17 +16,14 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PostDeliveryPartyReq {
-    private int chief;
-    private int domitory;
-    private List<Integer> hashTag;
-    private int category;
+    private int chief; // 추후 jwt 이용
+    private int dormitory;
+    private int foodCategory;
     private String title;
     private String content;
-    private LocalDateTime orderTime; // TODO: ###########
-    private int currentMatching;
+    private LocalDateTime orderTime;
     private int maxMatching;
     private String location;
-    private MatchingStatus matchingStatus; // TODO: #########String으로 하면 에러 남
 
     // 외래키 참조하는 것 말고는  요청 엔티티 생성
     public DeliveryParty toEntity() {
@@ -34,10 +31,8 @@ public class PostDeliveryPartyReq {
                 .title(getTitle())
                 .content(getContent())
                 .orderTime(getOrderTime())
-                .currentMatching(getCurrentMatching())
                 .maxMatching(getMaxMatching())
                 .location(getLocation())
-                .matchingStatus(getMatchingStatus())
                 .build();
     }
 }

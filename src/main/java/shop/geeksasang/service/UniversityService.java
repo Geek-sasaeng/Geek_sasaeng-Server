@@ -3,8 +3,6 @@ package shop.geeksasang.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import shop.geeksasang.domain.University;
-import shop.geeksasang.dto.domitory.GetDomitoriesRes;
 import shop.geeksasang.dto.university.GetUniversitiesRes;
 import shop.geeksasang.repository.*;
 
@@ -25,12 +23,5 @@ public class UniversityService {
                 .map(university -> GetUniversitiesRes.of(university))
                 .collect(Collectors.toList());
 
-    }
-
-    public List<GetDomitoriesRes> getDomitories(int universityId) {
-        University university = universityRepository.findDomitoriesByUniversityId(universityId).orElseThrow(() -> new RuntimeException());
-        return university.getDomitories().stream()
-                .map(domitory -> GetDomitoriesRes.of(domitory))
-                .collect(Collectors.toList());
     }
 }
