@@ -54,8 +54,8 @@ public class MemberController {
             @ApiResponse(code =2008 ,message ="존재하지 않는 학교 이름입니다"),
             @ApiResponse(code=4000,message = "서버 오류입니다.")
     })
-    @PostMapping("/social")
     @NoIntercept
+    @PostMapping("/social")
     public BaseResponse<PostRegisterRes> registerSocialMember(@Validated @RequestBody PostSocialRegisterReq dto){
         Member member = memberService.registerSocialMember(dto);
         PostRegisterRes postCreateMemberRes = PostRegisterRes.toDto(member);
