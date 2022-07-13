@@ -78,7 +78,7 @@ public class GetDeliveryPartyDetailRes {
                 .id(deliveryParty.getId())
                 .chief(deliveryParty.getChief().getNickName())
                 .chiefProfileImgUrl(deliveryParty.getChief().getProfileImgUrl())
-                .category(deliveryParty.getCategory().getTitle())
+                .category(deliveryParty.getFoodCategory().getTitle())
 //                .hashTags(deliveryParty.getHashTags().stream().map(HashTag::getTitle).collect(Collectors.toList()))
                 .title(deliveryParty.getTitle())
                 .content(deliveryParty.getContent())

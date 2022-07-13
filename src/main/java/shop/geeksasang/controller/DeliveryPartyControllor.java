@@ -54,7 +54,8 @@ public class DeliveryPartyControllor {
     @ApiOperation(value = "조회: 배달파티 상세조회", notes = "배달파티 게시물을 선택하면 상세 정보들을 볼 수 있다.")
     @ApiResponses({
             @ApiResponse(code =1000 ,message ="요청에 성공하셨습니다."),
-            @ApiResponse(code = 2010, message = "존재하지 않는 파티입니다.")
+            @ApiResponse(code = 2010, message = "존재하지 않는 파티입니다."),
+            @ApiResponse(code=4000,message = "서버 오류입니다.")
     })
     @GetMapping("/delivery-party/{partyId}")
     public BaseResponse<GetDeliveryPartyDetailRes> getDeliveryPartyDetailById(@PathVariable("partyId") int partyId){
