@@ -30,6 +30,9 @@ public class DeliveryPartyService {
     private final CategoryRepository categoryRepository;
     private final DeliveryPartyHashTagRepository deliveryPartyHashTagRepository;
 
+    private static final int PAGING_SIZE = 10;
+    private static final String PAGING_STANDARD = "orderTime";
+
 
     @Transactional(readOnly = false) // ?
     public DeliveryParty registerDeliveryParty(PostDeliveryPartyReq dto){
@@ -74,7 +77,7 @@ public class DeliveryPartyService {
     //배달파티 조회: 전체목록
     public List<GetDeliveryPartiesRes> getDeliveryPartiesByDomitoryId(int domitoryId, int cursor){
 
-        PageRequest paging = PageRequest.of(cursor, 3, Sort.by(Sort.Direction.DESC, "orderTime"));
+        PageRequest paging = PageRequest.of(cursor, PAGING_SIZE, Sort.by(Sort.Direction.ASC, PAGING_STANDARD ));
 
         Slice<DeliveryParty> deliveryParties = deliveryPartyRepository.findDeliveryPartiesByDomitoryId(domitoryId, paging);
 
