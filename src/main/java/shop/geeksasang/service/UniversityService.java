@@ -3,8 +3,6 @@ package shop.geeksasang.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import shop.geeksasang.domain.University;
-import shop.geeksasang.dto.domitory.GetDomitoriesRes;
 import shop.geeksasang.dto.university.GetUniversitiesRes;
 import shop.geeksasang.repository.*;
 

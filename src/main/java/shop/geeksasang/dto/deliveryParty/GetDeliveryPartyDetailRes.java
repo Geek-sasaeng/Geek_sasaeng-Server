@@ -7,11 +7,10 @@ import lombok.Getter;
 import lombok.Setter;
 import shop.geeksasang.config.domain.MatchingStatus;
 import shop.geeksasang.domain.DeliveryParty;
-import shop.geeksasang.domain.HashTag;
+
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
+
 
 @Getter
 @Setter
@@ -79,7 +78,6 @@ public class GetDeliveryPartyDetailRes {
                 .chief(deliveryParty.getChief().getNickName())
                 .chiefProfileImgUrl(deliveryParty.getChief().getProfileImgUrl())
                 .foodCategory(deliveryParty.getFoodCategory().getTitle())
-//                .hashTags(deliveryParty.getHashTags().stream().map(HashTag::getTitle).collect(Collectors.toList()))
                 .title(deliveryParty.getTitle())
                 .content(deliveryParty.getContent())
                 .orderTime(deliveryParty.getOrderTime())

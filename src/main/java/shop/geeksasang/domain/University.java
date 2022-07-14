@@ -31,6 +31,6 @@ public class University extends BaseEntity {
 
 
     @OneToMany(mappedBy = "university", cascade = CascadeType.ALL)
-    List<Domitory> domitories = new ArrayList<>();
+    List<Dormitory> dormitories = new ArrayList<>();
 
 }
