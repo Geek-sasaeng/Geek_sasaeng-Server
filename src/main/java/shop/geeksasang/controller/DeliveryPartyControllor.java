@@ -33,6 +33,11 @@ public class DeliveryPartyControllor {
     }
 
     //배달파티 조회: 전체목록
+    @ApiOperation(value = "전체 배달파티 조회", notes = "cursor은 0부터 시작. domitoryId는 현재 대학교 id. 예시 : https://geeksasaeng.shop/1/delivery-parties?cursor=0  ")
+    @ApiResponses({
+            @ApiResponse(code =1000 ,message ="요청에 성공하셨습니다."),
+            @ApiResponse(code=4000, message = "서버 오류입니다.")
+    })
     @NoIntercept
     @GetMapping("/{dormitoryId}/delivery-parties")
     public BaseResponse<List<GetDeliveryPartiesRes>> getAllDeliveryParty(@PathVariable int dormitoryId, @RequestParam int cursor){
