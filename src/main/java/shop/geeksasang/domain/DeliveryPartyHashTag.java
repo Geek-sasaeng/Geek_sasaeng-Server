@@ -14,7 +14,7 @@ import javax.persistence.*;
 @Builder
 @Getter
 @Entity
-public class DeliveryPartyHashTag extends BaseEntity {
+public class DeliveryPartyHashTag{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="delivery_party_hash_tag__id")
@@ -28,9 +28,8 @@ public class DeliveryPartyHashTag extends BaseEntity {
     @JoinColumn(name="delivery_party_id")
     private DeliveryParty deliveryParty;
 
-    public void connectPartyHashTag(DeliveryParty party, HashTag hashTag){
-
-        this.deliveryParty=party;
+    public DeliveryPartyHashTag(DeliveryParty deliveryParty, HashTag hashTag){
+        this.deliveryParty=deliveryParty;
         this.hashTag=hashTag;
     }
 }

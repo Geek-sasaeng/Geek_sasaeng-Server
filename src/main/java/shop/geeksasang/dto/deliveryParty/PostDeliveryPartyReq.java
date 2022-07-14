@@ -1,15 +1,9 @@
 package shop.geeksasang.dto.deliveryParty;
 
 import lombok.*;
-import net.bytebuddy.asm.Advice;
 import org.springframework.format.annotation.DateTimeFormat;
-import shop.geeksasang.config.domain.MatchingStatus;
 import shop.geeksasang.domain.*;
-
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -23,7 +17,7 @@ public class PostDeliveryPartyReq {
 
     private int foodCategory;
 
-    //**property 추가되어야 함.**
+    private List<Integer> hashTag;
 
     private String title;
 

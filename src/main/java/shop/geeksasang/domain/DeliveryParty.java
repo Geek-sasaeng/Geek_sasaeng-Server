@@ -16,6 +16,7 @@ import shop.geeksasang.config.domain.Status;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -39,14 +40,12 @@ public class DeliveryParty extends BaseEntity {
     @OneToMany(mappedBy ="deliveryParty", targetEntity=DeliveryPartyHashTag.class)
     private List<HashTag> hashTags=new ArrayList<>();
 
-
     @OneToOne(fetch=FetchType.LAZY)
     @JsonIgnore
     private FoodCategory foodCategory;
 
     @OneToMany(mappedBy = "party")
     private List<DeliveryPartyMember> deliveryPartyMembers;
-
 
     private String title;
 
@@ -83,10 +82,9 @@ public class DeliveryParty extends BaseEntity {
     public void connectOrderTimeCategory(OrderTimeCategoryType orderTimeCategory){
         this.orderTimeCategory = orderTimeCategory;
     }
-    public void connectHashTag(HashTag hashTag){
-        this.hashTags.add(hashTag);
+    public void connectHashTag(List<HashTag> hashTags){
+        this.hashTags=hashTags.stream().collect(Collectors.toList());
     }
-
 
 
     //배달생성시 초기 세팅 메소드

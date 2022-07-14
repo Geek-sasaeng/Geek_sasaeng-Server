@@ -7,6 +7,8 @@ import lombok.Setter;
 import shop.geeksasang.domain.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Getter
@@ -21,6 +23,8 @@ public class PostDeliveryPartyRes {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy/MM/dd HH:mm:ss ", timezone = "Asia/Seoul")
     private LocalDateTime orderTime;
+
+    private List<String> hashTags;
 
     private String createdAt;
     private String orderTimeCategoryType;
@@ -38,6 +42,7 @@ public class PostDeliveryPartyRes {
                 .title(deliveryParty.getTitle())
                 .content(deliveryParty.getContent())
                 .orderTime(deliveryParty.getOrderTime())
+                .hashTags(deliveryParty.getHashTags().stream().map(HashTag::getTitle).collect(Collectors.toList()))
                 .createdAt(deliveryParty.getCreatedAt())
                 .orderTimeCategoryType(deliveryParty.getOrderTimeCategory().toString())
                 .currentMatching(deliveryParty.getCurrentMatching())
