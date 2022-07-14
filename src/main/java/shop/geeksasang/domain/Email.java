@@ -20,9 +20,6 @@ public class Email extends BaseEntity {
     @Column(name = "email_id")
     private int id;
 
-    @OneToOne(mappedBy = "email")
-    private Member member;
-
     private String address;
 
     @Enumerated(EnumType.STRING)

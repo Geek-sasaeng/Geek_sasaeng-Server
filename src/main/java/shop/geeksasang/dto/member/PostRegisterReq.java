@@ -7,6 +7,7 @@ import shop.geeksasang.config.domain.MemberLoginType;
 import shop.geeksasang.domain.Email;
 import shop.geeksasang.domain.Member;
 import shop.geeksasang.domain.PhoneNumber;
+import shop.geeksasang.repository.EmailRepository;
 
 import javax.validation.constraints.*;
 
@@ -47,26 +48,24 @@ public class PostRegisterReq {
 
     @ApiModelProperty(example = "1")
     @ApiParam(value = "사용자 이메일", required = true)
-    @NotBlank(message = "이메일을 입력해주세요.")
-    private Email email;
+    private Integer emailId;
 
     @ApiModelProperty(example = "1")
     @ApiParam(value = "사용자 핸드폰 번호", required = true)
-    @NotBlank(message = "핸드폰 번호를 입력해주세요.")
-    private PhoneNumber phoneNumber;
+    private Integer phoneNumberId;
 
     @ApiModelProperty(example = "Y")
     @ApiParam(value = "사용자 회원 정보 동의 여부", required = true)
     @NotBlank(message = "회원정보동의는 Y 를 입력해야 합니다.") //Null, 빈 문자열, 스페이스만 있는 문자열 불가
     private String informationAgreeStatus;
 
-    public Member toEntity() {
+    public Member toEntity(Email email, PhoneNumber phoneNumber) {
         return Member.builder()
                 .loginId(getLoginId())
                 .password(getPassword())
                 .nickName(getNickname())
-                .email(getEmail())
-                .phoneNumber(getPhoneNumber())
+                .email(email)
+                .phoneNumber(phoneNumber)
                 .informationAgreeStatus(getInformationAgreeStatus())
                 .memberLoginType(MemberLoginType.NORMAL_USER)
                 .build();

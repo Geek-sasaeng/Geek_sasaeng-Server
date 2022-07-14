@@ -19,33 +19,39 @@ public class Member extends BaseEntity {
     @Column(name="member_id")
     private int id;
 
+    @Column(nullable = false)
     private String loginId;
 
+    @Column(nullable = false)
     private String nickName;
 
+    @Column(nullable = false)
     private String password;
 
     @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="university_id")
+    @JoinColumn(name="university_id", nullable = false)
     private University university;
 
     @OneToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="phoneNumber_id")
+    @JoinColumn(name="phoneNumber_id", nullable = false, foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private PhoneNumber phoneNumber;
 
     @OneToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="email_id")
+    @JoinColumn(name="email_id", nullable = false, foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private Email email;
 
     private String profileImgUrl;
 
     private String jwtToken;
 
+    @Column(nullable = false)
     private String informationAgreeStatus; // 회원 정보 동의 여부
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private LoginStatus loginStatus; // 첫 번째 로그인인지 아닌지
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private MemberLoginType memberLoginType;
 
@@ -88,8 +94,6 @@ public class Member extends BaseEntity {
     public void changeLoginStatusToNotNever(){
         this.loginStatus = LoginStatus.NOTNEVER;
     }
-
-
 
     @Override
     public String toString() {

@@ -20,9 +20,6 @@ public class PhoneNumber extends BaseEntity {
     @Column(name="phoneNumber_id")
     private int id;
 
-    @OneToOne(mappedBy = "phoneNumber")
-    private Member member;
-
     private String number;
 
     @Enumerated(EnumType.STRING)

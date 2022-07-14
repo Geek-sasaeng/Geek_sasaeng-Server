@@ -12,13 +12,13 @@ import java.util.Optional;
 public interface MemberRepository extends JpaRepository<Member, Integer> {
     Optional<Member> findMemberByLoginId(String loginId);
 
-    Optional<Member> findMemberByEmail(Email email);
+    Optional<Member> findMemberByEmailId(int emailId);
 
     Optional<Member> findMemberByNickName(String nickName);
 
     Optional<Member> findMemberById(int id);
 
-    Optional<Member> findMemberByPhoneNumber(String phoneNumber);
+    Optional<Member> findMemberByPhoneNumberId(int phoneNumberId);
 
 
 }

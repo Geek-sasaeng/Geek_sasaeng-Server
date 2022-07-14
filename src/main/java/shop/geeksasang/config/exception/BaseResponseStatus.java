@@ -113,6 +113,8 @@ public enum BaseResponseStatus {
     NOT_MATCH_EMAIL(false, 2803,"이메일이 주소가 올바르지 않습니다."),
     INVALID_EMAIL_COUNT(false,2804,"이메일 인증은 하루 최대 10번입니다. 내일 다시 시도해주세요."),
     THREAD_OVER_REQUEST(false, 2805, "잠시 후에 다시 시도해주세요"),
+    INVALID_EMAIL_MEMBER(false, 2805, "이메일 인증을 하고 회원가입을 시도해주세요."),
+    INVALID_SMS_MEMBER(false, 2805, "SMS 인증을 하고 회원가입을 시도해주세요."),
 
     /**
      * 3000 : Response 오류
