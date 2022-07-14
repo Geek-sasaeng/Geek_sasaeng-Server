@@ -60,9 +60,11 @@ public class EmailService {
         if(!universityEmailAdress.equals(emailAddress)){
             throw new BaseException(BaseResponseStatus.NOT_MATCH_EMAIL);
         }
-//        if(memberRepository.findMemberByEmail(email).get().getEmailValidStatus().equals(EmailValidStatus.SUCCESS)){
-//            throw new BaseException(BaseResponseStatus.ALREADY_VALID_EMAIL);
-//        }
+
+        if(memberRepository.findMemberByEmail(email).get().getEmailValidStatus().equals(EmailValidStatus.SUCCESS)){
+            throw new BaseException(BaseResponseStatus.ALREADY_VALID_EMAIL);
+        }
+
         // 하루 10번 제한 검증
         Optional<VerificationCount> emailVerificationCount_optional = verificationCountRepository.findEmailVerificationCountByUUID(UUID);
 
@@ -80,11 +82,11 @@ public class EmailService {
             emailVerificationCount.increaseEmailVerificationCount();
         }
 
-
         // 난수 생성
         Random random = new Random();
         String authKey = String.valueOf(random.nextInt(888888) + 111111);
         sendAuthEmail(request.getEmail(), authKey);
+
     }
 
     // 인증번호가 일치하는지 체크

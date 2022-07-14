@@ -24,20 +24,19 @@ public class DeliveryPartyControllor {
     private final DeliveryPartyService deliveryPartyService;
 
     //배달 파티 생성
-    @PostMapping
+    @PostMapping("/deliveryParty")
     public BaseResponse<PostDeliveryPartyRes> registerDeliveryParty(@RequestBody PostDeliveryPartyReq dto){
         DeliveryParty deliveryParty = deliveryPartyService.registerDeliveryParty(dto);
 
         PostDeliveryPartyRes postDeliveryPartyRes = PostDeliveryPartyRes.toDto(deliveryParty);
-
         return new BaseResponse<>(postDeliveryPartyRes);
     }
 
     //배달파티 조회: 전체목록
     @NoIntercept
-    @GetMapping("/{domitoryId}/delivery-parties")
-    public BaseResponse<List<GetDeliveryPartiesRes>> getAllDeliveryParty(@PathVariable int domitoryId, @RequestParam int cursor){
-        List<GetDeliveryPartiesRes> response = deliveryPartyService.getDeliveryPartiesByDomitoryId(domitoryId, cursor);
+    @GetMapping("/{dormitoryId}/delivery-parties")
+    public BaseResponse<List<GetDeliveryPartiesRes>> getAllDeliveryParty(@PathVariable int dormitoryId, @RequestParam int cursor){
+        List<GetDeliveryPartiesRes> response = deliveryPartyService.getDeliveryPartiesByDormitoryId(dormitoryId, cursor);
         return new BaseResponse<>(response);
     }
 
@@ -72,9 +71,9 @@ public class DeliveryPartyControllor {
             @ApiResponse(code=4000,message = "서버 오류입니다.")
     })
     @NoIntercept
-    @GetMapping("/{domitoryId}/delivery-parties/{maxMatching}")
-    public BaseResponse<List<GetDeliveryPartyByMaxMatchingRes>> getDeliveryPartyByMaxMatching(@PathVariable int domitoryId, @PathVariable int maxMatching, @RequestParam("cursor") int cursor){
-        List<GetDeliveryPartyByMaxMatchingRes> response = deliveryPartyService.getDeliveryPartyByMaxMatching(domitoryId, maxMatching, cursor);
+    @GetMapping("/{dormitoryId}/delivery-parties/{maxMatching}")
+    public BaseResponse<List<GetDeliveryPartyByMaxMatchingRes>> getDeliveryPartyByMaxMatching(@PathVariable int dormitoryId, @PathVariable int maxMatching, @RequestParam("cursor") int cursor){
+        List<GetDeliveryPartyByMaxMatchingRes> response = deliveryPartyService.getDeliveryPartyByMaxMatching(dormitoryId, maxMatching, cursor);
         return new BaseResponse<>(response);
     }
 
@@ -86,15 +85,15 @@ public class DeliveryPartyControllor {
             @ApiResponse(code=4000,message = "서버 오류입니다.")
     })
     @NoIntercept
-    @GetMapping("/{domitoryId}/delivery-parties/filter/{orderTimeCategory}")
-    public BaseResponse<List<GetDeliveryPartyByOrderTimeRes>> GetDeliveryPartyByOrderTime(@PathVariable int domitoryId, @PathVariable String orderTimeCategory, @RequestParam("cursor") int cursor){
+    @GetMapping("/{dormitoryId}/delivery-parties/filter/{orderTimeCategory}")
+    public BaseResponse<List<GetDeliveryPartyByOrderTimeRes>> GetDeliveryPartyByOrderTime(@PathVariable int dormitoryId, @PathVariable String orderTimeCategory, @RequestParam("cursor") int cursor){
         // enum값 아닌 것 들어올때 처리 - 리팩토링 대상
         try{
             System.out.println(OrderTimeCategoryType.valueOf(orderTimeCategory));
         }catch(IllegalArgumentException e){
             throw new BaseException(NOT_EXISTS_ORDER_TIME_CATEGORY);
         }
-        List<GetDeliveryPartyByOrderTimeRes> response = deliveryPartyService.getDeliveryPartyByOrderTime(domitoryId, cursor, orderTimeCategory);
+        List<GetDeliveryPartyByOrderTimeRes> response = deliveryPartyService.getDeliveryPartyByOrderTime(dormitoryId, cursor, orderTimeCategory);
         return new BaseResponse<>(response);
     }
 

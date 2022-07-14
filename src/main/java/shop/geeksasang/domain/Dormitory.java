@@ -9,7 +9,6 @@ import javax.persistence.*;
 import lombok.NoArgsConstructor;
 import shop.geeksasang.config.domain.BaseEntity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -17,19 +16,19 @@ import java.util.List;
 @Builder
 @Getter
 @Entity
-public class HashTag extends BaseEntity {
+public class Dormitory extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="hash_tag_id")
+    @Column(name="dormitory_id")
     private int id;
 
-    private String title;
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name = "university_id")
+    private University university;
 
-    @OneToMany(mappedBy ="hashTag", targetEntity=DeliveryPartyHashTag.class)
-    private List<DeliveryParty> deliveryParties=new ArrayList<>();
+    @OneToMany(mappedBy = "dormitory")
+    private List<DeliveryParty> deliveryParties;
 
-    public void updateDeliveryParties(DeliveryParty deliveryParty){
-        this.deliveryParties.add(deliveryParty);
-    }
+    private String name;
 
 }

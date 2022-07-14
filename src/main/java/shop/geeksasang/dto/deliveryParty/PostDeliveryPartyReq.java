@@ -2,6 +2,7 @@ package shop.geeksasang.dto.deliveryParty;
 
 import lombok.*;
 import net.bytebuddy.asm.Advice;
+import org.springframework.format.annotation.DateTimeFormat;
 import shop.geeksasang.config.domain.MatchingStatus;
 import shop.geeksasang.domain.*;
 
@@ -16,17 +17,24 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PostDeliveryPartyReq {
-    private int chief;
-    private int domitory;
-    private List<Integer> hashTag;
+    private int chief; // 추후 jwt 이용
+
+    private int dormitory;
+
     private int foodCategory;
+
+    //**property 추가되어야 함.**
+
     private String title;
+
     private String content;
-    private LocalDateTime orderTime; // TODO: ###########
-    private int currentMatching;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
+    private LocalDateTime orderTime; //주문시간
+
     private int maxMatching;
+
     private String location;
-    private MatchingStatus matchingStatus; // TODO: #########String으로 하면 에러 남
 
     // 외래키 참조하는 것 말고는  요청 엔티티 생성
     public DeliveryParty toEntity() {
@@ -34,10 +42,8 @@ public class PostDeliveryPartyReq {
                 .title(getTitle())
                 .content(getContent())
                 .orderTime(getOrderTime())
-                .currentMatching(getCurrentMatching())
                 .maxMatching(getMaxMatching())
                 .location(getLocation())
-                .matchingStatus(getMatchingStatus())
                 .build();
     }
 }

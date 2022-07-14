@@ -88,6 +88,7 @@ public enum BaseResponseStatus {
      */
     NOT_EXISTS_LOGINID(false,2400,"존재하지 않는 아이디입니다."),
     NOT_EXISTS_HASHTAG(false,2401,"존재하지 않는 해시태그입니다."),
+    NOT_EXISTS_CATEGORY(false,2402,"존재하지 않는 카테고리입니다."),
 
 
 
@@ -101,7 +102,7 @@ public enum BaseResponseStatus {
     EXISTS_LOGIN_ID(false, 2603, "존재하는 아이디입니다"),
     NOT_SPECIFIED_VALUE(false, 2604, "지정된 값이 아닙니다"),
     NOT_EXISTS_UNIVERSITY_ID(false, 2605, "존재하지 않는 학교입니다"),
-    NOT_EXISTS_DOMITORY(false, 2606, "기숙사가 존재하지 않습니다"),
+    NOT_EXISTS_DORMITORY(false, 2606, "기숙사가 존재하지 않습니다"),
     ALREADY_VALID_EMAIL(false, 2607, "이미 인증된 이메일 입니다"),
     NOT_EXISTS_ORDER_TIME_CATEGORY(false, 2608, "존재하지 않는 시간 카테고리 입니다"),
 
