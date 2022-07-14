@@ -4,7 +4,9 @@ import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiParam;
 import lombok.*;
 import shop.geeksasang.config.domain.MemberLoginType;
+import shop.geeksasang.domain.Email;
 import shop.geeksasang.domain.Member;
+import shop.geeksasang.domain.PhoneNumber;
 
 import javax.validation.constraints.*;
 
@@ -43,19 +45,15 @@ public class PostRegisterReq {
     @NotBlank
     private  String universityName;
 
-    @ApiModelProperty(example = "abc@gachon.ac.kr")
+    @ApiModelProperty(example = "1")
     @ApiParam(value = "사용자 이메일", required = true)
     @NotBlank(message = "이메일을 입력해주세요.")
-    @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.ac.kr$")
-    @Email
-    private  String email;
+    private Email email;
 
-    @ApiModelProperty(example = "01012341234")
+    @ApiModelProperty(example = "1")
     @ApiParam(value = "사용자 핸드폰 번호", required = true)
-    @Size(min = 10, max = 11)
-    @Pattern(regexp = "^01(?:0|1|[6-9])(\\d{3}|\\d{4})(\\d{4})$")
-//    @Pattern(regexp = "^01(?:0|1|[6-9])(?:\\\\d{3}|\\\\d{4})\\\\d{4}$")
-    private  String phoneNumber;
+    @NotBlank(message = "핸드폰 번호를 입력해주세요.")
+    private PhoneNumber phoneNumber;
 
     @ApiModelProperty(example = "Y")
     @ApiParam(value = "사용자 회원 정보 동의 여부", required = true)

@@ -40,7 +40,6 @@ public class MemberService {
         if(!memberRepository.findMemberByEmail(dto.getEmail()).isEmpty()){
             throw new BaseException(DUPLICATE_USER_EMAIL);
         }
-
         // 검증: 동의여부가 Y 가 이닌 경우
         if(!dto.getInformationAgreeStatus().equals("Y")){
             throw new BaseException(INVALID_INFORMATIONAGREE_STATUS);
@@ -88,47 +87,6 @@ public class MemberService {
         memberRepository.save(member);
         return member;
     }
-    // 수정: 폰 번호
-    @Transactional(readOnly = false) // readOnly = false : 생성, 수정하는 작업에 적용
-    public Member updatePhoneNumber(int id, PatchPhoneNumberReq dto){
-
-        // 멤버 아이디로 조회
-        Member findMember = memberRepository
-                .findById(id)
-                .orElseThrow(() -> new BaseException(NOT_EXIST_USER));
-        // 폰 번호 수정
-        findMember.updatePhoneNumber(dto.getPhoneNumber());
-
-        return findMember;
-    }
-
-    // 수정: 폰 인증 번호
-    @Transactional(readOnly = false)
-    public Member updatePhoneValidKey(int id, PatchPhoneValidKeyReq dto){
-
-        //멤버 아이디로 조회
-        Member findMember = memberRepository
-                .findById(id)
-                .orElseThrow(()-> new BaseException(NOT_EXIST_USER));
-        //폰 인증번호 수정
-        findMember.updatePhoneValidKey(dto.getPhoneValidKey());
-
-        return findMember;
-    }
-
-    // 수정: 프로필 이미지
-    @Transactional(readOnly = false)
-    public Member updateProfileImgUrl(int id, PatchProfileImgUrlReq dto){
-
-        //멤버 아이디로 조회
-        Member findMember = memberRepository
-                .findById(id)
-                .orElseThrow(() -> new BaseException(NOT_EXIST_USER));
-        //프로필 이미지 수정
-        findMember.updateProfileImgUrl(dto.getProfileImgUrl());
-
-        return findMember;
-    }
 
     // 수정: 회원정보 동의 수정
     @Transactional(readOnly = false)
@@ -144,21 +102,16 @@ public class MemberService {
         return findMember;
     }
 
-    //확인: 새로 입력한 폰 인증번호 맞는지 확인
+    // 수정: 프로필 이미지
     @Transactional(readOnly = false)
-    public void checkPhoneValidKey(int id,GetCheckPhoneValidKeyReq dto){
-        // 검증: 전화번호 중복확인
-        if(memberRepository.findMemberByPhoneNumber(dto.getPhoneNumber()).isPresent()){
-            throw new BaseException(DUPLICATE_USER_PHONENUMBER);
-        }
-
-        // 확인: 기존 폰 인증번호 조회 -> dto 번호롸 일치하진 않으면 에러
+    public Member updateProfileImgUrl(int id, PatchProfileImgUrlReq dto){
+        //멤버 아이디로 조회
         Member findMember = memberRepository
                 .findById(id)
                 .orElseThrow(() -> new BaseException(NOT_EXIST_USER));
-        if(!dto.getPhoneValidKey().equals(findMember.getPhoneValidKey())){
-            throw new BaseException(DIFFERENT_PHONEVALIDKEY);
-        }
+        //프로필 이미지 수정
+        findMember.updateProfileImgUrl(dto.getProfileImgUrl());
+        return findMember;
     }
 
     // 중복 확인: 닉네임
@@ -170,7 +123,6 @@ public class MemberService {
             throw new BaseException(DUPLICATE_USER_NICKNAME);
         }
     }
-
 
     // 닉네임 변경하기
     @Transactional(readOnly = false)
@@ -260,6 +212,4 @@ public class MemberService {
             throw new BaseException(EXISTS_LOGIN_ID);
         }
     }
-
-
 }

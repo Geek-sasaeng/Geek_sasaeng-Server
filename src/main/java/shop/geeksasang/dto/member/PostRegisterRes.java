@@ -5,7 +5,9 @@ import io.swagger.annotations.ApiParam;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import shop.geeksasang.domain.Email;
 import shop.geeksasang.domain.Member;
+import shop.geeksasang.domain.PhoneNumber;
 
 @Getter @Setter
 @Builder
@@ -25,11 +27,11 @@ public class PostRegisterRes {
 
     @ApiModelProperty(example = "abc@gachon.ac.kr")
     @ApiParam(value = "사용자 이메일")
-    private  String email;
+    private Email email;
 
     @ApiModelProperty(example = "01012341234")
     @ApiParam(value = "사용자 핸드폰 번호")
-    private  String phoneNumber;
+    private PhoneNumber phoneNumber;
 
     static public PostRegisterRes toDto(Member member) {
         return PostRegisterRes.builder()

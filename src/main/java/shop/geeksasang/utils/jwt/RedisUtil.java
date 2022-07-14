@@ -30,8 +30,6 @@ public class RedisUtil {
     public boolean checkNumber(String email, String value) {
         try {
             String valid_value = getData(email);
-            System.out.println(valid_value);
-            System.out.println(value);
             if (valid_value.equals(value)) {
                 deleteData(email);
                 return true;

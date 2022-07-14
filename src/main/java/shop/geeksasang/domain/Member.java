@@ -14,7 +14,6 @@ import javax.persistence.*;
 @Entity
 @Getter
 public class Member extends BaseEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="member_id")
@@ -24,26 +23,21 @@ public class Member extends BaseEntity {
 
     private String nickName;
 
-    private String email;
-
     private String password;
 
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="university_id")
     private University university;
 
-    private String phoneNumber;
+    @OneToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="phoneNumber_id")
+    private PhoneNumber phoneNumber;
 
-    private String phoneValidKey;
-
-    private String phoneValidStatus;
+    @OneToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="email_id")
+    private Email email;
 
     private String profileImgUrl;
-
-    private String emailValidKey;
-
-    @Enumerated(EnumType.STRING)
-    private EmailValidStatus emailValidStatus;
 
     private String jwtToken;
 
@@ -65,38 +59,20 @@ public class Member extends BaseEntity {
         this.university = university;
     }
 
-    // 수정: 폰번호 저장
-    public void updatePhoneNumber(String phoneNumber){
-        this.phoneNumber = phoneNumber;
-    }
-
-    //수정: 폰 인증번호 수정
-    public void updatePhoneValidKey(String phoneValidKey){
-        this.phoneValidKey = phoneValidKey;
-    }
-
-    // 수정: 폰 번호
-    public void updateProfileImgUrl(String profileImgUrl){
-        this.profileImgUrl = profileImgUrl;
-    }
-
     // 수정: 회원정보 동의 수정
     public void updateInformationAgreeStatus(String informationAgreeStatus){
         this.informationAgreeStatus = informationAgreeStatus;
+    }
+
+    // 수정: 프로필 이미지
+    public void updateProfileImgUrl(String profileImgUrl){
+        this.profileImgUrl = profileImgUrl;
     }
 
     // 값 확인용 메서드
     public void updateNickname(String nickName) { this.nickName = nickName; }
 
     public void updatePassword(String password) { this.password = password; }
-
-    public void updateEmailValidKey(String emailValidKey) { this.emailValidKey = emailValidKey; }
-
-
-    public void changeEmailValidStatusToSuccess() {
-        this.emailValidStatus = EmailValidStatus.SUCCESS;
-    }
-
 
     // 회원 탈퇴
     public void changeStatusToInactive(){
@@ -113,6 +89,8 @@ public class Member extends BaseEntity {
         this.loginStatus = LoginStatus.NOTNEVER;
     }
 
+
+
     @Override
     public String toString() {
         return "Member{" +
@@ -123,11 +101,7 @@ public class Member extends BaseEntity {
                 ", password='" + password + '\'' +
                 ", university=" + university +
                 ", phoneNumber='" + phoneNumber + '\'' +
-                ", phoneValidKey='" + phoneValidKey + '\'' +
-                ", phoneValidStatus='" + phoneValidStatus + '\'' +
                 ", profileImgUrl='" + profileImgUrl + '\'' +
-                ", emailValidKey='" + emailValidKey + '\'' +
-                ", emailValidStatus='" + emailValidStatus + '\'' +
                 ", jwtToken='" + jwtToken + '\'' +
                 '}';
     }

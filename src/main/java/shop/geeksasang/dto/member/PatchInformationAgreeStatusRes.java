@@ -4,7 +4,9 @@ import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiParam;
 import lombok.Builder;
 import lombok.Data;
+import shop.geeksasang.domain.Email;
 import shop.geeksasang.domain.Member;
+import shop.geeksasang.domain.PhoneNumber;
 
 @Builder // .builder() 사용
 @Data // Getter, Setter 포함
@@ -28,11 +30,11 @@ public class PatchInformationAgreeStatusRes {
 
     @ApiModelProperty(example = "zero@naver.com")
     @ApiParam(value = "사용자 이메일")
-    private  String email;
+    private Email email;
 
     @ApiModelProperty(example = "01012341234")
     @ApiParam(value = "사용자 폰 번호")
-    private  String phoneNumber;
+    private PhoneNumber phoneNumber;
 
     @ApiModelProperty(example = "Y")
     @ApiParam(value = "회원 정보동의 여부")
