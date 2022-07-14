@@ -83,7 +83,7 @@ public class DeliveryParty extends BaseEntity {
         this.orderTimeCategory = orderTimeCategory;
     }
     public void connectHashTag(List<HashTag> hashTags){
-        this.hashTags=hashTags.stream().collect(Collectors.toList());
+        this.hashTags = hashTags.stream().collect(Collectors.toList());
     }
 
 

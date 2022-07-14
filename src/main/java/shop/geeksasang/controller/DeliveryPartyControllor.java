@@ -7,8 +7,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import shop.geeksasang.config.domain.OrderTimeCategoryType;
 import shop.geeksasang.config.exception.BaseException;
+import shop.geeksasang.config.exception.BaseResponseStatus;
 import shop.geeksasang.config.response.BaseResponse;
 import shop.geeksasang.domain.DeliveryParty;
+import shop.geeksasang.domain.Member;
 import shop.geeksasang.dto.deliveryParty.*;
 import shop.geeksasang.service.DeliveryPartyService;
 import shop.geeksasang.utils.jwt.NoIntercept;
@@ -24,6 +26,15 @@ public class DeliveryPartyControllor {
     private final DeliveryPartyService deliveryPartyService;
 
     //배달 파티 생성
+    @NoIntercept
+    @ApiOperation(value = "배달 파티 생성", notes = "사용자는 배달 파티를 생성할 수 있다.")
+    @ApiResponses({
+            @ApiResponse(code =1000 ,message ="요청에 성공하였습니다"),
+            @ApiResponse(code =2009 ,message ="존재하지 않는 멤버입니다"),
+            @ApiResponse(code =2606 ,message ="기숙사가 존재하지 않습니다"),
+            @ApiResponse(code =2402 ,message ="존재하지 않는 카테고리입니다"),
+            @ApiResponse(code =4000 ,message = "서버 오류입니다.")
+    })
     @PostMapping("/deliveryParty")
     public BaseResponse<PostDeliveryPartyRes> registerDeliveryParty(@RequestBody PostDeliveryPartyReq dto){
         DeliveryParty deliveryParty = deliveryPartyService.registerDeliveryParty(dto);
@@ -33,7 +44,7 @@ public class DeliveryPartyControllor {
     }
 
     //배달파티 조회: 전체목록
-    @ApiOperation(value = "전체 배달파티 조회", notes = "cursor은 0부터 시작. domitoryId는 현재 대학교 id. 예시 : https://geeksasaeng.shop/1/delivery-parties?cursor=0  ")
+    @ApiOperation(value = "전체 배달파티 조회", notes = "cursor은 0부터 시작. dormitoryId는 현재 대학교 id. 예시 : https://geeksasaeng.shop/1/delivery-parties?cursor=0  ")
     @ApiResponses({
             @ApiResponse(code =1000 ,message ="요청에 성공하셨습니다."),
             @ApiResponse(code=4000, message = "서버 오류입니다.")
