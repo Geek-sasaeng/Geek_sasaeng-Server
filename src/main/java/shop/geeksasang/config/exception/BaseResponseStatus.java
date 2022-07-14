@@ -77,7 +77,7 @@ public enum BaseResponseStatus {
      * code : 2200~2399
      */
     INVALID_INFORMATIONAGREE_STATUS(false,2201,"회원 정보동의 status가 Y가 아닙니다."),
-    DUPLICATE_USER_PHONENUMBER(false, 2202, "이미 등록된 전호번호입니다."),
+    DUPLICATE_USER_PHONENUMBER(false, 2202, "이미 등록된 전화번호 입니다."),
     DIFFERENT_PHONEVALIDKEY(false, 2203, "폰 인증번호가 다릅니다."),
     NOT_EXIST_USER(false,2204,"존재하지 않는 회원 id 입니다."),
 

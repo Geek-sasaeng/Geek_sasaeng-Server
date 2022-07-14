@@ -54,8 +54,8 @@ public class SmsController {
     @NoIntercept
     @PostMapping("/verification")
     public BaseResponse<BaseResponse> verifySms(@Validated @RequestBody PostVerifySmsReq request){
-        BaseResponse baseResponse = smsService.verifySms(request.getVerifyRandomNumber(), request.getRecipientPhoneNumber());
-        return new BaseResponse<>(baseResponse);
+        smsService.verifySms(request.getVerifyRandomNumber(), request.getRecipientPhoneNumber());
+        return new BaseResponse<>(SMS_VERIFICATION_SUCCESS);
     }
-
+    
 }

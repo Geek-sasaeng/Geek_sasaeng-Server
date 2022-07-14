@@ -63,7 +63,7 @@ public class EmailService {
             throw new BaseException(BaseResponseStatus.NOT_MATCH_EMAIL);
         }
         // 이미 존재하는 이메일인지 검증
-        if(emailRepository.findEmailByName(emailAddress).isPresent()){
+        if(emailRepository.findEmailByAddress(email).isPresent()){
             throw new BaseException(ALREADY_VALID_EMAIL);
         }
         // 하루 10번 제한 검증
@@ -91,6 +91,7 @@ public class EmailService {
     }
 
     // 인증번호가 일치하는지 체크
+    @Transactional(readOnly = false)
     public boolean checkEmailCertification(PostEmailCertificationReq request) {
         String address = request.getEmail();
         String key = request.getKey();

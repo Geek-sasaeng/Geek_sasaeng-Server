@@ -6,5 +6,5 @@ import shop.geeksasang.domain.Email;
 import java.util.Optional;
 
 public interface EmailRepository extends JpaRepository<Email, Integer> {
-    Optional<Email> findEmailByName(String name);
+    Optional<Email> findEmailByAddress(String name);
 }
