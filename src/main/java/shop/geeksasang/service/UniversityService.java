@@ -26,11 +26,4 @@ public class UniversityService {
                 .collect(Collectors.toList());
 
     }
-
-    public List<GetDomitoriesRes> getDomitories(int universityId) {
-        University university = universityRepository.findDomitoriesByUniversityId(universityId).orElseThrow(() -> new RuntimeException());
-        return university.getDomitories().stream()
-                .map(domitory -> GetDomitoriesRes.of(domitory))
-                .collect(Collectors.toList());
-    }
 }

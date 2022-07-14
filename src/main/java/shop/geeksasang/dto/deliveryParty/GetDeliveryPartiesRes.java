@@ -1,44 +1,39 @@
 package shop.geeksasang.dto.deliveryParty;
 
+import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiParam;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import shop.geeksasang.config.domain.MatchingStatus;
-import shop.geeksasang.domain.*;
+import shop.geeksasang.domain.DeliveryParty;
+import shop.geeksasang.domain.HashTag;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+
 
 @Getter
 @Setter
 @Builder
-public class PostDeliveryPartyRes {
+public class GetDeliveryPartiesRes {
+    private int id;
     private String chief;
-    private String domitory;
-//    private List<HashTag> hashTags;
-    //private String hashTag; //TODO:######
-    private List<String> hashTags;
     private String foodCategory;
+    private List<String> hashTags;
     private String title;
     private String content;
     private LocalDateTime orderTime;
     private int currentMatching;
     private int maxMatching;
     private String location;
-    private String matchingStatus;
+    private MatchingStatus matchingStatus;
 
-
-
-    static public PostDeliveryPartyRes toDto(DeliveryParty deliveryParty){
-
-
-        return PostDeliveryPartyRes.builder()
+    static public GetDeliveryPartiesRes toDto(DeliveryParty deliveryParty){
+        return GetDeliveryPartiesRes.builder()
+                .id(deliveryParty.getId())
                 .chief(deliveryParty.getChief().getNickName())
-                .domitory(deliveryParty.getDomitory().getName())
-                //.hashTags(deliveryParty.getHashTag()) // Req의 메소드와 다름
-                //.hashTags(deliveryParty.getHashTag()) // TODO:#####
                 .hashTags(deliveryParty.getHashTags().stream().map(HashTag::getTitle).collect(Collectors.toList()))
                 .foodCategory(deliveryParty.getFoodCategory().getTitle())
                 .title(deliveryParty.getTitle())
@@ -47,7 +42,7 @@ public class PostDeliveryPartyRes {
                 .currentMatching(deliveryParty.getCurrentMatching())
                 .maxMatching(deliveryParty.getMaxMatching())
                 .location(deliveryParty.getLocation())
-                .matchingStatus(deliveryParty.getMatchingStatus().toString())// TODO:#####
+                .matchingStatus(deliveryParty.getMatchingStatus())
                 .build();
     }
 }

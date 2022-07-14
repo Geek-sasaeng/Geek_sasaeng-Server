@@ -12,10 +12,10 @@ import shop.geeksasang.config.domain.BaseEntity;
 @Getter
 @Entity
 @Setter
-public class DeliveryPartyRoom extends BaseEntity {
+public class DeliveryPartyMember extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="delivery_party_room_id")
+    @Column(name="delivery_party_member_id")
     private int id;
 
     @ManyToOne(fetch=FetchType.LAZY)

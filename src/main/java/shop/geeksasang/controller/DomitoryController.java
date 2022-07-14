@@ -22,25 +22,14 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class DomitoryController {
 
-    private final UniversityService universityService;
     private final DomitoryService domitoryService;
 
     @ApiOperation(value = "조회: 대학교별 기숙사 목록 조회", notes = "대학교 id 입력받아 기숙사 목록을 조회한다.")
     @NoIntercept
-
     @GetMapping("/{universityId}/domitories")
-    public BaseResponse<List<GetDomitoriesRes>> getDomitoryByUniversity(@PathVariable int universityId) {
-        List<GetDomitoriesRes> response = universityService.getDomitories(universityId);
+    public BaseResponse<List<GetDomitoriesRes>> getDomitoriesByUniversity(@PathVariable int universityId) {
+        List<GetDomitoriesRes> response = domitoryService.getDomitories(universityId);
         return new BaseResponse<>(response);
     }
-    
-//    @GetMapping
-//    public List<DomitoryDto> getDomitoryByUniversity(@RequestParam int university_id) {
-//        List<Domitory> domitory = domitoryService.getDomitories(university_id);
-//        List<DomitoryDto> domitoryDto = domitory.stream()
-//                .map(d -> new DomitoryDto(d))
-//                .collect(Collectors.toList());
-//        return domitoryDto;
-//    }
 
 }
