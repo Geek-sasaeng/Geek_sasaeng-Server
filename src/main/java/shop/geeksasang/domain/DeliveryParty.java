@@ -36,12 +36,17 @@ public class DeliveryParty extends BaseEntity {
     @JoinColumn(name="dormitory_id")
     private Dormitory dormitory;
 
+    @OneToMany(mappedBy ="deliveryParty", targetEntity=DeliveryPartyHashTag.class)
+    private List<HashTag> hashTags=new ArrayList<>();
+
+
     @OneToOne(fetch=FetchType.LAZY)
     @JsonIgnore
     private FoodCategory foodCategory;
 
     @OneToMany(mappedBy = "party")
     private List<DeliveryPartyMember> deliveryPartyMembers;
+
 
     private String title;
 
@@ -78,6 +83,11 @@ public class DeliveryParty extends BaseEntity {
     public void connectOrderTimeCategory(OrderTimeCategoryType orderTimeCategory){
         this.orderTimeCategory = orderTimeCategory;
     }
+    public void connectHashTag(HashTag hashTag){
+        this.hashTags.add(hashTag);
+    }
+
+
 
     //배달생성시 초기 세팅 메소드
     public void initialCurrentMatching(){
