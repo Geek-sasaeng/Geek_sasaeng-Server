@@ -6,7 +6,9 @@ import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 import shop.geeksasang.domain.*;
 
+import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -20,17 +22,17 @@ public class PostDeliveryPartyReq {
     // 추후 jwt 이용
     @ApiModelProperty(example = "1")
     @ApiParam(value = "사용자 id", required = true)
-    @NotBlank(message = "사용자 id를 입력하세요.")
+    @NotNull
     private int chief;
 
     @ApiModelProperty(example = "1")
     @ApiParam(value = "기숙사 id", required = true)
-    @NotBlank(message = "기숙사 id를 입력하세요.")
+    @NotNull
     private int dormitory;
 
     @ApiModelProperty(example = "1")
     @ApiParam(value = "음식 카테고리", required = true)
-    @NotBlank(message = "음식 카테고리를 입력하세요.")
+    @NotNull
     private int foodCategory;
 
     @ApiModelProperty(example = "[1,2]")
@@ -40,24 +42,25 @@ public class PostDeliveryPartyReq {
     @ApiModelProperty(example = "치킨 같이 나눠먹어요")
     @ApiParam(value = "배달파티 제목", required = true)
     @Size(min = 1, max = 20)
-    //@NotBlank(message = "배달 파티 제목을 입력하세요.")
+    @NotBlank(message = "배달 파티 제목을 입력하세요.")
     private String title;
 
     @ApiModelProperty(example = "관심있는 분 채팅 해주세요")
     @ApiParam(value = "배달파티 내용", required = true)
     @Size(min = 1, max = 500)
-    //@NotBlank(message = "배달파티 내용을 입력하세요.")
+    @NotBlank(message = "배달파티 내용을 입력하세요.")
     private String content;
 
     @ApiModelProperty(example = "2022-07-13T16:29:30.97")
     @ApiParam(value = "주문 시간", required = true)
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
-    @NotBlank(message = "배달파티 주문시간을 입력하세요.")
+    @NotNull
+    @FutureOrPresent //현재 or 미래 validation
     private LocalDateTime orderTime; //주문시간
 
     @ApiModelProperty(example = "4")
     @ApiParam(value = "매칭 인원", required = true)
-    @NotBlank(message = "매칭 인원을 입력하세요.")
+    @NotNull
     private int maxMatching;
 
     @ApiModelProperty(example = "1기숙사 정문")
