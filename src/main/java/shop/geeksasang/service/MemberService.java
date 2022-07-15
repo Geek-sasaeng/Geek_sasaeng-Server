@@ -4,12 +4,17 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import shop.geeksasang.config.domain.ValidStatus;
 import shop.geeksasang.config.exception.BaseException;
+import shop.geeksasang.domain.Email;
 import shop.geeksasang.domain.Member;
+import shop.geeksasang.domain.PhoneNumber;
 import shop.geeksasang.domain.University;
 
 import shop.geeksasang.dto.member.*;
+import shop.geeksasang.repository.EmailRepository;
 import shop.geeksasang.repository.MemberRepository;
+import shop.geeksasang.repository.PhoneNumberRepository;
 import shop.geeksasang.repository.UniversityRepository;
 import shop.geeksasang.utils.jwt.RedisUtil;
 import shop.geeksasang.utils.encrypt.SHA256;
@@ -24,6 +29,9 @@ import static shop.geeksasang.config.exception.BaseResponseStatus.*;
 public class MemberService {
     private final MemberRepository memberRepository;
     private final UniversityRepository universityRepository;
+    private final EmailRepository emailRepository;
+    private final PhoneNumberRepository phoneNumberRepository;
+
     private final RedisUtil redisUtil;
 
     private final long expireTime = 60 * 5L; // 이메일 유효 기간
@@ -37,23 +45,38 @@ public class MemberService {
         if(!memberRepository.findMemberByLoginId(dto.getLoginId()).isEmpty()){
             throw new BaseException(DUPLICATE_USER_LOGIN_ID);
         }
-        if(!memberRepository.findMemberByEmail(dto.getEmail()).isEmpty()){
-            throw new BaseException(DUPLICATE_USER_EMAIL);
-        }
-
         // 검증: 동의여부가 Y 가 이닌 경우
         if(!dto.getInformationAgreeStatus().equals("Y")){
             throw new BaseException(INVALID_INFORMATIONAGREE_STATUS);
         }
+        // 검증: 이메일 인증 여부
+        if(memberRepository.findMemberByEmailId(dto.getEmailId()).isPresent()){
+            throw new BaseException(ALREADY_VALID_EMAIL);
+        }
+
+        Email email = emailRepository.findById(dto.getEmailId()).orElseThrow(
+                () -> new BaseException(INVALID_EMAIL_MEMBER));
+        if(!email.getEmailValidStatus().equals(ValidStatus.SUCCESS))
+            throw new BaseException(INVALID_EMAIL_MEMBER);
+
+        // 검증: 휴대폰 인증 여부
+        if(memberRepository.findMemberByPhoneNumberId(dto.getPhoneNumberId()).isPresent()){
+            throw new BaseException(DUPLICATE_USER_PHONENUMBER);
+        }
+
+        PhoneNumber phoneNumber = phoneNumberRepository.findById(dto.getPhoneNumberId()).orElseThrow(
+                () -> new BaseException(INVALID_EMAIL_MEMBER));
+        if(!phoneNumber.getPhoneValidStatus().equals(ValidStatus.SUCCESS))
+            throw new BaseException(INVALID_SMS_MEMBER);
+
         dto.setPassword(SHA256.encrypt(dto.getPassword()));
-        Member member = dto.toEntity();
+        Member member = dto.toEntity(email, phoneNumber);
         University university = universityRepository
                 .findUniversityByName(dto.getUniversityName())
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_UNIVERSITY));
         member.connectUniversity(university);
         member.changeStatusToActive();
         member.changeLoginStatusToNever(); // 로그인 안해본 상태 디폴트 저장
-
         memberRepository.save(member);
         return member;
     }
@@ -67,67 +90,40 @@ public class MemberService {
         if(!memberRepository.findMemberByLoginId(dto.getLoginId()).isEmpty()){
             throw new BaseException(DUPLICATE_USER_LOGIN_ID);
         }
-        if(!memberRepository.findMemberByEmail(dto.getEmail()).isEmpty()){
-            throw new BaseException(DUPLICATE_USER_EMAIL);
-        }
-
         // 검증: 동의여부가 Y 가 이닌 경우
         if(!dto.getInformationAgreeStatus().equals("Y")){
             throw new BaseException(INVALID_INFORMATIONAGREE_STATUS);
         }
+        // 검증: 이메일 인증 여부
+        if(memberRepository.findMemberByEmailId(dto.getEmailId()).isPresent()){
+            throw new BaseException(ALREADY_VALID_EMAIL);
+        }
+
+        Email email = emailRepository.findById(dto.getEmailId()).orElseThrow(
+                () -> new BaseException(INVALID_EMAIL_MEMBER));
+        if(!email.getEmailValidStatus().equals(ValidStatus.SUCCESS))
+            throw new BaseException(INVALID_EMAIL_MEMBER);
+
+        // 검증: 휴대폰 인증 여부
+        if(memberRepository.findMemberByPhoneNumberId(dto.getPhoneNumberId()).isPresent()){
+            throw new BaseException(DUPLICATE_USER_PHONENUMBER);
+        }
+
+        PhoneNumber phoneNumber = phoneNumberRepository.findById(dto.getPhoneNumberId()).orElseThrow(
+                () -> new BaseException(INVALID_EMAIL_MEMBER));
+        if(!phoneNumber.getPhoneValidStatus().equals(ValidStatus.SUCCESS))
+            throw new BaseException(INVALID_SMS_MEMBER);
+
         dto.setPassword(SHA256.encrypt(dto.getPassword()));
-        Member member = dto.toEntity();
+        Member member = dto.toEntity(email, phoneNumber);
         University university = universityRepository
                 .findUniversityByName(dto.getUniversityName())
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_UNIVERSITY));
         member.connectUniversity(university);
         member.changeStatusToActive();
         member.changeLoginStatusToNever(); // 로그인 안해본 상태 디폴트 저장
-
-
         memberRepository.save(member);
         return member;
-    }
-    // 수정: 폰 번호
-    @Transactional(readOnly = false) // readOnly = false : 생성, 수정하는 작업에 적용
-    public Member updatePhoneNumber(int id, PatchPhoneNumberReq dto){
-
-        // 멤버 아이디로 조회
-        Member findMember = memberRepository
-                .findById(id)
-                .orElseThrow(() -> new BaseException(NOT_EXIST_USER));
-        // 폰 번호 수정
-        findMember.updatePhoneNumber(dto.getPhoneNumber());
-
-        return findMember;
-    }
-
-    // 수정: 폰 인증 번호
-    @Transactional(readOnly = false)
-    public Member updatePhoneValidKey(int id, PatchPhoneValidKeyReq dto){
-
-        //멤버 아이디로 조회
-        Member findMember = memberRepository
-                .findById(id)
-                .orElseThrow(()-> new BaseException(NOT_EXIST_USER));
-        //폰 인증번호 수정
-        findMember.updatePhoneValidKey(dto.getPhoneValidKey());
-
-        return findMember;
-    }
-
-    // 수정: 프로필 이미지
-    @Transactional(readOnly = false)
-    public Member updateProfileImgUrl(int id, PatchProfileImgUrlReq dto){
-
-        //멤버 아이디로 조회
-        Member findMember = memberRepository
-                .findById(id)
-                .orElseThrow(() -> new BaseException(NOT_EXIST_USER));
-        //프로필 이미지 수정
-        findMember.updateProfileImgUrl(dto.getProfileImgUrl());
-
-        return findMember;
     }
 
     // 수정: 회원정보 동의 수정
@@ -144,21 +140,16 @@ public class MemberService {
         return findMember;
     }
 
-    //확인: 새로 입력한 폰 인증번호 맞는지 확인
+    // 수정: 프로필 이미지
     @Transactional(readOnly = false)
-    public void checkPhoneValidKey(int id,GetCheckPhoneValidKeyReq dto){
-        // 검증: 전화번호 중복확인
-        if(memberRepository.findMemberByPhoneNumber(dto.getPhoneNumber()).isPresent()){
-            throw new BaseException(DUPLICATE_USER_PHONENUMBER);
-        }
-
-        // 확인: 기존 폰 인증번호 조회 -> dto 번호롸 일치하진 않으면 에러
+    public Member updateProfileImgUrl(int id, PatchProfileImgUrlReq dto){
+        //멤버 아이디로 조회
         Member findMember = memberRepository
                 .findById(id)
                 .orElseThrow(() -> new BaseException(NOT_EXIST_USER));
-        if(!dto.getPhoneValidKey().equals(findMember.getPhoneValidKey())){
-            throw new BaseException(DIFFERENT_PHONEVALIDKEY);
-        }
+        //프로필 이미지 수정
+        findMember.updateProfileImgUrl(dto.getProfileImgUrl());
+        return findMember;
     }
 
     // 중복 확인: 닉네임
@@ -170,7 +161,6 @@ public class MemberService {
             throw new BaseException(DUPLICATE_USER_NICKNAME);
         }
     }
-
 
     // 닉네임 변경하기
     @Transactional(readOnly = false)
@@ -260,6 +250,4 @@ public class MemberService {
             throw new BaseException(EXISTS_LOGIN_ID);
         }
     }
-
-
 }

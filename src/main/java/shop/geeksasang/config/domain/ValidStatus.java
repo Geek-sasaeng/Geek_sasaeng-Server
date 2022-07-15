@@ -1,5 +1,5 @@
 package shop.geeksasang.config.domain;
 
-public enum EmailValidStatus {
+public enum ValidStatus {
     SUCCESS, FAILED
 }

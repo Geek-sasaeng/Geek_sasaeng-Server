@@ -30,12 +30,16 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
+import shop.geeksasang.config.domain.ValidStatus;
 import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.config.response.BaseResponse;
+import shop.geeksasang.domain.PhoneNumber;
 import shop.geeksasang.domain.VerificationCount;
 import shop.geeksasang.dto.sms.MessagesDto;
 import shop.geeksasang.dto.sms.NaverApiSmsReq;
 import shop.geeksasang.dto.sms.NaverApiSmsRes;
+import shop.geeksasang.dto.sms.PostVerifySmsRes;
+import shop.geeksasang.repository.PhoneNumberRepository;
 import shop.geeksasang.repository.SmsRedisRepository;
 import shop.geeksasang.repository.VerificationCountRepository;
 
@@ -57,6 +61,7 @@ public class SmsService {
     @Value("#{environment['sms.phone_number']}")
     private String fromPhoneNumber;
 
+    private final PhoneNumberRepository phoneNumberRepository;
     private final SmsRedisRepository smsRedisRepository;
     private final VerificationCountRepository smsVerificationCountRepository;
 
@@ -68,6 +73,11 @@ public class SmsService {
         //uuid가 없다면 이메일 인증을 하지 않은 것이므로 오류 발생
         VerificationCount smsVerificationCount = smsVerificationCountRepository.findVerificationCountByUUID(uuid)
                 .orElseThrow(() -> new BaseException(INVALID_SMS_UUID));
+
+        // 중복되는 핸드폰 번호 있는지 검사
+        if(phoneNumberRepository.findPhoneNumberByNumber(recipientPhoneNumber).isPresent()){
+            throw new BaseException(DUPLICATE_USER_PHONENUMBER);
+        }
 
         //하루에 5번 넘었는지 검사
         if(smsVerificationCount.checkSmsVerificationCountIsMoreThan5()){
@@ -82,6 +92,7 @@ public class SmsService {
         userSmsApi(recipientPhoneNumber, randomNumber);
 
         smsRedisRepository.createSmsCertification(recipientPhoneNumber, randomNumber);
+
 
         smsVerificationCount.increaseSmsVerificationCount();
 
@@ -169,13 +180,16 @@ public class SmsService {
     }
 
 
-    @Transactional(readOnly = true)
-    public BaseResponse verifySms(String verifyRandomNumber, String phoneNumber) {
+    @Transactional(readOnly = false)
+    public PostVerifySmsRes verifySms(String verifyRandomNumber, String phoneNumber) {
         if(!isVerify(verifyRandomNumber, phoneNumber)){
             throw new BaseException(INVALID_SMS_VERIFY_NUMBER);
         }
         smsRedisRepository.removeSmsCertification(phoneNumber);
-        return new BaseResponse<>(SMS_VERIFICATION_SUCCESS);
+        // 인증된 핸드폰 번호 등록
+        PhoneNumber phoneNumberEntity = PhoneNumber.builder().number(phoneNumber).phoneValidStatus(ValidStatus.SUCCESS).build();
+        phoneNumberRepository.save(phoneNumberEntity);
+        return new PostVerifySmsRes(phoneNumberEntity.getId());
     }
 
     private boolean isVerify(String verifyRandomNumber, String phoneNumber){

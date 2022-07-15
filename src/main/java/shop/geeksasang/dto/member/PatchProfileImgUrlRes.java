@@ -4,7 +4,9 @@ import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiParam;
 import lombok.Builder;
 import lombok.Data;
+import shop.geeksasang.domain.Email;
 import shop.geeksasang.domain.Member;
+import shop.geeksasang.domain.PhoneNumber;
 
 @Builder // .builder() 사용
 @Data // Getter, Setter 포함
@@ -28,11 +30,11 @@ public class PatchProfileImgUrlRes {
 
     @ApiModelProperty(example = "zero@naver.com")
     @ApiParam(value = "사용자 이메일")
-    private String email;
+    private Email email;
 
     @ApiModelProperty(example = "01012341234")
     @ApiParam(value = "사용자 폰 번호")
-    private String phoneNumber;
+    private PhoneNumber phoneNumber;
 
     @ApiModelProperty(example = "http://geeksasaeng.shop/s3/neo.jpg")
     @ApiParam(value = "수정할 프로필 이미지 url")
