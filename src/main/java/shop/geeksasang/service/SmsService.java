@@ -76,7 +76,12 @@ public class SmsService {
 
         // 중복되는 핸드폰 번호 있는지 검사
         if(phoneNumberRepository.findPhoneNumberByNumber(recipientPhoneNumber).isPresent()){
-            throw new BaseException(DUPLICATE_USER_PHONENUMBER);
+            PhoneNumber phoneNumber = phoneNumberRepository.findPhoneNumberByNumber(recipientPhoneNumber).get();
+            if(phoneNumber.getMember() == null){
+                phoneNumberRepository.delete(phoneNumber);
+            }else{
+                throw new BaseException(DUPLICATE_USER_PHONENUMBER);
+            }
         }
 
         //하루에 5번 넘었는지 검사

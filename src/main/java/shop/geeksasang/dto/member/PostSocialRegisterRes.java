@@ -2,10 +2,16 @@ package shop.geeksasang.dto.member;
 
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiParam;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 import shop.geeksasang.domain.Email;
 import shop.geeksasang.domain.Member;
 import shop.geeksasang.domain.PhoneNumber;
 
+@Getter
+@Setter
+@Builder
 public class PostSocialRegisterRes {
 
     @ApiModelProperty(example = "geeksasaeng@gmail.com")
@@ -17,35 +23,21 @@ public class PostSocialRegisterRes {
     @ApiModelProperty(example = "Gachon University")
     private  String universityName;
 
-    @ApiModelProperty(example = "\"email\": {\n" +
-            "            \"createdAt\": \"2022-07-15 10:39:12\",\n" +
-            "            \"updatedAt\": \"2022-07-15 10:39:12\",\n" +
-            "            \"status\": null,\n" +
-            "            \"id\": 2,\n" +
-            "            \"address\": \"forceTlight@gachon.ac.kr\",\n" +
-            "            \"emailValidStatus\": \"SUCCESS\"\n" +
-            "        }")
-    @ApiParam(value = "사용자 이메일")
-    private Email email;
+    @ApiModelProperty(example = "1")
+    @ApiParam(value = "사용자 이메일 인덱스")
+    private int email;
 
-    @ApiModelProperty(example = "\"phoneNumber\": {\n" +
-            "            \"createdAt\": \"2022-07-15 10:40:24\",\n" +
-            "            \"updatedAt\": \"2022-07-15 10:40:24\",\n" +
-            "            \"status\": null,\n" +
-            "            \"id\": 2,\n" +
-            "            \"number\": \"01025291674\",\n" +
-            "            \"phoneValidStatus\": \"SUCCESS\"\n" +
-            "        }")
-    @ApiParam(value = "사용자 핸드폰 번호")
-    private PhoneNumber phoneNumber;
+    @ApiModelProperty(example = "3")
+    @ApiParam(value = "사용자 핸드폰 번호 인덱스")
+    private int phoneNumber;
 
-    static public PostRegisterRes toDto(Member member) {
-        return PostRegisterRes.builder()
+    static public PostSocialRegisterRes toDto(Member member, Email email, PhoneNumber phoneNumber) {
+        return PostSocialRegisterRes.builder()
                 .loginId(member.getLoginId())
                 .nickname(member.getNickName())
                 .universityName(member.getUniversity().getName())
-                .email(member.getEmail())
-                .phoneNumber(member.getPhoneNumber())
+                .email(email.getId())
+                .phoneNumber(phoneNumber.getId())
                 .build();
     }
 }

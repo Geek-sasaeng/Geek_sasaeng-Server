@@ -38,7 +38,7 @@ public class MemberService {
 
     // 회원 가입하기
     @Transactional(readOnly = false)
-    public Member registerMember(PostRegisterReq dto){
+    public PostRegisterRes registerMember(PostRegisterReq dto){
          if(!dto.getCheckPassword().equals(dto.getPassword())) {
              throw new BaseException(DIFFRENT_PASSWORDS);
          }
@@ -78,12 +78,13 @@ public class MemberService {
         member.changeStatusToActive();
         member.changeLoginStatusToNever(); // 로그인 안해본 상태 디폴트 저장
         memberRepository.save(member);
-        return member;
+        PostRegisterRes postRegisterRes = PostRegisterRes.toDto(member, email, phoneNumber);
+        return postRegisterRes;
     }
 
     // 소셜 회원가입 하기
     @Transactional(readOnly = false)
-    public Member registerSocialMember(PostSocialRegisterReq dto){
+    public PostSocialRegisterRes registerSocialMember(PostSocialRegisterReq dto){
         if(!dto.getCheckPassword().equals(dto.getPassword())) {
             throw new BaseException(DIFFRENT_PASSWORDS);
         }
@@ -123,7 +124,8 @@ public class MemberService {
         member.changeStatusToActive();
         member.changeLoginStatusToNever(); // 로그인 안해본 상태 디폴트 저장
         memberRepository.save(member);
-        return member;
+        PostSocialRegisterRes postSocialRegisterRes = PostSocialRegisterRes.toDto(member, email, phoneNumber);
+        return postSocialRegisterRes;
     }
 
     // 수정: 회원정보 동의 수정

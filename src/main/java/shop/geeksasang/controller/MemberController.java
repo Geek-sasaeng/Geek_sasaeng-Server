@@ -39,8 +39,7 @@ public class MemberController {
     @PostMapping
     @NoIntercept
     public BaseResponse<PostRegisterRes> registerMember(@Validated @RequestBody PostRegisterReq dto){
-        Member member = memberService.registerMember(dto);
-        PostRegisterRes postCreateMemberRes = PostRegisterRes.toDto(member);
+        PostRegisterRes postCreateMemberRes = memberService.registerMember(dto);
         return new BaseResponse<>(postCreateMemberRes);
     }
 
@@ -55,10 +54,9 @@ public class MemberController {
     })
     @NoIntercept
     @PostMapping("/social")
-    public BaseResponse<PostRegisterRes> registerSocialMember(@Validated @RequestBody PostSocialRegisterReq dto){
-        Member member = memberService.registerSocialMember(dto);
-        PostRegisterRes postCreateMemberRes = PostRegisterRes.toDto(member);
-        return new BaseResponse<>(postCreateMemberRes);
+    public BaseResponse<PostSocialRegisterRes> registerSocialMember(@Validated @RequestBody PostSocialRegisterReq dto){
+        PostSocialRegisterRes postSocialRegisterRes = memberService.registerSocialMember(dto);
+        return new BaseResponse<>(postSocialRegisterRes);
     }
 
     // 수정: 프로필 이미지
