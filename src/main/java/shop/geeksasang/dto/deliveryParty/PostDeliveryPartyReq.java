@@ -1,11 +1,10 @@
 package shop.geeksasang.dto.deliveryParty;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiParam;
 import lombok.*;
-import org.springframework.format.annotation.DateTimeFormat;
 import shop.geeksasang.domain.*;
-
 import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -51,9 +50,9 @@ public class PostDeliveryPartyReq {
     @NotBlank(message = "배달파티 내용을 입력하세요.")
     private String content;
 
-    @ApiModelProperty(example = "2022-07-13T16:29:30.97")
+    @ApiModelProperty(example = "2022-07-13 16:29:30")
     @ApiParam(value = "주문 시간", required = true)
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     @NotNull
     @FutureOrPresent //현재 or 미래 validation
     private LocalDateTime orderTime; //주문시간

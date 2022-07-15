@@ -39,16 +39,16 @@ public class PostDeliveryPartyRes {
     @ApiParam(value = "배달 파티 내용")
     private String content;
 
-    @ApiModelProperty(example = "2022/07/13 16:29:30")
+    @ApiModelProperty(example = "2022-07-13 16:29:30")
     @ApiParam(value = "주문 시간")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy/MM/dd HH:mm:ss", timezone = "Asia/Seoul")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime orderTime;
 
     @ApiModelProperty(example ="[" +"매칭 시 바로 주문" +","+"같이 먹고 싶어요" + "]")
     @ApiParam(value = "해시태그 내용")
     private List<String> hashTags;
 
-    @ApiModelProperty(example = "2022/07/13 13:29:30")
+    @ApiModelProperty(example = "2022-07-13 13:29:30")
     @ApiParam(value = "배달 파티 생성 시간")
     private String createdAt;
 
