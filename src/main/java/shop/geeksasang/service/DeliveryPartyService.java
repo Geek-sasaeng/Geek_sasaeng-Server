@@ -19,7 +19,6 @@ import shop.geeksasang.dto.deliveryParty.GetDeliveryPartyDetailRes;
 import shop.geeksasang.dto.deliveryParty.PostDeliveryPartyReq;
 import shop.geeksasang.repository.*;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,6 +35,7 @@ public class DeliveryPartyService {
     private final MemberRepository memberRepository;
     private final DormitoryRepository dormitoryRepository;
     private final FoodCategoryRepository foodCategoryRepository;
+    private final DeliveryPartyHashTagService deliveryPartyHashTagService;
 
     private static final int PAGING_SIZE = 10;
     private static final String PAGING_STANDARD = "orderTime";
@@ -62,8 +62,6 @@ public class DeliveryPartyService {
         FoodCategory foodCategory = foodCategoryRepository.findById(dto.getFoodCategory())
                 .orElseThrow(() ->  new BaseException(BaseResponseStatus.NOT_EXISTS_CATEGORY));
         deliveryParty.connectFoodCategory(foodCategory);
-
-        //**추후 property 추가해야 함.**
 
         //orderTime 분류화
        OrderTimeCategoryType orderTimeCategory = null;
@@ -93,8 +91,12 @@ public class DeliveryPartyService {
         deliveryParty.initialCurrentMatching();
         deliveryParty.initialMatchingStatus();
         deliveryParty.initialStatus();
+
         //배달파티 저장
-        deliveryPartyRepository.save(deliveryParty);
+        DeliveryParty party= deliveryPartyRepository.save(deliveryParty);
+
+        //배달파티-해시태그 연결 및 저장
+        deliveryPartyHashTagService.saveHashTag(party,dto.getHashTag());
 
         // 반환
         return deliveryParty;

@@ -16,6 +16,7 @@ import shop.geeksasang.config.domain.Status;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -35,6 +36,9 @@ public class DeliveryParty extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="dormitory_id")
     private Dormitory dormitory;
+
+    @OneToMany(mappedBy ="deliveryParty", targetEntity=DeliveryPartyHashTag.class)
+    private List<HashTag> hashTags=new ArrayList<>();
 
     @OneToOne(fetch=FetchType.LAZY)
     @JsonIgnore
@@ -78,6 +82,10 @@ public class DeliveryParty extends BaseEntity {
     public void connectOrderTimeCategory(OrderTimeCategoryType orderTimeCategory){
         this.orderTimeCategory = orderTimeCategory;
     }
+    public void connectHashTag(List<HashTag> hashTags){
+        this.hashTags = hashTags.stream().collect(Collectors.toList());
+    }
+
 
     //배달생성시 초기 세팅 메소드
     public void initialCurrentMatching(){
