@@ -16,6 +16,7 @@ import shop.geeksasang.config.response.BaseResponse;
 import shop.geeksasang.dto.sms.PostSmsReq;
 import shop.geeksasang.dto.sms.NaverApiSmsRes;
 import shop.geeksasang.dto.sms.PostVerifySmsReq;
+import shop.geeksasang.dto.sms.PostVerifySmsRes;
 import shop.geeksasang.service.SmsService;
 import shop.geeksasang.utils.jwt.NoIntercept;
 
@@ -53,9 +54,8 @@ public class SmsController {
     })
     @NoIntercept
     @PostMapping("/verification")
-    public BaseResponse<BaseResponse> verifySms(@Validated @RequestBody PostVerifySmsReq request){
-        smsService.verifySms(request.getVerifyRandomNumber(), request.getRecipientPhoneNumber());
-        return new BaseResponse<>(SMS_VERIFICATION_SUCCESS);
+    public BaseResponse<PostVerifySmsRes> verifySms(@Validated @RequestBody PostVerifySmsReq request){
+        PostVerifySmsRes postVerifySmsRes = smsService.verifySms(request.getVerifyRandomNumber(), request.getRecipientPhoneNumber());
+        return new BaseResponse<>(postVerifySmsRes);
     }
-    
 }

@@ -13,14 +13,13 @@ import shop.geeksasang.config.domain.ValidStatus;
 import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.config.exception.BaseResponseStatus;
 import shop.geeksasang.domain.Email;
-import shop.geeksasang.domain.Member;
 import shop.geeksasang.domain.University;
 import shop.geeksasang.domain.VerificationCount;
 import shop.geeksasang.dto.email.PostEmailCertificationReq;
 import shop.geeksasang.dto.email.PostEmailReq;
 import shop.geeksasang.dto.email.EmailSenderDto;
+import shop.geeksasang.dto.email.PostEmailCertificationRes;
 import shop.geeksasang.repository.EmailRepository;
-import shop.geeksasang.repository.MemberRepository;
 import shop.geeksasang.repository.UniversityRepository;
 import shop.geeksasang.repository.VerificationCountRepository;
 import shop.geeksasang.utils.jwt.RedisUtil;
@@ -83,7 +82,6 @@ public class EmailService {
             emailVerificationCount.increaseEmailVerificationCount();
         }
 
-
         // 난수 생성
         Random random = new Random();
         String authKey = String.valueOf(random.nextInt(888888) + 111111);
@@ -92,7 +90,7 @@ public class EmailService {
 
     // 인증번호가 일치하는지 체크
     @Transactional(readOnly = false)
-    public boolean checkEmailCertification(PostEmailCertificationReq request) {
+    public PostEmailCertificationRes checkEmailCertification(PostEmailCertificationReq request) {
         String address = request.getEmail();
         String key = request.getKey();
         boolean check = redisUtil.checkNumber(address, key);
@@ -100,8 +98,11 @@ public class EmailService {
             // 이메일 테이블에 이메일 주소 및 인증 성공 저장
             Email email = Email.builder().address(address).emailValidStatus(ValidStatus.SUCCESS).build();
             emailRepository.save(email);
+            PostEmailCertificationRes postEmailRes = new PostEmailCertificationRes(email.getId());
+            return postEmailRes;
+        }else{
+            throw new BaseException(INVALID_EMAIL_NUMBER);
         }
-        return check;
     }
 
     // AWS SES로 이메일 전송, 비동기

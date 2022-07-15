@@ -12,6 +12,7 @@ import shop.geeksasang.config.exception.BaseResponseStatus;
 import shop.geeksasang.config.response.BaseResponse;
 import shop.geeksasang.dto.email.PostEmailCertificationReq;
 import shop.geeksasang.dto.email.PostEmailReq;
+import shop.geeksasang.dto.email.PostEmailCertificationRes;
 import shop.geeksasang.service.EmailService;
 import shop.geeksasang.utils.clientip.ClientIpUtils;
 import shop.geeksasang.utils.jwt.NoIntercept;
@@ -51,12 +52,8 @@ public class EmailController {
     )
     @NoIntercept
     @PostMapping("/check")
-    public BaseResponse<String> checkEmailValid(@RequestBody @Valid PostEmailCertificationReq req) {
-        boolean check = emailService.checkEmailCertification(req);
-        if(check){
-            return new BaseResponse<>(BaseResponseStatus.VALID_EMAIL_NUMBER);
-        }else{
-            return new BaseResponse<>(BaseResponseStatus.INVALID_EMAIL_NUMBER);
-        }
+    public BaseResponse<PostEmailCertificationRes> checkEmailValid(@RequestBody @Valid PostEmailCertificationReq req) {
+        PostEmailCertificationRes postEmailRes = emailService.checkEmailCertification(req);
+        return new BaseResponse<PostEmailCertificationRes>(postEmailRes);
     }
 }

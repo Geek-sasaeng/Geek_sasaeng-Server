@@ -90,21 +90,38 @@ public class MemberService {
         if(!memberRepository.findMemberByLoginId(dto.getLoginId()).isEmpty()){
             throw new BaseException(DUPLICATE_USER_LOGIN_ID);
         }
-
         // 검증: 동의여부가 Y 가 이닌 경우
         if(!dto.getInformationAgreeStatus().equals("Y")){
             throw new BaseException(INVALID_INFORMATIONAGREE_STATUS);
         }
+        // 검증: 이메일 인증 여부
+        if(memberRepository.findMemberByEmailId(dto.getEmailId()).isPresent()){
+            throw new BaseException(ALREADY_VALID_EMAIL);
+        }
+
+        Email email = emailRepository.findById(dto.getEmailId()).orElseThrow(
+                () -> new BaseException(INVALID_EMAIL_MEMBER));
+        if(!email.getEmailValidStatus().equals(ValidStatus.SUCCESS))
+            throw new BaseException(INVALID_EMAIL_MEMBER);
+
+        // 검증: 휴대폰 인증 여부
+        if(memberRepository.findMemberByPhoneNumberId(dto.getPhoneNumberId()).isPresent()){
+            throw new BaseException(DUPLICATE_USER_PHONENUMBER);
+        }
+
+        PhoneNumber phoneNumber = phoneNumberRepository.findById(dto.getPhoneNumberId()).orElseThrow(
+                () -> new BaseException(INVALID_EMAIL_MEMBER));
+        if(!phoneNumber.getPhoneValidStatus().equals(ValidStatus.SUCCESS))
+            throw new BaseException(INVALID_SMS_MEMBER);
+
         dto.setPassword(SHA256.encrypt(dto.getPassword()));
-        Member member = dto.toEntity();
+        Member member = dto.toEntity(email, phoneNumber);
         University university = universityRepository
                 .findUniversityByName(dto.getUniversityName())
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_UNIVERSITY));
         member.connectUniversity(university);
         member.changeStatusToActive();
         member.changeLoginStatusToNever(); // 로그인 안해본 상태 디폴트 저장
-
-
         memberRepository.save(member);
         return member;
     }

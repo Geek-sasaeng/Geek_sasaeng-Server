@@ -38,6 +38,7 @@ import shop.geeksasang.domain.VerificationCount;
 import shop.geeksasang.dto.sms.MessagesDto;
 import shop.geeksasang.dto.sms.NaverApiSmsReq;
 import shop.geeksasang.dto.sms.NaverApiSmsRes;
+import shop.geeksasang.dto.sms.PostVerifySmsRes;
 import shop.geeksasang.repository.PhoneNumberRepository;
 import shop.geeksasang.repository.SmsRedisRepository;
 import shop.geeksasang.repository.VerificationCountRepository;
@@ -180,7 +181,7 @@ public class SmsService {
 
 
     @Transactional(readOnly = false)
-    public void verifySms(String verifyRandomNumber, String phoneNumber) {
+    public PostVerifySmsRes verifySms(String verifyRandomNumber, String phoneNumber) {
         if(!isVerify(verifyRandomNumber, phoneNumber)){
             throw new BaseException(INVALID_SMS_VERIFY_NUMBER);
         }
@@ -188,6 +189,7 @@ public class SmsService {
         // 인증된 핸드폰 번호 등록
         PhoneNumber phoneNumberEntity = PhoneNumber.builder().number(phoneNumber).phoneValidStatus(ValidStatus.SUCCESS).build();
         phoneNumberRepository.save(phoneNumberEntity);
+        return new PostVerifySmsRes(phoneNumberEntity.getId());
     }
 
     private boolean isVerify(String verifyRandomNumber, String phoneNumber){
