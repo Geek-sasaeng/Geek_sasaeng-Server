@@ -9,19 +9,18 @@ import org.springframework.stereotype.Repository;
 import shop.geeksasang.config.domain.OrderTimeCategoryType;
 import shop.geeksasang.domain.DeliveryParty;
 
-import javax.persistence.TypedQuery;
 
 @Repository
 public interface DeliveryPartyRepository extends JpaRepository<DeliveryParty,Integer> {
 
-    @Query("select dp from DeliveryParty dp where dp.domitory.id = :domitoryId")
-    Slice<DeliveryParty> findDeliveryPartiesByDomitoryId(int domitoryId, Pageable pageable);
+    @Query("select dp from DeliveryParty dp where dp.dormitory.id = :dormitoryId")
+    Slice<DeliveryParty> findDeliveryPartiesByDormitoryId(int dormitoryId, Pageable pageable);
 
-    @Query("select dp from DeliveryParty dp where dp.domitory.id = :domitoryId and dp.maxMatching <= :maxMatching")
-    Slice<DeliveryParty> findDeliveryPartiesByMaxMatching(int domitoryId, int maxMatching, Pageable pageable);
+    @Query("select dp from DeliveryParty dp where dp.dormitory.id = :dormitoryId and dp.maxMatching <= :maxMatching")
+    Slice<DeliveryParty> findDeliveryPartiesByMaxMatching(int dormitoryId, int maxMatching, Pageable pageable);
 
-    @Query("select dp from DeliveryParty dp where dp.domitory.id = :domitoryId and dp.orderTimeCategory = :orderTimeCategory")
-    Slice<DeliveryParty> findDeliveryPartiesByOrderTime(int domitoryId, @Param("orderTimeCategory") OrderTimeCategoryType orderTimeCategory, Pageable pageable);
+    @Query("select dp from DeliveryParty dp where dp.dormitory.id = :dormitoryId and dp.orderTimeCategory = :orderTimeCategory")
+    Slice<DeliveryParty> findDeliveryPartiesByOrderTime(int dormitoryId, @Param("orderTimeCategory") OrderTimeCategoryType orderTimeCategory, Pageable pageable);
 
 
 }

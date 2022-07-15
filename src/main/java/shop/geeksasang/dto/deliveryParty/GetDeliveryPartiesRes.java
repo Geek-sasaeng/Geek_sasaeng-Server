@@ -1,17 +1,11 @@
 package shop.geeksasang.dto.deliveryParty;
 
-import io.swagger.annotations.ApiModelProperty;
-import io.swagger.annotations.ApiParam;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import shop.geeksasang.config.domain.MatchingStatus;
 import shop.geeksasang.domain.DeliveryParty;
-import shop.geeksasang.domain.HashTag;
-
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Getter
@@ -21,7 +15,6 @@ public class GetDeliveryPartiesRes {
     private int id;
     private String chief;
     private String foodCategory;
-    private List<String> hashTags;
     private String title;
     private String content;
     private LocalDateTime orderTime;
@@ -34,7 +27,6 @@ public class GetDeliveryPartiesRes {
         return GetDeliveryPartiesRes.builder()
                 .id(deliveryParty.getId())
                 .chief(deliveryParty.getChief().getNickName())
-                .hashTags(deliveryParty.getHashTags().stream().map(HashTag::getTitle).collect(Collectors.toList()))
                 .foodCategory(deliveryParty.getFoodCategory().getTitle())
                 .title(deliveryParty.getTitle())
                 .content(deliveryParty.getContent())

@@ -11,10 +11,12 @@ import lombok.NoArgsConstructor;
 import shop.geeksasang.config.domain.BaseEntity;
 import shop.geeksasang.config.domain.MatchingStatus;
 import shop.geeksasang.config.domain.OrderTimeCategoryType;
+import shop.geeksasang.config.domain.Status;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -32,13 +34,11 @@ public class DeliveryParty extends BaseEntity {
     private Member chief;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="domitory_id")
-    private Domitory domitory;
+    @JoinColumn(name="dormitory_id")
+    private Dormitory dormitory;
 
-    //나중에 수정 가능.
     @OneToMany(mappedBy ="deliveryParty", targetEntity=DeliveryPartyHashTag.class)
     private List<HashTag> hashTags=new ArrayList<>();
-
 
     @OneToOne(fetch=FetchType.LAZY)
     @JsonIgnore
@@ -69,18 +69,32 @@ public class DeliveryParty extends BaseEntity {
 
     public void connectChief(Member chief){
         this.chief = chief;
-        //university.getMemberList().add(this); TODO:##파티장 연결하고 이거 해야하나??
     }
 
-    public void connectDomitory(Domitory domitory){
-        this.domitory = domitory;
-    }
-
-    public void connectHashTag(HashTag hashTag){
-        this.hashTags.add(hashTag);
+    public void connectDormitory(Dormitory dormitory){
+        this.dormitory = dormitory;
     }
 
     public void connectFoodCategory(FoodCategory foodCategory){
         this.foodCategory = foodCategory;
+    }
+
+    public void connectOrderTimeCategory(OrderTimeCategoryType orderTimeCategory){
+        this.orderTimeCategory = orderTimeCategory;
+    }
+    public void connectHashTag(List<HashTag> hashTags){
+        this.hashTags = hashTags.stream().collect(Collectors.toList());
+    }
+
+
+    //배달생성시 초기 세팅 메소드
+    public void initialCurrentMatching(){
+        this.currentMatching = 1;
+    }
+    public void initialMatchingStatus(){
+        this.matchingStatus = MatchingStatus.ONGOING;
+    }
+    public void initialStatus(){
+        super.setStatus(Status.ACTIVE);
     }
 }

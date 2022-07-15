@@ -9,7 +9,6 @@ import javax.persistence.*;
 import lombok.NoArgsConstructor;
 import shop.geeksasang.config.domain.BaseEntity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -17,17 +16,17 @@ import java.util.List;
 @Builder
 @Getter
 @Entity
-public class Domitory extends BaseEntity {
+public class Dormitory extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="domitory_id")
+    @Column(name="dormitory_id")
     private int id;
 
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "university_id")
     private University university;
 
-    @OneToMany(mappedBy = "domitory")
+    @OneToMany(mappedBy = "dormitory")
     private List<DeliveryParty> deliveryParties;
 
     private String name;

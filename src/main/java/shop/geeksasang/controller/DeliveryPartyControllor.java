@@ -4,11 +4,14 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import shop.geeksasang.config.domain.OrderTimeCategoryType;
 import shop.geeksasang.config.exception.BaseException;
+import shop.geeksasang.config.exception.BaseResponseStatus;
 import shop.geeksasang.config.response.BaseResponse;
 import shop.geeksasang.domain.DeliveryParty;
+import shop.geeksasang.domain.Member;
 import shop.geeksasang.dto.deliveryParty.*;
 import shop.geeksasang.service.DeliveryPartyService;
 import shop.geeksasang.utils.jwt.NoIntercept;
@@ -24,20 +27,33 @@ public class DeliveryPartyControllor {
     private final DeliveryPartyService deliveryPartyService;
 
     //배달 파티 생성
-    @PostMapping
-    public BaseResponse<PostDeliveryPartyRes> registerDeliveryParty(@RequestBody PostDeliveryPartyReq dto){
+    @NoIntercept
+    @ApiOperation(value = "배달 파티 생성", notes = "사용자는 배달 파티를 생성할 수 있다.")
+    @ApiResponses({
+            @ApiResponse(code =1000 ,message ="요청에 성공하였습니다"),
+            @ApiResponse(code =2009 ,message ="존재하지 않는 멤버입니다"),
+            @ApiResponse(code =2606 ,message ="기숙사가 존재하지 않습니다"),
+            @ApiResponse(code =2402 ,message ="존재하지 않는 카테고리입니다"),
+            @ApiResponse(code =4000 ,message = "서버 오류입니다.")
+    })
+    @PostMapping("/deliveryParty")
+    public BaseResponse<PostDeliveryPartyRes> registerDeliveryParty(@Validated @RequestBody PostDeliveryPartyReq dto){
         DeliveryParty deliveryParty = deliveryPartyService.registerDeliveryParty(dto);
 
         PostDeliveryPartyRes postDeliveryPartyRes = PostDeliveryPartyRes.toDto(deliveryParty);
-
         return new BaseResponse<>(postDeliveryPartyRes);
     }
 
     //배달파티 조회: 전체목록
+    @ApiOperation(value = "전체 배달파티 조회", notes = "cursor은 0부터 시작. dormitoryId는 현재 대학교 id. 예시 : https://geeksasaeng.shop/1/delivery-parties?cursor=0  ")
+    @ApiResponses({
+            @ApiResponse(code =1000 ,message ="요청에 성공하셨습니다."),
+            @ApiResponse(code=4000, message = "서버 오류입니다.")
+    })
     @NoIntercept
-    @GetMapping("/{domitoryId}/delivery-parties")
-    public BaseResponse<List<GetDeliveryPartiesRes>> getAllDeliveryParty(@PathVariable int domitoryId, @RequestParam int cursor){
-        List<GetDeliveryPartiesRes> response = deliveryPartyService.getDeliveryPartiesByDomitoryId(domitoryId, cursor);
+    @GetMapping("/{dormitoryId}/delivery-parties")
+    public BaseResponse<List<GetDeliveryPartiesRes>> getAllDeliveryParty(@PathVariable int dormitoryId, @RequestParam int cursor){
+        List<GetDeliveryPartiesRes> response = deliveryPartyService.getDeliveryPartiesByDormitoryId(dormitoryId, cursor);
         return new BaseResponse<>(response);
     }
 
@@ -72,9 +88,9 @@ public class DeliveryPartyControllor {
             @ApiResponse(code=4000,message = "서버 오류입니다.")
     })
     @NoIntercept
-    @GetMapping("/{domitoryId}/delivery-parties/{maxMatching}")
-    public BaseResponse<List<GetDeliveryPartyByMaxMatchingRes>> getDeliveryPartyByMaxMatching(@PathVariable int domitoryId, @PathVariable int maxMatching, @RequestParam("cursor") int cursor){
-        List<GetDeliveryPartyByMaxMatchingRes> response = deliveryPartyService.getDeliveryPartyByMaxMatching(domitoryId, maxMatching, cursor);
+    @GetMapping("/{dormitoryId}/delivery-parties/{maxMatching}")
+    public BaseResponse<List<GetDeliveryPartyByMaxMatchingRes>> getDeliveryPartyByMaxMatching(@PathVariable int dormitoryId, @PathVariable int maxMatching, @RequestParam("cursor") int cursor){
+        List<GetDeliveryPartyByMaxMatchingRes> response = deliveryPartyService.getDeliveryPartyByMaxMatching(dormitoryId, maxMatching, cursor);
         return new BaseResponse<>(response);
     }
 
@@ -86,15 +102,15 @@ public class DeliveryPartyControllor {
             @ApiResponse(code=4000,message = "서버 오류입니다.")
     })
     @NoIntercept
-    @GetMapping("/{domitoryId}/delivery-parties/filter/{orderTimeCategory}")
-    public BaseResponse<List<GetDeliveryPartyByOrderTimeRes>> GetDeliveryPartyByOrderTime(@PathVariable int domitoryId, @PathVariable String orderTimeCategory, @RequestParam("cursor") int cursor){
+    @GetMapping("/{dormitoryId}/delivery-parties/filter/{orderTimeCategory}")
+    public BaseResponse<List<GetDeliveryPartyByOrderTimeRes>> GetDeliveryPartyByOrderTime(@PathVariable int dormitoryId, @PathVariable String orderTimeCategory, @RequestParam("cursor") int cursor){
         // enum값 아닌 것 들어올때 처리 - 리팩토링 대상
         try{
             System.out.println(OrderTimeCategoryType.valueOf(orderTimeCategory));
         }catch(IllegalArgumentException e){
             throw new BaseException(NOT_EXISTS_ORDER_TIME_CATEGORY);
         }
-        List<GetDeliveryPartyByOrderTimeRes> response = deliveryPartyService.getDeliveryPartyByOrderTime(domitoryId, cursor, orderTimeCategory);
+        List<GetDeliveryPartyByOrderTimeRes> response = deliveryPartyService.getDeliveryPartyByOrderTime(dormitoryId, cursor, orderTimeCategory);
         return new BaseResponse<>(response);
     }
 

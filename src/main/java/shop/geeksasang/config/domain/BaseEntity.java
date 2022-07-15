@@ -41,6 +41,5 @@ public class BaseEntity {
     }
 }
 
-
 //@PrePersist : 엔티티 insert 이전 실행
 //@PreUpdate : 엔티티 update 이전 실행

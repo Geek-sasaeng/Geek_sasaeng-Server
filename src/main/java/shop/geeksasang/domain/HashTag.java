@@ -3,12 +3,9 @@ package shop.geeksasang.domain;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-
-import lombok.NoArgsConstructor;
-import shop.geeksasang.config.domain.BaseEntity;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +14,7 @@ import java.util.List;
 @Builder
 @Getter
 @Entity
-public class HashTag extends BaseEntity {
+public class HashTag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="hash_tag_id")

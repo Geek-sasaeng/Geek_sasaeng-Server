@@ -1,5 +1,6 @@
 package shop.geeksasang.domain;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,7 +14,7 @@ import javax.persistence.*;
 @Builder
 @Getter
 @Entity
-public class DeliveryPartyHashTag extends BaseEntity {
+public class DeliveryPartyHashTag{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="delivery_party_hash_tag__id")
@@ -27,18 +28,8 @@ public class DeliveryPartyHashTag extends BaseEntity {
     @JoinColumn(name="delivery_party_id")
     private DeliveryParty deliveryParty;
 
-    public void connectPartyHashTag(DeliveryParty party, HashTag hashTag){
-
-        this.deliveryParty=party;
+    public DeliveryPartyHashTag(DeliveryParty deliveryParty, HashTag hashTag){
+        this.deliveryParty=deliveryParty;
         this.hashTag=hashTag;
-
-        if(!party.getHashTags().contains(hashTag)) {
-            party.getHashTags().add(hashTag);
-        }
-        if(!hashTag.getDeliveryParties().contains(party)){
-            hashTag.getDeliveryParties().add(party);
-        }
-
     }
 }
-
