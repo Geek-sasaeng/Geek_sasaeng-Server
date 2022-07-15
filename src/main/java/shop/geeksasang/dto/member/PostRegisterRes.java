@@ -25,35 +25,21 @@ public class PostRegisterRes {
     @ApiParam(value = "사용자 대학교")
     private  String universityName;
 
-    @ApiModelProperty(example = "\"email\": {\n" +
-            "            \"createdAt\": \"2022/07/15 10:39:12\",\n" +
-            "            \"updatedAt\": \"2022/07/15 10:39:12\",\n" +
-            "            \"status\": null,\n" +
-            "            \"id\": 2,\n" +
-            "            \"address\": \"forceTlight@gachon.ac.kr\",\n" +
-            "            \"emailValidStatus\": \"SUCCESS\"\n" +
-            "        }")
+    @ApiModelProperty(example = "1")
     @ApiParam(value = "사용자 이메일")
-    private Email email;
+    private int email;
 
-    @ApiModelProperty(example = "\"phoneNumber\": {\n" +
-            "            \"createdAt\": \"2022/07/15 10:40:24\",\n" +
-            "            \"updatedAt\": \"2022/07/15 10:40:24\",\n" +
-            "            \"status\": null,\n" +
-            "            \"id\": 2,\n" +
-            "            \"number\": \"01025291674\",\n" +
-            "            \"phoneValidStatus\": \"SUCCESS\"\n" +
-            "        }")
+    @ApiModelProperty(example = "2")
     @ApiParam(value = "사용자 핸드폰 번호")
-    private PhoneNumber phoneNumber;
+    private int phoneNumber;
 
-    static public PostRegisterRes toDto(Member member) {
+    static public PostRegisterRes toDto(Member member, Email email, PhoneNumber phoneNumber) {
         return PostRegisterRes.builder()
                 .loginId(member.getLoginId())
                 .nickname(member.getNickName())
                 .universityName(member.getUniversity().getName())
-                .email(member.getEmail())
-                .phoneNumber(member.getPhoneNumber())
+                .email(email.getId())
+                .phoneNumber(phoneNumber.getId())
                 .build();
     }
 }

@@ -8,6 +8,7 @@ import shop.geeksasang.config.domain.BaseEntity;
 import shop.geeksasang.config.domain.ValidStatus;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,8 +21,13 @@ public class Email extends BaseEntity {
     @Column(name = "email_id")
     private int id;
 
+    @OneToOne(mappedBy = "email")
+    private Member member;
+
+    @NotNull
     private String address;
 
+    @NotNull
     @Enumerated(EnumType.STRING)
     private ValidStatus emailValidStatus;
 

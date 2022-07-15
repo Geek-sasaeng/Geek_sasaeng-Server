@@ -63,11 +63,16 @@ public class EmailService {
         }
         // 이미 존재하는 이메일인지 검증
         if(emailRepository.findEmailByAddress(email).isPresent()){
-            throw new BaseException(ALREADY_VALID_EMAIL);
+            Email emailEntity = emailRepository.findEmailByAddress(email).get();
+            // Member랑 연결 안됐으면 해당 Entity 지우기
+            if(emailEntity.getMember() == null){
+                emailRepository.delete(emailEntity);
+            }else{
+                throw new BaseException(ALREADY_VALID_EMAIL);
+            }
         }
         // 하루 10번 제한 검증
         Optional<VerificationCount> emailVerificationCount_optional = verificationCountRepository.findEmailVerificationCountByUUID(UUID);
-
         if(!emailVerificationCount_optional.isEmpty()) {
             if(emailVerificationCount_optional.get().getEmailVerificationCount() >= 10){
                 throw new BaseException(INVALID_EMAIL_COUNT);
