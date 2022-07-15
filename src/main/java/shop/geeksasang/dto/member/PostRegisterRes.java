@@ -26,8 +26,8 @@ public class PostRegisterRes {
     private  String universityName;
 
     @ApiModelProperty(example = "\"email\": {\n" +
-            "            \"createdAt\": \"2022/07/15 10:39:12\",\n" +
-            "            \"updatedAt\": \"2022/07/15 10:39:12\",\n" +
+            "            \"createdAt\": \"2022-07-15 10:39:12\",\n" +
+            "            \"updatedAt\": \"2022-07-15 10:39:12\",\n" +
             "            \"status\": null,\n" +
             "            \"id\": 2,\n" +
             "            \"address\": \"forceTlight@gachon.ac.kr\",\n" +
@@ -37,8 +37,8 @@ public class PostRegisterRes {
     private Email email;
 
     @ApiModelProperty(example = "\"phoneNumber\": {\n" +
-            "            \"createdAt\": \"2022/07/15 10:40:24\",\n" +
-            "            \"updatedAt\": \"2022/07/15 10:40:24\",\n" +
+            "            \"createdAt\": \"2022-07-15 10:40:24\",\n" +
+            "            \"updatedAt\": \"2022-07-15 10:40:24\",\n" +
             "            \"status\": null,\n" +
             "            \"id\": 2,\n" +
             "            \"number\": \"01025291674\",\n" +
