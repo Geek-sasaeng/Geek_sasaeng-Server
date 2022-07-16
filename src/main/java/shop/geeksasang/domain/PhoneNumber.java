@@ -8,6 +8,7 @@ import shop.geeksasang.config.domain.BaseEntity;
 import shop.geeksasang.config.domain.ValidStatus;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,6 +21,10 @@ public class PhoneNumber extends BaseEntity {
     @Column(name="phoneNumber_id")
     private int id;
 
+    @OneToOne(mappedBy = "phoneNumber")
+    private Member member;
+
+    @NotNull
     private String number;
 
     @Enumerated(EnumType.STRING)
