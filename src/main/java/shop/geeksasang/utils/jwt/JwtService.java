@@ -5,6 +5,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
 import lombok.NoArgsConstructor;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -12,6 +13,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.dto.login.JwtInfo;
@@ -23,10 +25,10 @@ import static shop.geeksasang.config.exception.BaseResponseStatus.*;
 @NoArgsConstructor
 public class JwtService {
 
-
-
     @Value("${secret.jwt_secret_key}")
     private String secretKey;
+
+    public static final String AUTHORIZATION = "Authorization";
 
 
     /*
@@ -46,12 +48,20 @@ public class JwtService {
     }
 
     /*
-    Header에서 X-ACCESS-TOKEN 으로 JWT 추출
+    Header에서 Authorization 으로 JWT 추출
+    Authorization(키) : "Bearer" + jwtToken
     @return String
      */
     public String getJwt(){
         HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.currentRequestAttributes()).getRequest();
-        return request.getHeader("X-ACCESS-TOKEN");
+        Enumeration<String> headers=request.getHeaders("Authorization");
+        while(headers.hasMoreElements()){
+            String value = headers.nextElement();
+            if(value.toLowerCase().startsWith("Bearer".toLowerCase())){
+                return value.substring("Bearer".length()).trim();
+            }
+        }
+        return Strings.EMPTY;
     }
 
     /*

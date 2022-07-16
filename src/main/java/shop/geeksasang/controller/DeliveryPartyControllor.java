@@ -27,7 +27,6 @@ public class DeliveryPartyControllor {
     private final DeliveryPartyService deliveryPartyService;
 
     //배달 파티 생성
-    @NoIntercept
     @ApiOperation(value = "배달 파티 생성", notes = "사용자는 배달 파티를 생성할 수 있다.")
     @ApiResponses({
             @ApiResponse(code =1000 ,message ="요청에 성공하였습니다"),
