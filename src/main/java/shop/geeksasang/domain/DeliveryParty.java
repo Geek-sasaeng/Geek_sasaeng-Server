@@ -1,22 +1,21 @@
 package shop.geeksasang.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
-import lombok.NoArgsConstructor;
 import shop.geeksasang.config.domain.BaseEntity;
 import shop.geeksasang.config.domain.MatchingStatus;
 import shop.geeksasang.config.domain.OrderTimeCategoryType;
 import shop.geeksasang.config.domain.Status;
+import shop.geeksasang.dto.deliveryParty.PostDeliveryPartyReq;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -37,15 +36,14 @@ public class DeliveryParty extends BaseEntity {
     @JoinColumn(name="dormitory_id")
     private Dormitory dormitory;
 
-    @OneToMany(mappedBy ="deliveryParty", targetEntity=DeliveryPartyHashTag.class)
-    private List<HashTag> hashTags=new ArrayList<>();
+    @OneToMany(mappedBy ="deliveryParty", cascade = CascadeType.ALL)
+    private List<DeliveryPartyHashTag> deliveryPartyHashTags = new ArrayList<>();
 
     @OneToOne(fetch=FetchType.LAZY)
-    @JsonIgnore
     private FoodCategory foodCategory;
 
     @OneToMany(mappedBy = "party")
-    private List<DeliveryPartyMember> deliveryPartyMembers;
+    private List<DeliveryPartyMember> deliveryPartyMembers = new ArrayList<>();
 
     private String title;
 
@@ -65,36 +63,25 @@ public class DeliveryParty extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private MatchingStatus matchingStatus;
 
-    //-// 연관 관계 편의 메서드 //-//
-
-    public void connectChief(Member chief){
-        this.chief = chief;
-    }
-
-    public void connectDormitory(Dormitory dormitory){
-        this.dormitory = dormitory;
-    }
-
-    public void connectFoodCategory(FoodCategory foodCategory){
-        this.foodCategory = foodCategory;
-    }
-
-    public void connectOrderTimeCategory(OrderTimeCategoryType orderTimeCategory){
-        this.orderTimeCategory = orderTimeCategory;
-    }
-    public void connectHashTag(List<HashTag> hashTags){
-        this.hashTags = hashTags.stream().collect(Collectors.toList());
-    }
-
-
-    //배달생성시 초기 세팅 메소드
-    public void initialCurrentMatching(){
-        this.currentMatching = 1;
-    }
-    public void initialMatchingStatus(){
-        this.matchingStatus = MatchingStatus.ONGOING;
-    }
-    public void initialStatus(){
-        super.setStatus(Status.ACTIVE);
+    public static DeliveryParty makeParty(PostDeliveryPartyReq dto, OrderTimeCategoryType orderTimeCategory, Dormitory dormitory, FoodCategory foodCategory, Member chief, List<HashTag> hashTagList) {
+        DeliveryParty party = DeliveryParty.builder()
+                .title(dto.getTitle())
+                .content(dto.getContent())
+                .orderTime(dto.getOrderTime())
+                .maxMatching(dto.getMaxMatching())
+                .location(dto.getLocation())
+                .chief(chief)
+                .foodCategory(foodCategory)
+                .orderTimeCategory(orderTimeCategory)
+                .dormitory(dormitory)
+                .deliveryPartyHashTags(new ArrayList<>())
+                .matchingStatus(MatchingStatus.ONGOING)
+                .currentMatching(1)
+                .build();
+        party.setStatus(Status.ACTIVE);
+        for (HashTag hashTag : hashTagList) {
+            party.deliveryPartyHashTags.add(new DeliveryPartyHashTag(party, hashTag));
+        }
+        return party;
     }
 }

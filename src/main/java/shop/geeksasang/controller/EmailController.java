@@ -14,7 +14,6 @@ import shop.geeksasang.dto.email.PostEmailCertificationReq;
 import shop.geeksasang.dto.email.PostEmailReq;
 import shop.geeksasang.dto.email.PostEmailCertificationRes;
 import shop.geeksasang.service.EmailService;
-import shop.geeksasang.utils.clientip.ClientIpUtils;
 import shop.geeksasang.utils.jwt.NoIntercept;
 
 import javax.servlet.http.HttpServletRequest;
@@ -38,7 +37,6 @@ public class EmailController {
     @NoIntercept
     @PostMapping("")
     public BaseResponse<String> sendAuthEmail(@RequestBody @Valid PostEmailReq req, HttpServletRequest servletRequest) {
-        String clientIp = ClientIpUtils.getClientIp(servletRequest);
         emailService.sendEmail(req);
         return new BaseResponse<>(BaseResponseStatus.SEND_MAIL_SUCCESS);
     }

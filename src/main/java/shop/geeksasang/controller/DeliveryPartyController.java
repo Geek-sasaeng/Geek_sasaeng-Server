@@ -8,16 +8,12 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import shop.geeksasang.config.domain.OrderTimeCategoryType;
 import shop.geeksasang.config.exception.BaseException;
-import shop.geeksasang.config.exception.BaseResponseStatus;
 import shop.geeksasang.config.response.BaseResponse;
-import shop.geeksasang.domain.DeliveryParty;
-import shop.geeksasang.domain.Member;
 import shop.geeksasang.dto.deliveryParty.*;
 import shop.geeksasang.dto.login.JwtInfo;
 import shop.geeksasang.service.DeliveryPartyService;
 import shop.geeksasang.utils.jwt.NoIntercept;
 
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
@@ -25,7 +21,7 @@ import static shop.geeksasang.config.exception.BaseResponseStatus.NOT_EXISTS_ORD
 
 @RestController
 @RequiredArgsConstructor // final로 선언 된 것 자동으로 @Autowired와 같은 기능
-public class DeliveryPartyControllor {
+public class DeliveryPartyController {
 
     private final DeliveryPartyService deliveryPartyService;
 
@@ -38,16 +34,11 @@ public class DeliveryPartyControllor {
             @ApiResponse(code =2402 ,message ="존재하지 않는 카테고리입니다"),
             @ApiResponse(code =4000 ,message = "서버 오류입니다.")
     })
-    @PostMapping("/deliveryParty")
-    public BaseResponse<PostDeliveryPartyRes> registerDeliveryParty(@Validated @RequestBody PostDeliveryPartyReq dto, HttpServletRequest request){
-
-        //Interceptor에서 parsing한 jwtInfo(userId,universityId)
+    @PostMapping("/delivery-parties")
+    public BaseResponse<PostDeliveryPartyRes> registerDeliveryParty(@Validated @RequestBody PostDeliveryPartyReq dto,  HttpServletRequest request){
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
 
-        //배달 파티 생성
-        DeliveryParty deliveryParty = deliveryPartyService.registerDeliveryParty(dto,jwtInfo);
-
-        PostDeliveryPartyRes postDeliveryPartyRes = PostDeliveryPartyRes.toDto(deliveryParty);
+        PostDeliveryPartyRes postDeliveryPartyRes = deliveryPartyService.registerDeliveryParty(dto, jwtInfo);
         return new BaseResponse<>(postDeliveryPartyRes);
     }
 
@@ -64,13 +55,6 @@ public class DeliveryPartyControllor {
         return new BaseResponse<>(response);
     }
 
-
-//    //배달파티 조회:
-//    @GetMapping("/get/detail")
-//    public BaseResponse<DeliveryParty> getDeliveryPartyDetailById(@RequestParam int partyId){
-//        DeliveryParty deliveryParty = deliveryPartyService.getDeliveryParty(partyId);
-//        return new BaseResponse<>(deliveryParty);
-//    }
 
     //배달파티 조회: 상세조회
     @NoIntercept
@@ -110,7 +94,7 @@ public class DeliveryPartyControllor {
     })
     @NoIntercept
     @GetMapping("/{dormitoryId}/delivery-parties/filter/{orderTimeCategory}")
-    public BaseResponse<List<GetDeliveryPartyByOrderTimeRes>> getDeliveryPartyByOrderTime(@PathVariable int dormitoryId, @PathVariable String orderTimeCategory, @RequestParam("cursor") int cursor){
+    public BaseResponse<List<GetDeliveryPartyByOrderTimeRes>> GetDeliveryPartyByOrderTime(@PathVariable int dormitoryId, @PathVariable String orderTimeCategory, @RequestParam("cursor") int cursor){
         // enum값 아닌 것 들어올때 처리 - 리팩토링 대상
         try{
             System.out.println(OrderTimeCategoryType.valueOf(orderTimeCategory));
@@ -118,20 +102,6 @@ public class DeliveryPartyControllor {
             throw new BaseException(NOT_EXISTS_ORDER_TIME_CATEGORY);
         }
         List<GetDeliveryPartyByOrderTimeRes> response = deliveryPartyService.getDeliveryPartyByOrderTime(dormitoryId, cursor, orderTimeCategory);
-        return new BaseResponse<>(response);
-    }
-
-
-    //배달파티 조회: 검색어로 조회
-    @ApiOperation(value = "조회 : 검색어를 포함하는 배달파티 목록 조회", notes = "해당 기숙사의 배달파티 목록울 검색어로 조회할 수 있다.")
-    @ApiResponses({
-            @ApiResponse(code =1000 ,message ="요청에 성공하였습니다."),
-            @ApiResponse(code=4000,message = "서버 오류입니다.")
-    })
-    @NoIntercept
-    @GetMapping("/{dormitoryId}/delivery-parties/keyword/{keyword}")
-    public BaseResponse<List<GetDeliveryPartiesByKeywordRes>> getDeliveryPartiesByKeyword(@PathVariable("dormitoryId") int dormitoryId, @PathVariable("keyword") String keyword,@RequestParam int cursor){
-        List<GetDeliveryPartiesByKeywordRes> response = deliveryPartyService.getDeliveryPartiesByKeyword(dormitoryId, keyword, cursor);
         return new BaseResponse<>(response);
     }
 
