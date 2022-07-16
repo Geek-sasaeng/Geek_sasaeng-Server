@@ -3,21 +3,19 @@ package shop.geeksasang.controller;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
 import shop.geeksasang.config.exception.BaseResponseStatus;
 import shop.geeksasang.config.response.BaseResponse;
 import shop.geeksasang.domain.Member;
-import shop.geeksasang.dto.email.PostEmailCertificationReq;
-import shop.geeksasang.dto.email.PostEmailReq;
 import shop.geeksasang.dto.member.*;
 import shop.geeksasang.service.MemberService;
-import shop.geeksasang.service.EmailService;
-import shop.geeksasang.utils.clientip.ClientIpUtils;
 import shop.geeksasang.utils.jwt.NoIntercept;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @RestController

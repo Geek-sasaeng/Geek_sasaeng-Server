@@ -62,15 +62,9 @@ public class DeliveryPartyService {
             hashTagList.add(hashTag);
         }
 
-        for (HashTag hashTag : hashTagList) {
-
-            System.out.println("hashTag = " + hashTag);
-        }
-
         //orderTime 분류화
         OrderTimeCategoryType orderTimeCategory = OrderTimeUtils.selectOrderTime(dto.getOrderTime().getHour());
 
-        //배달파티 orderTimeCategory
         // 파티 생성 및 저장. 이렇게 의존성이 많이 발생하는데 더 좋은 방법이 있지 않을까?
         DeliveryParty deliveryParty = DeliveryParty.makeParty(dto, orderTimeCategory, dormitory, foodCategory, chief, hashTagList);
 

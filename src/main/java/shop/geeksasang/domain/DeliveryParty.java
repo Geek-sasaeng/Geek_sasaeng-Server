@@ -16,7 +16,6 @@ import shop.geeksasang.dto.deliveryParty.PostDeliveryPartyReq;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -80,7 +79,6 @@ public class DeliveryParty extends BaseEntity {
                 .currentMatching(1)
                 .build();
         party.setStatus(Status.ACTIVE);
-        System.out.println("party.deliveryPartyHashTags = " + party.deliveryPartyHashTags);
         for (HashTag hashTag : hashTagList) {
             party.deliveryPartyHashTags.add(new DeliveryPartyHashTag(party, hashTag));
         }
