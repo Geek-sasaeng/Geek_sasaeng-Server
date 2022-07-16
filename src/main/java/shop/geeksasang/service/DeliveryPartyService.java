@@ -12,6 +12,7 @@ import shop.geeksasang.config.domain.OrderTimeCategoryType;
 import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.config.exception.BaseResponseStatus;
 import shop.geeksasang.domain.*;
+import shop.geeksasang.dto.login.JwtInfo;
 import shop.geeksasang.dto.deliveryParty.*;
 import shop.geeksasang.repository.*;
 
@@ -39,59 +40,62 @@ public class DeliveryPartyService {
 
 
     @Transactional(readOnly = false)
-    public DeliveryParty registerDeliveryParty(PostDeliveryPartyReq dto){
+    public DeliveryParty registerDeliveryParty(PostDeliveryPartyReq dto, JwtInfo jwtInfo){
 
         // 파티 생성 및 저장
         DeliveryParty deliveryParty = dto.toEntity();
 
-        //파티장
-        Member chief = memberRepository.findById(dto.getChief())
+        //jwtInfo에서 memberId값 꺼내기
+        int memberId = jwtInfo.getUserId();
+
+        // 파티장
+        Member chief = memberRepository.findById(memberId)
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTICIPANT));
         deliveryParty.connectChief(chief);
 
-        //기숙사
+        // 기숙사
         Dormitory dormitory = dormitoryRepository.findById(dto.getDormitory())
                 .orElseThrow(() ->  new BaseException(BaseResponseStatus.NOT_EXISTS_DORMITORY));
         deliveryParty.connectDormitory(dormitory);
 
-        //카테고리
+        // 카테고리
         FoodCategory foodCategory = foodCategoryRepository.findById(dto.getFoodCategory())
                 .orElseThrow(() ->  new BaseException(BaseResponseStatus.NOT_EXISTS_CATEGORY));
         deliveryParty.connectFoodCategory(foodCategory);
 
-        //orderTime 분류화
+        // orderTime 분류화
        OrderTimeCategoryType orderTimeCategory = null;
        int orderHour = dto.getOrderTime().getHour();
 
-       //아침 : 6시 ~ 10시59분
+       // 아침 : 6시 ~ 10시59분
        if (orderHour >= 6 && orderHour <11){
            orderTimeCategory = OrderTimeCategoryType.BREAKFAST;
        }
-       //점심 : 11시 ~ 16시59분
+       // 점심 : 11시 ~ 16시59분
        if(orderHour>=11 && orderHour<17){
            orderTimeCategory=OrderTimeCategoryType.DINNER;
        }
-       //저녁 : 17시 ~ 20시59분
+       // 저녁 : 17시 ~ 20시59분
        if(orderHour>=17 && orderHour<21){
            orderTimeCategory=OrderTimeCategoryType.DINNER;
        }
-       //야식 : 21시 ~ 05:59분
+       // 야식 : 21시 ~ 05:59분
        if((orderHour>=21&&orderHour<24)||(orderHour>=0 && orderHour<6)){
            orderTimeCategory = OrderTimeCategoryType.MIDNIGHT_SNACKS;
        }
 
-        //배달파티 orderTimeCategory       
+        // 배달파티 orderTimeCategory
         deliveryParty.connectOrderTimeCategory(orderTimeCategory);
        
-        //배달파티 생성시 초기 세팅
+        // 배달파티 생성시 초기 세팅
         deliveryParty.initialCurrentMatching();
         deliveryParty.initialMatchingStatus();
         deliveryParty.initialStatus();
 
-        //배달파티 저장
+        // 배달파티 저장
         DeliveryParty party= deliveryPartyRepository.save(deliveryParty);
 
-        //배달파티-해시태그 연결 및 저장
+        // 배달파티-해시태그 연결 및 저장
         deliveryPartyHashTagService.saveHashTag(party,dto.getHashTag());
 
         // 반환
