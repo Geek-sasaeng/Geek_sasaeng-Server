@@ -13,9 +13,12 @@ import shop.geeksasang.config.response.BaseResponse;
 import shop.geeksasang.domain.DeliveryParty;
 import shop.geeksasang.domain.Member;
 import shop.geeksasang.dto.deliveryParty.*;
+import shop.geeksasang.dto.login.JwtInfo;
 import shop.geeksasang.service.DeliveryPartyService;
 import shop.geeksasang.utils.jwt.NoIntercept;
 
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 import static shop.geeksasang.config.exception.BaseResponseStatus.NOT_EXISTS_ORDER_TIME_CATEGORY;
@@ -36,8 +39,13 @@ public class DeliveryPartyControllor {
             @ApiResponse(code =4000 ,message = "서버 오류입니다.")
     })
     @PostMapping("/deliveryParty")
-    public BaseResponse<PostDeliveryPartyRes> registerDeliveryParty(@Validated @RequestBody PostDeliveryPartyReq dto){
-        DeliveryParty deliveryParty = deliveryPartyService.registerDeliveryParty(dto);
+    public BaseResponse<PostDeliveryPartyRes> registerDeliveryParty(@Validated @RequestBody PostDeliveryPartyReq dto, HttpServletRequest request){
+
+        //Interceptor에서 parsing한 jwtInfo(userId,universityId)
+        JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
+
+        //배달 파티 생성
+        DeliveryParty deliveryParty = deliveryPartyService.registerDeliveryParty(dto,jwtInfo);
 
         PostDeliveryPartyRes postDeliveryPartyRes = PostDeliveryPartyRes.toDto(deliveryParty);
         return new BaseResponse<>(postDeliveryPartyRes);

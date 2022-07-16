@@ -54,7 +54,7 @@ public class JwtService {
      */
     public String getJwt(){
         HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.currentRequestAttributes()).getRequest();
-        Enumeration<String> headers=request.getHeaders("Authorization");
+        Enumeration<String> headers=request.getHeaders(AUTHORIZATION);
         while(headers.hasMoreElements()){
             String value = headers.nextElement();
             if(value.toLowerCase().startsWith("Bearer".toLowerCase())){
