@@ -12,11 +12,7 @@ import shop.geeksasang.config.domain.OrderTimeCategoryType;
 import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.config.exception.BaseResponseStatus;
 import shop.geeksasang.domain.*;
-import shop.geeksasang.dto.deliveryParty.GetDeliveryPartiesRes;
-import shop.geeksasang.dto.deliveryParty.GetDeliveryPartyByMaxMatchingRes;
-import shop.geeksasang.dto.deliveryParty.GetDeliveryPartyByOrderTimeRes;
-import shop.geeksasang.dto.deliveryParty.GetDeliveryPartyDetailRes;
-import shop.geeksasang.dto.deliveryParty.PostDeliveryPartyReq;
+import shop.geeksasang.dto.deliveryParty.*;
 import shop.geeksasang.repository.*;
 
 import java.util.Arrays;
@@ -160,6 +156,18 @@ public class DeliveryPartyService {
         return deliveryParties.stream()
                 .map(deliveryParty -> GetDeliveryPartyByOrderTimeRes.toDto(deliveryParty))
                 .collect(Collectors.toList());
+    }
+
+
+    //배달파티 조회: 검색어로 조회
+    public List<GetDeliveryPartiesByKeywordRes> getDeliveryPartiesByKeyword(int dormitoryId,String keyword, int cursor){
+        PageRequest paging = PageRequest.of(cursor, PAGING_SIZE, Sort.by(Sort.Direction.ASC, PAGING_STANDARD));
+
+        Slice<DeliveryParty> deliveryParties = deliveryPartyRepository.findDeliveryPartiesByKeyword(dormitoryId, keyword, paging);
+
+        return deliveryParties.stream()
+                .map(deliveryParty -> GetDeliveryPartiesByKeywordRes.toDto(deliveryParty)) // 배열 원소 변경 한번에 적용
+                .collect(Collectors.toList()); // List로 변경
     }
 
 }

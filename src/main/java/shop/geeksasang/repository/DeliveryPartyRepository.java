@@ -22,5 +22,6 @@ public interface DeliveryPartyRepository extends JpaRepository<DeliveryParty,Int
     @Query("select dp from DeliveryParty dp where dp.dormitory.id = :dormitoryId and dp.orderTimeCategory = :orderTimeCategory")
     Slice<DeliveryParty> findDeliveryPartiesByOrderTime(int dormitoryId, @Param("orderTimeCategory") OrderTimeCategoryType orderTimeCategory, Pageable pageable);
 
-
+    @Query("select dp from DeliveryParty dp where dp.dormitory.id = :dormitoryId and dp.title LIKE :keyword")
+    Slice<DeliveryParty> findDeliveryPartiesByKeyword(int dormitoryId, String keyword, Pageable pageable);
 }

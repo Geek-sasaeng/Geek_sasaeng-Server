@@ -94,8 +94,8 @@ public class MemberController {
     // 중복 확인: 닉네임
     @ApiOperation(value = "중복 확인: 닉네임", notes = "사용자의 닉네임을 이용해서 중복확인을 한다.")
     @ApiResponses({
-            @ApiResponse(code =1202 ,message ="사용 가능한 닉네임 입니다."),
-            @ApiResponse(code =2600 ,message ="중복되는 유저 닉네임입니다"),
+            @ApiResponse(code =1202 ,message ="사용 가능한 닉네임입니다."),
+            @ApiResponse(code =2600 ,message ="중복된 닉네임입니다."),
             @ApiResponse(code=4000,message = "서버 오류입니다.")
     })
     @PostMapping("/nickname-duplicated")
@@ -111,7 +111,7 @@ public class MemberController {
     // 수정: 닉네임 수정하기
     @ApiOperation(value = "수정: 닉네임 수정하기", notes = "수정할 닉네임을 입력받아 수정한다.")
     @ApiResponses({
-            @ApiResponse(code =2600 ,message ="중복되는 유저 닉네임입니다"),
+            @ApiResponse(code =2600 ,message ="중복된 닉네임입니다"),
             @ApiResponse(code=4000,message = "서버 오류입니다.")
     })
     @PatchMapping("/nickName/{id}")
@@ -159,8 +159,8 @@ public class MemberController {
     // 아이디 중복 확인하기
     @ApiOperation(value = "확인: 아이디 중복 확인하기", notes = "아이디 입력받아 중복 여부 체크.")
     @ApiResponses({
-            @ApiResponse(code =2603 ,message ="존재하는 아이디입니다"),
-            @ApiResponse(code =1601 ,message ="사용가능한 아이디입니다"),
+            @ApiResponse(code =2603 ,message ="중복된 아이디입니다"),
+            @ApiResponse(code =1601 ,message ="사용 가능한 아이디입니다"),
             @ApiResponse(code=4000,message = "서버 오류입니다.")
     })
     @NoIntercept
