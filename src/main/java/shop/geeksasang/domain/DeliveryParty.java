@@ -78,9 +78,13 @@ public class DeliveryParty extends BaseEntity {
                 .matchingStatus(MatchingStatus.ONGOING)
                 .currentMatching(1)
                 .build();
+
         party.setStatus(Status.ACTIVE);
+        dormitory.addParty(party);
         for (HashTag hashTag : hashTagList) {
-            party.deliveryPartyHashTags.add(new DeliveryPartyHashTag(party, hashTag));
+            DeliveryPartyHashTag deliveryPartyHashTag = new DeliveryPartyHashTag(party, hashTag);
+            hashTag.addDeliveryPartyHashTag(deliveryPartyHashTag);
+            party.deliveryPartyHashTags.add(deliveryPartyHashTag);
         }
         return party;
     }

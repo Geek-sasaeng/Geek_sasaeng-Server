@@ -24,4 +24,8 @@ public class HashTag {
 
     @OneToMany(mappedBy ="hashTag")
     private List<DeliveryPartyHashTag> deliveryPartyHashTags = new ArrayList<>();
+
+    public void addDeliveryPartyHashTag(DeliveryPartyHashTag deliveryPartyHashTag) {
+        deliveryPartyHashTags.add(deliveryPartyHashTag);
+    }
 }
