@@ -13,6 +13,7 @@ import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.config.exception.BaseResponseStatus;
 import shop.geeksasang.domain.*;
 import shop.geeksasang.dto.deliveryParty.*;
+import shop.geeksasang.dto.login.JwtInfo;
 import shop.geeksasang.repository.*;
 import shop.geeksasang.utils.ordertime.OrderTimeUtils;
 
@@ -41,10 +42,12 @@ public class DeliveryPartyService {
 
 
     @Transactional(readOnly = false)
-    public PostDeliveryPartyRes registerDeliveryParty(PostDeliveryPartyReq dto){
+    public PostDeliveryPartyRes registerDeliveryParty(PostDeliveryPartyReq dto, JwtInfo jwtInfo){
+
+        int chiefId = jwtInfo.getUserId();
 
         //파티장
-        Member chief = memberRepository.findById(dto.getChief())
+        Member chief = memberRepository.findById(chiefId)
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTICIPANT));
 
         //기숙사
