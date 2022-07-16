@@ -81,7 +81,8 @@ public class PostDeliveryPartyRes {
                 .title(deliveryParty.getTitle())
                 .content(deliveryParty.getContent())
                 .orderTime(deliveryParty.getOrderTime())
-                .hashTags(deliveryParty.getHashTags().stream().map(HashTag::getTitle).collect(Collectors.toList()))
+                .hashTags(deliveryParty.getDeliveryPartyHashTags().stream().map(deliveryPartyHashTag ->
+                        deliveryPartyHashTag.getHashTag().getTitle()).collect(Collectors.toList()))
                 .createdAt(deliveryParty.getCreatedAt())
                 .orderTimeCategoryType(deliveryParty.getOrderTimeCategory().toString())
                 .currentMatching(deliveryParty.getCurrentMatching())

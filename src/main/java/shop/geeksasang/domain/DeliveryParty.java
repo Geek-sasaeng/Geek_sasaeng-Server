@@ -44,7 +44,7 @@ public class DeliveryParty extends BaseEntity {
     private FoodCategory foodCategory;
 
     @OneToMany(mappedBy = "party")
-    private List<DeliveryPartyMember> deliveryPartyMembers;
+    private List<DeliveryPartyMember> deliveryPartyMembers = new ArrayList<>();
 
     private String title;
 
@@ -75,10 +75,12 @@ public class DeliveryParty extends BaseEntity {
                 .foodCategory(foodCategory)
                 .orderTimeCategory(orderTimeCategory)
                 .dormitory(dormitory)
+                .deliveryPartyHashTags(new ArrayList<>())
                 .matchingStatus(MatchingStatus.ONGOING)
                 .currentMatching(1)
                 .build();
         party.setStatus(Status.ACTIVE);
+        System.out.println("party.deliveryPartyHashTags = " + party.deliveryPartyHashTags);
         for (HashTag hashTag : hashTagList) {
             party.deliveryPartyHashTags.add(new DeliveryPartyHashTag(party, hashTag));
         }

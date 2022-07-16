@@ -8,10 +8,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import shop.geeksasang.config.domain.OrderTimeCategoryType;
 import shop.geeksasang.config.exception.BaseException;
-import shop.geeksasang.config.exception.BaseResponseStatus;
 import shop.geeksasang.config.response.BaseResponse;
-import shop.geeksasang.domain.DeliveryParty;
-import shop.geeksasang.domain.Member;
 import shop.geeksasang.dto.deliveryParty.*;
 import shop.geeksasang.service.DeliveryPartyService;
 import shop.geeksasang.utils.jwt.NoIntercept;
@@ -22,7 +19,7 @@ import static shop.geeksasang.config.exception.BaseResponseStatus.NOT_EXISTS_ORD
 
 @RestController
 @RequiredArgsConstructor // final로 선언 된 것 자동으로 @Autowired와 같은 기능
-public class DeliveryPartyControllor {
+public class DeliveryPartyController {
 
     private final DeliveryPartyService deliveryPartyService;
 
@@ -36,7 +33,7 @@ public class DeliveryPartyControllor {
             @ApiResponse(code =2402 ,message ="존재하지 않는 카테고리입니다"),
             @ApiResponse(code =4000 ,message = "서버 오류입니다.")
     })
-    @PostMapping("/deliveryParty")
+    @PostMapping("/delivery-parties")
     public BaseResponse<PostDeliveryPartyRes> registerDeliveryParty(@Validated @RequestBody PostDeliveryPartyReq dto){
         PostDeliveryPartyRes postDeliveryPartyRes = deliveryPartyService.registerDeliveryParty(dto);
         return new BaseResponse<>(postDeliveryPartyRes);
@@ -55,13 +52,6 @@ public class DeliveryPartyControllor {
         return new BaseResponse<>(response);
     }
 
-
-//    //배달파티 조회:
-//    @GetMapping("/get/detail")
-//    public BaseResponse<DeliveryParty> getDeliveryPartyDetailById(@RequestParam int partyId){
-//        DeliveryParty deliveryParty = deliveryPartyService.getDeliveryParty(partyId);
-//        return new BaseResponse<>(deliveryParty);
-//    }
 
     //배달파티 조회: 상세조회
     @NoIntercept
