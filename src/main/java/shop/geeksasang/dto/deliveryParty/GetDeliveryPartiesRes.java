@@ -56,7 +56,7 @@ public class GetDeliveryPartiesRes {
     @ApiParam(value = "배달시킬 위치")
     private String location;
 
-    @ApiModelProperty(example = "ONGOIND")
+    @ApiModelProperty(example = "ONGOING")
     @ApiParam(value = "배달 현황")
     private MatchingStatus matchingStatus;
 
