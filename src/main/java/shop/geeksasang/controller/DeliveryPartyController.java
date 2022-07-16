@@ -38,9 +38,7 @@ public class DeliveryPartyControllor {
     })
     @PostMapping("/deliveryParty")
     public BaseResponse<PostDeliveryPartyRes> registerDeliveryParty(@Validated @RequestBody PostDeliveryPartyReq dto){
-        DeliveryParty deliveryParty = deliveryPartyService.registerDeliveryParty(dto);
-
-        PostDeliveryPartyRes postDeliveryPartyRes = PostDeliveryPartyRes.toDto(deliveryParty);
+        PostDeliveryPartyRes postDeliveryPartyRes = deliveryPartyService.registerDeliveryParty(dto);
         return new BaseResponse<>(postDeliveryPartyRes);
     }
 

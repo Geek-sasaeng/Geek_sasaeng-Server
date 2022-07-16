@@ -22,11 +22,6 @@ public class HashTag {
 
     private String title;
 
-    @OneToMany(mappedBy ="hashTag", targetEntity=DeliveryPartyHashTag.class)
-    private List<DeliveryParty> deliveryParties=new ArrayList<>();
-
-    public void updateDeliveryParties(DeliveryParty deliveryParty){
-        this.deliveryParties.add(deliveryParty);
-    }
-
+    @OneToMany(mappedBy ="hashTag")
+    private List<DeliveryPartyHashTag> deliveryPartyHashTags = new ArrayList<>();
 }
