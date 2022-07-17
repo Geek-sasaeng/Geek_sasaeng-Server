@@ -1,5 +1,6 @@
 package shop.geeksasang.dto.deliveryParty;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiParam;
 import lombok.Builder;
@@ -49,6 +50,7 @@ public class GetDeliveryPartyDetailRes {
 
     @ApiModelProperty(example = "2022-07-11 15:30:00")
     @ApiParam(value = "주문 예정 시간")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime orderTime;
 
     @ApiModelProperty(example = "2")
@@ -69,6 +71,7 @@ public class GetDeliveryPartyDetailRes {
 
     @ApiModelProperty(example = "2022-07-11 15:30:00")
     @ApiParam(value = "배달파티 정보 업데이트 시각")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private String updatedAt;
 
     //빌더

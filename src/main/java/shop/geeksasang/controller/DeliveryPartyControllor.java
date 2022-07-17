@@ -119,9 +119,10 @@ public class DeliveryPartyControllor {
     @ApiOperation(value = "조회 : 검색어를 포함하는 배달파티 목록 조회", notes = "해당 기숙사의 배달파티 목록울 검색어로 조회할 수 있다.")
     @ApiResponses({
             @ApiResponse(code =1000 ,message ="요청에 성공하였습니다."),
+            @ApiResponse(code=2205,message = "검색어를 입력해주세요"),
             @ApiResponse(code=4000,message = "서버 오류입니다.")
     })
-    @NoIntercept
+    @NoIntercept // jwt 필요 없음
     @GetMapping("/{dormitoryId}/delivery-parties/keyword/{keyword}")
     public BaseResponse<List<GetDeliveryPartiesByKeywordRes>> getDeliveryPartiesByKeyword(@PathVariable("dormitoryId") int dormitoryId, @PathVariable("keyword") String keyword,@RequestParam int cursor){
         List<GetDeliveryPartiesByKeywordRes> response = deliveryPartyService.getDeliveryPartiesByKeyword(dormitoryId, keyword, cursor);
