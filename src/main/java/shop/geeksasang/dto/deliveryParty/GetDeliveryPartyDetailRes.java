@@ -29,7 +29,6 @@ public class GetDeliveryPartyDetailRes {
     @ApiParam(value = "파티장 닉네임")
     private String chief;
 
-
     @ApiModelProperty(example = "http://geeksasaeng.shop/s3/neo.jpg")
     @ApiParam(value = "파티장 프로필 이미지 url")
     private String chiefProfileImgUrl;

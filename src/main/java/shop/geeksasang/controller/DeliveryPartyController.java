@@ -35,7 +35,7 @@ public class DeliveryPartyController {
             @ApiResponse(code =2402 ,message ="존재하지 않는 카테고리입니다"),
             @ApiResponse(code =4000 ,message = "서버 오류입니다.")
     })
-    @PostMapping("/delivery-parties")
+    @PostMapping("/delivery-party")
     public BaseResponse<PostDeliveryPartyRes> registerDeliveryParty(@Validated @RequestBody PostDeliveryPartyReq dto,  HttpServletRequest request){
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
 
