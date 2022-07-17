@@ -130,4 +130,20 @@ public class DeliveryPartyService {
                 .collect(Collectors.toList());
     }
 
+
+    //배달파티 조회: 검색어로 조회
+    public List<GetDeliveryPartiesByKeywordRes> getDeliveryPartiesByKeyword(int dormitoryId, String keyword, int cursor){
+        // validation: 검색어 빈값
+        if(keyword == null || keyword.isBlank()){
+            throw new BaseException(BaseResponseStatus.BLANK_KEYWORD);
+        }
+        PageRequest paging = PageRequest.of(cursor, PAGING_SIZE, Sort.by(Sort.Direction.ASC, PAGING_STANDARD)); // 페이징 요구 객체
+
+        Slice<DeliveryParty> deliveryParties = deliveryPartyRepository.findDeliveryPartiesByKeyword(dormitoryId, keyword, paging); // 페이징 반환 객체
+
+        return deliveryParties.stream()
+                .map(deliveryParty -> GetDeliveryPartiesByKeywordRes.toDto(deliveryParty)) // 배열 원소 변경 한번에 적용
+                .collect(Collectors.toList()); // List로 변경
+    }
+
 }

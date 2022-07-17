@@ -80,6 +80,8 @@ public enum BaseResponseStatus {
     DUPLICATE_USER_PHONENUMBER(false, 2202, "이미 등록된 전화번호 입니다."),
     DIFFERENT_PHONEVALIDKEY(false, 2203, "폰 인증번호가 다릅니다."),
     NOT_EXIST_USER(false,2204,"존재하지 않는 회원 id 입니다."),
+    BLANK_KEYWORD(false,2205,"검색어를 입력해주세요"),
+
 
 
     /**

@@ -8,6 +8,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import shop.geeksasang.config.domain.OrderTimeCategoryType;
 import shop.geeksasang.config.exception.BaseException;
+import shop.geeksasang.config.exception.BaseResponseStatus;
 import shop.geeksasang.config.response.BaseResponse;
 import shop.geeksasang.dto.deliveryParty.*;
 import shop.geeksasang.dto.login.JwtInfo;
@@ -102,6 +103,21 @@ public class DeliveryPartyController {
             throw new BaseException(NOT_EXISTS_ORDER_TIME_CATEGORY);
         }
         List<GetDeliveryPartyByOrderTimeRes> response = deliveryPartyService.getDeliveryPartyByOrderTime(dormitoryId, cursor, orderTimeCategory);
+        return new BaseResponse<>(response);
+    }
+
+
+    //배달파티 조회: 검색어로 조회
+    @ApiOperation(value = "조회 : 검색어를 포함하는 배달파티 목록 조회", notes = "해당 기숙사의 배달파티 목록울 검색어로 조회할 수 있다.")
+    @ApiResponses({
+            @ApiResponse(code =1000 ,message ="요청에 성공하였습니다."),
+            @ApiResponse(code=2205,message = "검색어를 입력해주세요"),
+            @ApiResponse(code=4000,message = "서버 오류입니다.")
+    })
+    @NoIntercept // jwt 필요 없음
+    @GetMapping("/{dormitoryId}/delivery-parties/keyword/{keyword}")
+    public BaseResponse<List<GetDeliveryPartiesByKeywordRes>> getDeliveryPartiesByKeyword(@PathVariable("dormitoryId") int dormitoryId, @PathVariable("keyword") String keyword,@RequestParam int cursor){
+        List<GetDeliveryPartiesByKeywordRes> response = deliveryPartyService.getDeliveryPartiesByKeyword(dormitoryId, keyword, cursor);
         return new BaseResponse<>(response);
     }
 

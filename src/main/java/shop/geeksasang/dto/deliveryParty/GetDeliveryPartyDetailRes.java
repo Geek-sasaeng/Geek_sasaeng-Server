@@ -1,5 +1,6 @@
 package shop.geeksasang.dto.deliveryParty;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiParam;
 import lombok.Builder;
@@ -7,9 +8,12 @@ import lombok.Getter;
 import lombok.Setter;
 import shop.geeksasang.config.domain.MatchingStatus;
 import shop.geeksasang.domain.DeliveryParty;
+import shop.geeksasang.domain.DeliveryPartyHashTag;
 
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Getter
@@ -34,10 +38,9 @@ public class GetDeliveryPartyDetailRes {
     @ApiParam(value = "음식 카테고리")
     private String foodCategory;
 
-    //TODO: 해시태그 엔티티 수정되면 반영
-//    @ApiModelProperty(example = "")
-//    @ApiParam(value = "사용자 닉네임")
-//    private List<String> hashTags;
+    @ApiModelProperty(example = "깉이 먹고 싶어요")
+    @ApiParam(value = "해시태그")
+    private List<String> hashTags;
 
     @ApiModelProperty(example = "한식 같이 먹어요!!")
     @ApiParam(value = "배달파티 제목")
@@ -49,6 +52,7 @@ public class GetDeliveryPartyDetailRes {
 
     @ApiModelProperty(example = "2022-07-11 15:30:00")
     @ApiParam(value = "주문 예정 시간")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime orderTime;
 
     @ApiModelProperty(example = "2")
@@ -69,15 +73,18 @@ public class GetDeliveryPartyDetailRes {
 
     @ApiModelProperty(example = "2022-07-11 15:30:00")
     @ApiParam(value = "배달파티 정보 업데이트 시각")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private String updatedAt;
 
     //빌더
     static public GetDeliveryPartyDetailRes toDto(DeliveryParty deliveryParty){
+        List<String> hashTagDto = makeHashTagEntityToDto(deliveryParty.getDeliveryPartyHashTags());
         return GetDeliveryPartyDetailRes.builder()
                 .id(deliveryParty.getId())
                 .chief(deliveryParty.getChief().getNickName())
                 .chiefProfileImgUrl(deliveryParty.getChief().getProfileImgUrl())
                 .foodCategory(deliveryParty.getFoodCategory().getTitle())
+                .hashTags(hashTagDto)
                 .title(deliveryParty.getTitle())
                 .content(deliveryParty.getContent())
                 .orderTime(deliveryParty.getOrderTime())
@@ -87,6 +94,13 @@ public class GetDeliveryPartyDetailRes {
                 .matchingStatus(deliveryParty.getMatchingStatus())
                 .updatedAt(deliveryParty.getUpdatedAt())
                 .build();
+    }
+
+    // 해시태그 id -> title 리스트로 변환
+    private static List<String> makeHashTagEntityToDto(List<DeliveryPartyHashTag> deliveryPartyHashTags){
+        return deliveryPartyHashTags.stream()
+                .map(deliveryPartyHashTag -> deliveryPartyHashTag.getHashTag().getTitle())
+                .collect(Collectors.toList());
     }
 
 }
