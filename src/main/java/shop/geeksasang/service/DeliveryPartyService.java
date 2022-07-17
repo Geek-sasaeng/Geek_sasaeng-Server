@@ -13,8 +13,11 @@ import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.config.exception.BaseResponseStatus;
 import shop.geeksasang.domain.*;
 import shop.geeksasang.dto.deliveryParty.*;
+import shop.geeksasang.dto.login.JwtInfo;
 import shop.geeksasang.repository.*;
+import shop.geeksasang.utils.ordertime.OrderTimeUtils;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,71 +34,47 @@ public class DeliveryPartyService {
     private final MemberRepository memberRepository;
     private final DormitoryRepository dormitoryRepository;
     private final FoodCategoryRepository foodCategoryRepository;
-    private final DeliveryPartyHashTagService deliveryPartyHashTagService;
+    private final HashTagRepository hashTagRepository;
 
     private static final int PAGING_SIZE = 10;
     private static final String PAGING_STANDARD = "orderTime";
-    private static final List<Integer> MATHCING_NUMBER = Arrays.asList(2, 4, 6, 8, 10);
+    private static final List<Integer> MATCHING_NUMBER = Arrays.asList(2, 4, 6, 8, 10);
 
 
     @Transactional(readOnly = false)
-    public DeliveryParty registerDeliveryParty(PostDeliveryPartyReq dto){
+    public PostDeliveryPartyRes registerDeliveryParty(PostDeliveryPartyReq dto, JwtInfo jwtInfo){
 
-        // 파티 생성 및 저장
-        DeliveryParty deliveryParty = dto.toEntity();
+        int chiefId = jwtInfo.getUserId();
 
         //파티장
-        Member chief = memberRepository.findById(dto.getChief())
+        Member chief = memberRepository.findById(chiefId)
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTICIPANT));
-        deliveryParty.connectChief(chief);
 
         //기숙사
         Dormitory dormitory = dormitoryRepository.findById(dto.getDormitory())
                 .orElseThrow(() ->  new BaseException(BaseResponseStatus.NOT_EXISTS_DORMITORY));
-        deliveryParty.connectDormitory(dormitory);
 
         //카테고리
         FoodCategory foodCategory = foodCategoryRepository.findById(dto.getFoodCategory())
                 .orElseThrow(() ->  new BaseException(BaseResponseStatus.NOT_EXISTS_CATEGORY));
-        deliveryParty.connectFoodCategory(foodCategory);
+
+        //해시태그
+        List<HashTag> hashTagList = new ArrayList<>();
+        for (Integer hashTagId : dto.getHashTag()) {
+            HashTag hashTag = hashTagRepository.findById(hashTagId).orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_HASHTAG));
+            hashTagList.add(hashTag);
+        }
 
         //orderTime 분류화
-       OrderTimeCategoryType orderTimeCategory = null;
-       int orderHour = dto.getOrderTime().getHour();
+        OrderTimeCategoryType orderTimeCategory = OrderTimeUtils.selectOrderTime(dto.getOrderTime().getHour());
 
-       //아침 : 6시 ~ 10시59분
-       if (orderHour >= 6 && orderHour <11){
-           orderTimeCategory = OrderTimeCategoryType.BREAKFAST;
-       }
-       //점심 : 11시 ~ 16시59분
-       if(orderHour>=11 && orderHour<17){
-           orderTimeCategory=OrderTimeCategoryType.DINNER;
-       }
-       //저녁 : 17시 ~ 20시59분
-       if(orderHour>=17 && orderHour<21){
-           orderTimeCategory=OrderTimeCategoryType.DINNER;
-       }
-       //야식 : 21시 ~ 05:59분
-       if((orderHour>=21&&orderHour<24)||(orderHour>=0 && orderHour<6)){
-           orderTimeCategory = OrderTimeCategoryType.MIDNIGHT_SNACKS;
-       }
-
-        //배달파티 orderTimeCategory       
-        deliveryParty.connectOrderTimeCategory(orderTimeCategory);
-       
-        //배달파티 생성시 초기 세팅
-        deliveryParty.initialCurrentMatching();
-        deliveryParty.initialMatchingStatus();
-        deliveryParty.initialStatus();
+        // 파티 생성 및 저장. 이렇게 의존성이 많이 발생하는데 더 좋은 방법이 있지 않을까?
+        DeliveryParty deliveryParty = DeliveryParty.makeParty(dto, orderTimeCategory, dormitory, foodCategory, chief, hashTagList);
 
         //배달파티 저장
         DeliveryParty party= deliveryPartyRepository.save(deliveryParty);
 
-        //배달파티-해시태그 연결 및 저장
-        deliveryPartyHashTagService.saveHashTag(party,dto.getHashTag());
-
-        // 반환
-        return deliveryParty;
+        return PostDeliveryPartyRes.toDto(party);
     }
 
     //배달파티 조회: 기숙사 별 전체목록
@@ -109,13 +88,6 @@ public class DeliveryPartyService {
                 .map(deliveryParty -> GetDeliveryPartiesRes.toDto(deliveryParty))
                 .collect(Collectors.toList());
     }
-
-//    //배달파티 상세조회:
-//    public DeliveryParty getDeliveryParty(int partyId){
-//        DeliveryParty deliveryParty= deliveryPartyRepository.findById(partyId)
-//                .orElseThrow(() -> new RuntimeException(""));
-//        return deliveryParty;
-//    }
 
     //배달파티 상세조회:
     public GetDeliveryPartyDetailRes getDeliveryPartyDetailById(int partyId){
@@ -131,7 +103,7 @@ public class DeliveryPartyService {
     public List<GetDeliveryPartyByMaxMatchingRes> getDeliveryPartyByMaxMatching(int dormitoryId, int maxMatching, int cursor) {
 
         // 인원수 입렵값 validation
-        if(!MATHCING_NUMBER.contains(maxMatching)){
+        if(!MATCHING_NUMBER.contains(maxMatching)){
             throw new BaseException(NOT_SPECIFIED_VALUE);
         }
 

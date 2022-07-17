@@ -18,12 +18,6 @@ import java.util.List;
 @Data
 public class PostDeliveryPartyReq {
 
-    // 추후 jwt 이용
-    @ApiModelProperty(example = "1")
-    @ApiParam(value = "사용자 id", required = true)
-    @NotNull
-    private int chief;
-
     @ApiModelProperty(example = "1")
     @ApiParam(value = "기숙사 id", required = true)
     @NotNull

@@ -22,11 +22,10 @@ public class HashTag {
 
     private String title;
 
-    @OneToMany(mappedBy ="hashTag", targetEntity=DeliveryPartyHashTag.class)
-    private List<DeliveryParty> deliveryParties=new ArrayList<>();
+    @OneToMany(mappedBy ="hashTag")
+    private List<DeliveryPartyHashTag> deliveryPartyHashTags = new ArrayList<>();
 
-    public void updateDeliveryParties(DeliveryParty deliveryParty){
-        this.deliveryParties.add(deliveryParty);
+    public void addDeliveryPartyHashTag(DeliveryPartyHashTag deliveryPartyHashTag) {
+        deliveryPartyHashTags.add(deliveryPartyHashTag);
     }
-
 }

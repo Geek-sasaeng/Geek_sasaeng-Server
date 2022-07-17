@@ -14,7 +14,7 @@ import javax.persistence.*;
 @Builder
 @Getter
 @Entity
-public class DeliveryPartyHashTag{
+public class DeliveryPartyHashTag extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="delivery_party_hash_tag__id")
