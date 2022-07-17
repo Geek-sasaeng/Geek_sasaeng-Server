@@ -8,7 +8,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import shop.geeksasang.config.domain.OrderTimeCategoryType;
 import shop.geeksasang.config.exception.BaseException;
-import shop.geeksasang.config.exception.BaseResponseStatus;
 import shop.geeksasang.config.response.BaseResponse;
 import shop.geeksasang.dto.deliveryParty.*;
 import shop.geeksasang.dto.login.JwtInfo;
@@ -81,8 +80,8 @@ public class DeliveryPartyController {
     })
     @NoIntercept
     @GetMapping("/{dormitoryId}/delivery-parties/{maxMatching}")
-    public BaseResponse<List<GetDeliveryPartyByMaxMatchingRes>> getDeliveryPartyByMaxMatching(@PathVariable int dormitoryId, @PathVariable int maxMatching, @RequestParam("cursor") int cursor){
-        List<GetDeliveryPartyByMaxMatchingRes> response = deliveryPartyService.getDeliveryPartyByMaxMatching(dormitoryId, maxMatching, cursor);
+    public BaseResponse<List<GetDeliveryPartiesByMaxMatchingRes>> getDeliveryPartyByMaxMatching(@PathVariable int dormitoryId, @PathVariable int maxMatching, @RequestParam("cursor") int cursor){
+        List<GetDeliveryPartiesByMaxMatchingRes> response = deliveryPartyService.getDeliveryPartyByMaxMatching(dormitoryId, maxMatching, cursor);
         return new BaseResponse<>(response);
     }
 
@@ -95,14 +94,14 @@ public class DeliveryPartyController {
     })
     @NoIntercept
     @GetMapping("/{dormitoryId}/delivery-parties/filter/{orderTimeCategory}")
-    public BaseResponse<List<GetDeliveryPartyByOrderTimeRes>> GetDeliveryPartyByOrderTime(@PathVariable int dormitoryId, @PathVariable String orderTimeCategory, @RequestParam("cursor") int cursor){
+    public BaseResponse<List<GetDeliveryPartiesByOrderTimeRes>> GetDeliveryPartyByOrderTime(@PathVariable int dormitoryId, @PathVariable String orderTimeCategory, @RequestParam("cursor") int cursor){
         // enum값 아닌 것 들어올때 처리 - 리팩토링 대상
         try{
             System.out.println(OrderTimeCategoryType.valueOf(orderTimeCategory));
         }catch(IllegalArgumentException e){
             throw new BaseException(NOT_EXISTS_ORDER_TIME_CATEGORY);
         }
-        List<GetDeliveryPartyByOrderTimeRes> response = deliveryPartyService.getDeliveryPartyByOrderTime(dormitoryId, cursor, orderTimeCategory);
+        List<GetDeliveryPartiesByOrderTimeRes> response = deliveryPartyService.getDeliveryPartyByOrderTime(dormitoryId, cursor, orderTimeCategory);
         return new BaseResponse<>(response);
     }
 

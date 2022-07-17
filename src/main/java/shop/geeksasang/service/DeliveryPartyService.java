@@ -100,7 +100,7 @@ public class DeliveryPartyService {
 
 
     // 배달파티 조회: 인원수
-    public List<GetDeliveryPartyByMaxMatchingRes> getDeliveryPartyByMaxMatching(int dormitoryId, int maxMatching, int cursor) {
+    public List<GetDeliveryPartiesByMaxMatchingRes> getDeliveryPartyByMaxMatching(int dormitoryId, int maxMatching, int cursor) {
 
         // 인원수 입렵값 validation
         if(!MATCHING_NUMBER.contains(maxMatching)){
@@ -112,12 +112,12 @@ public class DeliveryPartyService {
         Slice<DeliveryParty> deliveryParties = deliveryPartyRepository.findDeliveryPartiesByMaxMatching(dormitoryId, maxMatching, paging);
 
         return deliveryParties.stream()
-                .map(deliveryParty -> GetDeliveryPartyByMaxMatchingRes.toDto(deliveryParty))
+                .map(deliveryParty -> GetDeliveryPartiesByMaxMatchingRes.toDto(deliveryParty))
                 .collect(Collectors.toList());
     }
 
     // 배달파티 조회: orderTimeCategory 시간대
-    public List<GetDeliveryPartyByOrderTimeRes> getDeliveryPartyByOrderTime(int dormitoryId, int cursor, String orderTimeCategory) {
+    public List<GetDeliveryPartiesByOrderTimeRes> getDeliveryPartyByOrderTime(int dormitoryId, int cursor, String orderTimeCategory) {
 
         OrderTimeCategoryType orderTimeCategoryType = OrderTimeCategoryType.valueOf(orderTimeCategory);
 
@@ -126,7 +126,7 @@ public class DeliveryPartyService {
         Slice<DeliveryParty> deliveryParties = deliveryPartyRepository.findDeliveryPartiesByOrderTime(dormitoryId, orderTimeCategoryType, paging);
 
         return deliveryParties.stream()
-                .map(deliveryParty -> GetDeliveryPartyByOrderTimeRes.toDto(deliveryParty))
+                .map(deliveryParty -> GetDeliveryPartiesByOrderTimeRes.toDto(deliveryParty))
                 .collect(Collectors.toList());
     }
 
