@@ -1,5 +1,6 @@
 package shop.geeksasang.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -12,10 +13,15 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig {
+
+    @Value("server.url")
+    private String host;
+
+
     @Bean
     public Docket api(){
         return new Docket(DocumentationType.SWAGGER_2)
-                .host("http://127.0.0.1:8080")
+                .host("")
                 .apiInfo(getApiInfo())
                 .useDefaultResponseMessages(false);
     }
