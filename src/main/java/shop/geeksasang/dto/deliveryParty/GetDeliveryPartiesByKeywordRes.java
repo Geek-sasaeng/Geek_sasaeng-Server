@@ -60,13 +60,13 @@ public class GetDeliveryPartiesByKeywordRes {
     @ApiParam(value = "배달 현황")
     private MatchingStatus matchingStatus;
 
-//    @ApiModelProperty(example = "깉이 먹고 싶어요")
-//    @ApiParam(value = "해시태그")
-//    private List<String> hashTags;
+    @ApiModelProperty(example = "깉이 먹고 싶어요")
+    @ApiParam(value = "해시태그")
+    private List<String> hashTags;
 
     //빌더
     static public GetDeliveryPartiesByKeywordRes toDto(DeliveryParty deliveryParty){
-//        List<String> hashTagDto = makeHashTagEntityToDto(deliveryParty.getDeliveryPartyHashTags());
+        List<String> hashTagDto = makeHashTagEntityToDto(deliveryParty.getDeliveryPartyHashTags());
         return GetDeliveryPartiesByKeywordRes.builder()
                 .id(deliveryParty.getId())
                 .chief(deliveryParty.getChief().getNickName())
@@ -78,10 +78,11 @@ public class GetDeliveryPartiesByKeywordRes {
                 .maxMatching(deliveryParty.getMaxMatching())
                 .location(deliveryParty.getLocation())
                 .matchingStatus(deliveryParty.getMatchingStatus())
-//                .hashTags(hashTagDto)
+                .hashTags(hashTagDto)
                 .build();
     }
 
+    // 해시태그 id -> title 리스트로 변환
     private static List<String> makeHashTagEntityToDto(List<DeliveryPartyHashTag> deliveryPartyHashTags) {
         return deliveryPartyHashTags.stream()
                 .map(deliveryPartyHashTag -> deliveryPartyHashTag.getHashTag().getTitle())
