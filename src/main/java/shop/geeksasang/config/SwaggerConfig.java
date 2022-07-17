@@ -14,14 +14,13 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 public class SwaggerConfig {
 
-    @Value("server.url")
+    @Value("${request.url}")
     private String host;
-
 
     @Bean
     public Docket api(){
         return new Docket(DocumentationType.SWAGGER_2)
-                .host("")
+                .host(host)
                 .apiInfo(getApiInfo())
                 .useDefaultResponseMessages(false);
     }
