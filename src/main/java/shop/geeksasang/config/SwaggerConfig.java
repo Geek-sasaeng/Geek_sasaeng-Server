@@ -15,6 +15,7 @@ public class SwaggerConfig {
     @Bean
     public Docket api(){
         return new Docket(DocumentationType.SWAGGER_2)
+                .host("http://127.0.0.1:8080")
                 .apiInfo(getApiInfo())
                 .useDefaultResponseMessages(false);
     }
