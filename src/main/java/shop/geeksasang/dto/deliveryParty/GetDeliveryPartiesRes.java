@@ -1,5 +1,6 @@
 package shop.geeksasang.dto.deliveryParty;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiParam;
 import lombok.Builder;
@@ -42,6 +43,7 @@ public class GetDeliveryPartiesRes {
 
     @ApiModelProperty(example = "2022-07-29 20:29:30")
     @ApiParam(value = "배달 시간")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime orderTime;
 
     @ApiModelProperty(example = "2")
@@ -79,7 +81,6 @@ public class GetDeliveryPartiesRes {
                 .matchingStatus(deliveryParty.getMatchingStatus())
                 .hashTags(hashTagDto)
                 .build();
-
     }
 
     private static List<String> makeHashTagEntityToDto(List<DeliveryPartyHashTag> deliveryPartyHashTags) {
