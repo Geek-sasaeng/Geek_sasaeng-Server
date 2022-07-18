@@ -99,39 +99,6 @@ public class DeliveryPartyService {
         return getDeliveryPartyDetailRes;
     }
 
-
-    // 배달파티 조회: 인원수
-    public List<GetDeliveryPartiesByMaxMatchingRes> getDeliveryPartyByMaxMatching(int dormitoryId, int maxMatching, int cursor) {
-
-        // 인원수 입렵값 validation
-        if(!MATCHING_NUMBER.contains(maxMatching)){
-            throw new BaseException(NOT_SPECIFIED_VALUE);
-        }
-
-        PageRequest paging = PageRequest.of(cursor, PAGING_SIZE, Sort.by(Sort.Direction.ASC, PAGING_STANDARD));
-
-        Slice<DeliveryParty> deliveryParties = deliveryPartyRepository.findDeliveryPartiesByMaxMatching(dormitoryId, maxMatching, paging);
-
-        return deliveryParties.stream()
-                .map(deliveryParty -> GetDeliveryPartiesByMaxMatchingRes.toDto(deliveryParty))
-                .collect(Collectors.toList());
-    }
-
-    // 배달파티 조회: orderTimeCategory 시간대
-    public List<GetDeliveryPartiesByOrderTimeRes> getDeliveryPartyByOrderTime(int dormitoryId, int cursor, String orderTimeCategory) {
-
-        OrderTimeCategoryType orderTimeCategoryType = OrderTimeCategoryType.valueOf(orderTimeCategory);
-
-        PageRequest paging = PageRequest.of(cursor, PAGING_SIZE, Sort.by(Sort.Direction.ASC, PAGING_STANDARD));
-
-        Slice<DeliveryParty> deliveryParties = deliveryPartyRepository.findDeliveryPartiesByOrderTime(dormitoryId, orderTimeCategoryType, paging);
-
-        return deliveryParties.stream()
-                .map(deliveryParty -> GetDeliveryPartiesByOrderTimeRes.toDto(deliveryParty))
-                .collect(Collectors.toList());
-    }
-
-
     //배달파티 조회: 검색어로 조회
     public List<GetDeliveryPartiesByKeywordRes> getDeliveryPartiesByKeyword(int dormitoryId, String keyword, int cursor){
         // validation: 검색어 빈값
@@ -150,7 +117,7 @@ public class DeliveryPartyService {
     public List<Object> getDeliveryPartiesByConditions(int dormitoryId, int cursor, String orderTimeCategory, Integer maxMatching) {
 
         OrderTimeCategoryType orderTimeCategoryType = null;
-        if(orderTimeCategory != ""){
+        if(!orderTimeCategory.equals("")){
             orderTimeCategoryType = OrderTimeCategoryType.valueOf(orderTimeCategory);
         }
 

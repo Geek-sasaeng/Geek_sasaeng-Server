@@ -32,8 +32,8 @@ public class DeliveryPartyQueryRepository {
         return query.select(deliveryParty)
                 .from(deliveryParty)
                 .where(deliveryParty.dormitory.id.eq(dormitoryId),
-                        deliveryParty.orderTimeCategory.eq(orderTimeCategory),  //여기는 null 넣으면 문제 발생
-                        deliveryParty.maxMatching.between(0, maxMatching)) //null이 들어가면 알아서 조건이 반영되지 않는다.
+                        orderTimeCategory == null ? null : deliveryParty.orderTimeCategory.eq(orderTimeCategory), //eq는 null 들어가면 문제 발생
+                        deliveryParty.maxMatching.between(0, maxMatching)) //null 들어가면 알아서 조건이 반영되지 않는다.
                 .orderBy(deliveryParty.orderTime.desc())
                 .offset(pageable.getOffset())
                 .limit(10)

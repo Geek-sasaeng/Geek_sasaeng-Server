@@ -16,12 +16,6 @@ public interface DeliveryPartyRepository extends JpaRepository<DeliveryParty,Int
     @Query("select dp from DeliveryParty dp where dp.dormitory.id = :dormitoryId")
     Slice<DeliveryParty> findDeliveryPartiesByDormitoryId(int dormitoryId, Pageable pageable);
 
-    @Query("select dp from DeliveryParty dp where dp.dormitory.id = :dormitoryId and dp.maxMatching <= :maxMatching")
-    Slice<DeliveryParty> findDeliveryPartiesByMaxMatching(int dormitoryId, int maxMatching, Pageable pageable);
-
-    @Query("select dp from DeliveryParty dp where dp.dormitory.id = :dormitoryId and dp.orderTimeCategory = :orderTimeCategory")
-    Slice<DeliveryParty> findDeliveryPartiesByOrderTime(int dormitoryId, @Param("orderTimeCategory") OrderTimeCategoryType orderTimeCategory, Pageable pageable);
-
     //배달파티 조회: 검색어로 조회
     @Query("select dp from DeliveryParty dp " +
             "where dp.dormitory.id = :dormitoryId and (dp.title LIKE CONCAT('%',:keyword,'%') or dp.foodCategory.title = :keyword) and dp.matchingStatus = 'ONGOING' and dp.status = 'ACTIVE'")
