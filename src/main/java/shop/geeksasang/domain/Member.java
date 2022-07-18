@@ -11,6 +11,7 @@ import shop.geeksasang.config.type.MemberLoginType;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -61,6 +62,12 @@ public class Member extends BaseEntity {
     @NotNull
     @Enumerated(EnumType.STRING)
     private MemberLoginType memberLoginType;
+
+    @OneToMany(mappedBy = "reportingMember")
+    private List<MemberReport> reportingMembers;
+
+    @OneToMany(mappedBy = "reportedMember")
+    private List<MemberReport> reportedMembers;
 
     public void changeStatusToActive(){
         super.setStatus(BaseStatus.ACTIVE);
