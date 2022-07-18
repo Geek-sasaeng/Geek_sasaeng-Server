@@ -1,4 +1,4 @@
-package shop.geeksasang.config.exception;
+package shop.geeksasang.config.exception.response;
 
 import lombok.Getter;
 

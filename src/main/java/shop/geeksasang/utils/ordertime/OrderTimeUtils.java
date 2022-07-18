@@ -1,6 +1,6 @@
 package shop.geeksasang.utils.ordertime;
 
-import shop.geeksasang.config.domain.OrderTimeCategoryType;
+import shop.geeksasang.config.type.OrderTimeCategoryType;
 
 public class OrderTimeUtils {
 

@@ -1,4 +1,4 @@
-package shop.geeksasang.dto.member;
+package shop.geeksasang.dto.member.patch;
 
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiParam;
@@ -9,8 +9,8 @@ import shop.geeksasang.domain.Member;
 import shop.geeksasang.domain.PhoneNumber;
 
 @Builder // .builder() 사용
-@Data // Getter, Setter 포함
-public class PatchInformationAgreeStatusRes {
+@Data// Getter, Setter 포함
+public class PatchPhoneNumberRes {
 
     @ApiModelProperty(example = "1")
     @ApiParam(value = "사용자 인덱스")
@@ -36,20 +36,15 @@ public class PatchInformationAgreeStatusRes {
     @ApiParam(value = "사용자 폰 번호")
     private PhoneNumber phoneNumber;
 
-    @ApiModelProperty(example = "Y")
-    @ApiParam(value = "회원 정보동의 여부")
-    private  String informationAgreeStatus;
-
-    //빌더
-    static public PatchInformationAgreeStatusRes toDto(Member member){
-        return PatchInformationAgreeStatusRes.builder()
+    // 빌더
+    static public PatchPhoneNumberRes toDto(Member member){
+        return PatchPhoneNumberRes.builder()
                 .id(member.getId())
                 .loginId(member.getLoginId())
                 .nickname(member.getNickName())
                 .universityName(member.getUniversity().toString())
                 .email(member.getEmail())
                 .phoneNumber(member.getPhoneNumber())
-                .informationAgreeStatus(member.getInformationAgreeStatus())
                 .build();
     }
 }

@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import shop.geeksasang.config.domain.BaseEntity;
-import shop.geeksasang.config.domain.ValidStatus;
+import shop.geeksasang.config.status.ValidStatus;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;

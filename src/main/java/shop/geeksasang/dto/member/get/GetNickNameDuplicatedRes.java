@@ -1,4 +1,4 @@
-package shop.geeksasang.dto.member;
+package shop.geeksasang.dto.member.get;
 
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiParam;

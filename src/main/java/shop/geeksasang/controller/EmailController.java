@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import shop.geeksasang.config.exception.BaseResponseStatus;
+import shop.geeksasang.config.exception.response.BaseResponseStatus;
 import shop.geeksasang.config.response.BaseResponse;
 import shop.geeksasang.dto.email.PostEmailCertificationReq;
 import shop.geeksasang.dto.email.PostEmailReq;

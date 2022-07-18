@@ -1,25 +1,27 @@
-package shop.geeksasang.dto.member;
+package shop.geeksasang.dto.member.post;
 
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiParam;
-import lombok.*;
-import shop.geeksasang.config.domain.MemberLoginType;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import shop.geeksasang.config.type.MemberLoginType;
 import shop.geeksasang.domain.Email;
 import shop.geeksasang.domain.Member;
 import shop.geeksasang.domain.PhoneNumber;
-import shop.geeksasang.repository.EmailRepository;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class PostRegisterReq {
-    @ApiModelProperty(example = "geeksasaeng")
+public class PostSocialRegisterReq {
+    @ApiModelProperty(example = "geeksasaeng@naver.com")
     @ApiParam(value = "사용자 ID", required = true)
-    @Size(min = 6, max = 20)// validation: 최소길이 6자
-    @Pattern(regexp="^(?=.*[a-zA-Z])[-a-zA-Z0-9_.]{6,20}$",
-            message = "아이디는 6-20자의 영문과 숫자, 일부 특수문자(._-)만 입력 가능합니다.")
+    @Pattern(regexp="^[a-zA-Z0-9+-\\_.]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$",
+            message = "아이디는 이메일 형식만 지원됩니다.")
     private  String loginId;
 
     @ApiModelProperty(example = "1q2w3e4r!")
@@ -47,7 +49,7 @@ public class PostRegisterReq {
     private  String universityName;
 
     @ApiModelProperty(example = "1")
-    @ApiParam(value = "사용자 이메일", required = true)
+    @ApiParam(value = "사용자 학교 이메일", required = true)
     private Integer emailId;
 
     @ApiModelProperty(example = "1")
@@ -67,15 +69,7 @@ public class PostRegisterReq {
                 .email(email)
                 .phoneNumber(phoneNumber)
                 .informationAgreeStatus(getInformationAgreeStatus())
-                .memberLoginType(MemberLoginType.NORMAL_USER)
+                .memberLoginType(MemberLoginType.NAVER_USER)
                 .build();
     }
 }
-
-
-
-
-
-
-
-
