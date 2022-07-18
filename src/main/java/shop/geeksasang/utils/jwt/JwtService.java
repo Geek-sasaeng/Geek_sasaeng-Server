@@ -18,7 +18,7 @@ import java.util.LinkedHashMap;
 import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.dto.login.JwtInfo;
 
-import static shop.geeksasang.config.exception.BaseResponseStatus.*;
+import static shop.geeksasang.config.exception.response.BaseResponseStatus.*;
 
 
 @Service

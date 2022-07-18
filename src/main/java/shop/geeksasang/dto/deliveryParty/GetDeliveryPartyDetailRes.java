@@ -6,7 +6,7 @@ import io.swagger.annotations.ApiParam;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import shop.geeksasang.config.domain.MatchingStatus;
+import shop.geeksasang.config.status.MatchingStatus;
 import shop.geeksasang.domain.DeliveryParty;
 import shop.geeksasang.domain.DeliveryPartyHashTag;
 

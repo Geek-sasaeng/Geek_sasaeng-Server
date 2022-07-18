@@ -8,9 +8,9 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 import shop.geeksasang.config.domain.BaseEntity;
-import shop.geeksasang.config.domain.MatchingStatus;
-import shop.geeksasang.config.domain.OrderTimeCategoryType;
-import shop.geeksasang.config.domain.Status;
+import shop.geeksasang.config.status.MatchingStatus;
+import shop.geeksasang.config.type.OrderTimeCategoryType;
+import shop.geeksasang.config.status.BaseStatus;
 import shop.geeksasang.dto.deliveryParty.PostDeliveryPartyReq;
 
 import java.time.LocalDateTime;
@@ -79,7 +79,7 @@ public class DeliveryParty extends BaseEntity {
                 .currentMatching(1)
                 .build();
 
-        party.setStatus(Status.ACTIVE);
+        party.setStatus(BaseStatus.ACTIVE);
         dormitory.addParty(party);
         for (HashTag hashTag : hashTagList) {
             DeliveryPartyHashTag deliveryPartyHashTag = new DeliveryPartyHashTag(party, hashTag);

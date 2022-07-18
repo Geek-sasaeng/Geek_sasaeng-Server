@@ -5,10 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
-import shop.geeksasang.config.domain.LoginStatus;
-import shop.geeksasang.config.domain.Status;
+import shop.geeksasang.config.status.LoginStatus;
+import shop.geeksasang.config.status.BaseStatus;
 import shop.geeksasang.config.exception.BaseException;
-import shop.geeksasang.config.exception.BaseResponseStatus;
+import shop.geeksasang.config.exception.response.BaseResponseStatus;
 import shop.geeksasang.domain.Member;
 import shop.geeksasang.dto.login.PostLoginReq;
 import shop.geeksasang.dto.login.PostLoginRes;
@@ -19,8 +19,7 @@ import shop.geeksasang.utils.jwt.JwtService;
 
 import java.util.LinkedHashMap;
 
-import static shop.geeksasang.config.exception.BaseResponseStatus.NOT_EXISTS_LOGINID;
-import static shop.geeksasang.config.exception.BaseResponseStatus.NOT_EXISTS_PARTICIPANT;
+import static shop.geeksasang.config.exception.response.BaseResponseStatus.NOT_EXISTS_LOGINID;
 
 @Transactional
 @Service
@@ -44,7 +43,7 @@ public class LoginService {
             throw new BaseException(BaseResponseStatus.NOT_EXISTS_PASSWORD);
         }
         //status
-        if(member.getStatus().equals(Status.INACTIVE)){
+        if(member.getStatus().equals(BaseStatus.INACTIVE)){
             throw new BaseException(BaseResponseStatus.INACTIVE_STATUS);
         }
 

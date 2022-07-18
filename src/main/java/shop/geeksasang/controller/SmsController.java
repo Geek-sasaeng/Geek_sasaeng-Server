@@ -22,7 +22,7 @@ import shop.geeksasang.utils.jwt.NoIntercept;
 
 import java.net.URISyntaxException;
 
-import static shop.geeksasang.config.exception.BaseResponseStatus.*;
+import static shop.geeksasang.config.exception.response.BaseResponseStatus.*;
 
 @RequestMapping("/sms")
 @RestController
