@@ -18,10 +18,10 @@ public interface DeliveryPartyRepository extends JpaRepository<DeliveryParty,Int
     @Query("select dp from DeliveryParty dp where dp.dormitory.id = :dormitoryId")
     Slice<DeliveryParty> findDeliveryPartiesByDormitoryId(int dormitoryId, Pageable pageable);
 
-    @Query("select dp from DeliveryParty dp where dp.dormitory.id = :dormitoryId and dp.maxMatching <= :maxMatching")
+    @Query("select dp from DeliveryParty dp where dp.dormitory.id = :dormitoryId and dp.maxMatching <= :maxMatching and dp.matchingStatus = 'ONGOING' and dp.status = 'ACTIVE'")
     Slice<DeliveryParty> findDeliveryPartiesByMaxMatching(int dormitoryId, int maxMatching, Pageable pageable);
 
-    @Query("select dp from DeliveryParty dp where dp.dormitory.id = :dormitoryId and dp.orderTimeCategory = :orderTimeCategory")
+    @Query("select dp from DeliveryParty dp where dp.dormitory.id = :dormitoryId and dp.orderTimeCategory = :orderTimeCategory and dp.matchingStatus = 'ONGOING' and dp.status = 'ACTIVE'")
     Slice<DeliveryParty> findDeliveryPartiesByOrderTime(int dormitoryId, @Param("orderTimeCategory") OrderTimeCategoryType orderTimeCategory, Pageable pageable);
 
     //배달파티 조회: 검색어로 조회
