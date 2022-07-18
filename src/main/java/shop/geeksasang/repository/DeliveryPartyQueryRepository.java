@@ -29,7 +29,6 @@ public class DeliveryPartyQueryRepository {
     }
 
     public List<DeliveryParty> findDeliveryPartiesByConditions(int dormitoryId, OrderTimeCategoryType orderTimeCategory, Integer maxMatching, Pageable pageable) {
-        System.out.println("pageable = " + pageable.getOffset());
         return query.select(deliveryParty)
                 .from(deliveryParty)
                 .where(deliveryParty.dormitory.id.eq(dormitoryId),

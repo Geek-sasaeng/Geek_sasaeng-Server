@@ -115,9 +115,8 @@ public class DeliveryPartyService {
     }
 
     public List<Object> getDeliveryPartiesByConditions(int dormitoryId, int cursor, String orderTimeCategory, Integer maxMatching) {
-
         OrderTimeCategoryType orderTimeCategoryType = null;
-        if(!orderTimeCategory.equals("")){
+        if( orderTimeCategory != null && !orderTimeCategory.equals("")){
             orderTimeCategoryType = OrderTimeCategoryType.valueOf(orderTimeCategory);
         }
 
