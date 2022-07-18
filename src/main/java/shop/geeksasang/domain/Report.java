@@ -1,36 +1,33 @@
 package shop.geeksasang.domain;
 
 import shop.geeksasang.config.domain.BaseEntity;
+import shop.geeksasang.config.status.ReportStatus;
 
 import javax.persistence.*;
 
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "report_type")
 @Entity
-public class Report extends BaseEntity {
+public abstract class Report extends BaseEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "report_id")
-    private int id;
+    public int id;
 
-    @OneToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="member_id", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
-    private Member reportingMember;
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(referencedColumnName = "member_id", name="reporting_member_id")
+    public Member reportingMember;
 
-    @OneToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="member_id", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
-    private Member reportedMember;
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(referencedColumnName = "member_id", name="reported_member_id")
+    public Member reportedMember;
 
-    private String content;
-
-//    @OneToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name="delivery_party_id", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
-//    private DeliveryParty deliveryParty;
+    public String content;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="report_category_id", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
-    private ReportCategory reportCategory;
+    @JoinColumn(name="report_category_id")
+    public ReportCategory reportCategory;
 
-//    @Enumerated
-//    private ReportStatus reportStatus;
-
+    @Enumerated(EnumType.STRING)
+    public ReportStatus reportStatus;
 }
