@@ -39,27 +39,30 @@ public class GetDeliveryPartiesByOrderTimeRes {
     @ApiParam(value = "최대 매칭 인원")
     private int maxMatching;
 
-    @ApiModelProperty(example = "같이 먹고 싶어요")
-    @ApiParam(value = "해시태그")
-    private List<String> hashTags;
+    @ApiModelProperty(example = "true")
+    @ApiParam(value = "태그가 있으면 true, 없으면 false")
+    private boolean hasHashTag;
+
+    @ApiModelProperty(example = "한식")
+    @ApiParam(value = "음식 카테고리")
+    private String foodCategory;
 
     static public GetDeliveryPartiesByOrderTimeRes toDto(DeliveryParty deliveryParty) {
-        List<String> hashTagDto = makeHashTagEntityToDto(deliveryParty.getDeliveryPartyHashTags());
-
         return GetDeliveryPartiesByOrderTimeRes.builder()
                 .id(deliveryParty.getId())
                 .title(deliveryParty.getTitle())
                 .orderTime(deliveryParty.getOrderTime())
+                .foodCategory(deliveryParty.getFoodCategory().getTitle())
                 .currentMatching(deliveryParty.getCurrentMatching())
                 .maxMatching(deliveryParty.getMaxMatching())
-                .hashTags(hashTagDto)
+                .hasHashTag(makeHashTagEntityToDto(deliveryParty.getDeliveryPartyHashTags()))
                 .build();
     }
-    // 해시태그 id -> title 리스트로 변환
-    private static List<String> makeHashTagEntityToDto(List<DeliveryPartyHashTag> deliveryPartyHashTags){
-        return deliveryPartyHashTags.stream()
-                .map(deliveryPartyHashTag -> deliveryPartyHashTag.getHashTag().getTitle())
-                .collect(Collectors.toList());
-    }
 
+    private static boolean makeHashTagEntityToDto(List<DeliveryPartyHashTag> deliveryPartyHashTags) {
+        if(deliveryPartyHashTags.isEmpty()){
+            return false;
+        }
+        return true;
+    }
 }
