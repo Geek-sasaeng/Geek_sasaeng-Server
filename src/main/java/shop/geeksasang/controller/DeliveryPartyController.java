@@ -1,5 +1,6 @@
 package shop.geeksasang.controller;
 
+import com.fasterxml.jackson.databind.ser.Serializers;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -104,6 +105,16 @@ public class DeliveryPartyController {
         List<GetDeliveryPartiesByOrderTimeRes> response = deliveryPartyService.getDeliveryPartyByOrderTime(dormitoryId, cursor, orderTimeCategory);
         return new BaseResponse<>(response);
     }
+
+    //배달파티 조회: 조건에 따른 검색
+    @GetMapping("/{dormitoryId}/delivery-parties/conditions")
+    public BaseResponse<Object> GetDeliveryPartyByConditions(@PathVariable int dormitoryId,
+                                                             @RequestParam int cursor, @RequestParam(required = false) String orderTimeCategory, @RequestParam(required = false) Integer maxMatching){
+
+        List<Object> response = deliveryPartyService.getDeliveryPartiesByConditions(dormitoryId, cursor, orderTimeCategory, maxMatching);
+        return new BaseResponse<>(response);
+    }
+
 
 
     //배달파티 조회: 검색어로 조회

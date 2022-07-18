@@ -35,6 +35,7 @@ public class DeliveryPartyService {
     private final DormitoryRepository dormitoryRepository;
     private final FoodCategoryRepository foodCategoryRepository;
     private final HashTagRepository hashTagRepository;
+    private final DeliveryPartyQueryRepository deliveryPartyQueryRepository;
 
     private static final int PAGING_SIZE = 10;
     private static final String PAGING_STANDARD = "orderTime";
@@ -144,6 +145,21 @@ public class DeliveryPartyService {
         return deliveryParties.stream()
                 .map(deliveryParty -> GetDeliveryPartiesByKeywordRes.toDto(deliveryParty)) // 배열 원소 변경 한번에 적용
                 .collect(Collectors.toList()); // List로 변경
+    }
+
+    public List<Object> getDeliveryPartiesByConditions(int dormitoryId, int cursor, String orderTimeCategory, Integer maxMatching) {
+
+        OrderTimeCategoryType orderTimeCategoryType = null;
+        if(orderTimeCategory != ""){
+            orderTimeCategoryType = OrderTimeCategoryType.valueOf(orderTimeCategory);
+        }
+
+        PageRequest paging = PageRequest.of(cursor, PAGING_SIZE, Sort.by(Sort.Direction.ASC, PAGING_STANDARD)); // 페이징 요구 객체
+        List<DeliveryParty> deliveryParties = deliveryPartyQueryRepository.findDeliveryPartiesByConditions(dormitoryId, orderTimeCategoryType, maxMatching, paging);
+
+        return deliveryParties.stream()
+                .map(deliveryParty -> GetDeliveryPartiesByConditionsRes.toDto(deliveryParty))
+                .collect(Collectors.toList());
     }
 
 }
