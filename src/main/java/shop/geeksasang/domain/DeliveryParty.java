@@ -63,6 +63,9 @@ public class DeliveryParty extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private MatchingStatus matchingStatus;
 
+    @OneToMany(mappedBy = "deliveryParty")
+    private List<DeliveryPartyReport> deliveryPartyReports;
+
     public static DeliveryParty makeParty(PostDeliveryPartyReq dto, OrderTimeCategoryType orderTimeCategory, Dormitory dormitory, FoodCategory foodCategory, Member chief, List<HashTag> hashTagList) {
         DeliveryParty party = DeliveryParty.builder()
                 .title(dto.getTitle())
