@@ -9,9 +9,9 @@ import org.springframework.core.task.TaskRejectedException;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import shop.geeksasang.config.domain.ValidStatus;
+import shop.geeksasang.config.status.ValidStatus;
 import shop.geeksasang.config.exception.BaseException;
-import shop.geeksasang.config.exception.BaseResponseStatus;
+import shop.geeksasang.config.exception.response.BaseResponseStatus;
 import shop.geeksasang.domain.Email;
 import shop.geeksasang.domain.University;
 import shop.geeksasang.domain.VerificationCount;
@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
-import static shop.geeksasang.config.exception.BaseResponseStatus.*;
+import static shop.geeksasang.config.exception.response.BaseResponseStatus.*;
 
 @Slf4j
 @Service

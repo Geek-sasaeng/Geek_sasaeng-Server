@@ -1,4 +1,4 @@
-package shop.geeksasang.dto.member;
+package shop.geeksasang.dto.member.post;
 
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiParam;
@@ -9,32 +9,30 @@ import shop.geeksasang.domain.Email;
 import shop.geeksasang.domain.Member;
 import shop.geeksasang.domain.PhoneNumber;
 
-@Getter @Setter
+@Getter
+@Setter
 @Builder
-public class PostRegisterRes {
+public class PostSocialRegisterRes {
 
-    @ApiModelProperty(example = "geeksasaeng")
-    @ApiParam(value = "사용자 ID")
+    @ApiModelProperty(example = "geeksasaeng@gmail.com")
     private  String loginId;
 
     @ApiModelProperty(example = "긱사생")
-    @ApiParam(value = "사용자 닉네임")
     private  String nickname;
 
     @ApiModelProperty(example = "Gachon University")
-    @ApiParam(value = "사용자 대학교")
     private  String universityName;
 
     @ApiModelProperty(example = "1")
-    @ApiParam(value = "사용자 이메일")
+    @ApiParam(value = "사용자 이메일 인덱스")
     private int email;
 
-    @ApiModelProperty(example = "2")
-    @ApiParam(value = "사용자 핸드폰 번호")
+    @ApiModelProperty(example = "3")
+    @ApiParam(value = "사용자 핸드폰 번호 인덱스")
     private int phoneNumber;
 
-    static public PostRegisterRes toDto(Member member, Email email, PhoneNumber phoneNumber) {
-        return PostRegisterRes.builder()
+    static public PostSocialRegisterRes toDto(Member member, Email email, PhoneNumber phoneNumber) {
+        return PostSocialRegisterRes.builder()
                 .loginId(member.getLoginId())
                 .nickname(member.getNickName())
                 .universityName(member.getUniversity().getName())

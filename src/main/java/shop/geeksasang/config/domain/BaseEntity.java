@@ -5,6 +5,7 @@ import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import shop.geeksasang.config.status.BaseStatus;
 
 import javax.persistence.*;
 
@@ -23,9 +24,9 @@ public class BaseEntity {
     private String updatedAt;
 
     @Enumerated(EnumType.STRING)
-    private Status status;
+    private BaseStatus status;
 
-    protected void setStatus(Status status) {
+    protected void setStatus(BaseStatus status) {
         this.status = status;
     }
 

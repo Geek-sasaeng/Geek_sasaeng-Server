@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import shop.geeksasang.config.exception.BaseException;
-import shop.geeksasang.config.exception.BaseResponseStatus;
+import shop.geeksasang.config.exception.response.BaseResponseStatus;
 import shop.geeksasang.config.response.BaseResponse;
 
 import java.net.URISyntaxException;

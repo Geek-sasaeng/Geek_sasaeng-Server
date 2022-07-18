@@ -8,9 +8,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import shop.geeksasang.config.domain.OrderTimeCategoryType;
+import shop.geeksasang.config.type.OrderTimeCategoryType;
 import shop.geeksasang.config.exception.BaseException;
-import shop.geeksasang.config.exception.BaseResponseStatus;
+import shop.geeksasang.config.exception.response.BaseResponseStatus;
 import shop.geeksasang.domain.*;
 import shop.geeksasang.dto.deliveryParty.*;
 import shop.geeksasang.dto.login.JwtInfo;
@@ -22,7 +22,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static shop.geeksasang.config.exception.BaseResponseStatus.NOT_SPECIFIED_VALUE;
+import static shop.geeksasang.config.exception.response.BaseResponseStatus.NOT_SPECIFIED_VALUE;
 
 
 @Transactional

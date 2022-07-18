@@ -1,4 +1,4 @@
-package shop.geeksasang.config.domain;
+package shop.geeksasang.config.type;
 
 public enum MemberLoginType {
     NORMAL_USER("일반 로그인 유저"),

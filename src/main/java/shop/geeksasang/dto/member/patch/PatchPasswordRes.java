@@ -1,4 +1,4 @@
-package shop.geeksasang.dto.member;
+package shop.geeksasang.dto.member.patch;
 
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiParam;
@@ -7,9 +7,10 @@ import lombok.Getter;
 import lombok.Setter;
 import shop.geeksasang.domain.Member;
 
-@Getter @Setter
+@Getter
+@Setter
 @Builder
-public class PatchNicknameRes {
+public class PatchPasswordRes {
 
     @ApiModelProperty(example = "1")
     @ApiParam(value = "사용자 인덱스")
@@ -19,15 +20,15 @@ public class PatchNicknameRes {
     @ApiParam(value = "사용자 로그인 아이디")
     private String loginId;
 
-    @ApiModelProperty(example = "긱사생1")
-    @ApiParam(value = "사용자 닉네임")
-    private String nickname;
+    @ApiModelProperty(example = "rlrtktod12!")
+    @ApiParam(value = "사용자 새로운 비밀번호")
+    private String newPassword;
 
-    static public PatchNicknameRes toDto(Member member) {
-        return PatchNicknameRes.builder()
+    static public PatchPasswordRes toDto(Member member) {
+        return PatchPasswordRes.builder()
                 .id(member.getId())
                 .loginId(member.getLoginId())
-                .nickname(member.getNickName())
+                .newPassword(member.getPassword())
                 .build();
     }
 }

@@ -11,7 +11,7 @@ import shop.geeksasang.repository.DeliveryPartyRepository;
 import shop.geeksasang.repository.DeliveryPartyMemberRepository;
 import shop.geeksasang.repository.MemberRepository;
 
-import static shop.geeksasang.config.exception.BaseResponseStatus.*;
+import static shop.geeksasang.config.exception.response.BaseResponseStatus.*;
 
 @Transactional
 @Service

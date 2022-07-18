@@ -9,10 +9,16 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import shop.geeksasang.config.exception.BaseResponseStatus;
+import shop.geeksasang.config.exception.response.BaseResponseStatus;
 import shop.geeksasang.config.response.BaseResponse;
 import shop.geeksasang.domain.Member;
-import shop.geeksasang.dto.member.*;
+import shop.geeksasang.dto.member.get.GetCheckIdReq;
+import shop.geeksasang.dto.member.get.GetNickNameDuplicatedReq;
+import shop.geeksasang.dto.member.patch.*;
+import shop.geeksasang.dto.member.post.PostRegisterReq;
+import shop.geeksasang.dto.member.post.PostRegisterRes;
+import shop.geeksasang.dto.member.post.PostSocialRegisterReq;
+import shop.geeksasang.dto.member.post.PostSocialRegisterRes;
 import shop.geeksasang.service.MemberService;
 import shop.geeksasang.utils.jwt.NoIntercept;
 
@@ -81,7 +87,7 @@ public class MemberController {
             @ApiResponse(code=4000,message = "서버 오류입니다.")
     })
     @PatchMapping("/information-agree-status/{id}")
-    public BaseResponse<PatchInformationAgreeStatusRes> updateInformationAgreeStatus(@PathVariable("id") int id,@Validated @RequestBody PatchInformationAgreeStatusReq dto){
+    public BaseResponse<PatchInformationAgreeStatusRes> updateInformationAgreeStatus(@PathVariable("id") int id, @Validated @RequestBody PatchInformationAgreeStatusReq dto){
         Member member = memberService.updateInformationAgreeStatus(id,dto);
 
         //응답 형식으로 변환
