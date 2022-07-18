@@ -30,9 +30,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
-import shop.geeksasang.config.domain.ValidStatus;
+import shop.geeksasang.config.status.ValidStatus;
 import shop.geeksasang.config.exception.BaseException;
-import shop.geeksasang.config.response.BaseResponse;
 import shop.geeksasang.domain.PhoneNumber;
 import shop.geeksasang.domain.VerificationCount;
 import shop.geeksasang.dto.sms.MessagesDto;
@@ -43,7 +42,7 @@ import shop.geeksasang.repository.PhoneNumberRepository;
 import shop.geeksasang.repository.SmsRedisRepository;
 import shop.geeksasang.repository.VerificationCountRepository;
 
-import static shop.geeksasang.config.exception.BaseResponseStatus.*;
+import static shop.geeksasang.config.exception.response.BaseResponseStatus.*;
 
 @Service
 @RequiredArgsConstructor

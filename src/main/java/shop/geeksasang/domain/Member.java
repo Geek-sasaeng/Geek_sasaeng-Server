@@ -5,6 +5,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import shop.geeksasang.config.domain.*;
+import shop.geeksasang.config.status.LoginStatus;
+import shop.geeksasang.config.status.BaseStatus;
+import shop.geeksasang.config.type.MemberLoginType;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -60,7 +63,7 @@ public class Member extends BaseEntity {
     private MemberLoginType memberLoginType;
 
     public void changeStatusToActive(){
-        super.setStatus(Status.ACTIVE);
+        super.setStatus(BaseStatus.ACTIVE);
     }
 
     //-// 연관 관계 편의 메서드 //-//
@@ -86,7 +89,7 @@ public class Member extends BaseEntity {
 
     // 회원 탈퇴
     public void changeStatusToInactive(){
-        super.setStatus(Status.INACTIVE);
+        super.setStatus(BaseStatus.INACTIVE);
     }
 
     // 로그인 안해본 디폴트 저장

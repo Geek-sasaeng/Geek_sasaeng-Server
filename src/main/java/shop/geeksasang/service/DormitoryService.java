@@ -11,7 +11,7 @@ import shop.geeksasang.repository.DormitoryRepository;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static shop.geeksasang.config.exception.BaseResponseStatus.NOT_EXISTS_DORMITORY;
+import static shop.geeksasang.config.exception.response.BaseResponseStatus.NOT_EXISTS_DORMITORY;
 
 
 @Transactional

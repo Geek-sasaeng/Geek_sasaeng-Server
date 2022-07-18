@@ -4,14 +4,20 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import shop.geeksasang.config.domain.ValidStatus;
+import shop.geeksasang.config.status.ValidStatus;
 import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.domain.Email;
 import shop.geeksasang.domain.Member;
 import shop.geeksasang.domain.PhoneNumber;
 import shop.geeksasang.domain.University;
 
-import shop.geeksasang.dto.member.*;
+import shop.geeksasang.dto.member.get.GetCheckIdReq;
+import shop.geeksasang.dto.member.get.GetNickNameDuplicatedReq;
+import shop.geeksasang.dto.member.patch.*;
+import shop.geeksasang.dto.member.post.PostRegisterReq;
+import shop.geeksasang.dto.member.post.PostRegisterRes;
+import shop.geeksasang.dto.member.post.PostSocialRegisterReq;
+import shop.geeksasang.dto.member.post.PostSocialRegisterRes;
 import shop.geeksasang.repository.EmailRepository;
 import shop.geeksasang.repository.MemberRepository;
 import shop.geeksasang.repository.PhoneNumberRepository;
@@ -21,7 +27,7 @@ import shop.geeksasang.utils.encrypt.SHA256;
 
 import java.util.Optional;
 
-import static shop.geeksasang.config.exception.BaseResponseStatus.*;
+import static shop.geeksasang.config.exception.response.BaseResponseStatus.*;
 
 @Transactional
 @Service

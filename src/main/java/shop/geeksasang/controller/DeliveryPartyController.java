@@ -6,7 +6,7 @@ import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import shop.geeksasang.config.domain.OrderTimeCategoryType;
+import shop.geeksasang.config.type.OrderTimeCategoryType;
 import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.config.response.BaseResponse;
 import shop.geeksasang.dto.deliveryParty.*;
@@ -17,7 +17,7 @@ import shop.geeksasang.utils.jwt.NoIntercept;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
-import static shop.geeksasang.config.exception.BaseResponseStatus.NOT_EXISTS_ORDER_TIME_CATEGORY;
+import static shop.geeksasang.config.exception.response.BaseResponseStatus.NOT_EXISTS_ORDER_TIME_CATEGORY;
 
 @RestController
 @RequiredArgsConstructor // final로 선언 된 것 자동으로 @Autowired와 같은 기능

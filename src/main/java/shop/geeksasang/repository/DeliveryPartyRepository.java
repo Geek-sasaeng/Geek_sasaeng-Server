@@ -6,10 +6,8 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-import shop.geeksasang.config.domain.OrderTimeCategoryType;
+import shop.geeksasang.config.type.OrderTimeCategoryType;
 import shop.geeksasang.domain.DeliveryParty;
-
-import java.util.List;
 
 
 @Repository
