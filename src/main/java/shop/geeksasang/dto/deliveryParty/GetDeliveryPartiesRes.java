@@ -55,11 +55,11 @@ public class GetDeliveryPartiesRes {
                 .foodCategory(deliveryParty.getFoodCategory().getTitle())
                 .currentMatching(deliveryParty.getCurrentMatching())
                 .maxMatching(deliveryParty.getMaxMatching())
-                .hasHashTag(makeHashTagEntityToDto(deliveryParty.getDeliveryPartyHashTags()))
+                .hasHashTag(presentHashTag(deliveryParty.getDeliveryPartyHashTags()))
                 .build();
     }
 
-    private static boolean makeHashTagEntityToDto(List<DeliveryPartyHashTag> deliveryPartyHashTags) {
+    private static boolean presentHashTag(List<DeliveryPartyHashTag> deliveryPartyHashTags) {
         if(deliveryPartyHashTags.isEmpty()){
             return false;
         }
