@@ -107,6 +107,7 @@ public enum BaseResponseStatus {
     NOT_EXISTS_DORMITORY(false, 2606, "기숙사가 존재하지 않습니다"),
     ALREADY_VALID_EMAIL(false, 2607, "이미 인증된 이메일 입니다"),
     NOT_EXISTS_ORDER_TIME_CATEGORY(false, 2608, "존재하지 않는 시간 카테고리 입니다"),
+    ALREADY_INACTIVE_DELIVERY_PARTY(false, 2609, "이미 삭제된 배달파티 입니다"),
 
     /**
      * 네오

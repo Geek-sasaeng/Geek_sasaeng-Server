@@ -20,7 +20,11 @@ import shop.geeksasang.utils.ordertime.OrderTimeUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static shop.geeksasang.config.exception.response.BaseResponseStatus.ALREADY_INACTIVE_DELIVERY_PARTY;
+import static shop.geeksasang.config.exception.response.BaseResponseStatus.NOT_EXISTS_PARTY;
 
 
 @Transactional
@@ -29,6 +33,7 @@ import java.util.stream.Collectors;
 public class DeliveryPartyService {
 
     private final DeliveryPartyRepository deliveryPartyRepository;
+    private final DeliveryPartyMemberRepository deliveryPartyMemberRepository;
     private final MemberRepository memberRepository;
     private final DormitoryRepository dormitoryRepository;
     private final FoodCategoryRepository foodCategoryRepository;
@@ -116,6 +121,33 @@ public class DeliveryPartyService {
         return deliveryParties.stream()
                 .map(deliveryParty -> GetDeliveryPartiesRes.toDto(deliveryParty))
                 .collect(Collectors.toList());
+    }
+
+    //배달파티 삭제
+    @Transactional(readOnly = false)
+    public PatchDeliveryPartyStatusRes patchDeliveryPartyStatusById(int partyId) {
+
+        // 이미 삭제된 배달 파티
+        if(deliveryPartyRepository.findDeliveryPartyStatusById(partyId).equals("INACTIVE")) {
+            throw new BaseException(ALREADY_INACTIVE_DELIVERY_PARTY);
+        }
+
+        DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyById(partyId)
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTY));
+        deliveryParty.changeStatusToInactive();
+        deliveryPartyRepository.save(deliveryParty);
+
+        // 배달파티 멤버 status도 Inactive로 수정
+        List<DeliveryPartyMember> deliveryPartyMembers = deliveryPartyMemberRepository.findDeliveryPartyMembersById(partyId);
+
+        for( DeliveryPartyMember deliveryPartyMember : deliveryPartyMembers ){
+            deliveryPartyMember.changeStatusToInactive();
+        }
+
+        return PatchDeliveryPartyStatusRes.builder()
+                .deliveryPartyId(deliveryParty.getId())
+                .status(deliveryParty.getStatus().toString())
+                .build();
     }
 
 }

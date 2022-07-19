@@ -5,6 +5,7 @@ import lombok.*;
 import javax.persistence.*;
 
 import shop.geeksasang.config.domain.BaseEntity;
+import shop.geeksasang.config.status.BaseStatus;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -32,6 +33,15 @@ public class DeliveryPartyMember extends BaseEntity {
     }
     public void connectParty(DeliveryParty party){
         this.party=party;
+    }
+
+    // 배달파티 멤버 삭제
+    public void changeStatusToInactive(){
+        super.setStatus(BaseStatus.INACTIVE);
+    }
+
+    public void changeStatusToActive(){
+        super.setStatus(BaseStatus.ACTIVE);
     }
 
 }

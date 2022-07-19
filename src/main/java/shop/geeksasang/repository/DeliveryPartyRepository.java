@@ -9,6 +9,8 @@ import org.springframework.stereotype.Repository;
 import shop.geeksasang.config.type.OrderTimeCategoryType;
 import shop.geeksasang.domain.DeliveryParty;
 
+import java.util.Optional;
+
 
 @Repository
 public interface DeliveryPartyRepository extends JpaRepository<DeliveryParty,Integer> {
@@ -21,6 +23,11 @@ public interface DeliveryPartyRepository extends JpaRepository<DeliveryParty,Int
 
     @Query("select dp from DeliveryParty dp where dp.dormitory.id = :dormitoryId and dp.orderTimeCategory = :orderTimeCategory and dp.matchingStatus = 'ONGOING' and dp.status = 'ACTIVE'")
     Slice<DeliveryParty> findDeliveryPartiesByOrderTime(int dormitoryId, @Param("orderTimeCategory") OrderTimeCategoryType orderTimeCategory, Pageable pageable);
+
+    Optional<DeliveryParty> findDeliveryPartyById(int deliveryPartyId);
+
+    @Query("select dp.status from DeliveryParty dp where dp.id = :deliveryPartyId")
+    Optional<DeliveryParty> findDeliveryPartyStatusById(int deliveryPartyId);
 
 
     //배달파티 조회: 검색어로 조회

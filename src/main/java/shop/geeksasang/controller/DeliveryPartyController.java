@@ -13,6 +13,7 @@ import shop.geeksasang.config.response.BaseResponse;
 import shop.geeksasang.dto.deliveryParty.*;
 import shop.geeksasang.dto.login.JwtInfo;
 import shop.geeksasang.service.DeliveryPartyService;
+import shop.geeksasang.utils.jwt.NoIntercept;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -81,6 +82,14 @@ public class DeliveryPartyController {
     @GetMapping("/{dormitoryId}/delivery-parties/keyword/{keyword}")
     public BaseResponse<List<GetDeliveryPartiesByKeywordRes>> getDeliveryPartiesByKeyword(@PathVariable("dormitoryId") int dormitoryId, @PathVariable("keyword") String keyword,@RequestParam int cursor){
         List<GetDeliveryPartiesByKeywordRes> response = deliveryPartyService.getDeliveryPartiesByKeyword(dormitoryId, keyword, cursor);
+        return new BaseResponse<>(response);
+    }
+
+    // 배달파티 삭제
+    @NoIntercept
+    @PatchMapping("/delivery-party/{partyId}")
+    public BaseResponse<PatchDeliveryPartyStatusRes> patchDeliveryPartyStatusById(@PathVariable("partyId") int partyId){
+        PatchDeliveryPartyStatusRes response = deliveryPartyService.patchDeliveryPartyStatusById(partyId);
         return new BaseResponse<>(response);
     }
 }
