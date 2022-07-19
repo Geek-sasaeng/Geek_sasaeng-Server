@@ -22,8 +22,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static shop.geeksasang.config.exception.response.BaseResponseStatus.NOT_SPECIFIED_VALUE;
-
 
 @Transactional
 @Service
@@ -78,18 +76,6 @@ public class DeliveryPartyService {
         return PostDeliveryPartyRes.toDto(party);
     }
 
-    //배달파티 조회: 기숙사 별 전체목록
-    public List<GetDeliveryPartiesRes> getDeliveryPartiesByDormitoryId(int dormitoryId, int cursor){
-
-        PageRequest paging = PageRequest.of(cursor, PAGING_SIZE, Sort.by(Sort.Direction.DESC, PAGING_STANDARD ));
-
-        Slice<DeliveryParty> deliveryParties = deliveryPartyRepository.findDeliveryPartiesByDormitoryId(dormitoryId, paging);
-
-        return deliveryParties.stream()
-                .map(deliveryParty -> GetDeliveryPartiesRes.toDto(deliveryParty))
-                .collect(Collectors.toList());
-    }
-
     //배달파티 상세조회:
     public GetDeliveryPartyDetailRes getDeliveryPartyDetailById(int partyId){
         DeliveryParty deliveryParty = deliveryPartyRepository.findById(partyId)
@@ -114,8 +100,12 @@ public class DeliveryPartyService {
                 .collect(Collectors.toList()); // List로 변경
     }
 
-    public List<GetDeliveryPartiesByConditionsRes> getDeliveryPartiesByConditions(int dormitoryId, int cursor, String orderTimeCategory, Integer maxMatching) {
+
+    //배달파티 검색 통합 버전
+    public List<GetDeliveryParties> getDeliveryParties(int dormitoryId, int cursor, String orderTimeCategory, Integer maxMatching) {
+
         OrderTimeCategoryType orderTimeCategoryType = null;
+
         if( orderTimeCategory != null && !orderTimeCategory.equals("")){
             orderTimeCategoryType = OrderTimeCategoryType.valueOf(orderTimeCategory);
         }
@@ -124,7 +114,7 @@ public class DeliveryPartyService {
         List<DeliveryParty> deliveryParties = deliveryPartyQueryRepository.findDeliveryPartiesByConditions(dormitoryId, orderTimeCategoryType, maxMatching, paging);
 
         return deliveryParties.stream()
-                .map(deliveryParty -> GetDeliveryPartiesByConditionsRes.toDto(deliveryParty))
+                .map(deliveryParty -> GetDeliveryParties.toDto(deliveryParty))
                 .collect(Collectors.toList());
     }
 

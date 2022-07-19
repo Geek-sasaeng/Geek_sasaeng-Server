@@ -42,15 +42,18 @@ public class DeliveryPartyController {
         return new BaseResponse<>(postDeliveryPartyRes);
     }
 
-    //배달파티 조회: 전체목록
-    @ApiOperation(value = "전체 배달파티 조회", notes = "cursor은 0부터 시작. dormitoryId는 현재 대학교 id. 예시 : https://geeksasaeng.shop/1/delivery-parties?cursor=0  ")
+    //배달파티 조회 (필터 및 전체 조회)
+    @ApiOperation(value = "배달파티 조회", notes = "cursor은 0부터 시작. dormitoryId는 현재 대학교 id. 쿼리 스트링은 생략 가능합니다/ " +
+            "예시 1. 필터 기반 검색이 아닌 배달 파티 전체 조회 : https://geeksasaeng.shop/1/delivery-parties?cursor=0," +
+            "예시 2. 필터를 기반으로 배달 파티 검색 https://geeksasaeng.shop/1/delivery-parties?cursor=0&orderTimeCategory=DINNER&maxMatching=3  ")
     @ApiResponses({
             @ApiResponse(code =1000 ,message ="요청에 성공하셨습니다."),
             @ApiResponse(code=4000, message = "서버 오류입니다.")
     })
     @GetMapping("/{dormitoryId}/delivery-parties")
-    public BaseResponse<List<GetDeliveryPartiesRes>> getAllDeliveryParty(@PathVariable int dormitoryId, @RequestParam int cursor){
-        List<GetDeliveryPartiesRes> response = deliveryPartyService.getDeliveryPartiesByDormitoryId(dormitoryId, cursor);
+    public BaseResponse<List<GetDeliveryParties>> GetDeliveryParties(@PathVariable int dormitoryId,
+                                                                     @RequestParam int cursor, @RequestParam(required = false) String orderTimeCategory, @RequestParam(required = false) Integer maxMatching){
+        List<GetDeliveryParties> response = deliveryPartyService.getDeliveryParties(dormitoryId, cursor, orderTimeCategory, maxMatching);
         return new BaseResponse<>(response);
     }
 
@@ -65,20 +68,6 @@ public class DeliveryPartyController {
     public BaseResponse<GetDeliveryPartyDetailRes> getDeliveryPartyDetailById(@PathVariable("partyId") int partyId){
         GetDeliveryPartyDetailRes response = deliveryPartyService.getDeliveryPartyDetailById(partyId);
 
-        return new BaseResponse<>(response);
-    }
-
-    //배달파티 조회: 상세조회
-    @ApiOperation(value = "조회: 조건에 따른 배달파티 조회", notes = "배달파티 게시물을 조건(배달 파티 최대 인원수, 배달 시간대)조건에 맞춰 조회할 수 있다.")
-    @ApiResponses({
-            @ApiResponse(code =1000 ,message ="요청에 성공하셨습니다."),
-            @ApiResponse(code=4000,message = "서버 오류입니다.")
-    })
-    //배달파티 조회: 조건에 따른 검색
-    @GetMapping("/{dormitoryId}/delivery-parties/conditions")
-    public BaseResponse<List<GetDeliveryPartiesByConditionsRes>> GetDeliveryPartyByConditions(@PathVariable int dormitoryId,
-                                                             @RequestParam int cursor, @RequestParam(required = false) String orderTimeCategory, @RequestParam(required = false) Integer maxMatching){
-        List<GetDeliveryPartiesByConditionsRes> response = deliveryPartyService.getDeliveryPartiesByConditions(dormitoryId, cursor, orderTimeCategory, maxMatching);
         return new BaseResponse<>(response);
     }
 
