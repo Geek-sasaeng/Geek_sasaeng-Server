@@ -56,16 +56,20 @@ public class PostDeliveryPartyReq {
     @NotNull
     private int maxMatching;
 
-    @ApiModelProperty(example = "1기숙사 정문")
-    @ApiParam(value = "수령 장소", required = true)
-    @NotBlank(message = "수령 장소를 입력하세요.")
-    private String location;
+    @ApiModelProperty(example = "https://baemin.me/mUpLJ7qBk")
+    @ApiParam(value = "배달 업소 url", required = true)
+    @NotBlank(message = "배달 업소 url을 입력하세요.")
+    private String storeUrl;
 
-    @ApiModelProperty(example = "https://배민~")
-    @ApiParam(value = "수령 장소", required = true)
-    @NotBlank(message = "수령 장소를 입력하세요.")
-    private String orderUrl;
+    @ApiModelProperty(example = "37.456335")
+    @ApiParam(value="위도", required = true)
+    @NotNull
+    private Double latitude;
 
+    @ApiModelProperty(example = "127.135331")
+    @ApiParam(value="경도", required = true)
+    @NotNull
+    private Double longitude;
 
     // 외래키 참조하는 것 말고는  요청 엔티티 생성
     public DeliveryParty toEntity() {
@@ -74,7 +78,8 @@ public class PostDeliveryPartyReq {
                 .content(getContent())
                 .orderTime(getOrderTime())
                 .maxMatching(getMaxMatching())
-                .location(getLocation())
+                .location(new Location(getLatitude(),getLongitude()))
+                .storeUrl(getStoreUrl())
                 .build();
     }
 }

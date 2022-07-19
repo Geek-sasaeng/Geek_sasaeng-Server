@@ -13,6 +13,7 @@ import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.config.exception.response.BaseResponseStatus;
 import shop.geeksasang.domain.*;
 import shop.geeksasang.dto.deliveryParty.*;
+import shop.geeksasang.dto.email.PostEmailCertificationRes;
 import shop.geeksasang.dto.login.JwtInfo;
 import shop.geeksasang.repository.*;
 import shop.geeksasang.utils.ordertime.OrderTimeUtils;
@@ -116,6 +117,17 @@ public class DeliveryPartyService {
         return deliveryParties.stream()
                 .map(deliveryParty -> GetDeliveryPartiesRes.toDto(deliveryParty))
                 .collect(Collectors.toList());
+    }
+
+    //
+    public GetDeliveryPartyDefaultLocationRes getDeliveryPartyDefaultLocation(int domitoryId){
+        Dormitory dormitory = dormitoryRepository.findById(domitoryId).orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_DORMITORY));
+
+        Double getLatitude = dormitory.getLocation().getLatitude(); //위도
+        Double getLongtitude = dormitory.getLocation().getLongitude(); //경도
+        GetDeliveryPartyDefaultLocationRes getDeliveryPartyDefaultLocationRes =  new GetDeliveryPartyDefaultLocationRes(getLatitude,getLongtitude);
+
+        return getDeliveryPartyDefaultLocationRes;
     }
 
 }

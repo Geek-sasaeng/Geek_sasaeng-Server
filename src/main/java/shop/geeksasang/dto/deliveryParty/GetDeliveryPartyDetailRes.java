@@ -62,9 +62,9 @@ public class GetDeliveryPartyDetailRes {
     @ApiParam(value = "최대 미칭 인원")
     private int maxMatching;
 
-    @ApiModelProperty(example = "제1기숙사 후문")
-    @ApiParam(value = "배달 수령 장소")
-    private String location;
+//    @ApiModelProperty(example = "제1기숙사 후문")
+//    @ApiParam(value = "배달 수령 장소")
+//    private String location;
 
     @ApiModelProperty(example = "ONGOING")
     @ApiParam(value = "배달 매칭 상태, 모집중ONGOING, 모집마감FINISH")
@@ -74,6 +74,14 @@ public class GetDeliveryPartyDetailRes {
     @ApiParam(value = "배달파티 정보 업데이트 시각")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private String updatedAt;
+
+    @ApiModelProperty(example = "37.456335")
+    @ApiParam(value="위도")
+    private Double latitude;
+
+    @ApiModelProperty(example = "127.135331")
+    @ApiParam(value="경도")
+    private Double longitude;
 
     //빌더
     static public GetDeliveryPartyDetailRes toDto(DeliveryParty deliveryParty){
@@ -89,9 +97,10 @@ public class GetDeliveryPartyDetailRes {
                 .orderTime(deliveryParty.getOrderTime())
                 .currentMatching(deliveryParty.getCurrentMatching())
                 .maxMatching(deliveryParty.getMaxMatching())
-                .location(deliveryParty.getLocation())
                 .matchingStatus(deliveryParty.getMatchingStatus())
                 .updatedAt(deliveryParty.getUpdatedAt())
+                .latitude(deliveryParty.getLocation().getLatitude())
+                .longitude(deliveryParty.getLocation().getLongitude())
                 .build();
     }
 
