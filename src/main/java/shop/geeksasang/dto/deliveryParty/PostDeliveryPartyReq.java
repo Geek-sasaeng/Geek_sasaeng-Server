@@ -61,6 +61,12 @@ public class PostDeliveryPartyReq {
     @NotBlank(message = "수령 장소를 입력하세요.")
     private String location;
 
+    @ApiModelProperty(example = "https://배민~")
+    @ApiParam(value = "수령 장소", required = true)
+    @NotBlank(message = "수령 장소를 입력하세요.")
+    private String orderUrl;
+
+
     // 외래키 참조하는 것 말고는  요청 엔티티 생성
     public DeliveryParty toEntity() {
         return DeliveryParty.builder()
