@@ -31,6 +31,9 @@ public class Dormitory extends BaseEntity {
 
     private String name;
 
+    @Embedded
+    private Location location;
+
     public void addParty(DeliveryParty party) {
         this.deliveryParties.add(party);
     }
