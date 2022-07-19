@@ -3,21 +3,21 @@ package shop.geeksasang.controller;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import shop.geeksasang.config.type.OrderTimeCategoryType;
-import shop.geeksasang.config.exception.BaseException;
+
 import shop.geeksasang.config.response.BaseResponse;
 import shop.geeksasang.dto.deliveryParty.*;
 import shop.geeksasang.dto.login.JwtInfo;
 import shop.geeksasang.service.DeliveryPartyService;
-import shop.geeksasang.utils.jwt.NoIntercept;
 
 import javax.servlet.http.HttpServletRequest;
+
 import java.util.List;
 
-import static shop.geeksasang.config.exception.response.BaseResponseStatus.NOT_EXISTS_ORDER_TIME_CATEGORY;
 
 @RestController
 @RequiredArgsConstructor // final로 선언 된 것 자동으로 @Autowired와 같은 기능
@@ -42,22 +42,22 @@ public class DeliveryPartyController {
         return new BaseResponse<>(postDeliveryPartyRes);
     }
 
-    //배달파티 조회: 전체목록
-    @ApiOperation(value = "전체 배달파티 조회", notes = "cursor은 0부터 시작. dormitoryId는 현재 대학교 id. 예시 : https://geeksasaeng.shop/1/delivery-parties?cursor=0  ")
+    //배달파티 조회 (필터 및 전체 조회)
+    @ApiOperation(value = "배달파티 조회", notes = "cursor은 0부터 시작. dormitoryId는 현재 대학교 id. 쿼리 스트링(orderTimeCategory, maxMatching)은 생략 가능합니다 \n " +
+            "예시 1. 필터 기반 검색이 아닌 배달 파티 전체 조회 : https://geeksasaeng.shop/1/delivery-parties?cursor=0 \n" +
+            "예시 2. 필터를 기반으로 배달 파티 검색 https://geeksasaeng.shop/1/delivery-parties?cursor=0&orderTimeCategory=DINNER&maxMatching=3  ")
     @ApiResponses({
             @ApiResponse(code =1000 ,message ="요청에 성공하셨습니다."),
             @ApiResponse(code=4000, message = "서버 오류입니다.")
     })
-    @NoIntercept
     @GetMapping("/{dormitoryId}/delivery-parties")
-    public BaseResponse<List<GetDeliveryPartiesRes>> getAllDeliveryParty(@PathVariable int dormitoryId, @RequestParam int cursor){
-        List<GetDeliveryPartiesRes> response = deliveryPartyService.getDeliveryPartiesByDormitoryId(dormitoryId, cursor);
+    public BaseResponse<List<GetDeliveryPartiesRes>> GetDeliveryParties(@PathVariable int dormitoryId,
+                                                                        @RequestParam int cursor, @RequestParam(required = false) String orderTimeCategory, @RequestParam(required = false) Integer maxMatching){
+        List<GetDeliveryPartiesRes> response = deliveryPartyService.getDeliveryParties(dormitoryId, cursor, orderTimeCategory, maxMatching);
         return new BaseResponse<>(response);
     }
 
-
     //배달파티 조회: 상세조회
-    @NoIntercept
     @ApiOperation(value = "조회: 배달파티 상세조회", notes = "배달파티 게시물을 선택하면 상세 정보들을 볼 수 있다.")
     @ApiResponses({
             @ApiResponse(code =1000 ,message ="요청에 성공하셨습니다."),
@@ -71,41 +71,6 @@ public class DeliveryPartyController {
         return new BaseResponse<>(response);
     }
 
-    // 배달파티 조회: 인원수
-    @ApiOperation(value = "조회 : 배달파티 목록 인원수에 따라 조회", notes = "해당 기숙사의 배달파티 목록을 인원수에 따라 조회할 수 있다.")
-    @ApiResponses({
-            @ApiResponse(code =1000 ,message ="요청에 성공하였습니다."),
-            @ApiResponse(code =2604 ,message ="지정된 값이 아닙니다"),
-            @ApiResponse(code=4000,message = "서버 오류입니다.")
-    })
-    @NoIntercept
-    @GetMapping("/{dormitoryId}/delivery-parties/{maxMatching}")
-    public BaseResponse<List<GetDeliveryPartiesByMaxMatchingRes>> getDeliveryPartyByMaxMatching(@PathVariable int dormitoryId, @PathVariable int maxMatching, @RequestParam("cursor") int cursor){
-        List<GetDeliveryPartiesByMaxMatchingRes> response = deliveryPartyService.getDeliveryPartyByMaxMatching(dormitoryId, maxMatching, cursor);
-        return new BaseResponse<>(response);
-    }
-
-    // 배달파티 조회: orderTimeType
-    @ApiOperation(value = "조회 : 배달파티 목록 주문 시간대에 따라 조회", notes = "해당 기숙사의 배달파티 목록을 주문 시간대에 따라 조회할 수 있다.")
-    @ApiResponses({
-            @ApiResponse(code =1000 ,message ="요청에 성공하였습니다."),
-            @ApiResponse(code =2608 ,message ="존재하지 않는 시간 카테고리 입니다"),
-            @ApiResponse(code=4000,message = "서버 오류입니다.")
-    })
-    @NoIntercept
-    @GetMapping("/{dormitoryId}/delivery-parties/filter/{orderTimeCategory}")
-    public BaseResponse<List<GetDeliveryPartiesByOrderTimeRes>> GetDeliveryPartyByOrderTime(@PathVariable int dormitoryId, @PathVariable String orderTimeCategory, @RequestParam("cursor") int cursor){
-        // enum값 아닌 것 들어올때 처리 - 리팩토링 대상
-        try{
-            System.out.println(OrderTimeCategoryType.valueOf(orderTimeCategory));
-        }catch(IllegalArgumentException e){
-            throw new BaseException(NOT_EXISTS_ORDER_TIME_CATEGORY);
-        }
-        List<GetDeliveryPartiesByOrderTimeRes> response = deliveryPartyService.getDeliveryPartyByOrderTime(dormitoryId, cursor, orderTimeCategory);
-        return new BaseResponse<>(response);
-    }
-
-
     //배달파티 조회: 검색어로 조회
     @ApiOperation(value = "조회 : 검색어를 포함하는 배달파티 목록 조회", notes = "해당 기숙사의 배달파티 목록울 검색어로 조회할 수 있다.")
     @ApiResponses({
@@ -113,11 +78,9 @@ public class DeliveryPartyController {
             @ApiResponse(code=2205,message = "검색어를 입력해주세요"),
             @ApiResponse(code=4000,message = "서버 오류입니다.")
     })
-    @NoIntercept // jwt 필요 없음
     @GetMapping("/{dormitoryId}/delivery-parties/keyword/{keyword}")
     public BaseResponse<List<GetDeliveryPartiesByKeywordRes>> getDeliveryPartiesByKeyword(@PathVariable("dormitoryId") int dormitoryId, @PathVariable("keyword") String keyword,@RequestParam int cursor){
         List<GetDeliveryPartiesByKeywordRes> response = deliveryPartyService.getDeliveryPartiesByKeyword(dormitoryId, keyword, cursor);
         return new BaseResponse<>(response);
     }
-
 }
