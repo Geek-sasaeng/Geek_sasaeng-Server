@@ -114,7 +114,7 @@ public class DeliveryPartyService {
                 .collect(Collectors.toList()); // List로 변경
     }
 
-    public List<Object> getDeliveryPartiesByConditions(int dormitoryId, int cursor, String orderTimeCategory, Integer maxMatching) {
+    public List<GetDeliveryPartiesByConditionsRes> getDeliveryPartiesByConditions(int dormitoryId, int cursor, String orderTimeCategory, Integer maxMatching) {
         OrderTimeCategoryType orderTimeCategoryType = null;
         if( orderTimeCategory != null && !orderTimeCategory.equals("")){
             orderTimeCategoryType = OrderTimeCategoryType.valueOf(orderTimeCategory);

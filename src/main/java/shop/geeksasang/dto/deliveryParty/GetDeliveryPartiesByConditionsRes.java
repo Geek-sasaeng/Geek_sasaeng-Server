@@ -59,7 +59,6 @@ public class GetDeliveryPartiesByConditionsRes {
                 .build();
     }
 
-    // 해시태그 id -> title 리스트로 변환
     private static boolean makeHashTagEntityToDto(List<DeliveryPartyHashTag> deliveryPartyHashTags) {
         if(deliveryPartyHashTags.isEmpty()){
             return false;
