@@ -44,10 +44,6 @@ public class PostDeliveryPartyRes {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime orderTime;
 
-    @ApiModelProperty(example ="[" +"매칭 시 바로 주문" +","+"같이 먹고 싶어요" + "]")
-    @ApiParam(value = "해시태그 내용")
-    private List<String> hashTags;
-
     @ApiModelProperty(example = "2022-07-13 13:29:30")
     @ApiParam(value = "배달 파티 생성 시간")
     private String createdAt;
@@ -80,6 +76,10 @@ public class PostDeliveryPartyRes {
     @ApiParam(value="경도")
     private Double longitude;
 
+    @ApiModelProperty(example = "true")
+    @ApiParam(value = "해시태그 추가 여부")
+    private boolean hashTag;
+
 
     static public PostDeliveryPartyRes toDto(DeliveryParty deliveryParty){
 
@@ -90,8 +90,6 @@ public class PostDeliveryPartyRes {
                 .title(deliveryParty.getTitle())
                 .content(deliveryParty.getContent())
                 .orderTime(deliveryParty.getOrderTime())
-                .hashTags(deliveryParty.getDeliveryPartyHashTags().stream().map(deliveryPartyHashTag ->
-                        deliveryPartyHashTag.getHashTag().getTitle()).collect(Collectors.toList()))
                 .createdAt(deliveryParty.getCreatedAt())
                 .orderTimeCategoryType(deliveryParty.getOrderTimeCategory().toString())
                 .currentMatching(deliveryParty.getCurrentMatching())
@@ -100,6 +98,7 @@ public class PostDeliveryPartyRes {
                 .storeUrl(deliveryParty.getStoreUrl())
                 .latitude(deliveryParty.getLocation().getLatitude())
                 .longitude(deliveryParty.getLocation().getLongitude())
+                .hashTag(!deliveryParty.getDeliveryPartyHashTags().isEmpty())
                 .build();
     }
 }

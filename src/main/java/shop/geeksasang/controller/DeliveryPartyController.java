@@ -85,7 +85,7 @@ public class DeliveryPartyController {
     }
 
     //기숙사별 default 위도, 경도 조회
-    @GetMapping("/{domitoryId}/default-location")
+    @GetMapping("/{dormitoryId}/default-location")
     public  BaseResponse<GetDeliveryPartyDefaultLocationRes> getDeliveryPartyDefaultLocation(@PathVariable("dormitoryId") int dormitoryId){
         GetDeliveryPartyDefaultLocationRes response = deliveryPartyService.getDeliveryPartyDefaultLocation(dormitoryId);
         return new BaseResponse<>(response);

@@ -28,10 +28,6 @@ public class PostDeliveryPartyReq {
     @NotNull
     private int foodCategory;
 
-    @ApiModelProperty(example = "[1,2]")
-    @ApiParam(value = "해시태그 리스트", required = true)
-    private List<Integer> hashTag;
-
     @ApiModelProperty(example = "치킨 같이 나눠먹어요")
     @ApiParam(value = "배달파티 제목", required = true)
     @Size(min = 1, max = 20)
@@ -70,6 +66,11 @@ public class PostDeliveryPartyReq {
     @ApiParam(value="경도", required = true)
     @NotNull
     private Double longitude;
+
+    @ApiModelProperty(example = "true")
+    @ApiParam(value = "해시태그 추가 여부", required = true)
+    @NotNull
+    private boolean hashTag;
 
     // 외래키 참조하는 것 말고는  요청 엔티티 생성
     public DeliveryParty toEntity() {
