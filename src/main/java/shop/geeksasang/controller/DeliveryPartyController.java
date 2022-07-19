@@ -51,9 +51,9 @@ public class DeliveryPartyController {
             @ApiResponse(code=4000, message = "서버 오류입니다.")
     })
     @GetMapping("/{dormitoryId}/delivery-parties")
-    public BaseResponse<List<GetDeliveryParties>> GetDeliveryParties(@PathVariable int dormitoryId,
-                                                                     @RequestParam int cursor, @RequestParam(required = false) String orderTimeCategory, @RequestParam(required = false) Integer maxMatching){
-        List<GetDeliveryParties> response = deliveryPartyService.getDeliveryParties(dormitoryId, cursor, orderTimeCategory, maxMatching);
+    public BaseResponse<List<GetDeliveryPartiesRes>> GetDeliveryParties(@PathVariable int dormitoryId,
+                                                                        @RequestParam int cursor, @RequestParam(required = false) String orderTimeCategory, @RequestParam(required = false) Integer maxMatching){
+        List<GetDeliveryPartiesRes> response = deliveryPartyService.getDeliveryParties(dormitoryId, cursor, orderTimeCategory, maxMatching);
         return new BaseResponse<>(response);
     }
 

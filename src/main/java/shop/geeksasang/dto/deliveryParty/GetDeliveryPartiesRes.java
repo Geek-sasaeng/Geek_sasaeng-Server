@@ -15,7 +15,7 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
-public class GetDeliveryParties {
+public class GetDeliveryPartiesRes {
 
     @ApiModelProperty(example = "1")
     @ApiParam(value = "배달 파티 id(pk)")
@@ -47,8 +47,8 @@ public class GetDeliveryParties {
     private String foodCategory;
 
     //빌더
-    static public GetDeliveryParties toDto(DeliveryParty deliveryParty){
-        return GetDeliveryParties.builder()
+    static public GetDeliveryPartiesRes toDto(DeliveryParty deliveryParty){
+        return GetDeliveryPartiesRes.builder()
                 .id(deliveryParty.getId())
                 .title(deliveryParty.getTitle())
                 .orderTime(deliveryParty.getOrderTime())

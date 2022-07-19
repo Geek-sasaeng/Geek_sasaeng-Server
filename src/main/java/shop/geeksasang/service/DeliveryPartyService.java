@@ -102,7 +102,7 @@ public class DeliveryPartyService {
 
 
     //배달파티 검색 통합 버전
-    public List<GetDeliveryParties> getDeliveryParties(int dormitoryId, int cursor, String orderTimeCategory, Integer maxMatching) {
+    public List<GetDeliveryPartiesRes> getDeliveryParties(int dormitoryId, int cursor, String orderTimeCategory, Integer maxMatching) {
 
         OrderTimeCategoryType orderTimeCategoryType = null;
 
@@ -114,7 +114,7 @@ public class DeliveryPartyService {
         List<DeliveryParty> deliveryParties = deliveryPartyQueryRepository.findDeliveryPartiesByConditions(dormitoryId, orderTimeCategoryType, maxMatching, paging);
 
         return deliveryParties.stream()
-                .map(deliveryParty -> GetDeliveryParties.toDto(deliveryParty))
+                .map(deliveryParty -> GetDeliveryPartiesRes.toDto(deliveryParty))
                 .collect(Collectors.toList());
     }
 
