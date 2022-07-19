@@ -22,8 +22,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static shop.geeksasang.config.exception.response.BaseResponseStatus.NOT_SPECIFIED_VALUE;
-
 
 @Transactional
 @Service
@@ -35,6 +33,7 @@ public class DeliveryPartyService {
     private final DormitoryRepository dormitoryRepository;
     private final FoodCategoryRepository foodCategoryRepository;
     private final HashTagRepository hashTagRepository;
+    private final DeliveryPartyQueryRepository deliveryPartyQueryRepository;
 
     private static final int PAGING_SIZE = 10;
     private static final String PAGING_STANDARD = "orderTime";
@@ -77,18 +76,6 @@ public class DeliveryPartyService {
         return PostDeliveryPartyRes.toDto(party);
     }
 
-    //배달파티 조회: 기숙사 별 전체목록
-    public List<GetDeliveryPartiesRes> getDeliveryPartiesByDormitoryId(int dormitoryId, int cursor){
-
-        PageRequest paging = PageRequest.of(cursor, PAGING_SIZE, Sort.by(Sort.Direction.ASC, PAGING_STANDARD ));
-
-        Slice<DeliveryParty> deliveryParties = deliveryPartyRepository.findDeliveryPartiesByDormitoryId(dormitoryId, paging);
-
-        return deliveryParties.stream()
-                .map(deliveryParty -> GetDeliveryPartiesRes.toDto(deliveryParty))
-                .collect(Collectors.toList());
-    }
-
     //배달파티 상세조회:
     public GetDeliveryPartyDetailRes getDeliveryPartyDetailById(int partyId){
         DeliveryParty deliveryParty = deliveryPartyRepository.findById(partyId)
@@ -97,39 +84,6 @@ public class DeliveryPartyService {
         GetDeliveryPartyDetailRes getDeliveryPartyDetailRes = GetDeliveryPartyDetailRes.toDto(deliveryParty);
         return getDeliveryPartyDetailRes;
     }
-
-
-    // 배달파티 조회: 인원수
-    public List<GetDeliveryPartiesByMaxMatchingRes> getDeliveryPartyByMaxMatching(int dormitoryId, int maxMatching, int cursor) {
-
-        // 인원수 입렵값 validation
-        if(!MATCHING_NUMBER.contains(maxMatching)){
-            throw new BaseException(NOT_SPECIFIED_VALUE);
-        }
-
-        PageRequest paging = PageRequest.of(cursor, PAGING_SIZE, Sort.by(Sort.Direction.ASC, PAGING_STANDARD));
-
-        Slice<DeliveryParty> deliveryParties = deliveryPartyRepository.findDeliveryPartiesByMaxMatching(dormitoryId, maxMatching, paging);
-
-        return deliveryParties.stream()
-                .map(deliveryParty -> GetDeliveryPartiesByMaxMatchingRes.toDto(deliveryParty))
-                .collect(Collectors.toList());
-    }
-
-    // 배달파티 조회: orderTimeCategory 시간대
-    public List<GetDeliveryPartiesByOrderTimeRes> getDeliveryPartyByOrderTime(int dormitoryId, int cursor, String orderTimeCategory) {
-
-        OrderTimeCategoryType orderTimeCategoryType = OrderTimeCategoryType.valueOf(orderTimeCategory);
-
-        PageRequest paging = PageRequest.of(cursor, PAGING_SIZE, Sort.by(Sort.Direction.ASC, PAGING_STANDARD));
-
-        Slice<DeliveryParty> deliveryParties = deliveryPartyRepository.findDeliveryPartiesByOrderTime(dormitoryId, orderTimeCategoryType, paging);
-
-        return deliveryParties.stream()
-                .map(deliveryParty -> GetDeliveryPartiesByOrderTimeRes.toDto(deliveryParty))
-                .collect(Collectors.toList());
-    }
-
 
     //배달파티 조회: 검색어로 조회
     public List<GetDeliveryPartiesByKeywordRes> getDeliveryPartiesByKeyword(int dormitoryId, String keyword, int cursor){
@@ -144,6 +98,24 @@ public class DeliveryPartyService {
         return deliveryParties.stream()
                 .map(deliveryParty -> GetDeliveryPartiesByKeywordRes.toDto(deliveryParty)) // 배열 원소 변경 한번에 적용
                 .collect(Collectors.toList()); // List로 변경
+    }
+
+
+    //배달파티 검색 통합 버전
+    public List<GetDeliveryPartiesRes> getDeliveryParties(int dormitoryId, int cursor, String orderTimeCategory, Integer maxMatching) {
+
+        OrderTimeCategoryType orderTimeCategoryType = null;
+
+        if( orderTimeCategory != null && !orderTimeCategory.equals("")){
+            orderTimeCategoryType = OrderTimeCategoryType.valueOf(orderTimeCategory);
+        }
+
+        PageRequest paging = PageRequest.of(cursor, PAGING_SIZE, Sort.by(Sort.Direction.ASC, PAGING_STANDARD)); // 페이징 요구 객체
+        List<DeliveryParty> deliveryParties = deliveryPartyQueryRepository.findDeliveryPartiesByConditions(dormitoryId, orderTimeCategoryType, maxMatching, paging);
+
+        return deliveryParties.stream()
+                .map(deliveryParty -> GetDeliveryPartiesRes.toDto(deliveryParty))
+                .collect(Collectors.toList());
     }
 
 }
