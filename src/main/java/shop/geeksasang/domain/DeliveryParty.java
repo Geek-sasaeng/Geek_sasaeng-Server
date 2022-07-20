@@ -58,13 +58,20 @@ public class DeliveryParty extends BaseEntity {
 
     private int maxMatching;
 
-    private String location;
-
     @Enumerated(EnumType.STRING)
     private MatchingStatus matchingStatus;
 
     @OneToMany(mappedBy = "deliveryParty")
     private List<DeliveryPartyReport> deliveryPartyReports;
+
+    private String storeUrl;
+
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name="latitude",column = @Column(name="latitude")),
+            @AttributeOverride(name="longitude", column = @Column(name="longitude"))
+    })
+    private Location location;
 
     public static DeliveryParty makeParty(PostDeliveryPartyReq dto, OrderTimeCategoryType orderTimeCategory, Dormitory dormitory, FoodCategory foodCategory, Member chief, List<HashTag> hashTagList) {
         DeliveryParty party = DeliveryParty.builder()
@@ -72,7 +79,7 @@ public class DeliveryParty extends BaseEntity {
                 .content(dto.getContent())
                 .orderTime(dto.getOrderTime())
                 .maxMatching(dto.getMaxMatching())
-                .location(dto.getLocation())
+                .location(new Location(dto.getLatitude(),dto.getLongitude()))
                 .chief(chief)
                 .foodCategory(foodCategory)
                 .orderTimeCategory(orderTimeCategory)
@@ -80,6 +87,7 @@ public class DeliveryParty extends BaseEntity {
                 .deliveryPartyHashTags(new ArrayList<>())
                 .matchingStatus(MatchingStatus.ONGOING)
                 .currentMatching(1)
+                .storeUrl(dto.getStoreUrl())
                 .build();
 
         party.setStatus(BaseStatus.ACTIVE);

@@ -83,4 +83,13 @@ public class DeliveryPartyController {
         List<GetDeliveryPartiesByKeywordRes> response = deliveryPartyService.getDeliveryPartiesByKeyword(dormitoryId, keyword, cursor);
         return new BaseResponse<>(response);
     }
+
+    //기숙사별 default 위도, 경도 조회
+    @GetMapping("/{dormitoryId}/default-location")
+    public  BaseResponse<GetDeliveryPartyDefaultLocationRes> getDeliveryPartyDefaultLocation(@PathVariable("dormitoryId") int dormitoryId){
+        GetDeliveryPartyDefaultLocationRes response = deliveryPartyService.getDeliveryPartyDefaultLocation(dormitoryId);
+        return new BaseResponse<>(response);
+    }
+
+
 }
