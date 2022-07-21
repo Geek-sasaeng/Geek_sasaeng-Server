@@ -160,6 +160,10 @@ public class Member extends BaseEntity {
     public boolean checkReportedCount(){
         return reportedCount >= 3;
     }
+
+    public void resetPerDayReportingCount(){
+        perDayReportingCount = 0;
+    }
 //    public void addReportedMemberRecord(Member reportedMember) {
 //        this.memberReportRecords(new )
 //    }

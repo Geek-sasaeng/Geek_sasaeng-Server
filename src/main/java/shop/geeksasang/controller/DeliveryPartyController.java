@@ -90,6 +90,4 @@ public class DeliveryPartyController {
         GetDeliveryPartyDefaultLocationRes response = deliveryPartyService.getDeliveryPartyDefaultLocation(dormitoryId);
         return new BaseResponse<>(response);
     }
-
-
 }
