@@ -93,8 +93,8 @@ public class DeliveryPartyService {
         if(keyword == null || keyword.isBlank()){
             throw new BaseException(BaseResponseStatus.BLANK_KEYWORD);
         }
-        PageRequest paging = PageRequest.of(cursor, PAGING_SIZE, Sort.by(Sort.Direction.ASC, PAGING_STANDARD)); // 페이징 요구 객체
 
+        PageRequest paging = PageRequest.of(cursor, PAGING_SIZE, Sort.by(Sort.Direction.ASC, PAGING_STANDARD)); // 페이징 요구 객체
         Slice<DeliveryParty> deliveryParties = deliveryPartyRepository.findDeliveryPartiesByKeyword(dormitoryId, keyword, paging); // 페이징 반환 객체
 
         return deliveryParties.stream()
