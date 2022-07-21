@@ -37,9 +37,9 @@ public class GetDeliveryPartyDetailRes {
     @ApiParam(value = "음식 카테고리")
     private String foodCategory;
 
-    @ApiModelProperty(example = "깉이 먹고 싶어요")
-    @ApiParam(value = "해시태그")
-    private List<String> hashTags;
+    @ApiModelProperty(example = "true")
+    @ApiParam(value = "해시태그 추가 여부")
+    private boolean hashTag;
 
     @ApiModelProperty(example = "한식 같이 먹어요!!")
     @ApiParam(value = "배달파티 제목")
@@ -62,10 +62,6 @@ public class GetDeliveryPartyDetailRes {
     @ApiParam(value = "최대 미칭 인원")
     private int maxMatching;
 
-//    @ApiModelProperty(example = "제1기숙사 후문")
-//    @ApiParam(value = "배달 수령 장소")
-//    private String location;
-
     @ApiModelProperty(example = "ONGOING")
     @ApiParam(value = "배달 매칭 상태, 모집중ONGOING, 모집마감FINISH")
     private MatchingStatus matchingStatus;
@@ -85,13 +81,13 @@ public class GetDeliveryPartyDetailRes {
 
     //빌더
     static public GetDeliveryPartyDetailRes toDto(DeliveryParty deliveryParty){
-        List<String> hashTagDto = makeHashTagEntityToDto(deliveryParty.getDeliveryPartyHashTags());
+
         return GetDeliveryPartyDetailRes.builder()
                 .id(deliveryParty.getId())
                 .chief(deliveryParty.getChief().getNickName())
                 .chiefProfileImgUrl(deliveryParty.getChief().getProfileImgUrl())
                 .foodCategory(deliveryParty.getFoodCategory().getTitle())
-                .hashTags(hashTagDto)
+                .hashTag(!deliveryParty.getDeliveryPartyHashTags().isEmpty())
                 .title(deliveryParty.getTitle())
                 .content(deliveryParty.getContent())
                 .orderTime(deliveryParty.getOrderTime())
