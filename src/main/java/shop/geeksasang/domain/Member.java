@@ -71,7 +71,7 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy = "reportedMember")
     private List<MemberReport> reportedMembers;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "report_list_id")
     private ReportList reportList;
 
