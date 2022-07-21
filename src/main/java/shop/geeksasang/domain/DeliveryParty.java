@@ -67,7 +67,7 @@ public class DeliveryParty extends BaseEntity {
 
     private String storeUrl;
 
-    private int reportCount;
+    private int reportedCount;
 
     @Embedded
     @AttributeOverrides({
@@ -91,7 +91,7 @@ public class DeliveryParty extends BaseEntity {
                 .matchingStatus(MatchingStatus.ONGOING)
                 .currentMatching(1)
                 .storeUrl(dto.getStoreUrl())
-                .reportCount(0)
+                .reportedCount(0)
                 .build();
 
         party.setStatus(BaseStatus.ACTIVE);
