@@ -43,7 +43,8 @@ public class MemberReportService {
             throw new RuntimeException("이미 신고함");
         }
 
-        //TODO 신고 레코드에 추가해야 한다.
+        //신고 기록에 추가
+        member.addMemberReportRecord(reportedMember);
 
         //카테고리 가져온다.
         ReportCategory reportCategory = reportCategoryRepository.findById(dto.getReportCategoryId())

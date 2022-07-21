@@ -164,7 +164,12 @@ public class Member extends BaseEntity {
     public void resetPerDayReportingCount(){
         perDayReportingCount = 0;
     }
-//    public void addReportedMemberRecord(Member reportedMember) {
-//        this.memberReportRecords(new )
-//    }
+
+    public void addMemberReportRecord(Member reportedMember) {
+        memberReportRecords.add(new MemberReportRecord(this, reportedMember));
+    }
+
+    public void addDeliveryPartyReportRecord(DeliveryParty deliveryParty) {
+        deliverPartyReportRecords.add(new DeliverPartyReportRecord(this, deliveryParty));
+    }
 }

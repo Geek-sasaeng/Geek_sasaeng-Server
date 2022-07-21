@@ -49,6 +49,7 @@ public class DeliveryPartyReportService {
         }
 
         //TODO 신고 레코드에 추가해야 한다.
+        member.addDeliveryPartyReportRecord(deliveryParty);
 
         //카테고리 가져온다.
         ReportCategory reportCategory = reportCategoryRepository.findById(dto.getReportCategoryId())
