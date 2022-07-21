@@ -9,7 +9,8 @@ import shop.geeksasang.config.status.LoginStatus;
 import shop.geeksasang.config.status.BaseStatus;
 import shop.geeksasang.config.type.MemberLoginType;
 import shop.geeksasang.domain.report.MemberReport;
-import shop.geeksasang.domain.report.list.ReportList;
+import shop.geeksasang.domain.report.record.DeliverPartyReportRecord;
+import shop.geeksasang.domain.report.record.MemberReportRecord;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -71,9 +72,13 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy = "reportedMember")
     private List<MemberReport> reportedMembers;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "report_list_id")
-    private ReportList reportList;
+    //만약 신고가 계속 늘어나면 필드도 늘어야 하는데 추상화로 묶을까?
+    //대신 검증할 때 강제 캐스팅을 해야 하는데 이것도 좋지 않아 보인다.
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
+    private List<MemberReportRecord> memberReportRecords;
+
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
+    private List<DeliverPartyReportRecord> deliverPartyReportRecords;
 
     private int perDayReportingCount;
 
@@ -119,18 +124,43 @@ public class Member extends BaseEntity {
         this.loginStatus = LoginStatus.NOTNEVER;
     }
 
-    @Override
-    public String toString() {
-        return "Member{" +
-                "id=" + id +
-                ", loginId='" + loginId + '\'' +
-                ", nickName='" + nickName + '\'' +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                ", university=" + university +
-                ", phoneNumber='" + phoneNumber + '\'' +
-                ", profileImgUrl='" + profileImgUrl + '\'' +
-                ", jwtToken='" + jwtToken + '\'' +
-                '}';
+    public boolean containReportedMemberRecord(Member reportedMember) {
+        for (MemberReportRecord memberReportRecord : memberReportRecords) {
+            if(memberReportRecord.sameMember(reportedMember)){
+                return true;
+            }
+        }
+        return false;
     }
+
+    public boolean containReportedDeliveryPartyRecord(DeliveryParty reportedDeliveryParty) {
+        for (DeliverPartyReportRecord deliverPartyReportRecord : deliverPartyReportRecords) {
+            if(deliverPartyReportRecord.sameParty(reportedDeliveryParty)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void addOneDayReportCount(){
+        perDayReportingCount++;
+    }
+
+    public boolean checkPerDayReportCopunt() {
+        return perDayReportingCount >= 3;
+    }
+
+    public void addReportedCountAndCheckReportedCount() {
+        reportedCount++;
+        if(checkReportedCount()){
+            setStatus(BaseStatus.INACTIVE); //이건 뭐 차후에 스테이터스를 추가할듯?
+        }
+    }
+
+    public boolean checkReportedCount(){
+        return reportedCount >= 3;
+    }
+//    public void addReportedMemberRecord(Member reportedMember) {
+//        this.memberReportRecords(new )
+//    }
 }
