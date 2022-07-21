@@ -43,9 +43,6 @@ public class MemberReportService {
             throw new RuntimeException("이미 신고함");
         }
 
-        //신고 기록에 추가
-        member.addMemberReportRecord(reportedMember);
-
         //카테고리 가져온다.
         ReportCategory reportCategory = reportCategoryRepository.findById(dto.getReportCategoryId())
                 .orElseThrow(() -> new RuntimeException("카테고리가 없음"));
@@ -53,6 +50,10 @@ public class MemberReportService {
         //신고 생성
         MemberReport report = dto.toEntity(member, reportedMember, dto, reportCategory);
         memberReportRepository.save(report);
+
+
+        //신고 기록에 추가
+        member.addMemberReportRecord(reportedMember);
 
         //멤버 하루 총 신고 횟수 추가
         member.addOneDayReportCount();
