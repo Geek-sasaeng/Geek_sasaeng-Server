@@ -9,6 +9,7 @@ import shop.geeksasang.config.status.LoginStatus;
 import shop.geeksasang.config.status.BaseStatus;
 import shop.geeksasang.config.type.MemberLoginType;
 import shop.geeksasang.domain.report.MemberReport;
+import shop.geeksasang.domain.report.list.ReportList;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -69,6 +70,10 @@ public class Member extends BaseEntity {
 
     @OneToMany(mappedBy = "reportedMember")
     private List<MemberReport> reportedMembers;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "report_list_id")
+    private ReportList reportList;
 
     private int perDayReportingCount;
 
