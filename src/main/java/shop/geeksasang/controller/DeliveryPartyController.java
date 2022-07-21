@@ -91,5 +91,14 @@ public class DeliveryPartyController {
         return new BaseResponse<>(response);
     }
 
+    //배달파티 수정
+    //@PutMapping("/delivery-party/{partyId}")
+    //public BaseResponse<PutDeliveryPartyRes> updateDeliveryParty(@PathVariable("partyId") int partyId, @Validated @RequestBody PutDeliveryPartyReq dto,  HttpServletRequest request){
+
+    //    JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
+
+    //   PutDeliveryPartyRes putDeliveryPartyRes = deliveryPartyService.updateDeliveryParty(dto, jwtInfo);
+     //   return new BaseResponse<>(putDeliveryPartyRes);
+   // }
 
 }
