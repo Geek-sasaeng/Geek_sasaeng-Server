@@ -67,7 +67,8 @@ public class PostRegisterReq {
                 .phoneNumber(phoneNumber)
                 .informationAgreeStatus(getInformationAgreeStatus())
                 .memberLoginType(MemberLoginType.NORMAL_USER)
-                .reportCount(0)
+                .perDayReportingCount(0)
+                .reportedCount(0)
                 .build();
     }
 }
