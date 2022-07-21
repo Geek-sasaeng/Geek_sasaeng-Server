@@ -78,8 +78,8 @@ public class DeliveryPartyController {
             @ApiResponse(code=2205,message = "검색어를 입력해주세요"),
             @ApiResponse(code=4000,message = "서버 오류입니다.")
     })
-    @GetMapping("/{dormitoryId}/delivery-parties/keyword/{keyword}")
-    public BaseResponse<List<GetDeliveryPartiesByKeywordRes>> getDeliveryPartiesByKeyword(@PathVariable("dormitoryId") int dormitoryId, @PathVariable("keyword") String keyword,@RequestParam int cursor){
+    @GetMapping("/{dormitoryId}/delivery-parties/keyword")
+    public BaseResponse<List<GetDeliveryPartiesByKeywordRes>> getDeliveryPartiesByKeyword(@PathVariable("dormitoryId") int dormitoryId, @RequestParam String keyword,@RequestParam int cursor){
         List<GetDeliveryPartiesByKeywordRes> response = deliveryPartyService.getDeliveryPartiesByKeyword(dormitoryId, keyword, cursor);
         return new BaseResponse<>(response);
     }
