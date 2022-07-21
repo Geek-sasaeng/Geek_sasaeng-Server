@@ -1,7 +1,9 @@
-package shop.geeksasang.domain;
+package shop.geeksasang.domain.report;
 
 import shop.geeksasang.config.domain.BaseEntity;
 import shop.geeksasang.config.status.ReportStatus;
+import shop.geeksasang.domain.Member;
+import shop.geeksasang.domain.ReportCategory;
 
 import javax.persistence.*;
 

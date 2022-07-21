@@ -8,6 +8,7 @@ import shop.geeksasang.config.domain.*;
 import shop.geeksasang.config.status.LoginStatus;
 import shop.geeksasang.config.status.BaseStatus;
 import shop.geeksasang.config.type.MemberLoginType;
+import shop.geeksasang.domain.report.MemberReport;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;

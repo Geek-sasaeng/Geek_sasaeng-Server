@@ -11,6 +11,7 @@ import shop.geeksasang.config.domain.BaseEntity;
 import shop.geeksasang.config.status.MatchingStatus;
 import shop.geeksasang.config.type.OrderTimeCategoryType;
 import shop.geeksasang.config.status.BaseStatus;
+import shop.geeksasang.domain.report.DeliveryPartyReport;
 import shop.geeksasang.dto.deliveryParty.PostDeliveryPartyReq;
 
 import java.time.LocalDateTime;

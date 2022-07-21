@@ -1,7 +1,4 @@
-package shop.geeksasang.domain;
-
-
-import shop.geeksasang.config.status.ReportStatus;
+package shop.geeksasang.domain.report;
 
 import javax.persistence.*;
 

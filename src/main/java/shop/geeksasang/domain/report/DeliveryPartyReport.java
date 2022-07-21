@@ -1,5 +1,6 @@
-package shop.geeksasang.domain;
+package shop.geeksasang.domain.report;
 
+import shop.geeksasang.domain.DeliveryParty;
 
 import javax.persistence.*;
 
