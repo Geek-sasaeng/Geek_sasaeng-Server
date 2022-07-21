@@ -67,6 +67,8 @@ public class DeliveryParty extends BaseEntity {
 
     private String storeUrl;
 
+    private int reportCount;
+
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(name="latitude",column = @Column(name="latitude")),
@@ -89,6 +91,7 @@ public class DeliveryParty extends BaseEntity {
                 .matchingStatus(MatchingStatus.ONGOING)
                 .currentMatching(1)
                 .storeUrl(dto.getStoreUrl())
+                .reportCount(0)
                 .build();
 
         party.setStatus(BaseStatus.ACTIVE);

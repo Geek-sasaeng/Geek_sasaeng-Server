@@ -70,6 +70,8 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy = "reportedMember")
     private List<MemberReport> reportedMembers;
 
+    private int reportCount;
+
     public void changeStatusToActive(){
         super.setStatus(BaseStatus.ACTIVE);
     }
