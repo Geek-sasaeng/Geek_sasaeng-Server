@@ -27,26 +27,20 @@ public class Member extends BaseEntity {
     @Column(name="member_id")
     private int id;
 
-    @NotNull
     private String loginId;
 
-    @NotNull
     private String nickName;
 
-    @NotNull
     private String password;
 
-    @NotNull
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="university_id")
     private University university;
 
-    @NotNull
     @OneToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="phoneNumber_id", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private PhoneNumber phoneNumber;
 
-    @NotNull
     @OneToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="email_id", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private Email email;
@@ -55,14 +49,11 @@ public class Member extends BaseEntity {
 
     private String jwtToken;
 
-    @NotNull
     private String informationAgreeStatus; // 회원 정보 동의 여부
 
-    @NotNull
     @Enumerated(EnumType.STRING)
     private LoginStatus loginStatus; // 첫 번째 로그인인지 아닌지
 
-    @NotNull
     @Enumerated(EnumType.STRING)
     private MemberLoginType memberLoginType;
 
