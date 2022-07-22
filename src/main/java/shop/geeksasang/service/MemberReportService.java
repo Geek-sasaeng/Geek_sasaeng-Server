@@ -51,8 +51,8 @@ public class MemberReportService {
         MemberReport report = dto.toEntity(member, reportedMember, dto, reportCategory);
         memberReportRepository.save(report);
 
-        //멤버 하루 총 신고 횟수 추가 및 신고 기록 추가
-        member.addOneDayReportCountAndAddReportRecord(reportedMember);
+        //신고 기록 추가 & 하루 신고 제한 횟수 추가
+        member.addMemberReportRecord(reportedMember);
 
         //신고당한 횟수추가 그리고 3회 이상이면 정지
         reportedMember.addReportedCountAndCheckReportedCount();

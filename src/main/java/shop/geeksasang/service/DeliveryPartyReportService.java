@@ -49,7 +49,6 @@ public class DeliveryPartyReportService {
         }
 
 
-        member.addDeliveryPartyReportRecord(deliveryParty);
 
         //카테고리 가져온다.
         ReportCategory reportCategory = reportCategoryRepository.findById(dto.getReportCategoryId())
@@ -59,8 +58,8 @@ public class DeliveryPartyReportService {
         DeliveryPartyReport report = dto.toEntity(member, deliveryParty, reportCategory, dto);
         deliveryPartyReportRepository.save(report);
 
-        //멤버 하루 총 신고 횟수 추가
-        member.addOneDayReportCount();
+        //멤버 하루 총 신고 횟수 추가 & 배달 파티 신고 기록 남기기
+        member.addDeliveryPartyReportRecord(deliveryParty);
 
         //횟수 증가와 3번 이상인지 체크
         deliveryParty.addReportedCountAndCheckReportedCount();

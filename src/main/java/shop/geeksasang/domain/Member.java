@@ -144,9 +144,14 @@ public class Member extends BaseEntity {
         return reportedCount >= 3;
     }
 
-    public void addOneDayReportCountAndAddReportRecord(Member reportedMember) {
+    public void addMemberReportRecord(Member reportedMember) {
         addOneDayReportCount();
-        addMemberReportRecord(reportedMember);
+        memberReportRecords.add(new MemberReportRecord(this, reportedMember));
+    }
+
+    public void addDeliveryPartyReportRecord(DeliveryParty deliveryParty) {
+        addOneDayReportCount();
+        deliverPartyReportRecords.add(new DeliverPartyReportRecord(this, deliveryParty));
     }
 
     public void addOneDayReportCount(){
@@ -155,14 +160,6 @@ public class Member extends BaseEntity {
 
     public boolean checkPerDayReportCount() {
         return perDayReportingCount >= 3;
-    }
-
-    public void addMemberReportRecord(Member reportedMember) {
-        memberReportRecords.add(new MemberReportRecord(this, reportedMember));
-    }
-
-    public void addDeliveryPartyReportRecord(DeliveryParty deliveryParty) {
-        deliverPartyReportRecords.add(new DeliverPartyReportRecord(this, deliveryParty));
     }
 
     public void resetPerDayReportingCount(){

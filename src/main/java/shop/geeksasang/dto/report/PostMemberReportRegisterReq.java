@@ -15,12 +15,12 @@ import javax.validation.constraints.Size;
 @Getter @Setter
 public class PostMemberReportRegisterReq {
 
-    @ApiModelProperty(example = "0 ~ 10 까지의 int 값.")
-    @ApiParam(value = "신고 카테고리 id", required = true)
+    @ApiModelProperty(example = "9")
+    @ApiParam(value = "신고 카테고리 id, 0 ~ 10 까지의 int 값.", required = true)
     @Range(min = 0, max = 10)
     private int reportCategoryId;
 
-    @ApiModelProperty(example = "231")
+    @ApiModelProperty(example = "34")
     @ApiParam(value = "신고하고, 차단할 멤버 id", required = true)
     @NotNull
     private int reportedMemberId;

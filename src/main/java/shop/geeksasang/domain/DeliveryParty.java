@@ -104,6 +104,11 @@ public class DeliveryParty extends BaseEntity {
         return party;
     }
 
+    public void addReportedCountAndCheckReportedCount() {
+        addReportedCount();
+        checkReportedCount();
+    }
+
     public void addReportedCount() {
         reportedCount++;
     }
@@ -112,10 +117,5 @@ public class DeliveryParty extends BaseEntity {
         if(reportedCount >= 3){
             setStatus(BaseStatus.INACTIVE);
         }
-    }
-
-    public void addReportedCountAndCheckReportedCount() {
-        addReportedCount();
-        checkReportedCount();
     }
 }
