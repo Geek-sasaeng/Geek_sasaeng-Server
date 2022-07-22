@@ -79,6 +79,10 @@ public class GetDeliveryPartyDetailRes {
     @ApiParam(value="경도")
     private Double longitude;
 
+    @ApiModelProperty(example = "https://baemin.me/mUpLJ7qBk")
+    @ApiParam(value="배달앱 주소")
+    private String storeUrl;
+
     //빌더
     static public GetDeliveryPartyDetailRes toDto(DeliveryParty deliveryParty){
 
@@ -97,6 +101,7 @@ public class GetDeliveryPartyDetailRes {
                 .updatedAt(deliveryParty.getUpdatedAt())
                 .latitude(deliveryParty.getLocation().getLatitude())
                 .longitude(deliveryParty.getLocation().getLongitude())
+                .storeUrl(deliveryParty.getStoreUrl())
                 .build();
     }
 

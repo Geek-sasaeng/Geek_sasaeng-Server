@@ -62,7 +62,7 @@ public class DeliveryPartyService {
         List<HashTag> hashTagList = new ArrayList<>();
 
         if(dto.isHashTag()){
-            HashTag hashTag = hashTagRepository.findById(1).orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_HASHTAG));
+            HashTag hashTag = hashTagRepository.findById(dto.getFoodCategory()).orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_HASHTAG));
             hashTagList.add(hashTag);
         }
 

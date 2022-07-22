@@ -11,6 +11,7 @@ import shop.geeksasang.config.domain.BaseEntity;
 import shop.geeksasang.config.status.MatchingStatus;
 import shop.geeksasang.config.type.OrderTimeCategoryType;
 import shop.geeksasang.config.status.BaseStatus;
+import shop.geeksasang.domain.report.DeliveryPartyReport;
 import shop.geeksasang.dto.deliveryParty.PostDeliveryPartyReq;
 
 import java.time.LocalDateTime;
@@ -66,6 +67,8 @@ public class DeliveryParty extends BaseEntity {
 
     private String storeUrl;
 
+    private int reportedCount;
+
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(name="latitude",column = @Column(name="latitude")),
@@ -88,6 +91,7 @@ public class DeliveryParty extends BaseEntity {
                 .matchingStatus(MatchingStatus.ONGOING)
                 .currentMatching(1)
                 .storeUrl(dto.getStoreUrl())
+                .reportedCount(0)
                 .build();
 
         party.setStatus(BaseStatus.ACTIVE);
@@ -98,5 +102,20 @@ public class DeliveryParty extends BaseEntity {
             party.deliveryPartyHashTags.add(deliveryPartyHashTag);
         }
         return party;
+    }
+
+    public void addReportedCount() {
+        reportedCount++;
+    }
+
+    public void checkReportedCount() {
+        if(reportedCount >= 3){
+            setStatus(BaseStatus.INACTIVE);
+        }
+    }
+
+    public void addReportedCountAndCheckReportedCount() {
+        addReportedCount();
+        checkReportedCount();
     }
 }
