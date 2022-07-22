@@ -1,21 +1,20 @@
-package shop.geeksasang.utils.scheduler;
+package shop.geeksasang.utils.scheduler.report;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import shop.geeksasang.domain.Member;
 import shop.geeksasang.repository.MemberRepository;
 
 import java.util.List;
 
-@Component
+@Service
 @RequiredArgsConstructor
-public class ReportScheduler {
+public class ReportSchedulerService {
 
     private final MemberRepository memberRepository;
 
-    //하루 최대 신고 회수 3회 초기화
-    @Scheduled(cron = "0 0 0 * * *")
+    @Transactional(readOnly = false)
     public void resetPerDayMemberReportingCount(){
         List<Member> memberList = memberRepository.findAll();
         for (Member member : memberList) {
@@ -23,5 +22,3 @@ public class ReportScheduler {
         }
     }
 }
-
-//한달 계산은 어케하지?
