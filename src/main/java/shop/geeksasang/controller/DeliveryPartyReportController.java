@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 public class DeliveryPartyReportController {
 
     private final DeliveryPartyReportService deliveryPartyReportService;
+    //TODO 차단 서비스 구현 처리할 것.
 
     public static final String SUCCESS_MESSAGE = "신고 생성에 성공하셨습니다";
 

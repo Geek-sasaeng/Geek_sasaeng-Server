@@ -153,7 +153,7 @@ public class Member extends BaseEntity {
     public void addReportedCountAndCheckReportedCount() {
         reportedCount++;
         if(checkReportedCount()){
-            setStatus(BaseStatus.INACTIVE); //이건 뭐 차후에 스테이터스를 추가할듯?
+            setStatus(BaseStatus.REPORTED); //신고 상태를 추가
         }
     }
 
