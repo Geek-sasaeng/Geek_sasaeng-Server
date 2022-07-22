@@ -62,7 +62,7 @@ public class DeliveryPartyService {
         List<HashTag> hashTagList = new ArrayList<>();
 
         if(dto.isHashTag()){
-            HashTag hashTag = hashTagRepository.findById(dto.getFoodCategory()).orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_HASHTAG));
+            HashTag hashTag = hashTagRepository.findById(1).orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_HASHTAG));
             hashTagList.add(hashTag);
         }
 
@@ -79,11 +79,25 @@ public class DeliveryPartyService {
     }
 
     //배달파티 상세조회:
-    public GetDeliveryPartyDetailRes getDeliveryPartyDetailById(int partyId){
-        DeliveryParty deliveryParty = deliveryPartyRepository.findById(partyId)
-                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTY));
+    public GetDeliveryPartyDetailRes getDeliveryPartyDetailById(int partyId, JwtInfo jwtInfo){
 
-        GetDeliveryPartyDetailRes getDeliveryPartyDetailRes = GetDeliveryPartyDetailRes.toDto(deliveryParty);
+        //사용자 본인 여부
+        boolean authorStatus = false;
+
+        //요청 보낸 사용자 Member 찾기
+        int memberId = jwtInfo.getUserId();
+        Member findMember = memberRepository.findById(memberId).
+                orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTICIPANT));
+
+        DeliveryParty deliveryParty = deliveryPartyRepository.findById(partyId).
+                orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTY));
+
+        //요청 보낸 사용자와 파티 chief 비교
+        if(findMember.equals(deliveryParty.getChief())){
+            authorStatus = true;
+        }
+
+        GetDeliveryPartyDetailRes getDeliveryPartyDetailRes = GetDeliveryPartyDetailRes.toDto(deliveryParty,authorStatus);
         return getDeliveryPartyDetailRes;
     }
 
