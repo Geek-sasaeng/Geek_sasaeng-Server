@@ -70,6 +70,9 @@ public enum BaseResponseStatus {
     INVALID_SMS_VERIFY_NUMBER(false,2013,"인증번호가 틀렸습니다."),
     INVALID_SMS_COUNT(false,2015,"일일 최대 전송 횟수를 초과했습니다."),
     INVALID_SMS_UUID(false,2016,"이메일 인증을 하지 못한 유저입니다. 이메일 인증을 해주세요."),
+    INVALID_REPORT_COUNT(false, 2017, "하루 신고 최대 횟수를 초과하셨습니다"),
+    EXIST_REPORT_RECORD(false, 2018, "중복 신고는 불가능합니다."),
+    NOT_EXISTS_REPORT_CATEGORY(false, 2019, "존재하지 않는 신고 카테고리입니다"),
 
 
     /**
