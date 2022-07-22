@@ -132,6 +132,8 @@ public class DeliveryPartyService {
             throw new BaseException(ALREADY_INACTIVE_DELIVERY_PARTY);
         }
 
+        // TODO: 배달파티 chief와 같은지 확인
+
         DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyById(partyId)
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTY));
         deliveryParty.changeStatusToInactive();

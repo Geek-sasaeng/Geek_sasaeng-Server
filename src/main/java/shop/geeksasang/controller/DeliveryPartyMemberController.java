@@ -29,7 +29,6 @@ public class DeliveryPartyMemberController {
             @ApiResponse(code =2010 ,message ="존재하지 않는 파티입니다"),
             @ApiResponse(code=4000,message = "서버 오류입니다.")
     })
-    @NoIntercept
     @PostMapping("/deliveryPartyMember")
     public BaseResponse<PostDeliveryPartyMemberRes> joinDeliveryPartyMember(@RequestBody PostDeliveryPartyMemberReq dto){
 
