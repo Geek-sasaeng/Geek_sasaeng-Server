@@ -23,8 +23,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static shop.geeksasang.config.exception.response.BaseResponseStatus.ALREADY_INACTIVE_DELIVERY_PARTY;
-import static shop.geeksasang.config.exception.response.BaseResponseStatus.NOT_EXISTS_PARTY;
+import static shop.geeksasang.config.exception.response.BaseResponseStatus.*;
 
 
 @Transactional
@@ -125,14 +124,20 @@ public class DeliveryPartyService {
 
     //배달파티 삭제
     @Transactional(readOnly = false)
-    public PatchDeliveryPartyStatusRes patchDeliveryPartyStatusById(int partyId) {
+    public PatchDeliveryPartyStatusRes patchDeliveryPartyStatusById(int partyId, JwtInfo jwtInfo) {
+
+        int chiefId = jwtInfo.getUserId();
 
         // 이미 삭제된 배달 파티
         if(deliveryPartyRepository.findDeliveryPartyStatusById(partyId).equals("INACTIVE")) {
             throw new BaseException(ALREADY_INACTIVE_DELIVERY_PARTY);
         }
 
-        // TODO: 배달파티 chief와 같은지 확인
+        // 배달파티 chief와 같은지 확인
+        if(!deliveryPartyRepository.findDeliveryPartyChiefById(partyId).equals(chiefId)) {
+            throw new BaseException(DIFFERENT_USER_ID);
+        }
+
 
         DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyById(partyId)
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTY));

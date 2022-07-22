@@ -94,8 +94,10 @@ public class DeliveryPartyController {
             @ApiResponse(code=4000,message = "서버 오류입니다.")
     })
     @PatchMapping("/delivery-party/{partyId}")
-    public BaseResponse<PatchDeliveryPartyStatusRes> patchDeliveryPartyStatusById(@PathVariable("partyId") int partyId){
-        PatchDeliveryPartyStatusRes response = deliveryPartyService.patchDeliveryPartyStatusById(partyId);
+    public BaseResponse<PatchDeliveryPartyStatusRes> patchDeliveryPartyStatusById(@PathVariable("partyId") int partyId, HttpServletRequest request){
+        JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
+
+        PatchDeliveryPartyStatusRes response = deliveryPartyService.patchDeliveryPartyStatusById(partyId, jwtInfo);
         return new BaseResponse<>(response);
     }
 }
