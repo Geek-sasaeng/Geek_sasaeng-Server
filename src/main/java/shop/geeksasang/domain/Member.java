@@ -142,14 +142,6 @@ public class Member extends BaseEntity {
         return false;
     }
 
-    public void addOneDayReportCount(){
-        perDayReportingCount++;
-    }
-
-    public boolean checkPerDayReportCopunt() {
-        return perDayReportingCount >= 3;
-    }
-
     public void addReportedCountAndCheckReportedCount() {
         reportedCount++;
         if(checkReportedCount()){
@@ -161,8 +153,17 @@ public class Member extends BaseEntity {
         return reportedCount >= 3;
     }
 
-    public void resetPerDayReportingCount(){
-        perDayReportingCount = 0;
+    public void addOneDayReportCountAndAddReportRecord(Member reportedMember) {
+        addOneDayReportCount();
+        addMemberReportRecord(reportedMember);
+    }
+
+    public void addOneDayReportCount(){
+        perDayReportingCount++;
+    }
+
+    public boolean checkPerDayReportCount() {
+        return perDayReportingCount >= 3;
     }
 
     public void addMemberReportRecord(Member reportedMember) {
@@ -172,4 +173,9 @@ public class Member extends BaseEntity {
     public void addDeliveryPartyReportRecord(DeliveryParty deliveryParty) {
         deliverPartyReportRecords.add(new DeliverPartyReportRecord(this, deliveryParty));
     }
+
+    public void resetPerDayReportingCount(){
+        perDayReportingCount = 0;
+    }
+
 }

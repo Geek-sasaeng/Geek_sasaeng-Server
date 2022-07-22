@@ -30,7 +30,7 @@ public class MemberReportService {
         Member member = memberRepository.findMemberById(memberId).orElseThrow(() -> new BaseException(NOT_EXIST_USER));
 
         //하루 신고 횟수 확인
-        if(member.checkPerDayReportCopunt()){
+        if(member.checkPerDayReportCount()){
             throw new BaseException(INVALID_REPORT_COUNT);
         }
 
@@ -51,14 +51,10 @@ public class MemberReportService {
         MemberReport report = dto.toEntity(member, reportedMember, dto, reportCategory);
         memberReportRepository.save(report);
 
-
-        //신고 기록에 추가
-        member.addMemberReportRecord(reportedMember);
-
-        //멤버 하루 총 신고 횟수 추가
-        member.addOneDayReportCount();
+        //멤버 하루 총 신고 횟수 추가 및 신고 기록 추가
+        member.addOneDayReportCountAndAddReportRecord(reportedMember);
 
         //신고당한 횟수추가 그리고 3회 이상이면 정지
-        member.addReportedCountAndCheckReportedCount();
+        reportedMember.addReportedCountAndCheckReportedCount();
     }
 }

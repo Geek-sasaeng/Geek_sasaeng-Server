@@ -35,7 +35,7 @@ public class DeliveryPartyReportService {
         Member member = memberRepository.findMemberById(memberId).orElseThrow(() -> new BaseException(NOT_EXIST_USER));
 
         //하루 총 신고 횟수 확인
-        if(member.checkPerDayReportCopunt()){
+        if(member.checkPerDayReportCount()){
             throw new BaseException(INVALID_REPORT_COUNT);
         }
 
