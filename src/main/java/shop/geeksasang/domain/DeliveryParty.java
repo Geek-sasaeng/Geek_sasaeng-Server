@@ -142,4 +142,9 @@ public class DeliveryParty extends BaseEntity {
             setStatus(BaseStatus.INACTIVE);
         }
     }
+
+    // 배달파티 삭제
+    public void changeStatusToInactive(){
+        super.setStatus(BaseStatus.INACTIVE);
+    }
 }

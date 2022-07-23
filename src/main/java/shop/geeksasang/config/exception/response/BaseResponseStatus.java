@@ -102,15 +102,17 @@ public enum BaseResponseStatus {
      * 제로
      * code : 2600~2799
      */
-    DUPLICATE_USER_NICKNAME(false, 2600, "중복된 닉네임입니다"),
-    ALREADY_INACTIVE_USER(false, 2601, "이미 탈퇴한 회원입니다"),
-    SAME_PASSWORDS(false, 2602, "기존 비밀번호와 동일합니다"),
-    EXISTS_LOGIN_ID(false, 2603, "중복된 아이디입니다"),
-    NOT_SPECIFIED_VALUE(false, 2604, "지정된 값이 아닙니다"),
-    NOT_EXISTS_UNIVERSITY_ID(false, 2605, "존재하지 않는 학교입니다"),
-    NOT_EXISTS_DORMITORY(false, 2606, "기숙사가 존재하지 않습니다"),
-    ALREADY_VALID_EMAIL(false, 2607, "이미 인증된 이메일 입니다"),
-    NOT_EXISTS_ORDER_TIME_CATEGORY(false, 2608, "존재하지 않는 시간 카테고리 입니다"),
+    DUPLICATE_USER_NICKNAME(false, 2600, "중복된 닉네임입니다."),
+    ALREADY_INACTIVE_USER(false, 2601, "이미 탈퇴한 회원입니다."),
+    SAME_PASSWORDS(false, 2602, "기존 비밀번호와 동일합니다."),
+    EXISTS_LOGIN_ID(false, 2603, "중복된 아이디입니다."),
+    NOT_SPECIFIED_VALUE(false, 2604, "지정된 값이 아닙니다."),
+    NOT_EXISTS_UNIVERSITY_ID(false, 2605, "존재하지 않는 학교입니다."),
+    NOT_EXISTS_DORMITORY(false, 2606, "기숙사가 존재하지 않습니다."),
+    ALREADY_VALID_EMAIL(false, 2607, "이미 인증된 이메일 입니다."),
+    NOT_EXISTS_ORDER_TIME_CATEGORY(false, 2608, "존재하지 않는 시간 카테고리 입니다."),
+    ALREADY_INACTIVE_DELIVERY_PARTY(false, 2609, "이미 삭제된 배달파티 입니다."),
+    DIFFERENT_USER_ID(false, 2610, "파티의 생성 유저가 아닙니다."),
 
     /**
      * 네오

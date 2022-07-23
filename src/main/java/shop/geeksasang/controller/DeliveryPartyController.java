@@ -122,4 +122,20 @@ public class DeliveryPartyController {
 
 
 
+
+    // 배달파티 삭제
+    @ApiOperation(value = "삭제 : 배달파티 삭제", notes = "삭제할 배달파티의 아이디값을 받아 배달파티를 삭제할 수 있다.")
+    @ApiResponses({
+            @ApiResponse(code =1000 ,message ="요청에 성공하였습니다."),
+            @ApiResponse(code =2010 ,message ="존재하지 않는 파티입니다"),
+            @ApiResponse(code=2609,message = "이미 삭제된 배달파티 입니다"),
+            @ApiResponse(code=4000,message = "서버 오류입니다.")
+    })
+    @PatchMapping("/delivery-party/{partyId}")
+    public BaseResponse<PatchDeliveryPartyStatusRes> patchDeliveryPartyStatusById(@PathVariable("partyId") int partyId, HttpServletRequest request){
+        JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
+
+        PatchDeliveryPartyStatusRes response = deliveryPartyService.patchDeliveryPartyStatusById(partyId, jwtInfo);
+        return new BaseResponse<>(response);
+    }
 }

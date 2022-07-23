@@ -8,6 +8,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import shop.geeksasang.config.status.BaseStatus;
+import shop.geeksasang.config.status.ValidStatus;
 import shop.geeksasang.config.type.OrderTimeCategoryType;
 import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.config.exception.response.BaseResponseStatus;
@@ -21,7 +23,10 @@ import shop.geeksasang.utils.ordertime.OrderTimeUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static shop.geeksasang.config.exception.response.BaseResponseStatus.*;
 
 
 @Transactional
@@ -30,6 +35,7 @@ import java.util.stream.Collectors;
 public class DeliveryPartyService {
 
     private final DeliveryPartyRepository deliveryPartyRepository;
+    private final DeliveryPartyMemberRepository deliveryPartyMemberRepository;
     private final MemberRepository memberRepository;
     private final DormitoryRepository dormitoryRepository;
     private final FoodCategoryRepository foodCategoryRepository;
@@ -188,6 +194,44 @@ public class DeliveryPartyService {
         GetDeliveryPartyDefaultLocationRes getDeliveryPartyDefaultLocationRes =  new GetDeliveryPartyDefaultLocationRes(getLatitude,getLongtitude);
 
         return getDeliveryPartyDefaultLocationRes;
+    }
+
+    //배달파티 삭제
+    @Transactional(readOnly = false)
+    public PatchDeliveryPartyStatusRes patchDeliveryPartyStatusById(int partyId, JwtInfo jwtInfo) {
+
+        Optional <DeliveryParty> partyOptional = deliveryPartyRepository.findDeliveryPartyById(partyId);
+        BaseStatus status = partyOptional.get().getStatus();
+        int chiefId = partyOptional.get().getChief().getId();
+        int userId = jwtInfo.getUserId();
+
+        // 이미 삭제된 배달 파티
+        if(status.equals(BaseStatus.INACTIVE)) {
+            throw new BaseException(ALREADY_INACTIVE_DELIVERY_PARTY);
+        }
+
+        // 배달파티 chief와 같은지 확인
+        if(chiefId != userId) {
+            throw new BaseException(DIFFERENT_USER_ID);
+        }
+
+
+        DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyById(partyId)
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTY));
+        deliveryParty.changeStatusToInactive();
+        deliveryPartyRepository.save(deliveryParty);
+
+        // 배달파티 멤버 status도 Inactive로 수정
+        List<DeliveryPartyMember> deliveryPartyMembers = deliveryPartyMemberRepository.findDeliveryPartyMembersById(partyId);
+
+        for( DeliveryPartyMember deliveryPartyMember : deliveryPartyMembers ){
+            deliveryPartyMember.changeStatusToInactive();
+        }
+
+        return PatchDeliveryPartyStatusRes.builder()
+                .deliveryPartyId(deliveryParty.getId())
+                .status(deliveryParty.getStatus().toString())
+                .build();
     }
 
 }
