@@ -26,10 +26,11 @@ public interface DeliveryPartyRepository extends JpaRepository<DeliveryParty,Int
     @Query("select dp from DeliveryParty dp where dp.dormitory.id = :dormitoryId and dp.orderTimeCategory = :orderTimeCategory and dp.matchingStatus = 'ONGOING' and dp.status = 'ACTIVE'")
     Slice<DeliveryParty> findDeliveryPartiesByOrderTime(int dormitoryId, @Param("orderTimeCategory") OrderTimeCategoryType orderTimeCategory, Pageable pageable);
 
+    @Query("select dp from DeliveryParty dp where dp.id = :deliveryPartyId and dp.status = 'ACTIVE' and dp.matchingStatus = 'ONGOING'")
     Optional<DeliveryParty> findDeliveryPartyById(int deliveryPartyId);
 
-    @Query("select dp.status from DeliveryParty dp where dp.id = :deliveryPartyId")
-    Optional<DeliveryParty> findDeliveryPartyStatusById(int deliveryPartyId);
+    @Query("select dp from DeliveryParty dp where dp.id = :deliveryPartyId and dp.status = 'ACTIVE' and dp.chief.id = :userId")
+    Optional<DeliveryParty> findDeliveryPartyByPartyId(int deliveryPartyId, int userId);
 
     @Query("select dp.chief from DeliveryParty dp where dp.id = :deliveryPartyId and dp.status = 'ACTIVE'")
     Optional<DeliveryParty> findDeliveryPartyChiefById(int deliveryPartyId);
