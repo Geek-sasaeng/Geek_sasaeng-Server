@@ -12,7 +12,7 @@ import shop.geeksasang.dto.report.PostMemberReportRegisterReq;
 import shop.geeksasang.repository.MemberReportRepository;
 import shop.geeksasang.repository.MemberRepository;
 
-import static shop.geeksasang.config.exception.response.BaseResponseStatus.NOT_EXIST_USER;
+import static shop.geeksasang.config.exception.response.BaseResponseStatus.*;
 
 @Service
 @Transactional
@@ -30,35 +30,31 @@ public class MemberReportService {
         Member member = memberRepository.findMemberById(memberId).orElseThrow(() -> new BaseException(NOT_EXIST_USER));
 
         //하루 신고 횟수 확인
-        if(member.checkPerDayReportCopunt()){
-            throw new RuntimeException("하루 3번만 신고 가능");
+        if(member.checkPerDayReportCount()){
+            throw new BaseException(INVALID_REPORT_COUNT);
         }
 
         //신고 당한 멤버가 이미 존재하는지 체크
         Member reportedMember = memberRepository.findMemberById(dto.getReportedMemberId())
                 .orElseThrow(() -> new BaseException(NOT_EXIST_USER));
 
-        //문제 없으면 멤버 id를 가져와서 신고를 넣고
+        //중복 신고인지 검사한다.
         if(member.containReportedMemberRecord(reportedMember)){
-            throw new RuntimeException("이미 신고함");
+            throw new BaseException(EXIST_REPORT_RECORD);
         }
 
         //카테고리 가져온다.
         ReportCategory reportCategory = reportCategoryRepository.findById(dto.getReportCategoryId())
-                .orElseThrow(() -> new RuntimeException("카테고리가 없음"));
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_REPORT_CATEGORY));
 
         //신고 생성
         MemberReport report = dto.toEntity(member, reportedMember, dto, reportCategory);
         memberReportRepository.save(report);
 
-
-        //신고 기록에 추가
+        //신고 기록 추가 & 하루 신고 제한 횟수 추가
         member.addMemberReportRecord(reportedMember);
 
-        //멤버 하루 총 신고 횟수 추가
-        member.addOneDayReportCount();
-
         //신고당한 횟수추가 그리고 3회 이상이면 정지
-        member.addReportedCountAndCheckReportedCount();
+        reportedMember.addReportedCountAndCheckReportedCount();
     }
 }

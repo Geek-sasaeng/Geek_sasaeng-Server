@@ -14,7 +14,7 @@ import javax.persistence.*;
 public abstract class ReportRecord extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "report_list_id")
+    @Column(name = "report_record_id")
     protected int id;
 
     @ManyToOne(fetch =  FetchType.LAZY)

@@ -27,26 +27,20 @@ public class Member extends BaseEntity {
     @Column(name="member_id")
     private int id;
 
-    @NotNull
     private String loginId;
 
-    @NotNull
     private String nickName;
 
-    @NotNull
     private String password;
 
-    @NotNull
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="university_id")
     private University university;
 
-    @NotNull
     @OneToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="phoneNumber_id", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private PhoneNumber phoneNumber;
 
-    @NotNull
     @OneToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="email_id", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private Email email;
@@ -55,14 +49,11 @@ public class Member extends BaseEntity {
 
     private String jwtToken;
 
-    @NotNull
     private String informationAgreeStatus; // 회원 정보 동의 여부
 
-    @NotNull
     @Enumerated(EnumType.STRING)
     private LoginStatus loginStatus; // 첫 번째 로그인인지 아닌지
 
-    @NotNull
     @Enumerated(EnumType.STRING)
     private MemberLoginType memberLoginType;
 
@@ -142,18 +133,10 @@ public class Member extends BaseEntity {
         return false;
     }
 
-    public void addOneDayReportCount(){
-        perDayReportingCount++;
-    }
-
-    public boolean checkPerDayReportCopunt() {
-        return perDayReportingCount >= 3;
-    }
-
     public void addReportedCountAndCheckReportedCount() {
         reportedCount++;
         if(checkReportedCount()){
-            setStatus(BaseStatus.INACTIVE); //이건 뭐 차후에 스테이터스를 추가할듯?
+            setStatus(BaseStatus.REPORTED); //신고 상태를 추가
         }
     }
 
@@ -161,15 +144,26 @@ public class Member extends BaseEntity {
         return reportedCount >= 3;
     }
 
-    public void resetPerDayReportingCount(){
-        perDayReportingCount = 0;
-    }
-
     public void addMemberReportRecord(Member reportedMember) {
+        addOneDayReportCount();
         memberReportRecords.add(new MemberReportRecord(this, reportedMember));
     }
 
     public void addDeliveryPartyReportRecord(DeliveryParty deliveryParty) {
+        addOneDayReportCount();
         deliverPartyReportRecords.add(new DeliverPartyReportRecord(this, deliveryParty));
     }
+
+    public void addOneDayReportCount(){
+        perDayReportingCount++;
+    }
+
+    public boolean checkPerDayReportCount() {
+        return perDayReportingCount >= 3;
+    }
+
+    public void resetPerDayReportingCount(){
+        perDayReportingCount = 0;
+    }
+
 }
