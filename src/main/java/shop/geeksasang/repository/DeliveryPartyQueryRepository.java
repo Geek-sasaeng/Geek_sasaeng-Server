@@ -3,14 +3,12 @@ package shop.geeksasang.repository;
 import com.querydsl.jpa.impl.JPAQueryFactory;;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
 import shop.geeksasang.config.status.BaseStatus;
 import shop.geeksasang.config.type.OrderTimeCategoryType;
 import shop.geeksasang.domain.DeliveryParty;
-import shop.geeksasang.dto.deliveryParty.get.DeliveryPartiesVo;
+import shop.geeksasang.dto.deliveryParty.get.vo.DeliveryPartiesVo;
 import shop.geeksasang.dto.deliveryParty.get.GetDeliveryPartiesRes;
 
 import javax.persistence.EntityManager;

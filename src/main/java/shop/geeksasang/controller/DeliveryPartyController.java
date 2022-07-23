@@ -107,8 +107,8 @@ public class DeliveryPartyController {
             @ApiResponse(code=4000,message = "서버 오류입니다.")
     })
     @GetMapping("/{dormitoryId}/delivery-parties/keyword")
-    public BaseResponse<List<GetDeliveryPartiesByKeywordRes>> getDeliveryPartiesByKeyword(@PathVariable("dormitoryId") int dormitoryId, @RequestParam String keyword, @RequestParam int cursor){
-        List<GetDeliveryPartiesByKeywordRes> response = deliveryPartyService.getDeliveryPartiesByKeyword(dormitoryId, keyword, cursor);
+    public BaseResponse<GetDeliveryPartiesRes> getDeliveryPartiesByKeyword(@PathVariable("dormitoryId") int dormitoryId, @RequestParam String keyword, @RequestParam int cursor){
+        GetDeliveryPartiesRes response = deliveryPartyService.getDeliveryPartiesByKeyword(dormitoryId, keyword, cursor);
         return new BaseResponse<>(response);
     }
 
@@ -118,9 +118,6 @@ public class DeliveryPartyController {
         GetDeliveryPartyDefaultLocationRes response = deliveryPartyService.getDeliveryPartyDefaultLocation(dormitoryId);
         return new BaseResponse<>(response);
     }
-
-
-
 
     // 배달파티 삭제
     @ApiOperation(value = "삭제 : 배달파티 삭제", notes = "삭제할 배달파티의 아이디값을 받아 배달파티를 삭제할 수 있다.")

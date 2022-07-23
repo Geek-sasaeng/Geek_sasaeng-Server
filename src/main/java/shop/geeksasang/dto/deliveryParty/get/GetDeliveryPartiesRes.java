@@ -2,6 +2,7 @@ package shop.geeksasang.dto.deliveryParty.get;
 
 import lombok.Getter;
 import lombok.Setter;
+import shop.geeksasang.dto.deliveryParty.get.vo.DeliveryPartiesVo;
 
 import java.util.List;
 

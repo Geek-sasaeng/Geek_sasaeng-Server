@@ -13,6 +13,7 @@ import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.config.exception.response.BaseResponseStatus;
 import shop.geeksasang.domain.*;
 import shop.geeksasang.dto.deliveryParty.get.*;
+import shop.geeksasang.dto.deliveryParty.get.vo.DeliveryPartiesVo;
 import shop.geeksasang.dto.deliveryParty.patch.PatchDeliveryPartyStatusRes;
 import shop.geeksasang.dto.deliveryParty.post.PostDeliveryPartyReq;
 import shop.geeksasang.dto.deliveryParty.post.PostDeliveryPartyRes;
@@ -154,7 +155,7 @@ public class DeliveryPartyService {
     }
 
     //배달파티 조회: 검색어로 조회
-    public List<GetDeliveryPartiesByKeywordRes> getDeliveryPartiesByKeyword(int dormitoryId, String keyword, int cursor){
+    public GetDeliveryPartiesRes getDeliveryPartiesByKeyword(int dormitoryId, String keyword, int cursor){
         // validation: 검색어 빈값
         if(keyword == null || keyword.isBlank()){
             throw new BaseException(BaseResponseStatus.BLANK_KEYWORD);
@@ -163,9 +164,11 @@ public class DeliveryPartyService {
         PageRequest paging = PageRequest.of(cursor, PAGING_SIZE, Sort.by(Sort.Direction.ASC, PAGING_STANDARD)); // 페이징 요구 객체
         Slice<DeliveryParty> deliveryParties = deliveryPartyRepository.findDeliveryPartiesByKeyword(dormitoryId, keyword, paging); // 페이징 반환 객체
 
-        return deliveryParties.stream()
-                .map(deliveryParty -> GetDeliveryPartiesByKeywordRes.toDto(deliveryParty)) // 배열 원소 변경 한번에 적용
-                .collect(Collectors.toList()); // List로 변경
+        List<DeliveryPartiesVo> list = deliveryParties.stream()
+                .map(deliveryParty -> DeliveryPartiesVo.toDto(deliveryParty))
+                .collect(Collectors.toList());
+
+        return new GetDeliveryPartiesRes(!deliveryParties.hasNext(), list); //다음 페이지가 있으면 파이널 페이지가 아니므로 !를 붙였다.
     }
 
 
