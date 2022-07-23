@@ -184,6 +184,7 @@ public class SmsService {
     }
 
 
+    // 인증 후 핸드폰 번호 등록
     @Transactional(readOnly = false)
     public PostVerifySmsRes verifySms(String verifyRandomNumber, String phoneNumber) {
         if(!isVerify(verifyRandomNumber, phoneNumber)){
@@ -198,5 +199,13 @@ public class SmsService {
 
     private boolean isVerify(String verifyRandomNumber, String phoneNumber){
         return smsRedisRepository.hasKey(phoneNumber) && smsRedisRepository.getSmsCertification(phoneNumber).equals(verifyRandomNumber);
+    }
+
+    // 소셜 로그인 시 DB에 핸드폰 번호 저장
+    @Transactional(readOnly = false)
+    public PhoneNumber savePhoneNumber(String phoneNumber){
+        phoneNumberRepository.findPhoneNumberByNumber(phoneNumber).orElseThrow(() -> new BaseException(DUPLICATE_USER_PHONENUMBER));
+        PhoneNumber phoneNumberEntity = PhoneNumber.builder().number(phoneNumber).phoneValidStatus(ValidStatus.SUCCESS).build();
+        return phoneNumberRepository.save(phoneNumberEntity);
     }
 }

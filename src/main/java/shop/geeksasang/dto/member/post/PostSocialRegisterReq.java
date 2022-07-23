@@ -48,9 +48,9 @@ public class PostSocialRegisterReq {
     @NotBlank
     private  String universityName;
 
-//    @ApiModelProperty(example = "1")
-//    @ApiParam(value = "사용자 학교 이메일", required = true)
-//    private Integer emailId;
+    @ApiModelProperty(example = "1")
+    @ApiParam(value = "사용자 학교 이메일", required = true)
+    private Integer emailId;
 
 //    @ApiModelProperty(example = "1")
 //    @ApiParam(value = "사용자 핸드폰 번호", required = true)
