@@ -27,6 +27,9 @@ public interface DeliveryPartyRepository extends JpaRepository<DeliveryParty,Int
     @Query("select dp from DeliveryParty dp where dp.id = :deliveryPartyId and dp.status = 'ACTIVE' and dp.matchingStatus = 'ONGOING'")
     Optional<DeliveryParty> findDeliveryPartyById(int deliveryPartyId);
 
+    @Query("select dp from DeliveryParty dp where dp.id = :deliveryPartyId and dp.status = 'ACTIVE' and dp.chief.id = :userId")
+    Optional<DeliveryParty> findDeliveryPartyByPartyId(int deliveryPartyId, int userId);
+
     @Query("select dp.chief from DeliveryParty dp where dp.id = :deliveryPartyId and dp.status = 'ACTIVE'")
     Optional<DeliveryParty> findDeliveryPartyChiefById(int deliveryPartyId);
 

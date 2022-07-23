@@ -110,6 +110,7 @@ public enum BaseResponseStatus {
     ALREADY_INACTIVE_DELIVERY_PARTY(false, 2609, "이미 삭제된 배달파티 입니다."),
     DIFFERENT_USER_ID(false, 2610, "파티의 생성 유저가 아닙니다."),
     CAN_NOT_PARTICIPATE(false, 2611, "참여할 수 없는 파티입니다."),
+    CAN_NOT_DELETE_PARTY(false, 2612, "삭제할 수 없는 파티입니다."),
 
     /**
      * 네오

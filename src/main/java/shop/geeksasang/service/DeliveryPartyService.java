@@ -141,24 +141,10 @@ public class DeliveryPartyService {
     @Transactional(readOnly = false)
     public PatchDeliveryPartyStatusRes patchDeliveryPartyStatusById(int partyId, JwtInfo jwtInfo) {
 
-        Optional <DeliveryParty> partyOptional = deliveryPartyRepository.findDeliveryPartyById(partyId);
-        BaseStatus status = partyOptional.get().getStatus();
-        int chiefId = partyOptional.get().getChief().getId();
         int userId = jwtInfo.getUserId();
 
-        // 이미 삭제된 배달 파티
-        if(status.equals(BaseStatus.INACTIVE)) {
-            throw new BaseException(ALREADY_INACTIVE_DELIVERY_PARTY);
-        }
-
-        // 배달파티 chief와 같은지 확인
-        if(chiefId != userId) {
-            throw new BaseException(DIFFERENT_USER_ID);
-        }
-
-
-        DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyById(partyId)
-                .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTY));
+        DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyByPartyId(partyId, userId)
+                .orElseThrow(() -> new BaseException(CAN_NOT_DELETE_PARTY));
         deliveryParty.changeStatusToInactive();
         deliveryPartyRepository.save(deliveryParty);
 
