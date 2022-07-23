@@ -23,9 +23,3 @@ public class DeliveryPartyReport extends Report {
         this.deliveryParty = deliveryParty;
     }
 }
-
-/**
- * 게시물 신고
- * 게시글 신고가 3개 이상일 때는, 그 게시글 삭제
- * 이미 신고를 한 게시물에는 다시 신고를 할 수 없음
- */

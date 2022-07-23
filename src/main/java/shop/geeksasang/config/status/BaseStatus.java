@@ -1,5 +1,5 @@
 package shop.geeksasang.config.status;
 
 public enum BaseStatus {
-    ACTIVE, INACTIVE
+    ACTIVE, INACTIVE, REPORTED
 }

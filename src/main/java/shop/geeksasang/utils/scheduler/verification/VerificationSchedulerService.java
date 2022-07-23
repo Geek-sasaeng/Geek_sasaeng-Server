@@ -1,24 +1,28 @@
-package shop.geeksasang.utils.scheduler;
+package shop.geeksasang.utils.scheduler.verification;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import shop.geeksasang.domain.VerificationCount;
 import shop.geeksasang.repository.VerificationCountRepository;
 
 import java.util.List;
 
-@Component
+@Service
 @RequiredArgsConstructor
-public class VerificationScheduler {
-    final VerificationCountRepository verificationCountRepository;
+public class VerificationSchedulerService {
 
-    // 핸드폰, 이메일 인증 횟수 초과 매일 자정에 초기화
-    @Scheduled(cron = "0 0 0 * * *")
+    private final VerificationCountRepository verificationCountRepository;
+
+    @Transactional(readOnly = false)
     public void resetVerificationCount(){
         List<VerificationCount> verificationCountList = verificationCountRepository.findAll();
         for(VerificationCount verificationCount: verificationCountList){
             verificationCount.resetVerificationCount();
         }
+
     }
+
 }
