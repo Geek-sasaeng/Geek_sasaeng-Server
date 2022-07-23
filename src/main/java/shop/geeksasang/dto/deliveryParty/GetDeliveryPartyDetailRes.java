@@ -83,8 +83,13 @@ public class GetDeliveryPartyDetailRes {
     @ApiParam(value="배달앱 주소")
     private String storeUrl;
 
+    @ApiModelProperty(example = "true")
+    @ApiParam(value = "작성자 본인 여부")
+    private boolean authorStatus;
+
+
     //빌더
-    static public GetDeliveryPartyDetailRes toDto(DeliveryParty deliveryParty){
+    static public GetDeliveryPartyDetailRes toDto(DeliveryParty deliveryParty,boolean authorStatus){
 
         return GetDeliveryPartyDetailRes.builder()
                 .id(deliveryParty.getId())
@@ -102,6 +107,7 @@ public class GetDeliveryPartyDetailRes {
                 .latitude(deliveryParty.getLocation().getLatitude())
                 .longitude(deliveryParty.getLocation().getLongitude())
                 .storeUrl(deliveryParty.getStoreUrl())
+                .authorStatus(authorStatus)
                 .build();
     }
 

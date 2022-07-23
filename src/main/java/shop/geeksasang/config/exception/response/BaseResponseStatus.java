@@ -94,6 +94,7 @@ public enum BaseResponseStatus {
     NOT_EXISTS_LOGINID(false,2400,"존재하지 않는 아이디입니다."),
     NOT_EXISTS_HASHTAG(false,2401,"존재하지 않는 해시태그입니다."),
     NOT_EXISTS_CATEGORY(false,2402,"존재하지 않는 카테고리입니다."),
+    NOT_EXISTS_PERMISSION_UPDATE(false,2403,"수정권한이 없는 유저입니다."),
 
 
 
