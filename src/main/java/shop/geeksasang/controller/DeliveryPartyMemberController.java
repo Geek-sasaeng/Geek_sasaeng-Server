@@ -13,8 +13,11 @@ import shop.geeksasang.config.response.BaseResponse;
 import shop.geeksasang.domain.DeliveryPartyMember;
 import shop.geeksasang.dto.deliveryPartyMember.PostDeliveryPartyMemberReq;
 import shop.geeksasang.dto.deliveryPartyMember.PostDeliveryPartyMemberRes;
+import shop.geeksasang.dto.login.JwtInfo;
 import shop.geeksasang.service.DeliveryPartyMemberService;
 import shop.geeksasang.utils.jwt.NoIntercept;
+
+import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping
@@ -30,9 +33,11 @@ public class DeliveryPartyMemberController {
             @ApiResponse(code=4000,message = "서버 오류입니다.")
     })
     @PostMapping("/deliveryPartyMember")
-    public BaseResponse<PostDeliveryPartyMemberRes> joinDeliveryPartyMember(@RequestBody PostDeliveryPartyMemberReq dto){
+    public BaseResponse<PostDeliveryPartyMemberRes> joinDeliveryPartyMember(@RequestBody PostDeliveryPartyMemberReq dto, HttpServletRequest request){
 
-        DeliveryPartyMember deliveryPartyMember= deliveryPartyMemberService.joinDeliveryPartyMember(dto);
+        JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
+
+        DeliveryPartyMember deliveryPartyMember= deliveryPartyMemberService.joinDeliveryPartyMember(dto, jwtInfo);
         PostDeliveryPartyMemberRes postDeliveryPartyMemberRes = PostDeliveryPartyMemberRes.toDto(deliveryPartyMember);
         return new BaseResponse<>(postDeliveryPartyMemberRes);
     }
