@@ -32,8 +32,8 @@ public interface DeliveryPartyRepository extends JpaRepository<DeliveryParty,Int
     @Query("select dp from DeliveryParty dp where dp.id = :deliveryPartyId and dp.status = 'ACTIVE' and dp.chief.id = :userId")
     Optional<DeliveryParty> findDeliveryPartyByPartyId(int deliveryPartyId, int userId);
 
-    @Query("select dp.chief from DeliveryParty dp where dp.id = :deliveryPartyId and dp.status = 'ACTIVE'")
-    Optional<DeliveryParty> findDeliveryPartyChiefById(int deliveryPartyId);
+    @Query("select dp from DeliveryParty dp where dp.id = :deliveryPartyId and dp.status = 'ACTIVE'")
+    Optional<DeliveryParty> findDeliveryPartyByIdAndStatus(int deliveryPartyId);
 
     //배달파티 조회: 검색어로 조회
     @Query("select dp from DeliveryParty dp " +

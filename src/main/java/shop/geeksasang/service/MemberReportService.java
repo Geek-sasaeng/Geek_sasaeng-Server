@@ -27,7 +27,7 @@ public class MemberReportService {
     public void registerMemberReport(PostMemberReportRegisterReq dto, JwtInfo jwtInfo){
         //멤버를 가져온다.
         int memberId = jwtInfo.getUserId();
-        Member member = memberRepository.findMemberById(memberId).orElseThrow(() -> new BaseException(NOT_EXIST_USER));
+        Member member = memberRepository.findMemberByIdAndStatus(memberId).orElseThrow(() -> new BaseException(NOT_EXIST_USER));
 
         //하루 신고 횟수 확인
         if(member.checkPerDayReportCount()){
@@ -35,7 +35,7 @@ public class MemberReportService {
         }
 
         //신고 당한 멤버가 우리 애플리케이션 이미 존재하는지 체크
-        Member reportedMember = memberRepository.findMemberById(dto.getReportedMemberId())
+        Member reportedMember = memberRepository.findMemberByIdAndStatus(dto.getReportedMemberId())
                 .orElseThrow(() -> new BaseException(NOT_EXIST_USER));
 
         //중복 신고인지 검사한다.
