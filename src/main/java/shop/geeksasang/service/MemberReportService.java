@@ -34,7 +34,7 @@ public class MemberReportService {
             throw new BaseException(INVALID_REPORT_COUNT);
         }
 
-        //신고 당한 멤버가 이미 존재하는지 체크
+        //신고 당한 멤버가 우리 애플리케이션 이미 존재하는지 체크
         Member reportedMember = memberRepository.findMemberById(dto.getReportedMemberId())
                 .orElseThrow(() -> new BaseException(NOT_EXIST_USER));
 
