@@ -77,6 +77,51 @@ public class DeliveryPartyService {
 
         return PostDeliveryPartyRes.toDto(party);
     }
+    @Transactional(readOnly = false)
+    public PutDeliveryPartyRes updateDeliveryParty(int partyId, PutDeliveryPartyReq dto, JwtInfo jwtInfo){
+        int chiefId = jwtInfo.getUserId();
+
+        //요청 보낸 사용자 Member 찾기
+        int memberId = jwtInfo.getUserId();
+        Member findMember = memberRepository.findById(memberId).
+                orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTICIPANT));
+
+        DeliveryParty deliveryParty = deliveryPartyRepository.findById(partyId).
+                orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTY));
+
+        //요청 보낸 사용자와 파티 chief 비교
+        if(!findMember.equals(deliveryParty.getChief())){
+            throw new BaseException(BaseResponseStatus.NOT_EXISTS_PERMISSION_UPDATE);
+        }
+
+        //파티장
+        Member chief = memberRepository.findById(chiefId)
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTICIPANT));
+
+        //기숙사
+        Dormitory dormitory = dormitoryRepository.findById(dto.getDormitory())
+                .orElseThrow(() ->  new BaseException(BaseResponseStatus.NOT_EXISTS_DORMITORY));
+
+        //카테고리
+        FoodCategory foodCategory = foodCategoryRepository.findById(dto.getFoodCategory())
+                .orElseThrow(() ->  new BaseException(BaseResponseStatus.NOT_EXISTS_CATEGORY));
+
+        //해시태그 -- 기존 로직 유지
+        List<HashTag> hashTagList = new ArrayList<>();
+
+        if(dto.isHashTag()){
+            HashTag hashTag = hashTagRepository.findById(1).orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_HASHTAG));
+            hashTagList.add(hashTag);
+        }
+        //orderTime 분류화
+        OrderTimeCategoryType orderTimeCategory = OrderTimeUtils.selectOrderTime(dto.getOrderTime().getHour());
+
+        // 파티 생성 및 저장. 이렇게 의존성이 많이 발생하는데 더 좋은 방법이 있지 않을까?
+        DeliveryParty resDeliveryParty = deliveryParty.updateParty(dto, orderTimeCategory, dormitory, foodCategory, chief, hashTagList);
+
+        return PutDeliveryPartyRes.toDto(resDeliveryParty);
+
+    }
 
     //배달파티 상세조회:
     public GetDeliveryPartyDetailRes getDeliveryPartyDetailById(int partyId, JwtInfo jwtInfo){
