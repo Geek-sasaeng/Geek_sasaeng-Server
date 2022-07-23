@@ -11,6 +11,7 @@ import shop.geeksasang.domain.DeliveryParty;
 import shop.geeksasang.domain.DeliveryPartyHashTag;
 
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -87,6 +88,9 @@ public class GetDeliveryPartyDetailRes {
     @ApiParam(value = "작성자 본인 여부")
     private boolean authorStatus;
 
+    @ApiModelProperty(example = "1")
+    @ApiParam(value = "기숙사 id")
+    private int dormitory;
 
     //빌더
     static public GetDeliveryPartyDetailRes toDto(DeliveryParty deliveryParty,boolean authorStatus){
@@ -108,6 +112,7 @@ public class GetDeliveryPartyDetailRes {
                 .longitude(deliveryParty.getLocation().getLongitude())
                 .storeUrl(deliveryParty.getStoreUrl())
                 .authorStatus(authorStatus)
+                .dormitory(deliveryParty.getDormitory().getId())
                 .build();
     }
 
