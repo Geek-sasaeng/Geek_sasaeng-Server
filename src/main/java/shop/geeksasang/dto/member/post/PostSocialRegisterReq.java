@@ -48,13 +48,17 @@ public class PostSocialRegisterReq {
     @NotBlank
     private  String universityName;
 
-    @ApiModelProperty(example = "1")
-    @ApiParam(value = "사용자 학교 이메일", required = true)
-    private Integer emailId;
+//    @ApiModelProperty(example = "1")
+//    @ApiParam(value = "사용자 학교 이메일", required = true)
+//    private Integer emailId;
 
-    @ApiModelProperty(example = "1")
-    @ApiParam(value = "사용자 핸드폰 번호", required = true)
-    private Integer phoneNumberId;
+//    @ApiModelProperty(example = "1")
+//    @ApiParam(value = "사용자 핸드폰 번호", required = true)
+//    private Integer phoneNumberId
+
+    @ApiModelProperty(example = "https://nid.naver.com/oauth2.0/token?grant_type=authorization_code&client_id=jyvqXeaVOVmV&client_secret=527300A0_COq1_XV33cf&code=EIc5bFrl4RibFls1&state=9kgsGTfH4j7IyAkg")
+    @ApiParam(value = "네이버 로그인 요청 URL", required = true)
+    private String loginURL;
 
     @ApiModelProperty(example = "Y")
     @ApiParam(value = "사용자 회원 정보 동의 여부", required = true)

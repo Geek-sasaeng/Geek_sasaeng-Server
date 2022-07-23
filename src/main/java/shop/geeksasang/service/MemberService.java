@@ -101,6 +101,7 @@ public class MemberService {
         if(!dto.getInformationAgreeStatus().equals("Y")){
             throw new BaseException(INVALID_INFORMATIONAGREE_STATUS);
         }
+
         // 검증: 이메일 인증 여부
         if(memberRepository.findMemberByEmailId(dto.getEmailId()).isPresent()){
             throw new BaseException(ALREADY_VALID_EMAIL);
