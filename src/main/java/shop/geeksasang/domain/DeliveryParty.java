@@ -11,6 +11,7 @@ import shop.geeksasang.config.domain.BaseEntity;
 import shop.geeksasang.config.status.MatchingStatus;
 import shop.geeksasang.config.type.OrderTimeCategoryType;
 import shop.geeksasang.config.status.BaseStatus;
+import shop.geeksasang.domain.report.DeliveryPartyReport;
 import shop.geeksasang.dto.deliveryParty.PostDeliveryPartyReq;
 
 import java.time.LocalDateTime;
@@ -66,13 +67,24 @@ public class DeliveryParty extends BaseEntity {
     @OneToMany(mappedBy = "deliveryParty")
     private List<DeliveryPartyReport> deliveryPartyReports;
 
+    private String storeUrl;
+
+    private int reportedCount;
+
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name="latitude",column = @Column(name="latitude")),
+            @AttributeOverride(name="longitude", column = @Column(name="longitude"))
+    })
+    private Location location;
+
     public static DeliveryParty makeParty(PostDeliveryPartyReq dto, OrderTimeCategoryType orderTimeCategory, Dormitory dormitory, FoodCategory foodCategory, Member chief, List<HashTag> hashTagList) {
         DeliveryParty party = DeliveryParty.builder()
                 .title(dto.getTitle())
                 .content(dto.getContent())
                 .orderTime(dto.getOrderTime())
                 .maxMatching(dto.getMaxMatching())
-                .location(dto.getLocation())
+                .location(new Location(dto.getLatitude(),dto.getLongitude()))
                 .chief(chief)
                 .foodCategory(foodCategory)
                 .orderTimeCategory(orderTimeCategory)
@@ -80,6 +92,8 @@ public class DeliveryParty extends BaseEntity {
                 .deliveryPartyHashTags(new ArrayList<>())
                 .matchingStatus(MatchingStatus.ONGOING)
                 .currentMatching(1)
+                .storeUrl(dto.getStoreUrl())
+                .reportedCount(0)
                 .build();
 
         party.setStatus(BaseStatus.ACTIVE);
@@ -90,6 +104,21 @@ public class DeliveryParty extends BaseEntity {
             party.deliveryPartyHashTags.add(deliveryPartyHashTag);
         }
         return party;
+    }
+
+    public void addReportedCount() {
+        reportedCount++;
+    }
+
+    public void checkReportedCount() {
+        if(reportedCount >= 3){
+            setStatus(BaseStatus.INACTIVE);
+        }
+    }
+
+    public void addReportedCountAndCheckReportedCount() {
+        addReportedCount();
+        checkReportedCount();
     }
 
     // 배달파티 삭제

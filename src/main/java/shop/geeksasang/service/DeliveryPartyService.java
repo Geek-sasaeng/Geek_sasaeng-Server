@@ -13,6 +13,7 @@ import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.config.exception.response.BaseResponseStatus;
 import shop.geeksasang.domain.*;
 import shop.geeksasang.dto.deliveryParty.*;
+import shop.geeksasang.dto.email.PostEmailCertificationRes;
 import shop.geeksasang.dto.login.JwtInfo;
 import shop.geeksasang.repository.*;
 import shop.geeksasang.utils.ordertime.OrderTimeUtils;
@@ -61,10 +62,11 @@ public class DeliveryPartyService {
         FoodCategory foodCategory = foodCategoryRepository.findById(dto.getFoodCategory())
                 .orElseThrow(() ->  new BaseException(BaseResponseStatus.NOT_EXISTS_CATEGORY));
 
-        //해시태그
+        //해시태그 -- 기존 로직 유지
         List<HashTag> hashTagList = new ArrayList<>();
-        for (Integer hashTagId : dto.getHashTag()) {
-            HashTag hashTag = hashTagRepository.findById(hashTagId).orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_HASHTAG));
+
+        if(dto.isHashTag()){
+            HashTag hashTag = hashTagRepository.findById(dto.getFoodCategory()).orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_HASHTAG));
             hashTagList.add(hashTag);
         }
 
@@ -120,6 +122,17 @@ public class DeliveryPartyService {
         return deliveryParties.stream()
                 .map(deliveryParty -> GetDeliveryPartiesRes.toDto(deliveryParty))
                 .collect(Collectors.toList());
+    }
+
+    //
+    public GetDeliveryPartyDefaultLocationRes getDeliveryPartyDefaultLocation(int domitoryId){
+        Dormitory dormitory = dormitoryRepository.findById(domitoryId).orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_DORMITORY));
+
+        Double getLatitude = dormitory.getLocation().getLatitude(); //위도
+        Double getLongtitude = dormitory.getLocation().getLongitude(); //경도
+        GetDeliveryPartyDefaultLocationRes getDeliveryPartyDefaultLocationRes =  new GetDeliveryPartyDefaultLocationRes(getLatitude,getLongtitude);
+
+        return getDeliveryPartyDefaultLocationRes;
     }
 
     //배달파티 삭제

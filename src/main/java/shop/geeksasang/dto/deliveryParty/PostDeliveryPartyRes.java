@@ -44,10 +44,6 @@ public class PostDeliveryPartyRes {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime orderTime;
 
-    @ApiModelProperty(example ="[" +"매칭 시 바로 주문" +","+"같이 먹고 싶어요" + "]")
-    @ApiParam(value = "해시태그 내용")
-    private List<String> hashTags;
-
     @ApiModelProperty(example = "2022-07-13 13:29:30")
     @ApiParam(value = "배달 파티 생성 시간")
     private String createdAt;
@@ -64,13 +60,26 @@ public class PostDeliveryPartyRes {
     @ApiParam(value = "배달 파티 총 인원")
     private int maxMatching;
 
-    @ApiModelProperty(example = "1기숙사")
-    @ApiParam(value = "수령 장소")
-    private String location;
-
     @ApiModelProperty(example = "ONGOING")
     @ApiParam(value = "주문 진행 상태")
     private String matchingStatus;
+
+    @ApiModelProperty(example = "https://baemin.me/mUpLJ7qBk")
+    @ApiParam(value = "배달 업소 url")
+    private String storeUrl;
+
+    @ApiModelProperty(example = "37.456335")
+    @ApiParam(value="위도")
+    private Double latitude;
+
+    @ApiModelProperty(example = "127.135331")
+    @ApiParam(value="경도")
+    private Double longitude;
+
+    @ApiModelProperty(example = "true")
+    @ApiParam(value = "해시태그 추가 여부")
+    private boolean hashTag;
+
 
     static public PostDeliveryPartyRes toDto(DeliveryParty deliveryParty){
 
@@ -81,14 +90,15 @@ public class PostDeliveryPartyRes {
                 .title(deliveryParty.getTitle())
                 .content(deliveryParty.getContent())
                 .orderTime(deliveryParty.getOrderTime())
-                .hashTags(deliveryParty.getDeliveryPartyHashTags().stream().map(deliveryPartyHashTag ->
-                        deliveryPartyHashTag.getHashTag().getTitle()).collect(Collectors.toList()))
                 .createdAt(deliveryParty.getCreatedAt())
                 .orderTimeCategoryType(deliveryParty.getOrderTimeCategory().toString())
                 .currentMatching(deliveryParty.getCurrentMatching())
                 .maxMatching(deliveryParty.getMaxMatching())
-                .location(deliveryParty.getLocation())
                 .matchingStatus(deliveryParty.getMatchingStatus().toString())
+                .storeUrl(deliveryParty.getStoreUrl())
+                .latitude(deliveryParty.getLocation().getLatitude())
+                .longitude(deliveryParty.getLocation().getLongitude())
+                .hashTag(!deliveryParty.getDeliveryPartyHashTags().isEmpty())
                 .build();
     }
 }

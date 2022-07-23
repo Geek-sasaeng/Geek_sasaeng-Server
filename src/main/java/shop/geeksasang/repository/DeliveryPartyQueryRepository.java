@@ -7,14 +7,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
-
 import shop.geeksasang.config.type.OrderTimeCategoryType;
 import shop.geeksasang.domain.DeliveryParty;
-
 import javax.persistence.EntityManager;
-
 import java.util.List;
-
 import static shop.geeksasang.domain.QDeliveryParty.*;
 
 

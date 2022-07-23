@@ -13,7 +13,6 @@ import shop.geeksasang.config.response.BaseResponse;
 import shop.geeksasang.dto.deliveryParty.*;
 import shop.geeksasang.dto.login.JwtInfo;
 import shop.geeksasang.service.DeliveryPartyService;
-import shop.geeksasang.utils.jwt.NoIntercept;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -79,11 +78,30 @@ public class DeliveryPartyController {
             @ApiResponse(code=2205,message = "검색어를 입력해주세요"),
             @ApiResponse(code=4000,message = "서버 오류입니다.")
     })
-    @GetMapping("/{dormitoryId}/delivery-parties/keyword/{keyword}")
-    public BaseResponse<List<GetDeliveryPartiesByKeywordRes>> getDeliveryPartiesByKeyword(@PathVariable("dormitoryId") int dormitoryId, @PathVariable("keyword") String keyword,@RequestParam int cursor){
+    @GetMapping("/{dormitoryId}/delivery-parties/keyword")
+    public BaseResponse<List<GetDeliveryPartiesByKeywordRes>> getDeliveryPartiesByKeyword(@PathVariable("dormitoryId") int dormitoryId, @RequestParam String keyword,@RequestParam int cursor){
         List<GetDeliveryPartiesByKeywordRes> response = deliveryPartyService.getDeliveryPartiesByKeyword(dormitoryId, keyword, cursor);
         return new BaseResponse<>(response);
     }
+
+    //기숙사별 default 위도, 경도 조회
+    @GetMapping("/{dormitoryId}/default-location")
+    public  BaseResponse<GetDeliveryPartyDefaultLocationRes> getDeliveryPartyDefaultLocation(@PathVariable("dormitoryId") int dormitoryId){
+        GetDeliveryPartyDefaultLocationRes response = deliveryPartyService.getDeliveryPartyDefaultLocation(dormitoryId);
+        return new BaseResponse<>(response);
+    }
+
+    //배달파티 수정
+    //@PutMapping("/delivery-party/{partyId}")
+    //public BaseResponse<PutDeliveryPartyRes> updateDeliveryParty(@PathVariable("partyId") int partyId, @Validated @RequestBody PutDeliveryPartyReq dto,  HttpServletRequest request){
+
+    //    JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
+
+    //   PutDeliveryPartyRes putDeliveryPartyRes = deliveryPartyService.updateDeliveryParty(dto, jwtInfo);
+     //   return new BaseResponse<>(putDeliveryPartyRes);
+   // }
+
+
 
     // 배달파티 삭제
     @ApiOperation(value = "삭제 : 배달파티 삭제", notes = "삭제할 배달파티의 아이디값을 받아 배달파티를 삭제할 수 있다.")
