@@ -31,20 +31,12 @@ public class DeliveryPartyMemberService {
         DeliveryPartyMember deliveryPartyMember = dto.toEntity();
         int userId = jwtInfo.getUserId();
 
-        Optional<DeliveryParty> partyOptional = deliveryPartyRepository.findDeliveryPartyById(dto.getPartyId());
-        BaseStatus status = partyOptional.get().getStatus();
-
         //엔티티 조회
         Member participant = memberRepository.findById(userId)
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTICIPANT));
 
-        DeliveryParty party= deliveryPartyRepository.findById(dto.getPartyId())
-        .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTY));
-
-        // 삭제된 파티에는 참여할 수 없음.
-        if(status.equals(BaseStatus.INACTIVE)) {
-            throw new BaseException(CAN_NOT_PARTICIPATE);
-        }
+        DeliveryParty party= deliveryPartyRepository.findDeliveryPartyById(dto.getPartyId())
+        .orElseThrow(() -> new BaseException(CAN_NOT_PARTICIPATE));
 
         deliveryPartyMember.connectParticipant(participant);
         deliveryPartyMember.connectParty(party);
