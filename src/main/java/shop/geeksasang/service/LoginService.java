@@ -10,9 +10,7 @@ import shop.geeksasang.config.status.BaseStatus;
 import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.config.exception.response.BaseResponseStatus;
 import shop.geeksasang.domain.Member;
-import shop.geeksasang.dto.login.PostLoginReq;
-import shop.geeksasang.dto.login.PostLoginRes;
-import shop.geeksasang.dto.login.JwtInfo;
+import shop.geeksasang.dto.login.*;
 import shop.geeksasang.repository.MemberRepository;
 import shop.geeksasang.utils.encrypt.SHA256;
 import shop.geeksasang.utils.jwt.JwtService;
@@ -36,7 +34,6 @@ public class LoginService {
 
         String password = SHA256.encrypt(dto.getPassword());
         LoginStatus loginStatus = member.getLoginStatus(); // 로그인 횟수 상태
-
 
         //password
         if(!password.equals(member.getPassword())){
@@ -64,6 +61,9 @@ public class LoginService {
                 .jwt(jwt)
                 .loginStatus(loginStatus)
                 .build();
+    }
+    public PostSocialLoginRes socialLogin(PostSocialLoginReq dto){
+
     }
 
     @GetMapping

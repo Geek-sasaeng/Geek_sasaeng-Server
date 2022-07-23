@@ -27,6 +27,7 @@ import shop.geeksasang.repository.PhoneNumberRepository;
 import shop.geeksasang.repository.UniversityRepository;
 import shop.geeksasang.utils.jwt.RedisUtil;
 import shop.geeksasang.utils.encrypt.SHA256;
+import shop.geeksasang.utils.restTemplate.NaverLoginRequest;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -45,7 +46,7 @@ public class MemberService {
 
     private final SmsService smsService;
 
-    private final RestTemplate restTemplate;
+    private final NaverLoginRequest naverLoginRequest;
 
     // 회원 가입하기
     @Transactional(readOnly = false)
@@ -97,18 +98,7 @@ public class MemberService {
     @Transactional(readOnly = false)
     public PostSocialRegisterRes registerSocialMember(PostSocialRegisterReq dto){
         // 네이버 사용자 토큰 받아오기
-        String phoneNumber = null;
-        String loginId = null;
-        try{
-            NaverLoginResponse response = restTemplate.getForObject(dto.getLoginURL(), NaverLoginResponse.class);
-            NaverLoginData data = response.getResponse();
-            phoneNumber = data.getPhoneNumber();
-            loginId = data.getEmail();
-        }catch(HttpStatusCodeException e){
-            if(e.getStatusCode() == HttpStatus.NOT_FOUND){
-                throw new BaseException(NAVER_LOGIN_ERROR);
-            }
-        }
+        NaverLoginData naverLoginData = naverLoginRequest.getToken(dto.getLoginURL());
         if(phoneNumber == null || loginId == null){
             throw new BaseException(NAVER_LOGIN_ERROR);
         }

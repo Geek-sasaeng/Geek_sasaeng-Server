@@ -12,6 +12,7 @@ public class NaverLoginResponse implements Serializable {
     private NaverLoginData response;
 }
 @Data
+public
 class NaverLoginData {
     private String email;
     private String phoneNumber;
