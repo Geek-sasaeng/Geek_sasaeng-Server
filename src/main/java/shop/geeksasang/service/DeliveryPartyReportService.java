@@ -40,6 +40,7 @@ public class DeliveryPartyReportService {
         }
 
         //배달파티 id를 가져옴.
+        //TODO INACTIVE 추가
         DeliveryParty deliveryParty = deliveryPartyRepository.findById(dto.getReportedDeliveryPartyId())
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTY));
 
@@ -47,8 +48,6 @@ public class DeliveryPartyReportService {
         if(member.containReportedDeliveryPartyRecord(deliveryParty)){
             throw new BaseException(EXIST_REPORT_RECORD);
         }
-
-
 
         //카테고리 가져온다.
         ReportCategory reportCategory = reportCategoryRepository.findById(dto.getReportCategoryId())

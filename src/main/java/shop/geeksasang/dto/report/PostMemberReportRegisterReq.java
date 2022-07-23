@@ -30,11 +30,6 @@ public class PostMemberReportRegisterReq {
     @Size(min = 0, max = 100)
     private String reportContent;
 
-    @ApiModelProperty(example = "부가적인 신고 내용입니다.")
-    @ApiParam(value = "신고에 관한 부가적인 내용", required = true)
-    @Size(min = 0, max = 100)
-    private String additionalContent;
-
     @ApiModelProperty(example = "true")
     @ApiParam(value = "멤버 차단 여부", required = true)
     @NotNull
@@ -45,7 +40,6 @@ public class PostMemberReportRegisterReq {
                 .reportingMember(member)
                 .reportedMember(reportedMember)
                 .reportContent(dto.getReportContent())
-                .additionalContent(dto.getAdditionalContent())
                 .reportCategory(reportCategory)
                 .build();
     }
