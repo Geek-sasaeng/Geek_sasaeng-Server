@@ -34,6 +34,7 @@ public class DeliveryPartyMemberService {
 
         deliveryPartyMember.connectParticipant(participant);
         deliveryPartyMember.connectParty(party);
+        deliveryPartyMember.changeStatusToActive();
 
         deliveryPartyMemberRepository.save(deliveryPartyMember);
         return deliveryPartyMember;

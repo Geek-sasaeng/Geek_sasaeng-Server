@@ -9,7 +9,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import shop.geeksasang.config.exception.BaseException;
+import shop.geeksasang.config.exception.response.BaseResponseStatus;
 import shop.geeksasang.config.response.BaseResponse;
+import shop.geeksasang.domain.DeliveryParty;
+import shop.geeksasang.domain.Dormitory;
+import shop.geeksasang.domain.FoodCategory;
+import shop.geeksasang.domain.Member;
 import shop.geeksasang.dto.deliveryParty.*;
 import shop.geeksasang.dto.login.JwtInfo;
 import shop.geeksasang.service.DeliveryPartyService;
@@ -42,6 +48,27 @@ public class DeliveryPartyController {
         return new BaseResponse<>(postDeliveryPartyRes);
     }
 
+    //배달 파티 수정
+    @ApiOperation(value = "배닥 파티 수정", notes = "글을 작성한 사용자는 배달 파티 내용을 수정할 수 있습니다. \n"+
+            "* 게시물 수정은 기존(수정 전) 게시물 데이터를 body에 담아 요청해야 합니다.(jwt토큰 값 필요) ")
+    @ApiResponses({
+            @ApiResponse(code =1000 ,message ="요청에 성공하였습니다"),
+            @ApiResponse(code =2009 ,message ="존재하지 않는 멤버입니다"),
+            @ApiResponse(code =2606 ,message ="기숙사가 존재하지 않습니다"),
+            @ApiResponse(code =2402 ,message ="존재하지 않는 카테고리입니다"),
+            @ApiResponse(code = 2010, message = "존재하지 않는 파티입니다."),
+            @ApiResponse(code = 2403, message = "수정권한이 없는 유저입니다."),
+            @ApiResponse(code =4000 ,message = "서버 오류입니다.")
+    })
+    @PutMapping("/delivery-party/{partyId}")
+    public BaseResponse<PutDeliveryPartyRes> updateDeliveryParty(@PathVariable("partyId") int partyId, @Validated @RequestBody PutDeliveryPartyReq dto,  HttpServletRequest request){
+
+        JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
+
+        PutDeliveryPartyRes putDeliveryPartyRes = deliveryPartyService.updateDeliveryParty(partyId,dto, jwtInfo);
+        return new BaseResponse<>(putDeliveryPartyRes);
+    }
+
     //배달파티 조회 (필터 및 전체 조회)
     @ApiOperation(value = "배달파티 조회", notes = "cursor은 0부터 시작. dormitoryId는 현재 대학교 id. 쿼리 스트링(orderTimeCategory, maxMatching)은 생략 가능합니다 \n " +
             "예시 1. 필터 기반 검색이 아닌 배달 파티 전체 조회 : https://geeksasaeng.shop/1/delivery-parties?cursor=0 \n" +
@@ -62,11 +89,13 @@ public class DeliveryPartyController {
     @ApiResponses({
             @ApiResponse(code =1000 ,message ="요청에 성공하셨습니다."),
             @ApiResponse(code = 2010, message = "존재하지 않는 파티입니다."),
+            @ApiResponse(code =2009 ,message ="존재하지 않는 멤버입니다"),
             @ApiResponse(code=4000,message = "서버 오류입니다.")
     })
     @GetMapping("/delivery-party/{partyId}")
-    public BaseResponse<GetDeliveryPartyDetailRes> getDeliveryPartyDetailById(@PathVariable("partyId") int partyId){
-        GetDeliveryPartyDetailRes response = deliveryPartyService.getDeliveryPartyDetailById(partyId);
+    public BaseResponse<GetDeliveryPartyDetailRes> getDeliveryPartyDetailById(@PathVariable("partyId") int partyId, HttpServletRequest request){
+        JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
+        GetDeliveryPartyDetailRes response = deliveryPartyService.getDeliveryPartyDetailById(partyId, jwtInfo);
 
         return new BaseResponse<>(response);
     }
@@ -91,15 +120,22 @@ public class DeliveryPartyController {
         return new BaseResponse<>(response);
     }
 
-    //배달파티 수정
-    //@PutMapping("/delivery-party/{partyId}")
-    //public BaseResponse<PutDeliveryPartyRes> updateDeliveryParty(@PathVariable("partyId") int partyId, @Validated @RequestBody PutDeliveryPartyReq dto,  HttpServletRequest request){
-
-    //    JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
-
-    //   PutDeliveryPartyRes putDeliveryPartyRes = deliveryPartyService.updateDeliveryParty(dto, jwtInfo);
-     //   return new BaseResponse<>(putDeliveryPartyRes);
-   // }
 
 
+
+    // 배달파티 삭제
+    @ApiOperation(value = "삭제 : 배달파티 삭제", notes = "삭제할 배달파티의 아이디값을 받아 배달파티를 삭제할 수 있다.")
+    @ApiResponses({
+            @ApiResponse(code =1000 ,message ="요청에 성공하였습니다."),
+            @ApiResponse(code =2010 ,message ="존재하지 않는 파티입니다"),
+            @ApiResponse(code=2609,message = "이미 삭제된 배달파티 입니다"),
+            @ApiResponse(code=4000,message = "서버 오류입니다.")
+    })
+    @PatchMapping("/delivery-party/{partyId}")
+    public BaseResponse<PatchDeliveryPartyStatusRes> patchDeliveryPartyStatusById(@PathVariable("partyId") int partyId, HttpServletRequest request){
+        JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
+
+        PatchDeliveryPartyStatusRes response = deliveryPartyService.patchDeliveryPartyStatusById(partyId, jwtInfo);
+        return new BaseResponse<>(response);
+    }
 }
