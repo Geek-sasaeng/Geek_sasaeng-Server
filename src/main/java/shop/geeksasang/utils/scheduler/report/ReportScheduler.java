@@ -12,7 +12,7 @@ public class ReportScheduler {
 
     private final ReportSchedulerService reportSchedulerService;
 
-    //하루 최대 신고 회수 3회 초기화가
+    //하루 최대 신고 회수 3회 초기화
     @Scheduled(cron = "0 0 0 * * *")
     public void resetPerDayMemberReportingCount(){
         reportSchedulerService.resetPerDayMemberReportingCount();

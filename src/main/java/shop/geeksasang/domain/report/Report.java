@@ -29,8 +29,6 @@ public abstract class Report extends BaseEntity {
 
     public String reportContent;
 
-    public String additionalContent;
-
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="report_category_id")
     public ReportCategory reportCategory;
@@ -42,7 +40,6 @@ public abstract class Report extends BaseEntity {
         this.reportingMember = reportingMember;
         this.reportedMember = reportedMember;
         this.reportContent = reportContent;
-        this.additionalContent = additionalContent;
         this.reportCategory = reportCategory;
         this.reportStatus = ReportStatus.ONGOING;
     }
