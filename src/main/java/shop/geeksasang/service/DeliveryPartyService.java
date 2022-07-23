@@ -8,6 +8,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import shop.geeksasang.config.status.BaseStatus;
+import shop.geeksasang.config.status.ValidStatus;
 import shop.geeksasang.config.type.OrderTimeCategoryType;
 import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.config.exception.response.BaseResponseStatus;
@@ -139,15 +141,18 @@ public class DeliveryPartyService {
     @Transactional(readOnly = false)
     public PatchDeliveryPartyStatusRes patchDeliveryPartyStatusById(int partyId, JwtInfo jwtInfo) {
 
-        int chiefId = jwtInfo.getUserId();
+        Optional <DeliveryParty> partyOptional = deliveryPartyRepository.findDeliveryPartyById(partyId);
+        BaseStatus status = partyOptional.get().getStatus();
+        int chiefId = partyOptional.get().getChief().getId();
+        int userId = jwtInfo.getUserId();
 
         // 이미 삭제된 배달 파티
-        if(deliveryPartyRepository.findDeliveryPartyStatusById(partyId).equals("INACTIVE")) {
+        if(status.equals(BaseStatus.INACTIVE)) {
             throw new BaseException(ALREADY_INACTIVE_DELIVERY_PARTY);
         }
 
         // 배달파티 chief와 같은지 확인
-        if(!deliveryPartyRepository.findDeliveryPartyChiefById(partyId).equals(chiefId)) {
+        if(chiefId != userId) {
             throw new BaseException(DIFFERENT_USER_ID);
         }
 

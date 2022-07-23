@@ -59,8 +59,6 @@ public class DeliveryParty extends BaseEntity {
 
     private int maxMatching;
 
-    private String location;
-
     @Enumerated(EnumType.STRING)
     private MatchingStatus matchingStatus;
 
