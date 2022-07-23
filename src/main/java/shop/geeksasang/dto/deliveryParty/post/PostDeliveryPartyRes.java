@@ -1,4 +1,4 @@
-package shop.geeksasang.dto.deliveryParty;
+package shop.geeksasang.dto.deliveryParty.post;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
@@ -10,8 +10,6 @@ import lombok.Setter;
 import shop.geeksasang.domain.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 @Setter

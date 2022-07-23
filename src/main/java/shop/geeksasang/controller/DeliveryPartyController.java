@@ -9,14 +9,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import shop.geeksasang.config.exception.BaseException;
-import shop.geeksasang.config.exception.response.BaseResponseStatus;
 import shop.geeksasang.config.response.BaseResponse;
-import shop.geeksasang.domain.DeliveryParty;
-import shop.geeksasang.domain.Dormitory;
-import shop.geeksasang.domain.FoodCategory;
-import shop.geeksasang.domain.Member;
-import shop.geeksasang.dto.deliveryParty.*;
+import shop.geeksasang.dto.deliveryParty.get.*;
+import shop.geeksasang.dto.deliveryParty.patch.PatchDeliveryPartyStatusRes;
+import shop.geeksasang.dto.deliveryParty.post.PostDeliveryPartyReq;
+import shop.geeksasang.dto.deliveryParty.post.PostDeliveryPartyRes;
+import shop.geeksasang.dto.deliveryParty.put.PutDeliveryPartyReq;
+import shop.geeksasang.dto.deliveryParty.put.PutDeliveryPartyRes;
 import shop.geeksasang.dto.login.JwtInfo;
 import shop.geeksasang.service.DeliveryPartyService;
 
@@ -41,7 +40,7 @@ public class DeliveryPartyController {
             @ApiResponse(code =4000 ,message = "서버 오류입니다.")
     })
     @PostMapping("/delivery-party")
-    public BaseResponse<PostDeliveryPartyRes> registerDeliveryParty(@Validated @RequestBody PostDeliveryPartyReq dto,  HttpServletRequest request){
+    public BaseResponse<PostDeliveryPartyRes> registerDeliveryParty(@Validated @RequestBody PostDeliveryPartyReq dto, HttpServletRequest request){
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
 
         PostDeliveryPartyRes postDeliveryPartyRes = deliveryPartyService.registerDeliveryParty(dto, jwtInfo);
@@ -61,7 +60,7 @@ public class DeliveryPartyController {
             @ApiResponse(code =4000 ,message = "서버 오류입니다.")
     })
     @PutMapping("/delivery-party/{partyId}")
-    public BaseResponse<PutDeliveryPartyRes> updateDeliveryParty(@PathVariable("partyId") int partyId, @Validated @RequestBody PutDeliveryPartyReq dto,  HttpServletRequest request){
+    public BaseResponse<PutDeliveryPartyRes> updateDeliveryParty(@PathVariable("partyId") int partyId, @Validated @RequestBody PutDeliveryPartyReq dto, HttpServletRequest request){
 
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
 
@@ -78,10 +77,10 @@ public class DeliveryPartyController {
             @ApiResponse(code=4000, message = "서버 오류입니다.")
     })
     @GetMapping("/{dormitoryId}/delivery-parties")
-    public BaseResponse<List<GetDeliveryPartiesRes>> GetDeliveryParties(@PathVariable int dormitoryId,
-                                                                        @RequestParam int cursor, @RequestParam(required = false) String orderTimeCategory, @RequestParam(required = false) Integer maxMatching){
-        List<GetDeliveryPartiesRes> response = deliveryPartyService.getDeliveryParties(dormitoryId, cursor, orderTimeCategory, maxMatching);
-        return new BaseResponse<>(response);
+    public BaseResponse<GetDeliveryPartiesRes> GetDeliveryParties(@PathVariable int dormitoryId,
+                                                                    @RequestParam int cursor, @RequestParam(required = false) String orderTimeCategory, @RequestParam(required = false) Integer maxMatching){
+        GetDeliveryPartiesRes res = deliveryPartyService.getDeliveryParties(dormitoryId, cursor, orderTimeCategory, maxMatching);
+        return new BaseResponse<>(res);
     }
 
     //배달파티 조회: 상세조회
@@ -108,7 +107,7 @@ public class DeliveryPartyController {
             @ApiResponse(code=4000,message = "서버 오류입니다.")
     })
     @GetMapping("/{dormitoryId}/delivery-parties/keyword")
-    public BaseResponse<List<GetDeliveryPartiesByKeywordRes>> getDeliveryPartiesByKeyword(@PathVariable("dormitoryId") int dormitoryId, @RequestParam String keyword,@RequestParam int cursor){
+    public BaseResponse<List<GetDeliveryPartiesByKeywordRes>> getDeliveryPartiesByKeyword(@PathVariable("dormitoryId") int dormitoryId, @RequestParam String keyword, @RequestParam int cursor){
         List<GetDeliveryPartiesByKeywordRes> response = deliveryPartyService.getDeliveryPartiesByKeyword(dormitoryId, keyword, cursor);
         return new BaseResponse<>(response);
     }

@@ -1,4 +1,4 @@
-package shop.geeksasang.dto.deliveryParty;
+package shop.geeksasang.dto.deliveryParty.put;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;

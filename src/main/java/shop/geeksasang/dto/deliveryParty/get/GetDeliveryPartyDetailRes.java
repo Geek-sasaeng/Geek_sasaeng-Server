@@ -1,4 +1,4 @@
-package shop.geeksasang.dto.deliveryParty;
+package shop.geeksasang.dto.deliveryParty.get;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
@@ -11,7 +11,6 @@ import shop.geeksasang.domain.DeliveryParty;
 import shop.geeksasang.domain.DeliveryPartyHashTag;
 
 
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;

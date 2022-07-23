@@ -8,14 +8,16 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import shop.geeksasang.config.status.BaseStatus;
-import shop.geeksasang.config.status.ValidStatus;
 import shop.geeksasang.config.type.OrderTimeCategoryType;
 import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.config.exception.response.BaseResponseStatus;
 import shop.geeksasang.domain.*;
-import shop.geeksasang.dto.deliveryParty.*;
-import shop.geeksasang.dto.email.PostEmailCertificationRes;
+import shop.geeksasang.dto.deliveryParty.get.*;
+import shop.geeksasang.dto.deliveryParty.patch.PatchDeliveryPartyStatusRes;
+import shop.geeksasang.dto.deliveryParty.post.PostDeliveryPartyReq;
+import shop.geeksasang.dto.deliveryParty.post.PostDeliveryPartyRes;
+import shop.geeksasang.dto.deliveryParty.put.PutDeliveryPartyReq;
+import shop.geeksasang.dto.deliveryParty.put.PutDeliveryPartyRes;
 import shop.geeksasang.dto.login.JwtInfo;
 import shop.geeksasang.repository.*;
 import shop.geeksasang.utils.ordertime.OrderTimeUtils;
@@ -23,7 +25,6 @@ import shop.geeksasang.utils.ordertime.OrderTimeUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static shop.geeksasang.config.exception.response.BaseResponseStatus.*;
@@ -169,7 +170,7 @@ public class DeliveryPartyService {
 
 
     //배달파티 검색 통합 버전
-    public List<GetDeliveryPartiesRes> getDeliveryParties(int dormitoryId, int cursor, String orderTimeCategory, Integer maxMatching) {
+    public GetDeliveryPartiesRes getDeliveryParties(int dormitoryId, int cursor, String orderTimeCategory, Integer maxMatching) {
 
         OrderTimeCategoryType orderTimeCategoryType = null;
 
@@ -178,11 +179,8 @@ public class DeliveryPartyService {
         }
 
         PageRequest paging = PageRequest.of(cursor, PAGING_SIZE, Sort.by(Sort.Direction.ASC, PAGING_STANDARD)); // 페이징 요구 객체
-        List<DeliveryParty> deliveryParties = deliveryPartyQueryRepository.findDeliveryPartiesByConditions(dormitoryId, orderTimeCategoryType, maxMatching, paging);
-
-        return deliveryParties.stream()
-                .map(deliveryParty -> GetDeliveryPartiesRes.toDto(deliveryParty))
-                .collect(Collectors.toList());
+        GetDeliveryPartiesRes dto = deliveryPartyQueryRepository.findDeliveryPartiesByConditions(dormitoryId, orderTimeCategoryType, maxMatching, paging);
+        return dto;
     }
 
     //
