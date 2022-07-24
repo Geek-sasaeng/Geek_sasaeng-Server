@@ -13,6 +13,7 @@ import shop.geeksasang.config.type.OrderTimeCategoryType;
 import shop.geeksasang.config.status.BaseStatus;
 import shop.geeksasang.domain.report.DeliveryPartyReport;
 import shop.geeksasang.dto.deliveryParty.PostDeliveryPartyReq;
+import shop.geeksasang.dto.deliveryParty.PutDeliveryPartyReq;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -104,6 +105,34 @@ public class DeliveryParty extends BaseEntity {
         return party;
     }
 
+    public DeliveryParty updateParty(PutDeliveryPartyReq dto, OrderTimeCategoryType orderTimeCategory, Dormitory dormitory, FoodCategory foodCategory, Member chief, List<HashTag> hashTagList){
+        this.title = dto.getTitle();
+        this.content = dto.getContent();
+        this.orderTime = dto.getOrderTime();
+        this.maxMatching = dto.getMaxMatching();
+        this.location= new Location(dto.getLatitude(),dto.getLongitude());
+        this.storeUrl = dto.getStoreUrl();
+        this.chief = chief;
+        this.foodCategory = foodCategory;
+        this.orderTimeCategory = orderTimeCategory;
+        this.dormitory = dormitory;
+        this.setStatus(BaseStatus.ACTIVE);
+
+        dormitory.addParty(this);
+        for (HashTag hashTag : hashTagList) {
+            DeliveryPartyHashTag deliveryPartyHashTag = new DeliveryPartyHashTag(this, hashTag);
+            hashTag.addDeliveryPartyHashTag(deliveryPartyHashTag);
+            this.deliveryPartyHashTags.add(deliveryPartyHashTag);
+        }
+
+        return this;
+    }
+
+    public void addReportedCountAndCheckReportedCount() {
+        addReportedCount();
+        checkReportedCount();
+    }
+
     public void addReportedCount() {
         reportedCount++;
     }
@@ -114,8 +143,8 @@ public class DeliveryParty extends BaseEntity {
         }
     }
 
-    public void addReportedCountAndCheckReportedCount() {
-        addReportedCount();
-        checkReportedCount();
+    // 배달파티 삭제
+    public void changeStatusToInactive(){
+        super.setStatus(BaseStatus.INACTIVE);
     }
 }

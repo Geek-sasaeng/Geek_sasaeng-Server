@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
+import shop.geeksasang.config.status.BaseStatus;
 import shop.geeksasang.config.type.OrderTimeCategoryType;
 import shop.geeksasang.domain.DeliveryParty;
 import javax.persistence.EntityManager;
@@ -29,10 +30,13 @@ public class DeliveryPartyQueryRepository {
                 .from(deliveryParty)
                 .where(deliveryParty.dormitory.id.eq(dormitoryId),
                         orderTimeCategory == null ? null : deliveryParty.orderTimeCategory.eq(orderTimeCategory), //eq는 null 들어가면 문제 발생
-                        deliveryParty.maxMatching.between(0, maxMatching)) //null 들어가면 알아서 조건이 반영되지 않는다.
+                        deliveryParty.maxMatching.between(0, maxMatching), //null 들어가면 알아서 조건이 반영되지 않는다.
+                        deliveryParty.status.eq(BaseStatus.ACTIVE))
                 .orderBy(deliveryParty.orderTime.asc(), deliveryParty.id.asc())
                 .offset(pageable.getOffset())
                 .limit(10)
                 .fetch();
     }
 }
+
+//INACTIVE, REPORTED 조건 추가하기

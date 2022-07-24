@@ -35,32 +35,30 @@ public class DeliveryPartyReportService {
         Member member = memberRepository.findMemberById(memberId).orElseThrow(() -> new BaseException(NOT_EXIST_USER));
 
         //하루 총 신고 횟수 확인
-        if(member.checkPerDayReportCopunt()){
-            throw new RuntimeException("하루 3번만 신고 가능");
+        if(member.checkPerDayReportCount()){
+            throw new BaseException(INVALID_REPORT_COUNT);
         }
 
         //배달파티 id를 가져옴.
+        //TODO INACTIVE 추가
         DeliveryParty deliveryParty = deliveryPartyRepository.findById(dto.getReportedDeliveryPartyId())
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTY));
 
         //멤버가 이미 신고했는지 체크 문제가 없다면 레코드에 추가
         if(member.containReportedDeliveryPartyRecord(deliveryParty)){
-            throw new RuntimeException("이미 존재");
+            throw new BaseException(EXIST_REPORT_RECORD);
         }
-
-        //TODO 신고 레코드에 추가해야 한다.
-        member.addDeliveryPartyReportRecord(deliveryParty);
 
         //카테고리 가져온다.
         ReportCategory reportCategory = reportCategoryRepository.findById(dto.getReportCategoryId())
-                .orElseThrow(() -> new RuntimeException("카테고리가 없음"));
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_REPORT_CATEGORY));
 
         //신고 생성
         DeliveryPartyReport report = dto.toEntity(member, deliveryParty, reportCategory, dto);
         deliveryPartyReportRepository.save(report);
 
-        //멤버 하루 총 신고 횟수 추가
-        member.addOneDayReportCount();
+        //멤버 하루 총 신고 횟수 추가 & 배달 파티 신고 기록 남기기
+        member.addDeliveryPartyReportRecord(deliveryParty);
 
         //횟수 증가와 3번 이상인지 체크
         deliveryParty.addReportedCountAndCheckReportedCount();
