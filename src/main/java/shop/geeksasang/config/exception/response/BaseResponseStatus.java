@@ -119,6 +119,7 @@ public enum BaseResponseStatus {
     INVALID_EMAIL_MEMBER(false, 2805, "이메일 인증을 하고 회원가입을 시도해주세요."),
     INVALID_SMS_MEMBER(false, 2805, "SMS 인증을 하고 회원가입을 시도해주세요."),
     NAVER_LOGIN_ERROR(false, 2806, "네이버 로그인 토큰 요청에 실패했습니다."),
+    INVALID_PHONE_NUMBER(false, 2806, "인증이 안된 핸드폰 번호입니다."),
 
     /**
      * 3000 : Response 오류

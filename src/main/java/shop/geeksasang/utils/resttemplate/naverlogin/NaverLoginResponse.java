@@ -1,4 +1,4 @@
-package shop.geeksasang.service;
+package shop.geeksasang.utils.resttemplate.naverlogin;
 
 import lombok.Data;
 
@@ -10,10 +10,4 @@ public class NaverLoginResponse implements Serializable {
     private String resultcode;
     private String message;
     private NaverLoginData response;
-}
-@Data
-public
-class NaverLoginData {
-    private String email;
-    private String phoneNumber;
 }

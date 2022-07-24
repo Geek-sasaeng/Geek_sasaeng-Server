@@ -50,7 +50,7 @@ public class PostRegisterReq {
     private Integer emailId;
 
     @ApiModelProperty(example = "1")
-    @ApiParam(value = "사용자 핸드폰 번호", required = true)
+    @ApiParam(value = "사용자 핸드폰 번호", required = false)
     private Integer phoneNumberId;
 
     @ApiModelProperty(example = "Y")

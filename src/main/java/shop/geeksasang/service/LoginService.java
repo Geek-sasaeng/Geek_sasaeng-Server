@@ -14,6 +14,8 @@ import shop.geeksasang.dto.login.*;
 import shop.geeksasang.repository.MemberRepository;
 import shop.geeksasang.utils.encrypt.SHA256;
 import shop.geeksasang.utils.jwt.JwtService;
+import shop.geeksasang.utils.resttemplate.naverlogin.NaverLoginData;
+import shop.geeksasang.utils.resttemplate.naverlogin.NaverLoginRequest;
 
 import java.util.LinkedHashMap;
 
@@ -25,6 +27,7 @@ import static shop.geeksasang.config.exception.response.BaseResponseStatus.NOT_E
 @Slf4j
 public class LoginService {
     private final MemberRepository memberRepository;
+    private final NaverLoginRequest naverLoginRequest;
     private final JwtService jwtService;
 
     public PostLoginRes login(PostLoginReq dto){
@@ -62,8 +65,34 @@ public class LoginService {
                 .loginStatus(loginStatus)
                 .build();
     }
-    public PostSocialLoginRes socialLogin(PostSocialLoginReq dto){
+    public PostLoginRes socialLogin(PostSocialLoginReq dto){
+        NaverLoginData data = naverLoginRequest.getToken(dto.getSocialLoginURL());
+        String loginId = data.getEmail();
+        Member member = memberRepository.findMemberByLoginId(loginId)
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_LOGINID));
+        LoginStatus loginStatus = member.getLoginStatus(); // 로그인 횟수 상태
 
+        //status
+        if(member.getStatus().equals(BaseStatus.INACTIVE)){
+            throw new BaseException(BaseResponseStatus.INACTIVE_STATUS);
+        }
+
+        // 로그인 횟수 상태 (loginStatus) Never -> NotNever변경
+        if(loginStatus.equals(LoginStatus.NEVER)){
+            member.changeLoginStatusToNotNever();
+        }
+
+        JwtInfo vo = JwtInfo.builder()
+                .userId(member.getId())
+                .universityId(member.getUniversity().getId())
+                .build();
+
+        String jwt = jwtService.createJwt(vo);
+
+        return PostLoginRes.builder()
+                .jwt(jwt)
+                .loginStatus(loginStatus)
+                .build();
     }
 
     @GetMapping

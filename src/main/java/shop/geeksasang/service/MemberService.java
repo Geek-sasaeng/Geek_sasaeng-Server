@@ -1,12 +1,9 @@
 package shop.geeksasang.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import org.springframework.web.client.HttpStatusCodeException;
-import org.springframework.web.client.RestTemplate;
 import shop.geeksasang.config.status.ValidStatus;
 import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.domain.Email;
@@ -25,12 +22,10 @@ import shop.geeksasang.repository.EmailRepository;
 import shop.geeksasang.repository.MemberRepository;
 import shop.geeksasang.repository.PhoneNumberRepository;
 import shop.geeksasang.repository.UniversityRepository;
-import shop.geeksasang.utils.jwt.RedisUtil;
 import shop.geeksasang.utils.encrypt.SHA256;
-import shop.geeksasang.utils.restTemplate.NaverLoginRequest;
+import shop.geeksasang.utils.resttemplate.naverlogin.NaverLoginData;
+import shop.geeksasang.utils.resttemplate.naverlogin.NaverLoginRequest;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 import static shop.geeksasang.config.exception.response.BaseResponseStatus.*;
@@ -72,14 +67,13 @@ public class MemberService {
             throw new BaseException(INVALID_EMAIL_MEMBER);
 
         // 검증: 휴대폰 인증 여부
+        PhoneNumber phoneNumber = null;
         if(memberRepository.findMemberByPhoneNumberId(dto.getPhoneNumberId()).isPresent()){
-            throw new BaseException(DUPLICATE_USER_PHONENUMBER);
+            phoneNumber = phoneNumberRepository.findById(dto.getPhoneNumberId()).orElseThrow(
+                    () -> new BaseException(INVALID_INFORMATIONAGREE_STATUS));
+            if(!phoneNumber.getPhoneValidStatus().equals(ValidStatus.SUCCESS))
+                throw new BaseException(INVALID_PHONE_NUMBER);
         }
-
-        PhoneNumber phoneNumber = phoneNumberRepository.findById(dto.getPhoneNumberId()).orElseThrow(
-                () -> new BaseException(INVALID_EMAIL_MEMBER));
-        if(!phoneNumber.getPhoneValidStatus().equals(ValidStatus.SUCCESS))
-            throw new BaseException(INVALID_SMS_MEMBER);
 
         dto.setPassword(SHA256.encrypt(dto.getPassword()));
         Member member = dto.toEntity(email, phoneNumber);
@@ -99,9 +93,9 @@ public class MemberService {
     public PostSocialRegisterRes registerSocialMember(PostSocialRegisterReq dto){
         // 네이버 사용자 토큰 받아오기
         NaverLoginData naverLoginData = naverLoginRequest.getToken(dto.getLoginURL());
-        if(phoneNumber == null || loginId == null){
-            throw new BaseException(NAVER_LOGIN_ERROR);
-        }
+        String phoneNumber = naverLoginData.getPhoneNumber();
+        String loginId = naverLoginData.getEmail();
+
         if(!dto.getCheckPassword().equals(dto.getPassword())) {
             throw new BaseException(DIFFRENT_PASSWORDS);
         }
@@ -125,6 +119,8 @@ public class MemberService {
 
         // 핸드폰 번호 DB에 저장
         PhoneNumber phoneNumberEntity = smsService.savePhoneNumber(phoneNumber);
+
+        dto.setLoginId(loginId);
 
         // 비밀번호 암호화
         dto.setPassword(SHA256.encrypt(dto.getPassword()));
