@@ -19,11 +19,6 @@ import java.util.List;
 public class PostDeliveryPartyReq {
 
     @ApiModelProperty(example = "1")
-    @ApiParam(value = "기숙사 id", required = true)
-    @NotNull
-    private int dormitory;
-
-    @ApiModelProperty(example = "1")
     @ApiParam(value = "음식 카테고리", required = true)
     @NotNull
     private int foodCategory;
