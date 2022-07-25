@@ -92,8 +92,8 @@ public class MemberService {
     @Transactional(readOnly = false)
     public PostSocialRegisterRes registerSocialMember(PostSocialRegisterReq dto){
         // 네이버 사용자 토큰 받아오기
-        NaverLoginData naverLoginData = naverLoginRequest.getToken(dto.getLoginURL());
-        String phoneNumber = naverLoginData.getPhoneNumber();
+        NaverLoginData naverLoginData = naverLoginRequest.getToken(dto.getAccessToken());
+        String phoneNumber = naverLoginData.getMobile();
         String loginId = naverLoginData.getEmail();
 
         if(!dto.getCheckPassword().equals(dto.getPassword())) {

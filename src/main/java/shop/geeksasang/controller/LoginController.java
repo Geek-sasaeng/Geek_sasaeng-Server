@@ -29,11 +29,11 @@ public class LoginController {
             notes="사용자의 id,비밀번호를 입력받아 jwt토큰을 반환한다. "
     )
     @ApiResponses({
-            @ApiResponse(code =1000 ,message ="요청에 성공하셨습니다."),
-            @ApiResponse(code =2011 ,message ="비밀번호가 틀립니다."),
-            @ApiResponse(code =2400 ,message ="존재하지 않는 아이디입니다."),
-            @ApiResponse(code =2012 ,message ="탈퇴한 회원입니다."),
-            @ApiResponse(code=4000,message = "서버 오류입니다.")
+            @ApiResponse(code = 1000, message ="요청에 성공하셨습니다."),
+            @ApiResponse(code = 2011, message ="비밀번호가 틀립니다."),
+            @ApiResponse(code = 2400, message ="존재하지 않는 아이디입니다."),
+            @ApiResponse(code = 2012, message ="탈퇴한 회원입니다."),
+            @ApiResponse(code= 4000, message = "서버 오류입니다.")
     })
     @PostMapping
     public BaseResponse<PostLoginRes> login(@Validated @RequestBody PostLoginReq dto){
@@ -41,21 +41,23 @@ public class LoginController {
         return new BaseResponse<>(login);
     }
 
+    // 네이버 로그인
     @NoIntercept
     @ApiOperation(
             value="소셜 로그인",
-            notes="네이버 로그인 요청 Request를 처리 해 토큰 값에 유효한 사용자 아이디가 있으면 jwt토큰을 반환한다. "
+            notes="네이버 로그인 토큰을 받아서 로그인을 진행한다, 토큰 userIdx가 DB에 없으면 회원가입 화면으로 이동한다. (2807 코드 참고) "
     )
     @ApiResponses({
-            @ApiResponse(code =1000 ,message ="요청에 성공하셨습니다."),
-            @ApiResponse(code =2011 ,message ="비밀번호가 틀립니다."),
-            @ApiResponse(code =2400 ,message ="존재하지 않는 아이디입니다."),
-            @ApiResponse(code =2012 ,message ="탈퇴한 회원입니다."),
-            @ApiResponse(code=4000,message = "서버 오류입니다.")
+            @ApiResponse(code = 1000, message ="요청에 성공하셨습니다."),
+            @ApiResponse(code = 2011, message ="비밀번호가 틀립니다."),
+            @ApiResponse(code = 2400,message ="존재하지 않는 아이디입니다."),
+            @ApiResponse(code = 2012,message ="탈퇴한 회원입니다."),
+            @ApiResponse(code = 2807,message ="존재하지 않는 아이디 입니다. 네이버 회원가입 화면으로 이동합니다.."),
+            @ApiResponse(code = 4000, message = "서버 오류입니다.")
     })
     @PostMapping("/social")
     public BaseResponse<PostLoginRes> socialLogin(@Validated @RequestBody PostSocialLoginReq dto){
-        PostLoginRes login = loginService.socialLogin(dto);
+        PostLoginRes login = loginService.naverLogin(dto);
         return new BaseResponse<>(login);
     }
 }
