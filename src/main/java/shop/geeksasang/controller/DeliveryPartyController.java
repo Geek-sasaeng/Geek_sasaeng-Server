@@ -39,16 +39,16 @@ public class DeliveryPartyController {
             @ApiResponse(code =2402 ,message ="존재하지 않는 카테고리입니다"),
             @ApiResponse(code =4000 ,message = "서버 오류입니다.")
     })
-    @PostMapping("/delivery-party")
-    public BaseResponse<PostDeliveryPartyRes> registerDeliveryParty(@Validated @RequestBody PostDeliveryPartyReq dto, HttpServletRequest request){
+    @PostMapping("/{dormitoryId}/delivery-party")
+    public BaseResponse<PostDeliveryPartyRes> registerDeliveryParty(@PathVariable("dormitoryId") int dormitoryId, @Validated @RequestBody PostDeliveryPartyReq dto, HttpServletRequest request){
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
 
-        PostDeliveryPartyRes postDeliveryPartyRes = deliveryPartyService.registerDeliveryParty(dto, jwtInfo);
+        PostDeliveryPartyRes postDeliveryPartyRes = deliveryPartyService.registerDeliveryParty(dto, jwtInfo, dormitoryId);
         return new BaseResponse<>(postDeliveryPartyRes);
     }
 
     //배달 파티 수정
-    @ApiOperation(value = "배닥 파티 수정", notes = "글을 작성한 사용자는 배달 파티 내용을 수정할 수 있습니다. \n"+
+    @ApiOperation(value = "배달 파티 수정", notes = "글을 작성한 사용자는 배달 파티 내용을 수정할 수 있습니다. \n"+
             "* 게시물 수정은 기존(수정 전) 게시물 데이터를 body에 담아 요청해야 합니다.(jwt토큰 값 필요) ")
     @ApiResponses({
             @ApiResponse(code =1000 ,message ="요청에 성공하였습니다"),
@@ -59,12 +59,12 @@ public class DeliveryPartyController {
             @ApiResponse(code = 2403, message = "수정권한이 없는 유저입니다."),
             @ApiResponse(code =4000 ,message = "서버 오류입니다.")
     })
-    @PutMapping("/delivery-party/{partyId}")
-    public BaseResponse<PutDeliveryPartyRes> updateDeliveryParty(@PathVariable("partyId") int partyId, @Validated @RequestBody PutDeliveryPartyReq dto, HttpServletRequest request){
+    @PutMapping("/{dormitoryId}/delivery-party/{partyId}")
+    public BaseResponse<PutDeliveryPartyRes> updateDeliveryParty(@PathVariable("dormitoryId") int dormitoryId,@PathVariable("partyId") int partyId, @Validated @RequestBody PutDeliveryPartyReq dto, HttpServletRequest request){
 
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
 
-        PutDeliveryPartyRes putDeliveryPartyRes = deliveryPartyService.updateDeliveryParty(partyId,dto, jwtInfo);
+        PutDeliveryPartyRes putDeliveryPartyRes = deliveryPartyService.updateDeliveryParty(dto, jwtInfo, dormitoryId, partyId);
         return new BaseResponse<>(putDeliveryPartyRes);
     }
 
