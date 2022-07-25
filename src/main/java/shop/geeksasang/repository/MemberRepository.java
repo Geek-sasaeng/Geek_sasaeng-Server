@@ -18,6 +18,9 @@ public interface MemberRepository extends JpaRepository<Member, Integer> {
 
     Optional<Member> findMemberById(int id);
 
+    @Query("select m from Member m where m.id = :id and m.status = 'ACTIVE'")
+    Optional<Member> findMemberByIdAndStatus(int id);
+
     Optional<Member> findMemberByPhoneNumberId(int phoneNumberId);
 
 

@@ -8,14 +8,17 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import shop.geeksasang.config.status.BaseStatus;
-import shop.geeksasang.config.status.ValidStatus;
 import shop.geeksasang.config.type.OrderTimeCategoryType;
 import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.config.exception.response.BaseResponseStatus;
 import shop.geeksasang.domain.*;
-import shop.geeksasang.dto.deliveryParty.*;
-import shop.geeksasang.dto.email.PostEmailCertificationRes;
+import shop.geeksasang.dto.deliveryParty.get.*;
+import shop.geeksasang.dto.deliveryParty.get.vo.DeliveryPartiesVo;
+import shop.geeksasang.dto.deliveryParty.patch.PatchDeliveryPartyStatusRes;
+import shop.geeksasang.dto.deliveryParty.post.PostDeliveryPartyReq;
+import shop.geeksasang.dto.deliveryParty.post.PostDeliveryPartyRes;
+import shop.geeksasang.dto.deliveryParty.put.PutDeliveryPartyReq;
+import shop.geeksasang.dto.deliveryParty.put.PutDeliveryPartyRes;
 import shop.geeksasang.dto.login.JwtInfo;
 import shop.geeksasang.repository.*;
 import shop.geeksasang.utils.ordertime.OrderTimeUtils;
@@ -23,7 +26,6 @@ import shop.geeksasang.utils.ordertime.OrderTimeUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static shop.geeksasang.config.exception.response.BaseResponseStatus.*;
@@ -153,7 +155,7 @@ public class DeliveryPartyService {
     }
 
     //배달파티 조회: 검색어로 조회
-    public List<GetDeliveryPartiesByKeywordRes> getDeliveryPartiesByKeyword(int dormitoryId, String keyword, int cursor){
+    public GetDeliveryPartiesRes getDeliveryPartiesByKeyword(int dormitoryId, String keyword, int cursor){
         // validation: 검색어 빈값
         if(keyword == null || keyword.isBlank()){
             throw new BaseException(BaseResponseStatus.BLANK_KEYWORD);
@@ -162,14 +164,16 @@ public class DeliveryPartyService {
         PageRequest paging = PageRequest.of(cursor, PAGING_SIZE, Sort.by(Sort.Direction.ASC, PAGING_STANDARD)); // 페이징 요구 객체
         Slice<DeliveryParty> deliveryParties = deliveryPartyRepository.findDeliveryPartiesByKeyword(dormitoryId, keyword, paging); // 페이징 반환 객체
 
-        return deliveryParties.stream()
-                .map(deliveryParty -> GetDeliveryPartiesByKeywordRes.toDto(deliveryParty)) // 배열 원소 변경 한번에 적용
-                .collect(Collectors.toList()); // List로 변경
+        List<DeliveryPartiesVo> list = deliveryParties.stream()
+                .map(deliveryParty -> DeliveryPartiesVo.toDto(deliveryParty))
+                .collect(Collectors.toList());
+
+        return new GetDeliveryPartiesRes(!deliveryParties.hasNext(), list); //다음 페이지가 있으면 파이널 페이지가 아니므로 !를 붙였다.
     }
 
 
     //배달파티 검색 통합 버전
-    public List<GetDeliveryPartiesRes> getDeliveryParties(int dormitoryId, int cursor, String orderTimeCategory, Integer maxMatching) {
+    public GetDeliveryPartiesRes getDeliveryParties(int dormitoryId, int cursor, String orderTimeCategory, Integer maxMatching) {
 
         OrderTimeCategoryType orderTimeCategoryType = null;
 
@@ -178,11 +182,8 @@ public class DeliveryPartyService {
         }
 
         PageRequest paging = PageRequest.of(cursor, PAGING_SIZE, Sort.by(Sort.Direction.ASC, PAGING_STANDARD)); // 페이징 요구 객체
-        List<DeliveryParty> deliveryParties = deliveryPartyQueryRepository.findDeliveryPartiesByConditions(dormitoryId, orderTimeCategoryType, maxMatching, paging);
-
-        return deliveryParties.stream()
-                .map(deliveryParty -> GetDeliveryPartiesRes.toDto(deliveryParty))
-                .collect(Collectors.toList());
+        GetDeliveryPartiesRes dto = deliveryPartyQueryRepository.findDeliveryPartiesByConditions(dormitoryId, orderTimeCategoryType, maxMatching, paging);
+        return dto;
     }
 
     //

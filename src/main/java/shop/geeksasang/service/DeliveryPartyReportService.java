@@ -32,7 +32,7 @@ public class DeliveryPartyReportService {
     public void registerDeliveryPartyReport(PostDeliveryPartyReportRegisterReq dto, JwtInfo jwtInfo){
         //멤버를 가져온다.
         int memberId = jwtInfo.getUserId();
-        Member member = memberRepository.findMemberById(memberId).orElseThrow(() -> new BaseException(NOT_EXIST_USER));
+        Member member = memberRepository.findMemberByIdAndStatus(memberId).orElseThrow(() -> new BaseException(NOT_EXIST_USER));
 
         //하루 총 신고 횟수 확인
         if(member.checkPerDayReportCount()){
@@ -41,7 +41,7 @@ public class DeliveryPartyReportService {
 
         //배달파티 id를 가져옴.
         //TODO INACTIVE 추가
-        DeliveryParty deliveryParty = deliveryPartyRepository.findById(dto.getReportedDeliveryPartyId())
+        DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyByIdAndStatus(dto.getReportedDeliveryPartyId())
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTY));
 
         //멤버가 이미 신고했는지 체크 문제가 없다면 레코드에 추가
