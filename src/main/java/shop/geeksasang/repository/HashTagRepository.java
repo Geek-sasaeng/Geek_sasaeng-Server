@@ -8,6 +8,4 @@ import shop.geeksasang.domain.HashTag;
 import java.util.Optional;
 
 public interface HashTagRepository extends JpaRepository<HashTag,Integer> {
-    @Query("select h from HashTag h where h.status = 'ACTIVE'")
-    Optional<HashTag> findHashTagById(int id);
 }

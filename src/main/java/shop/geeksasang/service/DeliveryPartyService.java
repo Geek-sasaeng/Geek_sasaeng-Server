@@ -50,7 +50,7 @@ public class DeliveryPartyService {
 
 
     @Transactional(readOnly = false)
-    public PostDeliveryPartyRes registerDeliveryParty(PostDeliveryPartyReq dto, JwtInfo jwtInfo){
+    public PostDeliveryPartyRes registerDeliveryParty(PostDeliveryPartyReq dto, JwtInfo jwtInfo, int dormitoryId){
 
         int chiefId = jwtInfo.getUserId();
 
@@ -58,19 +58,19 @@ public class DeliveryPartyService {
         Member chief = memberRepository.findMemberByIdAndStatus(chiefId)
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTICIPANT));
 
-        //기숙사
-        Dormitory dormitory = dormitoryRepository.findDormitoryById(dto.getDormitory())
-                .orElseThrow(() ->  new BaseException(BaseResponseStatus.NOT_EXISTS_DORMITORY));
 
         //카테고리
         FoodCategory foodCategory = foodCategoryRepository.findFoodCategoryById(dto.getFoodCategory())
                 .orElseThrow(() ->  new BaseException(BaseResponseStatus.NOT_EXISTS_CATEGORY));
 
+        //기숙사
+        Dormitory dormitory = dormitoryRepository.findDormitoryById(dormitoryId)
+                .orElseThrow(() ->  new BaseException(BaseResponseStatus.NOT_EXISTS_DORMITORY));
         //해시태그 -- 기존 로직 유지
         List<HashTag> hashTagList = new ArrayList<>();
 
         if(dto.isHashTag()){
-            HashTag hashTag = hashTagRepository.findHashTagById(1).orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_HASHTAG));
+            HashTag hashTag = hashTagRepository.findById(1).orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_HASHTAG));
             hashTagList.add(hashTag);
         }
 
@@ -85,8 +85,9 @@ public class DeliveryPartyService {
 
         return PostDeliveryPartyRes.toDto(party);
     }
+
     @Transactional(readOnly = false)
-    public PutDeliveryPartyRes updateDeliveryParty(int partyId, PutDeliveryPartyReq dto, JwtInfo jwtInfo){
+    public PutDeliveryPartyRes updateDeliveryParty(PutDeliveryPartyReq dto, JwtInfo jwtInfo, int dormitoryId, int partyId){
         int chiefId = jwtInfo.getUserId();
 
         //요청 보낸 사용자 Member 찾기
@@ -107,7 +108,7 @@ public class DeliveryPartyService {
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTICIPANT));
 
         //기숙사
-        Dormitory dormitory = dormitoryRepository.findDormitoryById(dto.getDormitory())
+        Dormitory dormitory = dormitoryRepository.findDormitoryById(dormitoryId)
                 .orElseThrow(() ->  new BaseException(BaseResponseStatus.NOT_EXISTS_DORMITORY));
 
         //카테고리
@@ -118,7 +119,7 @@ public class DeliveryPartyService {
         List<HashTag> hashTagList = new ArrayList<>();
 
         if(dto.isHashTag()){
-            HashTag hashTag = hashTagRepository.findHashTagById(1).orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_HASHTAG));
+            HashTag hashTag = hashTagRepository.findById(1).orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_HASHTAG));
             hashTagList.add(hashTag);
         }
         //orderTime 분류화
@@ -186,7 +187,7 @@ public class DeliveryPartyService {
         return dto;
     }
 
-    //
+    //기숙사 별 default 위도, 경도
     public GetDeliveryPartyDefaultLocationRes getDeliveryPartyDefaultLocation(int domitoryId){
         Dormitory dormitory = dormitoryRepository.findById(domitoryId).orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_DORMITORY));
 
