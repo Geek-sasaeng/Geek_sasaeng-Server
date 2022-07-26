@@ -12,6 +12,7 @@ import shop.geeksasang.dto.deliveryParty.get.vo.DeliveryPartiesVo;
 import shop.geeksasang.dto.deliveryParty.get.GetDeliveryPartiesRes;
 
 import javax.persistence.EntityManager;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,7 +35,9 @@ public class DeliveryPartyQueryRepository {
                 .where(deliveryParty.dormitory.id.eq(dormitoryId),
                         orderTimeCategory == null ? null : deliveryParty.orderTimeCategory.eq(orderTimeCategory), //eq는 null 들어가면 문제 발생
                         deliveryParty.maxMatching.between(0, maxMatching), //null 들어가면 알아서 조건이 반영되지 않는다.
-                        deliveryParty.status.eq(BaseStatus.ACTIVE))
+                        deliveryParty.status.eq(BaseStatus.ACTIVE),
+                        deliveryParty.orderTime.after(LocalDateTime.now())
+                )
                 .orderBy(deliveryParty.orderTime.asc(), deliveryParty.id.asc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1) // 페이징을 위해 11개를 가져온다.
