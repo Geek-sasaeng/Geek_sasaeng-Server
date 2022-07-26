@@ -23,6 +23,7 @@ import shop.geeksasang.dto.login.JwtInfo;
 import shop.geeksasang.repository.*;
 import shop.geeksasang.utils.ordertime.OrderTimeUtils;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -143,7 +144,7 @@ public class DeliveryPartyService {
         Member findMember = memberRepository.findById(memberId).
                 orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTICIPANT));
 
-        DeliveryParty deliveryParty = deliveryPartyRepository.findById(partyId).
+        DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyByIdBeforeOrderTime(partyId, LocalDateTime.now()).
                 orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTY));
 
         //요청 보낸 사용자와 파티 chief 비교
@@ -163,7 +164,7 @@ public class DeliveryPartyService {
         }
 
         PageRequest paging = PageRequest.of(cursor, PAGING_SIZE, Sort.by(Sort.Direction.ASC, PAGING_STANDARD)); // 페이징 요구 객체
-        Slice<DeliveryParty> deliveryParties = deliveryPartyRepository.findDeliveryPartiesByKeyword(dormitoryId, keyword, paging); // 페이징 반환 객체
+        Slice<DeliveryParty> deliveryParties = deliveryPartyRepository.findDeliveryPartiesByKeyword(dormitoryId, keyword, paging, LocalDateTime.now()); // 페이징 반환 객체
 
         List<DeliveryPartiesVo> list = deliveryParties.stream()
                 .map(deliveryParty -> DeliveryPartiesVo.toDto(deliveryParty))
