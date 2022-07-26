@@ -29,6 +29,10 @@ public class GetDeliveryPartyDetailRes {
     @ApiParam(value = "파티장 닉네임")
     private String chief;
 
+    @ApiModelProperty(example = "2")
+    @ApiParam(value = "파티장 memberId")
+    private int chiefId;
+
     @ApiModelProperty(example = "http://geeksasaeng.shop/s3/neo.jpg")
     @ApiParam(value = "파티장 프로필 이미지 url")
     private String chiefProfileImgUrl;
@@ -97,6 +101,7 @@ public class GetDeliveryPartyDetailRes {
         return GetDeliveryPartyDetailRes.builder()
                 .id(deliveryParty.getId())
                 .chief(deliveryParty.getChief().getNickName())
+                .chiefId(deliveryParty.getChief().getId())
                 .chiefProfileImgUrl(deliveryParty.getChief().getProfileImgUrl())
                 .foodCategory(deliveryParty.getFoodCategory().getTitle())
                 .hashTag(!deliveryParty.getDeliveryPartyHashTags().isEmpty())
