@@ -16,7 +16,7 @@ import shop.geeksasang.repository.MemberRepository;
 import shop.geeksasang.utils.encrypt.SHA256;
 import shop.geeksasang.utils.jwt.JwtService;
 import shop.geeksasang.utils.resttemplate.naverlogin.NaverLoginData;
-import shop.geeksasang.utils.resttemplate.naverlogin.NaverLoginRequest;
+import shop.geeksasang.utils.resttemplate.naverlogin.NaverLoginService;
 
 import java.util.LinkedHashMap;
 
@@ -28,7 +28,7 @@ import static shop.geeksasang.config.exception.response.BaseResponseStatus.*;
 @Slf4j
 public class LoginService {
     private final MemberRepository memberRepository;
-    private final NaverLoginRequest naverLoginRequest;
+    private final NaverLoginService naverLoginRequest;
     private final JwtService jwtService;
 
     public PostLoginRes login(PostLoginReq dto){

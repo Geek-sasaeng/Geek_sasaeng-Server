@@ -24,7 +24,7 @@ import shop.geeksasang.repository.PhoneNumberRepository;
 import shop.geeksasang.repository.UniversityRepository;
 import shop.geeksasang.utils.encrypt.SHA256;
 import shop.geeksasang.utils.resttemplate.naverlogin.NaverLoginData;
-import shop.geeksasang.utils.resttemplate.naverlogin.NaverLoginRequest;
+import shop.geeksasang.utils.resttemplate.naverlogin.NaverLoginService;
 
 import java.util.Optional;
 
@@ -41,7 +41,7 @@ public class MemberService {
 
     private final SmsService smsService;
 
-    private final NaverLoginRequest naverLoginRequest;
+    private final NaverLoginService naverLoginRequest;
 
     // 회원 가입하기
     @Transactional(readOnly = false)

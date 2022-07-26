@@ -1,5 +1,6 @@
 package shop.geeksasang.utils.resttemplate.naverlogin;
 
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -9,15 +10,15 @@ import shop.geeksasang.config.exception.BaseException;
 
 import static shop.geeksasang.config.exception.response.BaseResponseStatus.NAVER_LOGIN_ERROR;
 
-@RequiredArgsConstructor
 @Service
-public class NaverLoginRequest {
+@RequiredArgsConstructor
+public class NaverLoginService {
     private final RestTemplate restTemplate;
     private final String BaseURL = "https://openapi.naver.com/v1/nid/me";
     // 네이버 사용자 토큰 받아오기
-    String phoneNumber = null;
-    String loginId = null;
     public NaverLoginData getToken(String accessToken) {
+        String phoneNumber = null;
+        String loginId = null;
         NaverLoginData data = null;
         try {
             // Header - access Token 설정
