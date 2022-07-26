@@ -1,4 +1,4 @@
-package shop.geeksasang.dto.deliveryParty;
+package shop.geeksasang.dto.deliveryParty.get.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
@@ -15,7 +15,7 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
-public class GetDeliveryPartiesRes {
+public class DeliveryPartiesVo {
 
     @ApiModelProperty(example = "1")
     @ApiParam(value = "배달 파티 id(pk)")
@@ -47,8 +47,8 @@ public class GetDeliveryPartiesRes {
     private String foodCategory;
 
     //빌더
-    static public GetDeliveryPartiesRes toDto(DeliveryParty deliveryParty){
-        return GetDeliveryPartiesRes.builder()
+    static public DeliveryPartiesVo toDto(DeliveryParty deliveryParty){
+        return DeliveryPartiesVo.builder()
                 .id(deliveryParty.getId())
                 .title(deliveryParty.getTitle())
                 .orderTime(deliveryParty.getOrderTime())

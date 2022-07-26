@@ -1,27 +1,24 @@
-package shop.geeksasang.dto.deliveryParty;
+package shop.geeksasang.dto.deliveryParty.put;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiParam;
-import lombok.*;
-import shop.geeksasang.domain.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class PostDeliveryPartyReq {
-
-    @ApiModelProperty(example = "1")
-    @ApiParam(value = "기숙사 id", required = true)
-    @NotNull
-    private int dormitory;
+public class PutDeliveryPartyReq {
 
     @ApiModelProperty(example = "1")
     @ApiParam(value = "음식 카테고리", required = true)
@@ -71,16 +68,4 @@ public class PostDeliveryPartyReq {
     @ApiParam(value = "해시태그 추가 여부", required = true)
     @NotNull
     private boolean hashTag;
-
-    // 외래키 참조하는 것 말고는  요청 엔티티 생성
-    public DeliveryParty toEntity() {
-        return DeliveryParty.builder()
-                .title(getTitle())
-                .content(getContent())
-                .orderTime(getOrderTime())
-                .maxMatching(getMaxMatching())
-                .location(new Location(getLatitude(),getLongitude()))
-                .storeUrl(getStoreUrl())
-                .build();
-    }
 }

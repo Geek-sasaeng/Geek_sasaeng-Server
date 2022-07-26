@@ -1,4 +1,4 @@
-package shop.geeksasang.dto.deliveryParty;
+package shop.geeksasang.dto.deliveryParty.get;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
