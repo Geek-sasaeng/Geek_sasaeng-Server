@@ -204,7 +204,8 @@ public class SmsService {
     // 소셜 로그인 시 DB에 핸드폰 번호 저장
     @Transactional(readOnly = false)
     public PhoneNumber savePhoneNumber(String phoneNumber){
-        phoneNumberRepository.findPhoneNumberByNumber(phoneNumber).orElseThrow(() -> new BaseException(DUPLICATE_USER_PHONENUMBER));
+        if(phoneNumberRepository.findPhoneNumberByNumber(phoneNumber).isPresent())
+            throw new BaseException(DUPLICATE_USER_PHONENUMBER);
         PhoneNumber phoneNumberEntity = PhoneNumber.builder().number(phoneNumber).phoneValidStatus(ValidStatus.SUCCESS).build();
         return phoneNumberRepository.save(phoneNumberEntity);
     }
