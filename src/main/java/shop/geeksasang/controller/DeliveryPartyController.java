@@ -100,7 +100,7 @@ public class DeliveryPartyController {
     }
 
     //배달파티 조회: 검색어(키워드)로 조회
-    @ApiOperation(value = "조회 : 검색어를 포함하는 배달파티 목록 조회", notes = "해당 기숙사의 배달파티 목록울 검색어로 조회할 수 있다.")
+    @ApiOperation(value = "조회 : 검색어(키워드)를 포함하는 배달파티 목록 조회", notes = "해당 기숙사의 배달파티 목록울 검색어로 조회할 수 있다.")
     @ApiResponses({
             @ApiResponse(code =1000 ,message ="요청에 성공하였습니다."),
             @ApiResponse(code=2205,message = "검색어를 입력해주세요"),
