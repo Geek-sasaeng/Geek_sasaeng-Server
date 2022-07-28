@@ -173,6 +173,24 @@ public class DeliveryPartyService {
         return new GetDeliveryPartiesRes(!deliveryParties.hasNext(), list); //다음 페이지가 있으면 파이널 페이지가 아니므로 !를 붙였다.
     }
 
+    //배달파티 조회: 검색어로 조회 ,필터 추가
+    public GetDeliveryPartiesRes getDeliveryPartiesByKeyword2(int dormitoryId, int cursor, String orderTimeCategory, Integer maxMatching, String keyword) {
+        // validation: 검색어 빈값
+        if(keyword == null || keyword.isBlank()){
+            throw new BaseException(BaseResponseStatus.BLANK_KEYWORD);
+        }
+
+        OrderTimeCategoryType orderTimeCategoryType = null;
+
+        if( orderTimeCategory != null && !orderTimeCategory.equals("")){
+            orderTimeCategoryType = OrderTimeCategoryType.valueOf(orderTimeCategory);
+        }
+
+        PageRequest paging = PageRequest.of(cursor, PAGING_SIZE, Sort.by(Sort.Direction.ASC, PAGING_STANDARD)); // 페이징 요구 객체
+        GetDeliveryPartiesRes dto = deliveryPartyQueryRepository.getDeliveryPartiesByKeyword2(dormitoryId, orderTimeCategoryType, maxMatching, keyword, paging);
+        return dto;
+    }
+
 
     //배달파티 검색 통합 버전
     public GetDeliveryPartiesRes getDeliveryParties(int dormitoryId, int cursor, String orderTimeCategory, Integer maxMatching) {
