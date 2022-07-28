@@ -99,17 +99,33 @@ public class DeliveryPartyController {
         return new BaseResponse<>(response);
     }
 
-    //배달파티 조회: 검색어로 조회
-    @ApiOperation(value = "조회 : 검색어를 포함하는 배달파티 목록 조회", notes = "해당 기숙사의 배달파티 목록울 검색어로 조회할 수 있다.")
+//    //배달파티 조회: 검색어(키워드)로 조회
+//    @ApiOperation(value = "조회 : 검색어(키워드)를 포함하는 배달파티 목록 조회", notes = "해당 기숙사의 배달파티 목록울 검색어로 조회할 수 있다.")
+//    @ApiResponses({
+//            @ApiResponse(code =1000 ,message ="요청에 성공하였습니다."),
+//            @ApiResponse(code=2205,message = "검색어를 입력해주세요"),
+//            @ApiResponse(code=4000,message = "서버 오류입니다.")
+//    })
+//    @GetMapping("/{dormitoryId}/delivery-parties/keyword")
+//    public BaseResponse<GetDeliveryPartiesRes> getDeliveryPartiesByKeyword(@PathVariable("dormitoryId") int dormitoryId, @RequestParam String keyword, @RequestParam int cursor){
+//        GetDeliveryPartiesRes response = deliveryPartyService.getDeliveryPartiesByKeyword(dormitoryId, keyword, cursor);
+//        return new BaseResponse<>(response);
+//    }
+
+    //배달파티 조회: 검색어(키워드)로 조회 필터링 조건 추가
+    @ApiOperation(value = "배달파티 조회", notes = "cursor은 0부터 시작. dormitoryId는 현재 대학교 id. 쿼리 스트링(orderTimeCategory, maxMatching)은 생략 가능합니다 \n " +
+            "예시 1. 필터 기반 검색이 아닌 배달 파티 검색어 조회 : https://geeksasaeng.shop/1/delivery-parties/keyword?cursor=0&keyword=chicken \n" +
+            "예시 2. 검색어+필터 배달 파티 검색 https://geeksasaeng.shop/1/delivery-parties/keyword?cursor=0&orderTimeCategory=DINNER&maxMatching=3&keyword=chicken  ")
     @ApiResponses({
             @ApiResponse(code =1000 ,message ="요청에 성공하였습니다."),
             @ApiResponse(code=2205,message = "검색어를 입력해주세요"),
             @ApiResponse(code=4000,message = "서버 오류입니다.")
     })
     @GetMapping("/{dormitoryId}/delivery-parties/keyword")
-    public BaseResponse<GetDeliveryPartiesRes> getDeliveryPartiesByKeyword(@PathVariable("dormitoryId") int dormitoryId, @RequestParam String keyword, @RequestParam int cursor){
-        GetDeliveryPartiesRes response = deliveryPartyService.getDeliveryPartiesByKeyword(dormitoryId, keyword, cursor);
-        return new BaseResponse<>(response);
+    public BaseResponse<GetDeliveryPartiesRes> getDeliveryPartiesByKeyword2(@PathVariable int dormitoryId,
+                                                                  @RequestParam int cursor, @RequestParam(required = false) String orderTimeCategory, @RequestParam(required = false) Integer maxMatching, @RequestParam String keyword){
+        GetDeliveryPartiesRes res = deliveryPartyService.getDeliveryPartiesByKeyword2(dormitoryId, cursor, orderTimeCategory, maxMatching, keyword);
+        return new BaseResponse<>(res);
     }
 
     //기숙사별 default 위도, 경도 조회
