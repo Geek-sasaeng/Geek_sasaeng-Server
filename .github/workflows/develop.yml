@@ -23,6 +23,13 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
+      - name: Set an Environment Variable # add an environment variable step
+        run: |
+            IFS='/' read -ra vBranch <<< "$GITHUB_REF" # 현재 workflow를 실행한 refs/heads/branch를 '/'를 기준으로 array형태로 vBranch에 저장
+            branch=${vBranch[1]}                       # vBranch array중에 2번째(branch)를 branch에 저장
+            echo ::set-env name=BRANCH::$branch        # set-env
+
+
       - name: Set up JDK 11
         uses: actions/setup-java@v2
         with:
@@ -76,6 +83,10 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
+          aws s3 cp \
+          --recursive \
+          --region ap-northeast-2 \
+          build s3://github-actions-dh/$BRANCH # 위에서 shell script로 작성한 현재 실행 중인 branch명을 사용, 해당 branch 디렉토리로 배포
           aws deploy create-deployment \
           --application-name geeksasaeng \
           --deployment-group-name geeksasaeng-group \
