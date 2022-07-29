@@ -25,7 +25,6 @@ public class Block extends BaseEntity {
     @JoinColumn(name = "blocked_member_id")
     private Member blockedMember;
 
-    @Builder
     public Block(Member blockingMember, Member blockedMember) {
         this.blockingMember = blockingMember;
         this.blockedMember = blockedMember;
