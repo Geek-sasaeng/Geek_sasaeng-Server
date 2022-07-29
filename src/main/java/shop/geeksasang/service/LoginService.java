@@ -63,6 +63,7 @@ public class LoginService {
 
         return PostLoginRes.builder()
                 .jwt(jwt)
+                .nickName(member.getNickName())
                 .loginStatus(loginStatus)
                 .build();
     }
@@ -103,13 +104,8 @@ public class LoginService {
 
         return PostLoginRes.builder()
                 .jwt(jwt)
+                .nickName(member.getNickName())
                 .loginStatus(loginStatus)
                 .build();
     }
-
-    @GetMapping
-    public LinkedHashMap test(){
-        return jwtService.getJwtInfo();
-    }
-
 }

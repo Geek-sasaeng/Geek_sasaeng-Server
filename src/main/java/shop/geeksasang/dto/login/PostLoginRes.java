@@ -15,6 +15,10 @@ public class PostLoginRes {
     @ApiParam(value = "jwt Token")
     private String jwt;
 
+    @ApiModelProperty(example = "neoneo")
+    @ApiParam(value = "로그인한 멤버 닉네임")
+    private String nickName;
+
     @ApiModelProperty(example = "NEVER")
     @ApiParam(value = "로그인 횟수 상태")
     private LoginStatus loginStatus;
