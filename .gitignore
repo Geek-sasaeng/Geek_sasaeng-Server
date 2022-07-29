@@ -7,6 +7,7 @@ build/
 logs
 *.yml
 !.github/workflows/develop.yml
+!appspec.yml
 dump.rdb
 
 
