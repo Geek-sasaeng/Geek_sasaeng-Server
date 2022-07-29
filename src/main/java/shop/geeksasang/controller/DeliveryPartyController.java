@@ -113,7 +113,7 @@ public class DeliveryPartyController {
 //    }
 
     //배달파티 조회: 검색어(키워드)로 조회 필터링 조건 추가
-    @ApiOperation(value = "배달파티 검색어 조회", notes = "cursor은 0부터 시작. dormitoryId는 현재 대학교 id. 쿼리 스트링(orderTimeCategory, maxMatching)은 생략 가능합니다 \n " +
+    @ApiOperation(value = "배달파티 검색어(키워드) 조회", notes = "cursor은 0부터 시작. dormitoryId는 현재 대학교 id. 쿼리 스트링(orderTimeCategory, maxMatching)은 생략 가능합니다 \n " +
             "예시 1. 필터 기반 검색이 아닌 배달 파티 검색어 조회 : https://geeksasaeng.shop/1/delivery-parties/keyword?cursor=0&keyword=chicken \n" +
             "예시 2. 검색어+필터 배달 파티 검색 https://geeksasaeng.shop/1/delivery-parties/keyword?cursor=0&orderTimeCategory=DINNER&maxMatching=3&keyword=chicken  ")
     @ApiResponses({
