@@ -6,6 +6,7 @@ build/
 !**/src/test/**/build/
 logs
 *.yml
+!.github/workflows/develop.yml
 dump.rdb
 
 
