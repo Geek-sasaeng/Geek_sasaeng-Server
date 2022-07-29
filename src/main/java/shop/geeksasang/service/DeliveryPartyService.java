@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 import static shop.geeksasang.config.exception.response.BaseResponseStatus.*;
 
 
-@Transactional
+@Transactional(readOnly = true)
 @Service
 @RequiredArgsConstructor
 public class DeliveryPartyService {
@@ -44,6 +44,7 @@ public class DeliveryPartyService {
     private final FoodCategoryRepository foodCategoryRepository;
     private final HashTagRepository hashTagRepository;
     private final DeliveryPartyQueryRepository deliveryPartyQueryRepository;
+    private final BlockRepository blockRepository;
 
     private static final int PAGING_SIZE = 10;
     private static final String PAGING_STANDARD = "orderTime";
@@ -193,7 +194,7 @@ public class DeliveryPartyService {
 
 
     //배달파티 검색 통합 버전
-    public GetDeliveryPartiesRes getDeliveryParties(int dormitoryId, int cursor, String orderTimeCategory, Integer maxMatching) {
+    public GetDeliveryPartiesRes getDeliveryParties(int dormitoryId, int cursor, String orderTimeCategory, Integer maxMatching, int memberId) {
 
         OrderTimeCategoryType orderTimeCategoryType = null;
 
@@ -201,18 +202,22 @@ public class DeliveryPartyService {
             orderTimeCategoryType = OrderTimeCategoryType.valueOf(orderTimeCategory);
         }
 
+        List<Member> blockList = blockRepository.findBlocksByBlockingMember(memberId).stream()
+                .map(block -> block.getBlockedMember())
+                .collect(Collectors.toList());
+
         PageRequest paging = PageRequest.of(cursor, PAGING_SIZE, Sort.by(Sort.Direction.ASC, PAGING_STANDARD)); // 페이징 요구 객체
-        GetDeliveryPartiesRes dto = deliveryPartyQueryRepository.findDeliveryPartiesByConditions(dormitoryId, orderTimeCategoryType, maxMatching, paging);
+        GetDeliveryPartiesRes dto = deliveryPartyQueryRepository.findDeliveryPartiesByConditions(dormitoryId, orderTimeCategoryType, maxMatching, paging, blockList);
         return dto;
     }
 
     //기숙사 별 default 위도, 경도
-    public GetDeliveryPartyDefaultLocationRes getDeliveryPartyDefaultLocation(int domitoryId){
-        Dormitory dormitory = dormitoryRepository.findById(domitoryId).orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_DORMITORY));
+    public GetDeliveryPartyDefaultLocationRes getDeliveryPartyDefaultLocation(int dormitoryId){
+        Dormitory dormitory = dormitoryRepository.findById(dormitoryId).orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_DORMITORY));
 
         Double getLatitude = dormitory.getLocation().getLatitude(); //위도
-        Double getLongtitude = dormitory.getLocation().getLongitude(); //경도
-        GetDeliveryPartyDefaultLocationRes getDeliveryPartyDefaultLocationRes =  new GetDeliveryPartyDefaultLocationRes(getLatitude,getLongtitude);
+        Double getLongitude = dormitory.getLocation().getLongitude(); //경도
+        GetDeliveryPartyDefaultLocationRes getDeliveryPartyDefaultLocationRes =  new GetDeliveryPartyDefaultLocationRes(getLatitude,getLongitude);
 
         return getDeliveryPartyDefaultLocationRes;
     }
