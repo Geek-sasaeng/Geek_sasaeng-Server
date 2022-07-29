@@ -39,7 +39,7 @@ public class PostDeliveryPartyReportRegisterReq {
     @ApiModelProperty(example = "true")
     @ApiParam(value = "멤버 차단 여부", required = true)
     @NotNull
-    private boolean isBlock;
+    private boolean block;
 
     public DeliveryPartyReport toEntity(Member member, DeliveryParty deliveryParty, ReportCategory reportCategory, PostDeliveryPartyReportRegisterReq dto) {
         return DeliveryPartyReport.builder()
