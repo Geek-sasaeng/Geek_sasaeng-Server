@@ -110,9 +110,10 @@ public class DeliveryPartyController {
             @ApiResponse(code=4000,message = "서버 오류입니다.")
     })
     @GetMapping("/{dormitoryId}/delivery-parties/keyword")
-    public BaseResponse<GetDeliveryPartiesRes> getDeliveryPartiesByKeyword2(@PathVariable int dormitoryId,
+    public BaseResponse<GetDeliveryPartiesRes> getDeliveryPartiesByKeyword2(@PathVariable int dormitoryId, HttpServletRequest request,
                                                                   @RequestParam int cursor, @RequestParam(required = false) String orderTimeCategory, @RequestParam(required = false) Integer maxMatching, @RequestParam String keyword){
-        GetDeliveryPartiesRes res = deliveryPartyService.getDeliveryPartiesByKeyword2(dormitoryId, cursor, orderTimeCategory, maxMatching, keyword);
+        JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
+        GetDeliveryPartiesRes res = deliveryPartyService.getDeliveryPartiesByKeyword2(dormitoryId, cursor, orderTimeCategory, maxMatching, keyword, jwtInfo.getUserId());
         return new BaseResponse<>(res);
     }
 

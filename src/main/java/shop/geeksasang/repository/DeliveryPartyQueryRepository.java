@@ -64,7 +64,7 @@ public class DeliveryPartyQueryRepository {
     }
 
     //배달파티 조회: 검색어로 조회 필터 추가
-    public GetDeliveryPartiesRes getDeliveryPartiesByKeyword2(int dormitoryId, OrderTimeCategoryType orderTimeCategory, Integer maxMatching,String keyword, Pageable pageable) {
+    public GetDeliveryPartiesRes getDeliveryPartiesByKeyword2(int dormitoryId, OrderTimeCategoryType orderTimeCategory, Integer maxMatching, String keyword, Pageable pageable, List<Member> blockList) {
         List<DeliveryParty> DeliveryPartyList = query.select(deliveryParty)
                 .from(deliveryParty)
                 .where(deliveryParty.dormitory.id.eq(dormitoryId),
@@ -72,7 +72,8 @@ public class DeliveryPartyQueryRepository {
                         deliveryParty.maxMatching.between(0, maxMatching), //null 들어가면 알아서 조건이 반영되지 않는다.
                         deliveryParty.status.eq(BaseStatus.ACTIVE),
                         deliveryParty.orderTime.after(LocalDateTime.now()),
-                        deliveryParty.title.like('%'+keyword+'%').or(deliveryParty.foodCategory.title.eq(keyword))
+                        deliveryParty.title.like('%'+keyword+'%').or(deliveryParty.foodCategory.title.eq(keyword)),
+                        deliveryParty.chief.notIn(blockList)
                 )
                 .orderBy(deliveryParty.orderTime.asc(), deliveryParty.id.asc())
                 .offset(pageable.getOffset())
