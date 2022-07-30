@@ -33,7 +33,7 @@ public class PostMemberReportRegisterReq {
     @ApiModelProperty(example = "true")
     @ApiParam(value = "멤버 차단 여부", required = true)
     @NotNull
-    private boolean isBlock;
+    private boolean block;
 
     public MemberReport toEntity(Member member, Member reportedMember, PostMemberReportRegisterReq dto, ReportCategory reportCategory) {
         return MemberReport.builder()

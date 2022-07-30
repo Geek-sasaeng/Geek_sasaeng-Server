@@ -22,8 +22,9 @@ import shop.geeksasang.repository.EmailRepository;
 import shop.geeksasang.repository.MemberRepository;
 import shop.geeksasang.repository.PhoneNumberRepository;
 import shop.geeksasang.repository.UniversityRepository;
-import shop.geeksasang.utils.jwt.RedisUtil;
 import shop.geeksasang.utils.encrypt.SHA256;
+import shop.geeksasang.utils.resttemplate.naverlogin.NaverLoginData;
+import shop.geeksasang.utils.resttemplate.naverlogin.NaverLoginService;
 
 import java.util.Optional;
 
@@ -38,9 +39,9 @@ public class MemberService {
     private final EmailRepository emailRepository;
     private final PhoneNumberRepository phoneNumberRepository;
 
-    private final RedisUtil redisUtil;
+    private final SmsService smsService;
 
-    private final long expireTime = 60 * 5L; // 이메일 유효 기간
+    private final NaverLoginService naverLoginRequest;
 
     // 회원 가입하기
     @Transactional(readOnly = false)
@@ -66,14 +67,13 @@ public class MemberService {
             throw new BaseException(INVALID_EMAIL_MEMBER);
 
         // 검증: 휴대폰 인증 여부
+        PhoneNumber phoneNumber = null;
         if(memberRepository.findMemberByPhoneNumberId(dto.getPhoneNumberId()).isPresent()){
-            throw new BaseException(DUPLICATE_USER_PHONENUMBER);
+            phoneNumber = phoneNumberRepository.findById(dto.getPhoneNumberId()).orElseThrow(
+                    () -> new BaseException(INVALID_INFORMATIONAGREE_STATUS));
+            if(!phoneNumber.getPhoneValidStatus().equals(ValidStatus.SUCCESS))
+                throw new BaseException(INVALID_PHONE_NUMBER);
         }
-
-        PhoneNumber phoneNumber = phoneNumberRepository.findById(dto.getPhoneNumberId()).orElseThrow(
-                () -> new BaseException(INVALID_EMAIL_MEMBER));
-        if(!phoneNumber.getPhoneValidStatus().equals(ValidStatus.SUCCESS))
-            throw new BaseException(INVALID_SMS_MEMBER);
 
         dto.setPassword(SHA256.encrypt(dto.getPassword()));
         Member member = dto.toEntity(email, phoneNumber);
@@ -91,38 +91,45 @@ public class MemberService {
     // 소셜 회원가입 하기
     @Transactional(readOnly = false)
     public PostSocialRegisterRes registerSocialMember(PostSocialRegisterReq dto){
-        if(!dto.getCheckPassword().equals(dto.getPassword())) {
-            throw new BaseException(DIFFRENT_PASSWORDS);
-        }
-        if(!memberRepository.findMemberByLoginId(dto.getLoginId()).isEmpty()){
+        Email emailEntity;
+        // 네이버 사용자 토큰 받아오기
+        NaverLoginData naverLoginData = naverLoginRequest.getToken(dto.getAccessToken());
+        String naverId = naverLoginData.getId();
+        String loginId = naverLoginData.getEmail();
+        String phoneNumber = naverLoginData.getMobile();
+        phoneNumber = phoneNumber.replace("-","");
+        String email = dto.getEmail();
+        String password = naverId;
+
+        if(!memberRepository.findMemberByLoginId(loginId).isEmpty()){
             throw new BaseException(DUPLICATE_USER_LOGIN_ID);
         }
-        // 검증: 동의여부가 Y 가 이닌 경우
+
+        // 검증: 동의여부가 Y 가 아닌 경우
         if(!dto.getInformationAgreeStatus().equals("Y")){
             throw new BaseException(INVALID_INFORMATIONAGREE_STATUS);
         }
+
+        emailEntity = emailRepository.findEmailByAddress(email).orElseThrow(() -> new BaseException(NOT_MATCH_EMAIL));
+        int emailId = emailEntity.getId();
+
         // 검증: 이메일 인증 여부
-        if(memberRepository.findMemberByEmailId(dto.getEmailId()).isPresent()){
+        if(!memberRepository.findMemberByEmailId(emailId).isEmpty()){
             throw new BaseException(ALREADY_VALID_EMAIL);
         }
-
-        Email email = emailRepository.findById(dto.getEmailId()).orElseThrow(
-                () -> new BaseException(INVALID_EMAIL_MEMBER));
-        if(!email.getEmailValidStatus().equals(ValidStatus.SUCCESS))
+        if(!emailEntity.getEmailValidStatus().equals(ValidStatus.SUCCESS))
             throw new BaseException(INVALID_EMAIL_MEMBER);
 
-        // 검증: 휴대폰 인증 여부
-        if(memberRepository.findMemberByPhoneNumberId(dto.getPhoneNumberId()).isPresent()){
+        // 검증: 핸드폰 번호가 등록이 안되어있는지
+        Optional<PhoneNumber> sa = phoneNumberRepository.findPhoneNumberByNumber(phoneNumber);
+        if(phoneNumberRepository.findPhoneNumberByNumber(phoneNumber).isPresent()){
             throw new BaseException(DUPLICATE_USER_PHONENUMBER);
         }
 
-        PhoneNumber phoneNumber = phoneNumberRepository.findById(dto.getPhoneNumberId()).orElseThrow(
-                () -> new BaseException(INVALID_EMAIL_MEMBER));
-        if(!phoneNumber.getPhoneValidStatus().equals(ValidStatus.SUCCESS))
-            throw new BaseException(INVALID_SMS_MEMBER);
+        // 핸드폰 번호 DB에 저장
+        PhoneNumber phoneNumberEntity = smsService.savePhoneNumber(phoneNumber);
 
-        dto.setPassword(SHA256.encrypt(dto.getPassword()));
-        Member member = dto.toEntity(email, phoneNumber);
+        Member member = dto.toEntity(emailEntity, phoneNumberEntity, loginId, password);
         University university = universityRepository
                 .findUniversityByName(dto.getUniversityName())
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_UNIVERSITY));
@@ -130,7 +137,7 @@ public class MemberService {
         member.changeStatusToActive();
         member.changeLoginStatusToNever(); // 로그인 안해본 상태 디폴트 저장
         memberRepository.save(member);
-        PostSocialRegisterRes postSocialRegisterRes = PostSocialRegisterRes.toDto(member, email, phoneNumber);
+        PostSocialRegisterRes postSocialRegisterRes = PostSocialRegisterRes.toDto(member, emailEntity, phoneNumberEntity);
         return postSocialRegisterRes;
     }
 

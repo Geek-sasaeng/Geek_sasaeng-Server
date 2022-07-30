@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import shop.geeksasang.config.response.BaseResponse;
 import shop.geeksasang.dto.login.JwtInfo;
 import shop.geeksasang.dto.report.PostMemberReportRegisterReq;
+import shop.geeksasang.service.BlockService;
 import shop.geeksasang.service.MemberReportService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,7 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 public class MemberReportController {
 
     private final MemberReportService memberReportService;
-    //TODO 차단 서비스 구현 처리할 것.
+    private final BlockService blockService;
 
     public static final String SUCCESS_MESSAGE = "신고 생성에 성공하셨습니다";
 
@@ -41,6 +42,11 @@ public class MemberReportController {
     public BaseResponse<String> registerMemberReport(@Validated @RequestBody PostMemberReportRegisterReq dto, HttpServletRequest request){
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
         memberReportService.registerMemberReport(dto, jwtInfo);
+
+        if(dto.isBlock()){
+            blockService.block(jwtInfo.getUserId(), dto.getReportedMemberId());
+        }
+
         return new BaseResponse<>(SUCCESS_MESSAGE);
     }
 }

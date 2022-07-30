@@ -14,6 +14,7 @@ import shop.geeksasang.domain.report.record.MemberReportRecord;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -74,6 +75,9 @@ public class Member extends BaseEntity {
     private int perDayReportingCount;
 
     private int reportedCount;
+
+    @OneToMany(mappedBy = "blockingMember")
+    List<Block> blocks = new ArrayList<>();
 
     public void changeStatusToActive(){
         super.setStatus(BaseStatus.ACTIVE);
