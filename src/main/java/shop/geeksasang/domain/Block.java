@@ -2,12 +2,14 @@ package shop.geeksasang.domain;
 
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import shop.geeksasang.config.domain.BaseEntity;
 
 import javax.persistence.*;
 
+@Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Block extends BaseEntity {
