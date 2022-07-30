@@ -3,7 +3,6 @@ package shop.geeksasang.service;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,7 +12,6 @@ import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.config.exception.response.BaseResponseStatus;
 import shop.geeksasang.domain.*;
 import shop.geeksasang.dto.deliveryParty.get.*;
-import shop.geeksasang.dto.deliveryParty.get.vo.DeliveryPartiesVo;
 import shop.geeksasang.dto.deliveryParty.patch.PatchDeliveryPartyStatusRes;
 import shop.geeksasang.dto.deliveryParty.post.PostDeliveryPartyReq;
 import shop.geeksasang.dto.deliveryParty.post.PostDeliveryPartyRes;
@@ -32,7 +30,7 @@ import java.util.stream.Collectors;
 import static shop.geeksasang.config.exception.response.BaseResponseStatus.*;
 
 
-@Transactional
+@Transactional(readOnly = true)
 @Service
 @RequiredArgsConstructor
 public class DeliveryPartyService {
@@ -44,6 +42,7 @@ public class DeliveryPartyService {
     private final FoodCategoryRepository foodCategoryRepository;
     private final HashTagRepository hashTagRepository;
     private final DeliveryPartyQueryRepository deliveryPartyQueryRepository;
+    private final BlockRepository blockRepository;
 
     private static final int PAGING_SIZE = 10;
     private static final String PAGING_STANDARD = "orderTime";
@@ -156,25 +155,8 @@ public class DeliveryPartyService {
         return getDeliveryPartyDetailRes;
     }
 
-    //배달파티 조회: 검색어로 조회
-    public GetDeliveryPartiesRes getDeliveryPartiesByKeyword(int dormitoryId, String keyword, int cursor){
-        // validation: 검색어 빈값
-        if(keyword == null || keyword.isBlank()){
-            throw new BaseException(BaseResponseStatus.BLANK_KEYWORD);
-        }
-
-        PageRequest paging = PageRequest.of(cursor, PAGING_SIZE, Sort.by(Sort.Direction.ASC, PAGING_STANDARD)); // 페이징 요구 객체
-        Slice<DeliveryParty> deliveryParties = deliveryPartyRepository.findDeliveryPartiesByKeyword(dormitoryId, keyword, paging, LocalDateTime.now()); // 페이징 반환 객체
-
-        List<DeliveryPartiesVo> list = deliveryParties.stream()
-                .map(deliveryParty -> DeliveryPartiesVo.toDto(deliveryParty))
-                .collect(Collectors.toList());
-
-        return new GetDeliveryPartiesRes(!deliveryParties.hasNext(), list); //다음 페이지가 있으면 파이널 페이지가 아니므로 !를 붙였다.
-    }
-
     //배달파티 조회: 검색어로 조회 ,필터 추가
-    public GetDeliveryPartiesRes getDeliveryPartiesByKeyword2(int dormitoryId, int cursor, String orderTimeCategory, Integer maxMatching, String keyword) {
+    public GetDeliveryPartiesRes getDeliveryPartiesByKeyword2(int dormitoryId, int cursor, String orderTimeCategory, Integer maxMatching, String keyword, int memberId) {
         // validation: 검색어 빈값
         if(keyword == null || keyword.isBlank()){
             throw new BaseException(BaseResponseStatus.BLANK_KEYWORD);
@@ -186,14 +168,18 @@ public class DeliveryPartyService {
             orderTimeCategoryType = OrderTimeCategoryType.valueOf(orderTimeCategory);
         }
 
+        List<Member> blockList = blockRepository.findBlocksByBlockingMember(memberId).stream()
+                .map(block -> block.getBlockedMember())
+                .collect(Collectors.toList());
+
         PageRequest paging = PageRequest.of(cursor, PAGING_SIZE, Sort.by(Sort.Direction.ASC, PAGING_STANDARD)); // 페이징 요구 객체
-        GetDeliveryPartiesRes dto = deliveryPartyQueryRepository.getDeliveryPartiesByKeyword2(dormitoryId, orderTimeCategoryType, maxMatching, keyword, paging);
+        GetDeliveryPartiesRes dto = deliveryPartyQueryRepository.getDeliveryPartiesByKeyword2(dormitoryId, orderTimeCategoryType, maxMatching, keyword, paging, blockList);
         return dto;
     }
 
 
     //배달파티 검색 통합 버전
-    public GetDeliveryPartiesRes getDeliveryParties(int dormitoryId, int cursor, String orderTimeCategory, Integer maxMatching) {
+    public GetDeliveryPartiesRes getDeliveryParties(int dormitoryId, int cursor, String orderTimeCategory, Integer maxMatching, int memberId) {
 
         OrderTimeCategoryType orderTimeCategoryType = null;
 
@@ -201,18 +187,22 @@ public class DeliveryPartyService {
             orderTimeCategoryType = OrderTimeCategoryType.valueOf(orderTimeCategory);
         }
 
+        List<Member> blockList = blockRepository.findBlocksByBlockingMember(memberId).stream()
+                .map(block -> block.getBlockedMember())
+                .collect(Collectors.toList());
+
         PageRequest paging = PageRequest.of(cursor, PAGING_SIZE, Sort.by(Sort.Direction.ASC, PAGING_STANDARD)); // 페이징 요구 객체
-        GetDeliveryPartiesRes dto = deliveryPartyQueryRepository.findDeliveryPartiesByConditions(dormitoryId, orderTimeCategoryType, maxMatching, paging);
+        GetDeliveryPartiesRes dto = deliveryPartyQueryRepository.findDeliveryPartiesByConditions(dormitoryId, orderTimeCategoryType, maxMatching, paging, blockList);
         return dto;
     }
 
     //기숙사 별 default 위도, 경도
-    public GetDeliveryPartyDefaultLocationRes getDeliveryPartyDefaultLocation(int domitoryId){
-        Dormitory dormitory = dormitoryRepository.findById(domitoryId).orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_DORMITORY));
+    public GetDeliveryPartyDefaultLocationRes getDeliveryPartyDefaultLocation(int dormitoryId){
+        Dormitory dormitory = dormitoryRepository.findById(dormitoryId).orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_DORMITORY));
 
         Double getLatitude = dormitory.getLocation().getLatitude(); //위도
-        Double getLongtitude = dormitory.getLocation().getLongitude(); //경도
-        GetDeliveryPartyDefaultLocationRes getDeliveryPartyDefaultLocationRes =  new GetDeliveryPartyDefaultLocationRes(getLatitude,getLongtitude);
+        Double getLongitude = dormitory.getLocation().getLongitude(); //경도
+        GetDeliveryPartyDefaultLocationRes getDeliveryPartyDefaultLocationRes =  new GetDeliveryPartyDefaultLocationRes(getLatitude,getLongitude);
 
         return getDeliveryPartyDefaultLocationRes;
     }
