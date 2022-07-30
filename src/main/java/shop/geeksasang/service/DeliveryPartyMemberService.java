@@ -37,7 +37,7 @@ public class DeliveryPartyMemberService {
         Member participant = memberRepository.findById(userId)
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTICIPANT));
 
-        // TODO : 매칭 시 중복 validation
+        // 매칭 시 중복 validation
         if(deliveryPartyMemberRepository.findDeliveryPartyMemberById(userId).isPresent()) {
             throw new BaseException(ALREADY_PARTICIPATE_ANOTHER_PARTY);
         }
