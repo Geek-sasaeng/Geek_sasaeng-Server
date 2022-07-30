@@ -19,12 +19,12 @@ jobs:
     runs-on: ubuntu-latest
 
     # Steps represent a sequence of tasks that will be executed as part of the job
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-      with:
-        repository: actions/checkout
-        ref: develop
+        with:
+          repository: actions/checkout
+          ref: develop
       - run: ls
 
       # 현재 workflow를 실행한 refs/heads/branch를 '/'를 기준으로 array형태로 vBranch에 저장
