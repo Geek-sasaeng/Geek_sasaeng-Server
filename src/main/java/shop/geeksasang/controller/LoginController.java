@@ -6,11 +6,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import shop.geeksasang.config.response.BaseResponse;
-import shop.geeksasang.dto.login.PostLoginReq;
-import shop.geeksasang.dto.login.PostLoginRes;
-import shop.geeksasang.dto.login.PostSocialLoginReq;
+import shop.geeksasang.dto.login.JwtInfo;
+import shop.geeksasang.dto.login.JwtResponse;
+import shop.geeksasang.dto.login.post.PostLoginReq;
+import shop.geeksasang.dto.login.post.PostLoginRes;
+import shop.geeksasang.dto.login.post.PostSocialLoginReq;
 import shop.geeksasang.service.LoginService;
 import shop.geeksasang.utils.jwt.NoIntercept;
+
+import javax.servlet.http.HttpServletRequest;
 
 
 @RequestMapping("/login")
@@ -59,5 +63,25 @@ public class LoginController {
     public BaseResponse<PostLoginRes> socialLogin(@Validated @RequestBody PostSocialLoginReq dto){
         PostLoginRes login = loginService.naverLogin(dto);
         return new BaseResponse<>(login);
+    }
+
+    // 자동 로그인
+    // jwt를 이용해서 member 정보 반환
+    @ApiOperation(
+            value="소셜 로그인",
+            notes="네이버 로그인 토큰을 받아서 로그인을 진행한다, 토큰 userIdx가 DB에 없으면 회원가입 화면으로 이동한다. (2807 코드 참고) "
+    )
+    @ApiResponses({
+            @ApiResponse(code = 1000, message ="요청에 성공하셨습니다."),
+            @ApiResponse(code = 2204, message ="존재하지 않는 회원 id 입니다."),
+            @ApiResponse(code = 2001, message ="header에 JWT가 없습니다."),
+            @ApiResponse(code = 2002,message ="유효하지 않은 JWT입니다. 재로그인 바랍니다."),
+            @ApiResponse(code = 2003,message ="만료기간이 지난 JWT입니다. 재로그인 바랍니다.")
+    })
+    @PostMapping("/auto")
+    public BaseResponse<JwtResponse> socialLogin(HttpServletRequest request){
+        JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
+        JwtResponse memberInfo = loginService.autoLogin(jwtInfo);
+        return new BaseResponse<>(memberInfo);
     }
 }
