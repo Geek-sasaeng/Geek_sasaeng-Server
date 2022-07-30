@@ -115,6 +115,7 @@ public enum BaseResponseStatus {
     DIFFERENT_USER_ID(false, 2610, "파티의 생성 유저가 아닙니다."),
     CAN_NOT_PARTICIPATE(false, 2611, "참여할 수 없는 파티입니다."),
     CAN_NOT_DELETE_PARTY(false, 2612, "삭제할 수 없는 파티입니다."),
+    ALREADY_PARTICIPATE_ANOTHER_PARTY(false, 2613, "이미 다른 파티에 참여하고 있습니다."),
 
     /**
      * 네오

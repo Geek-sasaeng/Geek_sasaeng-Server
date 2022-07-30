@@ -211,7 +211,7 @@ public class DeliveryPartyService {
         deliveryPartyRepository.save(deliveryParty);
 
         // 배달파티 멤버 status도 Inactive로 수정
-        List<DeliveryPartyMember> deliveryPartyMembers = deliveryPartyMemberRepository.findDeliveryPartyMembersById(partyId);
+        List<DeliveryPartyMember> deliveryPartyMembers = deliveryPartyMemberRepository.findDeliveryPartyMembersByPartyId(partyId);
 
         for( DeliveryPartyMember deliveryPartyMember : deliveryPartyMembers ){
             deliveryPartyMember.changeStatusToInactive();
