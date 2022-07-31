@@ -15,11 +15,6 @@ import javax.validation.constraints.NotNull;
 @Data
 public class PostDeliveryPartyMemberReq {
 
-//    @ApiModelProperty(example = "1")
-//    @ApiParam(value = "멤버 id", required = true)
-//    @NotNull
-//    private int participantId;
-
     @ApiModelProperty(example = "1")
     @ApiParam(value = "파티 id", required = true)
     @NotNull

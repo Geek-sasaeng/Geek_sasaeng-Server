@@ -3,6 +3,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.geeksasang.config.exception.BaseException;
+import shop.geeksasang.config.response.BaseResponse;
 import shop.geeksasang.config.status.BaseStatus;
 import shop.geeksasang.domain.DeliveryParty;
 import shop.geeksasang.domain.DeliveryPartyMember;
@@ -25,6 +26,7 @@ public class DeliveryPartyMemberService {
     private final MemberRepository memberRepository;
     private final DeliveryPartyRepository deliveryPartyRepository;
 
+    // 파티 들어가기 - 멤버 생성
     @Transactional(readOnly = false)
     public DeliveryPartyMember joinDeliveryPartyMember(PostDeliveryPartyMemberReq dto, JwtInfo jwtInfo){
 
@@ -34,6 +36,11 @@ public class DeliveryPartyMemberService {
         //엔티티 조회
         Member participant = memberRepository.findById(userId)
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTICIPANT));
+
+        // 매칭 시 중복 validation
+        if(deliveryPartyMemberRepository.findDeliveryPartyMemberById(userId).isPresent()) {
+            throw new BaseException(ALREADY_PARTICIPATE_ANOTHER_PARTY);
+        }
 
         DeliveryParty party= deliveryPartyRepository.findDeliveryPartyById(dto.getPartyId())
         .orElseThrow(() -> new BaseException(CAN_NOT_PARTICIPATE));
