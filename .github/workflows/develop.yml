@@ -22,7 +22,7 @@ jobs:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     steps:
       - run: ls -al
-      - uses: actions/checkout@develop
+      - uses: actions/checkout@v2
 #        with:
 #          ref: develop
 
