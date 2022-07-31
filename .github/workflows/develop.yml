@@ -5,9 +5,9 @@ name: geeksasaeng develop branch CI/CD
 # Controls when the workflow will run
 on:
   push:
-    branches: [ main, develop]
+    branches: [ main, develop ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, develop ]
 
 env:
   S3_BUCKET_NAME: geeksasaeng-s3
@@ -29,11 +29,11 @@ jobs:
       # 현재 workflow를 실행한 refs/heads/branch를 '/'를 기준으로 array형태로 vBranch에 저장
       # vBranch array중에 2번째(branch)를 branch에 저장
       # set-env
-#      - name: Set an Environment Variable # add an environment variable step
-#        run: |
-#            IFS='/' read -ra vBranch <<< "$GITHUB_REF"
-#            branch=${vBranch[1]}
-#            echo ::set-env name=BRANCH::$branch
+      - name: Set an Environment Variable # add an environment variable step
+        run: |
+            IFS='/' read -ra vBranch <<< "$GITHUB_REF"
+            branch=${vBranch[1]}
+            echo ::set-env name=BRANCH::$branch
 
 
       - name: Set up JDK 11
