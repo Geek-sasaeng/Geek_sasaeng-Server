@@ -33,7 +33,7 @@ jobs:
         run: |
             IFS='/' read -ra vBranch <<< "$GITHUB_REF"
             branch=${vBranch[1]}
-            echo "::set-env name=BRANCH::$branch"
+            echo "::set-env name=BRANCH::${{branch}}"
 
 
       - name: Set up JDK 11
