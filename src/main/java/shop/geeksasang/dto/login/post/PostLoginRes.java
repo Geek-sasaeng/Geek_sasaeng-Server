@@ -1,4 +1,4 @@
-package shop.geeksasang.dto.login;
+package shop.geeksasang.dto.login.post;
 
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiParam;

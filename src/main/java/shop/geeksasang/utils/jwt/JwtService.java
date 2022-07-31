@@ -70,7 +70,7 @@ public class JwtService {
     @throws BaseException
      */
     public LinkedHashMap getJwtInfo() throws BaseException {
-        //1. JWT 추출
+        // 1. JWT 추출
         String accessToken = getJwt();
         if(accessToken == null || accessToken.length() == 0){
             throw new BaseException(EMPTY_JWT);
@@ -104,5 +104,4 @@ public class JwtService {
                 .getExpiration().before(new Date());
         return !expiration;
     }
-
 }

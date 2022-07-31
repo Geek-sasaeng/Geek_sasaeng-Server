@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
 import shop.geeksasang.config.status.LoginStatus;
 import shop.geeksasang.config.status.BaseStatus;
 import shop.geeksasang.config.exception.BaseException;
@@ -12,13 +11,15 @@ import shop.geeksasang.config.exception.response.BaseResponseStatus;
 import shop.geeksasang.config.type.MemberLoginType;
 import shop.geeksasang.domain.Member;
 import shop.geeksasang.dto.login.*;
+import shop.geeksasang.dto.login.JwtResponse;
+import shop.geeksasang.dto.login.post.PostLoginReq;
+import shop.geeksasang.dto.login.post.PostLoginRes;
+import shop.geeksasang.dto.login.post.PostSocialLoginReq;
 import shop.geeksasang.repository.MemberRepository;
 import shop.geeksasang.utils.encrypt.SHA256;
 import shop.geeksasang.utils.jwt.JwtService;
 import shop.geeksasang.utils.resttemplate.naverlogin.NaverLoginData;
 import shop.geeksasang.utils.resttemplate.naverlogin.NaverLoginService;
-
-import java.util.LinkedHashMap;
 
 import static shop.geeksasang.config.exception.response.BaseResponseStatus.*;
 
@@ -107,5 +108,22 @@ public class LoginService {
                 .nickName(member.getNickName())
                 .loginStatus(loginStatus)
                 .build();
+    }
+
+    // JWT 유효성 확인
+    // 유효성 검증되면 jwtResponse 반환
+    public JwtResponse autoLogin(JwtInfo jwtInfo){
+        int userIdx = jwtInfo.getUserId();
+        Member member = memberRepository.findById(userIdx).orElseThrow(
+                () -> new BaseException(NOT_EXIST_USER));
+        JwtResponse jwtResponse = getJwtResponse(member);
+        return jwtResponse;
+    }
+
+    // member로 jwtResponse 가져오기
+    public JwtResponse getJwtResponse(Member member){
+        return new JwtResponse(member.getLoginId(), member.getNickName(), member.getProfileImgUrl(),
+                member.getUniversity().getName(), member.getEmail().getAddress(), member.getPhoneNumber().getNumber(), member.getMemberLoginType(),
+                member.getLoginStatus());
     }
 }
