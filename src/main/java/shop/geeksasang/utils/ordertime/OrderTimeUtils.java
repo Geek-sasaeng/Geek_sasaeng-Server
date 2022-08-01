@@ -13,7 +13,7 @@ public class OrderTimeUtils {
 
         //점심 : 11시 ~ 16시59분
         else if(orderHour>=11 && orderHour<17){
-            return OrderTimeCategoryType.DINNER;
+            return OrderTimeCategoryType.LUNCH;
         }
 
         //저녁 : 17시 ~ 20시59분
