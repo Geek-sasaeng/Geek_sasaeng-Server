@@ -6,8 +6,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import org.springframework.util.StringUtils;
+
+import shop.geeksasang.config.status.BaseStatus;
 import shop.geeksasang.config.type.OrderTimeCategoryType;
 import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.config.exception.response.BaseResponseStatus;
@@ -55,10 +56,19 @@ public class DeliveryPartyService {
 
         int chiefId = jwtInfo.getUserId();
 
-        //파티장
-        Member chief = memberRepository.findMemberByIdAndStatus(chiefId)
-                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTICIPANT));
+        //파티장 조회
+       Member chief = memberRepository.findById(chiefId)
+                .orElseThrow(()-> new BaseException(NOT_EXISTS_PARTICIPANT));
 
+       //비활성화 유저(INACTIVE) 확인
+       if(chief.getStatus().equals(BaseStatus.INACTIVE)){
+           throw new BaseException(INACTIVE_STATUS);
+       }
+
+       //신고 3번이상으로 누적된 회원은 파티를 생성할 수 없음
+        if(chief.getStatus().equals(BaseStatus.REPORTED)){
+            throw new BaseException(BaseResponseStatus.CAN_NOT_CREATE_PARTY);
+        }
 
         //카테고리
         FoodCategory foodCategory = foodCategoryRepository.findFoodCategoryById(dto.getFoodCategory())
@@ -67,6 +77,7 @@ public class DeliveryPartyService {
         //기숙사
         Dormitory dormitory = dormitoryRepository.findDormitoryById(dormitoryId)
                 .orElseThrow(() ->  new BaseException(BaseResponseStatus.NOT_EXISTS_DORMITORY));
+
         //해시태그 -- 기존 로직 유지
         List<HashTag> hashTagList = new ArrayList<>();
 
