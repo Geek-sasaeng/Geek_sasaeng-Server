@@ -7,6 +7,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.util.StringUtils;
 import shop.geeksasang.config.type.OrderTimeCategoryType;
 import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.config.exception.response.BaseResponseStatus;
@@ -183,7 +184,7 @@ public class DeliveryPartyService {
 
         OrderTimeCategoryType orderTimeCategoryType = null;
 
-        if( orderTimeCategory != null && !orderTimeCategory.equals("")){
+        if(StringUtils.hasText(orderTimeCategory)){
             orderTimeCategoryType = OrderTimeCategoryType.valueOf(orderTimeCategory);
         }
 
