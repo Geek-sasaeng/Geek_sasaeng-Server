@@ -5,9 +5,9 @@ name: geeksasaeng develop branch CI/CD
 # Controls when the workflow will run
 on:
   push:
-    branches: [ main, develop]
+    branches: [ main, develop ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, develop ]
 
 env:
   S3_BUCKET_NAME: geeksasaeng-s3
@@ -23,8 +23,8 @@ jobs:
     steps:
       - run: ls -al
       - uses: actions/checkout@v2
-        with:
-          ref: develop
+#        with:
+#          ref: develop
 
       # 현재 workflow를 실행한 refs/heads/branch를 '/'를 기준으로 array형태로 vBranch에 저장
       # vBranch array중에 2번째(branch)를 branch에 저장
@@ -33,7 +33,7 @@ jobs:
 #        run: |
 #            IFS='/' read -ra vBranch <<< "$GITHUB_REF"
 #            branch=${vBranch[1]}
-#            echo ::set-env name=BRANCH::$branch
+#            echo "::set-env name=BRANCH::$branch"
 
 
       - name: Set up JDK 11
@@ -95,3 +95,13 @@ jobs:
           --file-exists-behavior OVERWRITE \
           --s3-location bucket=geeksasaeng-s3,bundleType=zip,key=geeksasaeng.zip \
           --region ap-northeast-2
+
+#      - name: Deploy                  # S3에 배포하기
+#        env:
+#          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#        run: |
+#          aws s3 cp \
+#            --recursive \
+#            --region ap-northeast-2 \
+#            build s3://github-actions-dh/$BRANCH # 위에서 shell script로 작성한 현재 실행 중인 branch명을 사용, 해당 branch 디렉토리로 배포
