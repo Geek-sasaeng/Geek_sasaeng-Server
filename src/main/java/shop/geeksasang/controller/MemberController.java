@@ -169,7 +169,7 @@ public class MemberController {
             @ApiResponse(code =2606 ,message ="기숙사가 존재하지 않습니다."),
             @ApiResponse(code=4000,message = "서버 오류입니다.")
     })
-    @PatchMapping("/dormitory/{id}")
+    @PatchMapping("/dormitory")
     public BaseResponse<PatchDormitoryRes> updateDormitory(@RequestBody @Validated PatchDormitoryReq dto, HttpServletRequest request) {
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
 
