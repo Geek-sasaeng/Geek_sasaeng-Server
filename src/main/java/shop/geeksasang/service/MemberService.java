@@ -9,6 +9,7 @@ import shop.geeksasang.config.status.ValidStatus;
 import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.domain.*;
 
+import shop.geeksasang.dto.login.JwtInfo;
 import shop.geeksasang.dto.member.get.GetCheckIdReq;
 import shop.geeksasang.dto.member.get.GetNickNameDuplicatedReq;
 import shop.geeksasang.dto.member.patch.*;
@@ -18,6 +19,7 @@ import shop.geeksasang.dto.member.post.PostSocialRegisterReq;
 import shop.geeksasang.dto.member.post.PostSocialRegisterRes;
 import shop.geeksasang.repository.*;
 import shop.geeksasang.utils.encrypt.SHA256;
+import shop.geeksasang.utils.jwt.JwtService;
 import shop.geeksasang.utils.resttemplate.naverlogin.NaverLoginData;
 import shop.geeksasang.utils.resttemplate.naverlogin.NaverLoginService;
 
@@ -38,6 +40,7 @@ public class MemberService {
     private final SmsService smsService;
 
     private final NaverLoginService naverLoginRequest;
+    private final JwtService jwtService;
 
     // 회원 가입하기
     @Transactional(readOnly = false)
@@ -133,7 +136,15 @@ public class MemberService {
         member.changeStatusToActive();
         member.changeLoginStatusToNever(); // 로그인 안해본 상태 디폴트 저장
         memberRepository.save(member);
-        PostSocialRegisterRes postSocialRegisterRes = PostSocialRegisterRes.toDto(member, emailEntity, phoneNumberEntity);
+
+        // jwt 발급
+        JwtInfo vo = JwtInfo.builder()
+                .userId(member.getId())
+                .universityId(member.getUniversity().getId())
+                .build();
+
+        String jwt = jwtService.createJwt(vo);
+        PostSocialRegisterRes postSocialRegisterRes = PostSocialRegisterRes.toDto(member, emailEntity, phoneNumberEntity, jwt);
         return postSocialRegisterRes;
     }
 
