@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import shop.geeksasang.config.exception.response.BaseResponseStatus;
 import shop.geeksasang.config.status.LoginStatus;
 import shop.geeksasang.config.status.ValidStatus;
 import shop.geeksasang.config.exception.BaseException;
@@ -266,20 +267,11 @@ public class MemberService {
 
     // 수정: 기숙사 수정하기
     @Transactional(readOnly = false)
-    public Member updateDormitory(int id, PatchDormitoryReq dto) {
-        Optional <Member> memberEntity = memberRepository.findMemberById(id);
+    public Member updateDormitory(PatchDormitoryReq dto, JwtInfo jwtInfo) {
+        int memberId = jwtInfo.getUserId();
 
-        // 해당 유저 X
-        if(memberRepository.findMemberById(id).isEmpty()){
-            throw new BaseException(NOT_EXISTS_PARTICIPANT);
-        }
-        // 이미 탈퇴한 회원
-        if(memberEntity.get().getStatus().toString().equals("INACTIVE")){
-            throw new BaseException(ALREADY_INACTIVE_USER);
-        }
-
-        Member member = memberRepository.findMemberById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 유저는 존재하지 않습니다. id="+ id));
+        Member member = memberRepository.findMemberByIdAndStatus(memberId).
+                orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTICIPANT));
 
         // 처음 로그인 시 loginStatus를 NEVER -> NOTNEVER
         if(member.getLoginStatus().equals(LoginStatus.NEVER)){

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import shop.geeksasang.config.exception.response.BaseResponseStatus;
 import shop.geeksasang.config.response.BaseResponse;
 import shop.geeksasang.domain.Member;
+import shop.geeksasang.dto.login.JwtInfo;
 import shop.geeksasang.dto.member.get.GetCheckIdReq;
 import shop.geeksasang.dto.member.get.GetNickNameDuplicatedReq;
 import shop.geeksasang.dto.member.patch.*;
@@ -22,6 +23,7 @@ import shop.geeksasang.dto.member.post.PostSocialRegisterRes;
 import shop.geeksasang.service.MemberService;
 import shop.geeksasang.utils.jwt.NoIntercept;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @RestController
@@ -164,13 +166,14 @@ public class MemberController {
     @ApiOperation(value = "수정: 기숙사 수정하기", notes = "수정할 기숙사를 입력받아 수정.")
     @ApiResponses({
             @ApiResponse(code =2009 ,message ="존재하지 않는 멤버입니다"),
-            @ApiResponse(code =2601 ,message ="이미 탈퇴한 회원입니다"),
             @ApiResponse(code =2606 ,message ="기숙사가 존재하지 않습니다."),
             @ApiResponse(code=4000,message = "서버 오류입니다.")
     })
     @PatchMapping("/dormitory/{id}")
-    public BaseResponse<PatchDormitoryRes> updateDormitory(@PathVariable("id") int id, @RequestBody @Validated PatchDormitoryReq dto) {
-        Member member = memberService.updateDormitory(id, dto);
+    public BaseResponse<PatchDormitoryRes> updateDormitory(@RequestBody @Validated PatchDormitoryReq dto, HttpServletRequest request) {
+        JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
+
+        Member member = memberService.updateDormitory(dto, jwtInfo);
 
         PatchDormitoryRes patchDormitoryRes = PatchDormitoryRes.toDto(member);
         return new BaseResponse<>(patchDormitoryRes);
