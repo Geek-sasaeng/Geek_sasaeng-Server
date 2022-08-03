@@ -4,12 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import shop.geeksasang.config.status.LoginStatus;
 import shop.geeksasang.config.status.ValidStatus;
 import shop.geeksasang.config.exception.BaseException;
-import shop.geeksasang.domain.Email;
-import shop.geeksasang.domain.Member;
-import shop.geeksasang.domain.PhoneNumber;
-import shop.geeksasang.domain.University;
+import shop.geeksasang.domain.*;
 
 import shop.geeksasang.dto.member.get.GetCheckIdReq;
 import shop.geeksasang.dto.member.get.GetNickNameDuplicatedReq;
@@ -18,10 +16,7 @@ import shop.geeksasang.dto.member.post.PostRegisterReq;
 import shop.geeksasang.dto.member.post.PostRegisterRes;
 import shop.geeksasang.dto.member.post.PostSocialRegisterReq;
 import shop.geeksasang.dto.member.post.PostSocialRegisterRes;
-import shop.geeksasang.repository.EmailRepository;
-import shop.geeksasang.repository.MemberRepository;
-import shop.geeksasang.repository.PhoneNumberRepository;
-import shop.geeksasang.repository.UniversityRepository;
+import shop.geeksasang.repository.*;
 import shop.geeksasang.utils.encrypt.SHA256;
 import shop.geeksasang.utils.resttemplate.naverlogin.NaverLoginData;
 import shop.geeksasang.utils.resttemplate.naverlogin.NaverLoginService;
@@ -38,6 +33,7 @@ public class MemberService {
     private final UniversityRepository universityRepository;
     private final EmailRepository emailRepository;
     private final PhoneNumberRepository phoneNumberRepository;
+    private final DormitoryRepository dormitoryRepository;
 
     private final SmsService smsService;
 
@@ -254,6 +250,35 @@ public class MemberService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저는 존재하지 않습니다. id="+ id));
 
         member.updatePassword(dto.getNewPassword());
+        return member;
+    }
+
+    // 수정: 기숙사 수정하기
+    @Transactional(readOnly = false)
+    public Member updateDormitory(int id, PatchDormitoryReq dto) {
+        Optional <Member> memberEntity = memberRepository.findMemberById(id);
+
+        // 해당 유저 X
+        if(memberRepository.findMemberById(id).isEmpty()){
+            throw new BaseException(NOT_EXISTS_PARTICIPANT);
+        }
+        // 이미 탈퇴한 회원
+        if(memberEntity.get().getStatus().toString().equals("INACTIVE")){
+            throw new BaseException(ALREADY_INACTIVE_USER);
+        }
+
+        Member member = memberRepository.findMemberById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저는 존재하지 않습니다. id="+ id));
+
+        // 처음 로그인 시 loginStatus를 NEVER -> NOTNEVER
+        if(member.getLoginStatus().equals(LoginStatus.NEVER)){
+            member.changeLoginStatusToNotNever();
+        }
+
+        // 수정할 기숙사 조회
+        Dormitory dormitory = dormitoryRepository.findDormitoryById(dto.getDormitoryId())
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_DORMITORY));
+        member.updateDormitory(dormitory);
         return member;
     }
 
