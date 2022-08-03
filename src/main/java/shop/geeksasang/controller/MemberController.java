@@ -120,7 +120,7 @@ public class MemberController {
     })
     @PatchMapping("/nickName/{id}")
     public BaseResponse<PatchNicknameRes> updateNickname(@Validated @PathVariable("id") int id, @RequestBody @Valid PatchNicknameReq dto) {
-        Member member = memberService.UpdateNickname(id, dto);
+        Member member = memberService.updateNickname(id, dto);
 
         PatchNicknameRes patchNicknameRes = PatchNicknameRes.toDto(member);
         return new BaseResponse<>(patchNicknameRes);
@@ -137,7 +137,7 @@ public class MemberController {
     })
     @PatchMapping("/account-delete/{id}")
     public BaseResponse<String> updateMemberStatus(@PathVariable("id") int id, @RequestBody @Valid PatchMemberStatusReq dto) {
-        memberService.UpdateMemberStatus(id, dto);
+        memberService.updateMemberStatus(id, dto);
         String response = "회원 탈퇴가 성공하였습니다.";
         return new BaseResponse<String>(response);
     }
@@ -154,7 +154,7 @@ public class MemberController {
     })
     @PatchMapping("/modify-password/{id}")
     public BaseResponse<PatchPasswordRes> updatePassword(@PathVariable("id") int id, @RequestBody @Valid PatchPasswordReq dto) {
-        Member member = memberService.UpdatePassword(id, dto);
+        Member member = memberService.updatePassword(id, dto);
 
         PatchPasswordRes patchPasswordRes = PatchPasswordRes.toDto(member);
         return new BaseResponse<>(patchPasswordRes);

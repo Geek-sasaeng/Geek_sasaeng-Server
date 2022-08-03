@@ -186,7 +186,7 @@ public class MemberService {
 
     // 닉네임 변경하기
     @Transactional(readOnly = false)
-    public Member UpdateNickname(int id, PatchNicknameReq dto) {
+    public Member updateNickname(int id, PatchNicknameReq dto) {
         if(!memberRepository.findMemberByNickName(dto.getNickName()).isEmpty()){
             throw new BaseException(DUPLICATE_USER_NICKNAME);
         }
@@ -200,7 +200,7 @@ public class MemberService {
 
     // 회원 탈퇴하기
     @Transactional(readOnly = false)
-    public Member UpdateMemberStatus(int id, PatchMemberStatusReq dto) {
+    public Member updateMemberStatus(int id, PatchMemberStatusReq dto) {
         Optional <Member> memberEntity = memberRepository.findMemberById(id);
         // 해당 유저 X
         if(memberRepository.findMemberById(id).isEmpty()){
@@ -230,7 +230,7 @@ public class MemberService {
 
     // 비밀번호 수정하기
     @Transactional(readOnly = false)
-    public Member UpdatePassword(int id, PatchPasswordReq dto) {
+    public Member updatePassword(int id, PatchPasswordReq dto) {
         Optional <Member> memberEntity = memberRepository.findMemberById(id);
 
         // 해당 유저 X
