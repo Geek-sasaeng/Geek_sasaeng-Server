@@ -30,7 +30,9 @@ public class LoginController {
     @NoIntercept
     @ApiOperation(
             value="로그인",
-            notes="사용자의 id,비밀번호를 입력받아 jwt토큰을 반환한다. "
+            notes="사용자의 id,비밀번호를 입력받아 jwt토큰을 반환한다. " +
+                    "loginStatus가 NEVER인 경우에만 jwt,nickname,loginStatus를 반환하고" +
+                    " NOTNEVER인 경우 jwt,nickname,loginStatus,dormitoryId,dormitoryName을 반환합니다."
     )
     @ApiResponses({
             @ApiResponse(code = 1000, message ="요청에 성공하셨습니다."),

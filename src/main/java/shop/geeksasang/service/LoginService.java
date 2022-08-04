@@ -38,12 +38,14 @@ public class LoginService {
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_LOGINID));
 
         String password = SHA256.encrypt(dto.getPassword());
+
         LoginStatus loginStatus = member.getLoginStatus(); // 로그인 횟수 상태
 
         //password
         if(!password.equals(member.getPassword())){
             throw new BaseException(BaseResponseStatus.NOT_EXISTS_PASSWORD);
         }
+
         //status
         if(member.getStatus().equals(BaseStatus.INACTIVE)){
             throw new BaseException(BaseResponseStatus.INACTIVE_STATUS);
@@ -56,11 +58,23 @@ public class LoginService {
 
         String jwt = jwtService.createJwt(vo);
 
-        return PostLoginRes.builder()
-                .jwt(jwt)
-                .nickName(member.getNickName())
-                .loginStatus(loginStatus)
-                .build();
+        //loginStatus가 NOTNEVER인 경우 dormitoryId,dormitoryName을 추가
+        if(loginStatus.equals(LoginStatus.NOTNEVER)){
+            return PostLoginRes.builder()
+                    .jwt(jwt)
+                    .nickName(member.getNickName())
+                    .loginStatus(loginStatus)
+                    .dormitoryId(member.getDormitory().getId())
+                    .dormitoryName(member.getDormitory().getName())
+                    .build();
+        }
+        else{
+            return PostLoginRes.builder()
+                    .jwt(jwt)
+                    .nickName(member.getNickName())
+                    .loginStatus(loginStatus)
+                    .build();
+        }
     }
 
     // 네이버 로그인
