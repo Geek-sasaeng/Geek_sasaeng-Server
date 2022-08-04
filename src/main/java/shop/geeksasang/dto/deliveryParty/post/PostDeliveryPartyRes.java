@@ -80,7 +80,6 @@ public class PostDeliveryPartyRes {
 
 
     static public PostDeliveryPartyRes toDto(DeliveryParty deliveryParty){
-
         return PostDeliveryPartyRes.builder()
                 .chief(deliveryParty.getChief().getNickName())
                 .dormitory(deliveryParty.getDormitory().getName())

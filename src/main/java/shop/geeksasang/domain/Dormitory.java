@@ -9,6 +9,7 @@ import javax.persistence.*;
 import lombok.NoArgsConstructor;
 import shop.geeksasang.config.domain.BaseEntity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -27,7 +28,7 @@ public class Dormitory extends BaseEntity {
     private University university;
 
     @OneToMany(mappedBy = "dormitory")
-    private List<DeliveryParty> deliveryParties;
+    private List<DeliveryParty> deliveryParties = new ArrayList<>();
 
     private String name;
 

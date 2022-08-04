@@ -1,4 +1,4 @@
-package shop.geeksasang.repository;
+package shop.geeksasang.unit.repository;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -10,6 +10,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import shop.geeksasang.domain.Dormitory;
 import shop.geeksasang.domain.Location;
 import shop.geeksasang.domain.University;
+import shop.geeksasang.repository.DormitoryRepository;
+import shop.geeksasang.repository.UniversityRepository;
 
 import java.util.List;
 

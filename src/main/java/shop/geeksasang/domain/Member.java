@@ -170,4 +170,11 @@ public class Member extends BaseEntity {
         perDayReportingCount = 0;
     }
 
+
+    //테스트용
+    public Member(int id, String nickName) {
+        this.id = id;
+        this.nickName = nickName;
+        super.setStatus(BaseStatus.ACTIVE);
+    }
 }
