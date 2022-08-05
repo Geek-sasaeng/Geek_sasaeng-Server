@@ -4,13 +4,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import shop.geeksasang.config.exception.response.BaseResponseStatus;
+import shop.geeksasang.config.status.LoginStatus;
 import shop.geeksasang.config.status.ValidStatus;
 import shop.geeksasang.config.exception.BaseException;
-import shop.geeksasang.domain.Email;
-import shop.geeksasang.domain.Member;
-import shop.geeksasang.domain.PhoneNumber;
-import shop.geeksasang.domain.University;
+import shop.geeksasang.domain.*;
 
+import shop.geeksasang.dto.login.JwtInfo;
 import shop.geeksasang.dto.member.get.GetCheckIdReq;
 import shop.geeksasang.dto.member.get.GetNickNameDuplicatedReq;
 import shop.geeksasang.dto.member.patch.*;
@@ -18,11 +18,9 @@ import shop.geeksasang.dto.member.post.PostRegisterReq;
 import shop.geeksasang.dto.member.post.PostRegisterRes;
 import shop.geeksasang.dto.member.post.PostSocialRegisterReq;
 import shop.geeksasang.dto.member.post.PostSocialRegisterRes;
-import shop.geeksasang.repository.EmailRepository;
-import shop.geeksasang.repository.MemberRepository;
-import shop.geeksasang.repository.PhoneNumberRepository;
-import shop.geeksasang.repository.UniversityRepository;
+import shop.geeksasang.repository.*;
 import shop.geeksasang.utils.encrypt.SHA256;
+import shop.geeksasang.utils.jwt.JwtService;
 import shop.geeksasang.utils.resttemplate.naverlogin.NaverLoginData;
 import shop.geeksasang.utils.resttemplate.naverlogin.NaverLoginService;
 
@@ -38,10 +36,12 @@ public class MemberService {
     private final UniversityRepository universityRepository;
     private final EmailRepository emailRepository;
     private final PhoneNumberRepository phoneNumberRepository;
+    private final DormitoryRepository dormitoryRepository;
 
     private final SmsService smsService;
 
     private final NaverLoginService naverLoginRequest;
+    private final JwtService jwtService;
 
     // 회원 가입하기
     @Transactional(readOnly = false)
@@ -137,7 +137,15 @@ public class MemberService {
         member.changeStatusToActive();
         member.changeLoginStatusToNever(); // 로그인 안해본 상태 디폴트 저장
         memberRepository.save(member);
-        PostSocialRegisterRes postSocialRegisterRes = PostSocialRegisterRes.toDto(member, emailEntity, phoneNumberEntity);
+
+        // jwt 발급
+        JwtInfo vo = JwtInfo.builder()
+                .userId(member.getId())
+                .universityId(member.getUniversity().getId())
+                .build();
+
+        String jwt = jwtService.createJwt(vo);
+        PostSocialRegisterRes postSocialRegisterRes = PostSocialRegisterRes.toDto(member, emailEntity, phoneNumberEntity, jwt);
         return postSocialRegisterRes;
     }
 
@@ -179,7 +187,7 @@ public class MemberService {
 
     // 닉네임 변경하기
     @Transactional(readOnly = false)
-    public Member UpdateNickname(int id, PatchNicknameReq dto) {
+    public Member updateNickname(int id, PatchNicknameReq dto) {
         if(!memberRepository.findMemberByNickName(dto.getNickName()).isEmpty()){
             throw new BaseException(DUPLICATE_USER_NICKNAME);
         }
@@ -193,7 +201,7 @@ public class MemberService {
 
     // 회원 탈퇴하기
     @Transactional(readOnly = false)
-    public Member UpdateMemberStatus(int id, PatchMemberStatusReq dto) {
+    public Member updateMemberStatus(int id, PatchMemberStatusReq dto) {
         Optional <Member> memberEntity = memberRepository.findMemberById(id);
         // 해당 유저 X
         if(memberRepository.findMemberById(id).isEmpty()){
@@ -223,7 +231,7 @@ public class MemberService {
 
     // 비밀번호 수정하기
     @Transactional(readOnly = false)
-    public Member UpdatePassword(int id, PatchPasswordReq dto) {
+    public Member updatePassword(int id, PatchPasswordReq dto) {
         Optional <Member> memberEntity = memberRepository.findMemberById(id);
 
         // 해당 유저 X
@@ -254,6 +262,26 @@ public class MemberService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저는 존재하지 않습니다. id="+ id));
 
         member.updatePassword(dto.getNewPassword());
+        return member;
+    }
+
+    // 수정: 기숙사 수정하기
+    @Transactional(readOnly = false)
+    public Member updateDormitory(PatchDormitoryReq dto, JwtInfo jwtInfo) {
+        int memberId = jwtInfo.getUserId();
+
+        Member member = memberRepository.findMemberByIdAndStatus(memberId).
+                orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTICIPANT));
+
+        // 처음 로그인 시 loginStatus를 NEVER -> NOTNEVER
+        if(member.getLoginStatus().equals(LoginStatus.NEVER)){
+            member.changeLoginStatusToNotNever();
+        }
+
+        // 수정할 기숙사 조회
+        Dormitory dormitory = dormitoryRepository.findDormitoryById(dto.getDormitoryId())
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_DORMITORY));
+        member.updateDormitory(dormitory);
         return member;
     }
 

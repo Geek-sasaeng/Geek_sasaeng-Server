@@ -34,6 +34,9 @@ public class Dormitory extends BaseEntity {
     @Embedded
     private Location location;
 
+    @OneToMany(mappedBy = "dormitory")
+    private List<Member> members;
+
     public void addParty(DeliveryParty party) {
         this.deliveryParties.add(party);
     }
