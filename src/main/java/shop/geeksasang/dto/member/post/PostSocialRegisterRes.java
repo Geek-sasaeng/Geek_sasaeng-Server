@@ -31,13 +31,18 @@ public class PostSocialRegisterRes {
     @ApiParam(value = "사용자 핸드폰 번호 인덱스")
     private int phoneNumber;
 
-    static public PostSocialRegisterRes toDto(Member member, Email email, PhoneNumber phoneNumber) {
+    @ApiModelProperty(example = "eyJ0eXBlIjoiand0IiwiYWxnIjoiSFMyNTYifQ.eyJqd3RJbmZvIjp7InVuaXZlcnNpdHlJZCI6MSwidXNlcklkIjoxN30sImlhdCI6MTY1NzQ1MTU1NiwiZXhwIjoxNjU4MzQwNTg5fQ.0H1fUvms49VVcH9gkKD5P3PVP8X73mfX_r8Y14qH598")
+    @ApiParam(value = "jwt Token")
+    private String jwt;
+
+    static public PostSocialRegisterRes toDto(Member member, Email email, PhoneNumber phoneNumber, String jwt) {
         return PostSocialRegisterRes.builder()
                 .loginId(member.getLoginId())
                 .nickname(member.getNickName())
                 .universityName(member.getUniversity().getName())
                 .email(email.getId())
                 .phoneNumber(phoneNumber.getId())
+                .jwt(jwt)
                 .build();
     }
 }

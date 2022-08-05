@@ -79,6 +79,10 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy = "blockingMember")
     List<Block> blocks = new ArrayList<>();
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "dormitory_id")
+    private Dormitory dormitory;
+
     public void changeStatusToActive(){
         super.setStatus(BaseStatus.ACTIVE);
     }
@@ -169,6 +173,9 @@ public class Member extends BaseEntity {
     public void resetPerDayReportingCount(){
         perDayReportingCount = 0;
     }
+
+    //수정: 회원의 기숙사
+    public void updateDormitory(Dormitory dormitory) { this.dormitory = dormitory; }
 
 
     //테스트용

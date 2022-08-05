@@ -27,6 +27,7 @@ public class DeliveryPartyControllerTest extends ControllerTest {
 
         String value = mapper.writeValueAsString(req);
 
+
         given(deliveryPartyService.registerDeliveryParty(Mockito.any(PostDeliveryPartyReq.class), Mockito.any(Integer.class), Mockito.any(Integer.class))).willReturn(res);
 
         //given(this.deliveryPartyService.registerDeliveryParty(req, 1, 1)).willReturn(res); //이렇게 직접적인 값을 주면 오류 발생. 이걸로 한참을 헤맴.
