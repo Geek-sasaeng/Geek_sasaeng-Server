@@ -47,4 +47,12 @@ public class JwtResponse {
     @ApiModelProperty(example = "NEVER")
     @ApiParam(value = "로그인 한 적이 있는지, 없으면 = NEVER / 있으면 = NOTNEVER")
     private LoginStatus loginStatus;
+
+    @ApiModelProperty(example = "1")
+    @ApiParam(value = "기숙사 인덱스")
+    private int dormitoryId;
+
+    @ApiModelProperty(example = "1기숙사")
+    @ApiParam(value = "사용자 기숙사 이름")
+    private String dormitoryName;
 }
