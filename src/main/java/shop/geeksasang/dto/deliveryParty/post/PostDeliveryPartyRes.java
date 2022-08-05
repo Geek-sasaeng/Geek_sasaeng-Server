@@ -3,17 +3,14 @@ package shop.geeksasang.dto.deliveryParty.post;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiParam;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import shop.geeksasang.domain.*;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@Builder
+@NoArgsConstructor
 @Data
 public class PostDeliveryPartyRes {
 
@@ -97,5 +94,30 @@ public class PostDeliveryPartyRes {
                 .longitude(deliveryParty.getLocation().getLongitude())
                 .hashTag(!deliveryParty.getDeliveryPartyHashTags().isEmpty())
                 .build();
+    }
+    @Builder
+    public PostDeliveryPartyRes(String chief, String dormitory, String foodCategory, String title, String content, LocalDateTime orderTime, String createdAt, String orderTimeCategoryType, int currentMatching, int maxMatching, String matchingStatus, String storeUrl, Double latitude, Double longitude, boolean hashTag) {
+        this.chief = chief;
+        this.dormitory = dormitory;
+        this.foodCategory = foodCategory;
+        this.title = title;
+        this.content = content;
+        this.orderTime = orderTime;
+        this.createdAt = createdAt;
+        this.orderTimeCategoryType = orderTimeCategoryType;
+        this.currentMatching = currentMatching;
+        this.maxMatching = maxMatching;
+        this.matchingStatus = matchingStatus;
+        this.storeUrl = storeUrl;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.hashTag = hashTag;
+    }
+
+    //테스트용
+    public PostDeliveryPartyRes(String dormitory, String foodCategory, String title) {
+        this.dormitory = dormitory;
+        this.foodCategory = foodCategory;
+        this.title = title;
     }
 }

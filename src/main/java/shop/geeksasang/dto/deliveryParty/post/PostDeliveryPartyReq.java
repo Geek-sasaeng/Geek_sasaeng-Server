@@ -13,8 +13,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
-@NoArgsConstructor
 @Data
+@NoArgsConstructor
 public class PostDeliveryPartyReq {
 
     @ApiModelProperty(example = "1")
