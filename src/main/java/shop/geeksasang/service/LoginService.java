@@ -66,6 +66,7 @@ public class LoginService {
                     .loginStatus(loginStatus)
                     .dormitoryId(member.getDormitory().getId())
                     .dormitoryName(member.getDormitory().getName())
+                    .profileImgUrl(member.getProfileImgUrl())
                     .build();
         }
         else{
@@ -73,6 +74,7 @@ public class LoginService {
                     .jwt(jwt)
                     .nickName(member.getNickName())
                     .loginStatus(loginStatus)
+                    .profileImgUrl(member.getProfileImgUrl())
                     .build();
         }
     }
@@ -107,11 +109,25 @@ public class LoginService {
 
         String jwt = jwtService.createJwt(vo);
 
-        return PostLoginRes.builder()
-                .jwt(jwt)
-                .nickName(member.getNickName())
-                .loginStatus(loginStatus)
-                .build();
+        //loginStatus가 NOTNEVER인 경우 dormitoryId,dormitoryName을 추가
+        if(loginStatus.equals(LoginStatus.NOTNEVER)){
+            return PostLoginRes.builder()
+                    .jwt(jwt)
+                    .nickName(member.getNickName())
+                    .loginStatus(loginStatus)
+                    .profileImgUrl(member.getProfileImgUrl())
+                    .dormitoryId(member.getDormitory().getId())
+                    .dormitoryName(member.getDormitory().getName())
+                    .build();
+        }
+        else {
+            return PostLoginRes.builder()
+                    .jwt(jwt)
+                    .nickName(member.getNickName())
+                    .loginStatus(loginStatus)
+                    .profileImgUrl(member.getProfileImgUrl())
+                    .build();
+        }
     }
 
     // JWT 유효성 확인
@@ -128,6 +144,6 @@ public class LoginService {
     public JwtResponse getJwtResponse(Member member){
         return new JwtResponse(member.getLoginId(), member.getNickName(), member.getProfileImgUrl(),
                 member.getUniversity().getName(), member.getEmail().getAddress(), member.getPhoneNumber().getNumber(), member.getMemberLoginType(),
-                member.getLoginStatus());
+                member.getLoginStatus(), member.getDormitory().getId(), member.getDormitory().getName());
     }
 }

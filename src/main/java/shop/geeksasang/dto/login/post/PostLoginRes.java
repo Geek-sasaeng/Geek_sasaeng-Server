@@ -34,4 +34,8 @@ public class PostLoginRes {
     @ApiModelProperty(example="1")
     @ApiParam(value = "로그인 한 멤버의 기숙사 id / loginStatus가 NOTNEVER일 때만 반환하는 값입니다.")
     private Integer dormitoryId;
+
+    @ApiModelProperty(example="https://geeksasaeng-s3.s3.ap-northeast-2.amazonaws.com/%EA%B4%91%EA%B3%A0.png")
+    @ApiParam(value = "유저 프로필 이미지 주소")
+    private String profileImgUrl;
 }
