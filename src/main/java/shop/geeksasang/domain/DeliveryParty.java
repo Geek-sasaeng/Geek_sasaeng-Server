@@ -147,4 +147,11 @@ public class DeliveryParty extends BaseEntity {
     public void changeStatusToInactive(){
         super.setStatus(BaseStatus.INACTIVE);
     }
+
+    public void addCurrentMatching(){
+        currentMatching++;
+    }
+    public void changeMatchingStatusToFinish() {
+        this.matchingStatus = MatchingStatus.FINISH;
+    }
 }

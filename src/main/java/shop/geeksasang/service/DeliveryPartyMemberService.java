@@ -14,6 +14,7 @@ import shop.geeksasang.repository.DeliveryPartyRepository;
 import shop.geeksasang.repository.DeliveryPartyMemberRepository;
 import shop.geeksasang.repository.MemberRepository;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static shop.geeksasang.config.exception.response.BaseResponseStatus.*;
@@ -45,9 +46,26 @@ public class DeliveryPartyMemberService {
         DeliveryParty party= deliveryPartyRepository.findDeliveryPartyById(dto.getPartyId())
         .orElseThrow(() -> new BaseException(CAN_NOT_PARTICIPATE));
 
+        // orderTime전에만 신청 가능
+        if(party.getOrderTime().isBefore(LocalDateTime.now())){
+            throw new BaseException(ORDER_TIME_OVER);
+        }
+
+        // maxMatching 꽉차있으면 신청X
+        if(party.getMaxMatching() == party.getCurrentMatching()){
+            throw new BaseException(MATCHING_COMPLITED);
+        }
+
         deliveryPartyMember.connectParticipant(participant);
         deliveryPartyMember.connectParty(party);
         deliveryPartyMember.changeStatusToActive();
+        //currentMatching 올라감.
+        party.addCurrentMatching();
+
+        // currentMatching과 maxMatching 같아지면 matching status바꿈.
+        if(party.getCurrentMatching() == party.getMaxMatching()){
+            party.changeMatchingStatusToFinish();
+        }
 
         deliveryPartyMemberRepository.save(deliveryPartyMember);
         return deliveryPartyMember;
