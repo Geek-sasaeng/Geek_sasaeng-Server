@@ -5,7 +5,7 @@ name: geeksasaeng develop branch CI/CD
 # Controls when the workflow will run
 on:
   push:
-    branches: [ main, push]
+    branches: [ main, develop ]
   pull_request:
     branches: [ main ]
 
