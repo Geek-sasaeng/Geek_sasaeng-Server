@@ -15,6 +15,6 @@ permissions:
 #ApplicationStart 단계에서 deploy.sh를 실행
 hooks:
   ApplicationStart:
-    - location: scripts/deploy.sh
+    - location: deploy.sh
       timeout: 60
       runas: ubuntu
