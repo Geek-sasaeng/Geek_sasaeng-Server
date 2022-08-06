@@ -6,8 +6,6 @@ name: geeksasaeng develop branch CI/CD
 on:
   push:
     branches: [ develop ]
-  pull_request:
-    branches: [ main ]
 
 env:
   S3_BUCKET_NAME: geeksasaeng-s3
