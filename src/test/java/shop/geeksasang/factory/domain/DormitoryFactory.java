@@ -5,7 +5,7 @@ import shop.geeksasang.domain.Location;
 
 public class DormitoryFactory {
 
-    public static Dormitory crate(){
+    public static Dormitory create(){
         return new Dormitory(null, "세종", new Location(1.11, 1.22));
     }
 }

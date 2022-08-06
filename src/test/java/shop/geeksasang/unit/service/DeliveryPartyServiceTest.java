@@ -64,7 +64,7 @@ public class DeliveryPartyServiceTest {
 
         given(memberRepository.findById(chiefId)).willReturn(Optional.of(MemberFactory.create()));
         given(foodCategoryRepository.findFoodCategoryById(dto.getFoodCategory())).willReturn(Optional.of(FoodCategoryFactory.create()));
-        given(dormitoryRepository.findDormitoryById(dormitoryId)).willReturn(Optional.of(DormitoryFactory.crate()));
+        given(dormitoryRepository.findDormitoryById(dormitoryId)).willReturn(Optional.of(DormitoryFactory.create()));
         given(hashTagRepository.findById(1)).willReturn(Optional.of(HashTagFactory.create()));
 
         //when
