@@ -5,7 +5,7 @@ name: geeksasaeng develop branch CI/CD
 # Controls when the workflow will run
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main ]
 
 env:
   S3_BUCKET_NAME: geeksasaeng-s3
