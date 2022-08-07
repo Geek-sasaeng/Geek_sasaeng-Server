@@ -78,6 +78,10 @@ public class PostDeliveryPartyRes {
     @ApiParam(value = "해시태그 추가 여부")
     private boolean hashTag;
 
+    @ApiModelProperty(example = "2f48f241-9d64-4d16-bf56-70b9d4e0e79a")
+    @ApiParam(value = "채팅방 UUID 값")
+    private String uuid;
+
 
     static public PostDeliveryPartyRes toDto(DeliveryParty deliveryParty){
 
@@ -97,6 +101,7 @@ public class PostDeliveryPartyRes {
                 .latitude(deliveryParty.getLocation().getLatitude())
                 .longitude(deliveryParty.getLocation().getLongitude())
                 .hashTag(!deliveryParty.getDeliveryPartyHashTags().isEmpty())
+                .uuid(deliveryParty.getUuid())
                 .build();
     }
 }

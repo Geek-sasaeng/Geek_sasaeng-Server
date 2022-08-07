@@ -67,6 +67,22 @@ public class PostDeliveryPartyReq {
     @NotNull
     private boolean hashTag;
 
+    @ApiModelProperty(example = "신한은행")
+    @ApiParam(value = "은행이름", required = true)
+    @NotBlank(message = "은행이름을 입력하세요.")
+    private String bank;
+
+    @ApiModelProperty(example = "111-22222-33333")
+    @ApiParam(value = "계좌번호", required = true)
+    @NotBlank(message = "계좌번호를 입력하세요.")
+    private String accountNumber;
+
+    @ApiModelProperty(example = "교촌 채팅방입니다")
+    @ApiParam(value = "파티 채팅방 이름", required = true)
+    @NotBlank(message = "채팅방 이름을 입력하세요")
+    private String chatRoomName;
+
+
     // 외래키 참조하는 것 말고는  요청 엔티티 생성
     public DeliveryParty toEntity() {
         return DeliveryParty.builder()
