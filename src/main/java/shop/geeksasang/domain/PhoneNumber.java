@@ -35,4 +35,10 @@ public class PhoneNumber extends BaseEntity {
     public void changePhoneValidStatusToSuccess() {
         this.phoneValidStatus = ValidStatus.SUCCESS;
     }
+
+    //테스트용
+    public PhoneNumber(String number,ValidStatus phoneValidStatus){
+        this.number = number;
+        this.phoneValidStatus = phoneValidStatus;
+    };
 }
