@@ -3,27 +3,22 @@ plugins {
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
 }
-
 group = 'shop'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
-configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
-}
 
 repositories {
 	mavenCentral()
 }
+apply plugin: "io.spring.dependency-management"
 
 dependencies {
 	//jpa
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
 	//mysql
-	runtimeOnly ('mysql:mysql-connector-java')
+	runtimeOnly('mysql:mysql-connector-java')
 
 	//spring boot
 	implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -35,14 +30,59 @@ dependencies {
 	//test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
-	//JWT
+	//jwt
 	implementation 'io.jsonwebtoken:jjwt:0.9.1'
 
 	//테스트에서 lombok 사용.
 	testCompileOnly 'org.projectlombok:lombok'
 	testAnnotationProcessor 'org.projectlombok:lombok'
+
+	//validation
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	//Swagger
+	implementation 'io.springfox:springfox-boot-starter:3.0.0'
+
+	// Mail
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+	// redis
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+	// AWS SES (Mail)
+	implementation 'com.amazonaws:aws-java-sdk-ses:1.12.3'
+
+	//Querydsl 추가. 보통 버전업이 되면 수정사항이 발생한다.
+	implementation 'com.querydsl:querydsl-jpa'
+	annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jpa"
+	annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+
+	// WebClient
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+	implementation 'org.projectreactor:reactor-spring:1.0.1.RELEASE'
+
+
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
+	//채팅 로직
+	implementation 'io.netty:netty-resolver-dns-native-macos:4.1.68.Final:osx-aarch_64'
+
+	// FCM push
+	implementation 'com.google.firebase:firebase-admin:6.8.1'
+
+	// okhttp
+	implementation("com.squareup.okhttp3:okhttp:4.9.1")
+
+	// GSON
+	implementation group: 'com.google.code.gson', name: 'gson', version: '2.8.5'
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+//Querydsl 추가, 자동 생성된 Q클래스 gradle clean으로 제거
+clean {
+	delete file('src/main/generated')
 }

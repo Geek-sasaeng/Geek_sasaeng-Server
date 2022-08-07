@@ -1,0 +1,20 @@
+version: 0.0
+os: linux
+#S3에 있는 zip 파일이 EC2에 배포될 위치
+files:
+  - source: /
+    destination: /home/ubuntu/app/
+    overwrite: yes
+
+permissions:
+  - object: /
+    pattern: "**"
+    owner: ubuntu
+    group: ubuntu
+
+#ApplicationStart 단계에서 deploy.sh를 실행
+hooks:
+  ApplicationStart:
+    - location: deploy.sh
+      timeout: 60
+      runas: ubuntu

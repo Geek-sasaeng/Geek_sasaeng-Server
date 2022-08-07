@@ -5,9 +5,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import shop.geeksasang.config.exception.BaseResponseStatus;
+import shop.geeksasang.config.exception.response.BaseResponseStatus;
 
-import static shop.geeksasang.config.exception.BaseResponseStatus.SUCCESS;
+import static shop.geeksasang.config.exception.response.BaseResponseStatus.SUCCESS;
 
 @Getter
 @AllArgsConstructor

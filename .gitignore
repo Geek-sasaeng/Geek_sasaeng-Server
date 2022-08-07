@@ -6,6 +6,11 @@ build/
 !**/src/test/**/build/
 logs
 *.yml
+!.github/workflows/develop.yml
+!appspec.yml
+dump.rdb
+
+
 
 ### STS ###
 .apt_generated
