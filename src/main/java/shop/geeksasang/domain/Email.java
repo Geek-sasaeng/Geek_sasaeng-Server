@@ -35,4 +35,10 @@ public class Email extends BaseEntity {
     public void changeEmailValidStatusToSuccess() {
         this.emailValidStatus = ValidStatus.SUCCESS;
     }
+
+    //테스트용
+    public Email(String address, ValidStatus validStatus){
+        this.address = address;
+        this.emailValidStatus = validStatus;
+    }
 }

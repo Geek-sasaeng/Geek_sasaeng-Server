@@ -40,4 +40,11 @@ public class Dormitory extends BaseEntity {
     public void addParty(DeliveryParty party) {
         this.deliveryParties.add(party);
     }
+
+    //테스트용
+    public Dormitory(University university, String name, Location location) {
+        this.university = university;
+        this.name = name;
+        this.location = location;
+    }
 }
