@@ -19,18 +19,19 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     steps:
-      - name: executing remote ssh commands using ssh key
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.REMOTE_IP }}
-          username: ${{ secrets.REMOTE_SSH_ID }}
-          key: ${{ secrets.REMOTE_SSH_KEY }}
-          port: ${{ secrets.REMOTE_SSH_PORT }}
-          script: |
-            cd /var/www/Geek_sasaeng-Server
-            sudo git pull origin develop
-            sudo ./gradlew clean build
-            sudo nohup java -jar geeksasaeng-0.0.1-SNAPSHOT.jar &
+#      # ssh로 외부에서 직접 명령어 입력
+#      - name: executing remote ssh commands using ssh key
+#        uses: appleboy/ssh-action@master
+#        with:
+#          host: ${{ secrets.REMOTE_IP }}
+#          username: ${{ secrets.REMOTE_SSH_ID }}
+#          key: ${{ secrets.REMOTE_SSH_KEY }}
+#          port: ${{ secrets.REMOTE_SSH_PORT }}
+#          script: |
+#            cd /var/www/Geek_sasaeng-Server
+#            sudo git pull origin develop
+#            sudo ./gradlew clean build
+#            sudo nohup java -jar geeksasaeng-0.0.1-SNAPSHOT.jar &
 
 #      - run: ls -al
 #      - uses: actions/checkout@v2
