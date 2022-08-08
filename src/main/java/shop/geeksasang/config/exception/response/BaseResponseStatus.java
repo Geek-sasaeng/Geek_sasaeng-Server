@@ -117,6 +117,8 @@ public enum BaseResponseStatus {
     CAN_NOT_PARTICIPATE(false, 2611, "참여할 수 없는 파티입니다."),
     CAN_NOT_DELETE_PARTY(false, 2612, "삭제할 수 없는 파티입니다."),
     ALREADY_PARTICIPATE_ANOTHER_PARTY(false, 2613, "이미 다른 파티에 참여하고 있습니다."),
+    MATCHING_COMPLITED(false, 2614, "매칭이 완료된 파티입니다."),
+    ORDER_TIME_OVER(false, 2615, "파티 신청 시간이 끝났습니다."),
 
     /**
      * 네오

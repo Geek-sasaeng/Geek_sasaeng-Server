@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import shop.geeksasang.config.status.BaseStatus;
+import shop.geeksasang.config.status.MatchingStatus;
 import shop.geeksasang.config.type.OrderTimeCategoryType;
 import shop.geeksasang.domain.DeliveryParty;
 import shop.geeksasang.domain.Member;
@@ -38,6 +39,7 @@ public class DeliveryPartyQueryRepository {
                         orderTimeCategory == null ? null : deliveryParty.orderTimeCategory.eq(orderTimeCategory), //eq는 null 들어가면 문제 발생
                         deliveryParty.maxMatching.between(0, maxMatching), //null 들어가면 알아서 조건이 반영되지 않는다.
                         deliveryParty.status.eq(BaseStatus.ACTIVE),
+                        deliveryParty.matchingStatus.eq(MatchingStatus.ONGOING),
                         deliveryParty.orderTime.after(LocalDateTime.now()),
                         deliveryParty.chief.notIn(blockList)
                 )
@@ -71,6 +73,7 @@ public class DeliveryPartyQueryRepository {
                         orderTimeCategory == null ? null : deliveryParty.orderTimeCategory.eq(orderTimeCategory), //eq는 null 들어가면 문제 발생
                         deliveryParty.maxMatching.between(0, maxMatching), //null 들어가면 알아서 조건이 반영되지 않는다.
                         deliveryParty.status.eq(BaseStatus.ACTIVE),
+                        deliveryParty.matchingStatus.eq(MatchingStatus.ONGOING),
                         deliveryParty.orderTime.after(LocalDateTime.now()),
                         deliveryParty.title.like('%'+keyword+'%').or(deliveryParty.foodCategory.title.eq(keyword)),
                         deliveryParty.chief.notIn(blockList)

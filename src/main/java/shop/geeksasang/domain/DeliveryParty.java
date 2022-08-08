@@ -15,6 +15,7 @@ import shop.geeksasang.dto.deliveryParty.put.PutDeliveryPartyReq;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -67,6 +68,14 @@ public class DeliveryParty extends BaseEntity {
 
     private int reportedCount;
 
+    private String bank;
+
+    private String accountNumber;
+
+    private String chatRoomName;
+
+    private String uuid;
+
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(name="latitude",column = @Column(name="latitude")),
@@ -81,6 +90,9 @@ public class DeliveryParty extends BaseEntity {
                 .orderTime(dto.getOrderTime())
                 .maxMatching(dto.getMaxMatching())
                 .location(new Location(dto.getLatitude(),dto.getLongitude()))
+                .bank(dto.getBank())
+                .accountNumber(dto.getAccountNumber())
+                .chatRoomName(dto.getChatRoomName())
                 .chief(chief)
                 .foodCategory(foodCategory)
                 .orderTimeCategory(orderTimeCategory)
@@ -90,6 +102,7 @@ public class DeliveryParty extends BaseEntity {
                 .currentMatching(1)
                 .storeUrl(dto.getStoreUrl())
                 .reportedCount(0)
+                .uuid(createUuid())
                 .build();
 
         party.setStatus(BaseStatus.ACTIVE);
@@ -140,8 +153,20 @@ public class DeliveryParty extends BaseEntity {
         }
     }
 
+    public static String createUuid(){
+        return UUID.randomUUID().toString();
+    }
+
+
     // 배달파티 삭제
     public void changeStatusToInactive(){
         super.setStatus(BaseStatus.INACTIVE);
+    }
+
+    public void addCurrentMatching(){
+        currentMatching++;
+    }
+    public void changeMatchingStatusToFinish() {
+        this.matchingStatus = MatchingStatus.FINISH;
     }
 }
