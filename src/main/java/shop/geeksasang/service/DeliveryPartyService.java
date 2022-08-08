@@ -52,9 +52,7 @@ public class DeliveryPartyService {
 
 
     @Transactional(readOnly = false)
-    public PostDeliveryPartyRes registerDeliveryParty(PostDeliveryPartyReq dto, JwtInfo jwtInfo, int dormitoryId){
-
-        int chiefId = jwtInfo.getUserId();
+    public PostDeliveryPartyRes registerDeliveryParty(PostDeliveryPartyReq dto, int chiefId, int dormitoryId){
 
         //파티장 조회
        Member chief = memberRepository.findById(chiefId)
@@ -93,9 +91,8 @@ public class DeliveryPartyService {
         DeliveryParty deliveryParty = DeliveryParty.makeParty(dto, orderTimeCategory, dormitory, foodCategory, chief, hashTagList);
 
         //배달파티 저장
-        DeliveryParty party= deliveryPartyRepository.save(deliveryParty);
-
-        return PostDeliveryPartyRes.toDto(party);
+        deliveryPartyRepository.save(deliveryParty);
+        return PostDeliveryPartyRes.toDto(deliveryParty); //어차피 영속성이 관리하니 id가 들어가므로 생성한걸 보내줘도 된다. 테스트하기 편하므로 이게 더 좋은 코드
     }
 
     @Transactional(readOnly = false)

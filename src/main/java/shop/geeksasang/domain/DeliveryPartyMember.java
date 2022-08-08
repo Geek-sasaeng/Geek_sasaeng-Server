@@ -7,6 +7,9 @@ import javax.persistence.*;
 import shop.geeksasang.config.domain.BaseEntity;
 import shop.geeksasang.config.status.BaseStatus;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -26,6 +29,9 @@ public class DeliveryPartyMember extends BaseEntity {
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="delivery_party_id")
     private DeliveryParty party;
+
+    @OneToMany(mappedBy = "menuOwner")
+    private List<DeliveryPartyMenu> menuList = new ArrayList<>();
 
     //-// connect 메서드 //-//
     public void connectParticipant(Member participant){
