@@ -21,13 +21,13 @@ public class DeliveryPartyMenu extends BaseEntity {
     @JoinColumn(name="menu_owner")
     private DeliveryPartyMember menuOwner;
 
-    private String title;
+    private String name;
 
     private int price;
 
-    public DeliveryPartyMenu(DeliveryPartyMember menuOwner, String title, int price) {
+    public DeliveryPartyMenu(DeliveryPartyMember menuOwner, String name, int price) {
         this.menuOwner = menuOwner;
-        this.title = title;
+        this.name = name;
         this.price = price;
     }
 }

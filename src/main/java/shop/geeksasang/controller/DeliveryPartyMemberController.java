@@ -20,7 +20,6 @@ import shop.geeksasang.service.DeliveryPartyMemberService;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
-@RequestMapping
 @RequiredArgsConstructor
 public class DeliveryPartyMemberController {
     private final DeliveryPartyMemberService deliveryPartyMemberService;
@@ -32,13 +31,10 @@ public class DeliveryPartyMemberController {
             @ApiResponse(code = 2010 ,message ="존재하지 않는 파티입니다"),
             @ApiResponse(code = 4000 ,message = "서버 오류입니다.")
     })
-    @PostMapping("/deliveryPartyMember")
+    @PostMapping("/delivery-party-member")
     public BaseResponse<PostDeliveryPartyMemberRes> joinDeliveryPartyMember(@RequestBody PostDeliveryPartyMemberReq dto, HttpServletRequest request){
-
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
-
-        DeliveryPartyMember deliveryPartyMember= deliveryPartyMemberService.joinDeliveryPartyMember(dto, jwtInfo);
-        PostDeliveryPartyMemberRes postDeliveryPartyMemberRes = PostDeliveryPartyMemberRes.toDto(deliveryPartyMember);
+        PostDeliveryPartyMemberRes postDeliveryPartyMemberRes = deliveryPartyMemberService.joinDeliveryPartyMember(dto, jwtInfo.getUserId());
         return new BaseResponse<>(postDeliveryPartyMemberRes);
     }
 }

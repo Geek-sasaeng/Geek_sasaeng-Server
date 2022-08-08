@@ -100,8 +100,9 @@ public class PostDeliveryPartyRes {
                 .uuid(deliveryParty.getUuid())
                 .build();
     }
+
     @Builder
-    public PostDeliveryPartyRes(String chief, String dormitory, String foodCategory, String title, String content, LocalDateTime orderTime, String createdAt, String orderTimeCategoryType, int currentMatching, int maxMatching, String matchingStatus, String storeUrl, Double latitude, Double longitude, boolean hashTag) {
+    public PostDeliveryPartyRes(String chief, String dormitory, String foodCategory, String title, String content, LocalDateTime orderTime, String createdAt, String orderTimeCategoryType, int currentMatching, int maxMatching, String matchingStatus, String storeUrl, Double latitude, Double longitude, boolean hashTag, String uuid) {
         this.chief = chief;
         this.dormitory = dormitory;
         this.foodCategory = foodCategory;
@@ -117,6 +118,7 @@ public class PostDeliveryPartyRes {
         this.latitude = latitude;
         this.longitude = longitude;
         this.hashTag = hashTag;
+        this.uuid = uuid;
     }
 
     //테스트용

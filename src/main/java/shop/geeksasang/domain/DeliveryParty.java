@@ -157,6 +157,10 @@ public class DeliveryParty extends BaseEntity {
         return UUID.randomUUID().toString();
     }
 
+    public void addPartyMember(DeliveryPartyMember partyMember){
+        this.deliveryPartyMembers.add(partyMember);
+    }
+
 
     // 배달파티 삭제
     public void changeStatusToInactive(){
