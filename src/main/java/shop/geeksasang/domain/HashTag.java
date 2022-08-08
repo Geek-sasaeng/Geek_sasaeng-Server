@@ -28,4 +28,10 @@ public class HashTag {
     public void addDeliveryPartyHashTag(DeliveryPartyHashTag deliveryPartyHashTag) {
         deliveryPartyHashTags.add(deliveryPartyHashTag);
     }
+
+    //테스트용
+    public HashTag(int id, String title) {
+        this.id = id;
+        this.title = title;
+    }
 }

@@ -176,4 +176,12 @@ public class Member extends BaseEntity {
 
     //수정: 회원의 기숙사
     public void updateDormitory(Dormitory dormitory) { this.dormitory = dormitory; }
+
+
+    //테스트용
+    public Member(int id, String nickName) {
+        this.id = id;
+        this.nickName = nickName;
+        super.setStatus(BaseStatus.ACTIVE);
+    }
 }

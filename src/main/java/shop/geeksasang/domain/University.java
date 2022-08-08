@@ -32,11 +32,11 @@ public class University extends BaseEntity {
     @OneToMany(mappedBy = "university", cascade = CascadeType.ALL)
     List<Dormitory> dormitories = new ArrayList<>();
 
+
     //테스트용
     public University(String name, String emailAddress, String universityImgUrl) {
         this.name = name;
         this.emailAddress = emailAddress;
         this.universityImgUrl = universityImgUrl;
     }
-
 }

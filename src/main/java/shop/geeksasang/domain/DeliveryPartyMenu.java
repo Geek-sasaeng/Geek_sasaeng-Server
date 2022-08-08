@@ -1,9 +1,10 @@
-package shop.geeksasang.domain.chat;
+package shop.geeksasang.domain;
 
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import shop.geeksasang.config.domain.BaseEntity;
+import shop.geeksasang.domain.chat.DeliveryPartyChatRoom;
 
 import javax.persistence.*;
 
@@ -11,21 +12,21 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
-public class DeliveryPartyChatMenu extends BaseEntity {
+public class DeliveryPartyMenu extends BaseEntity {
     @Id
     @GeneratedValue
     private int id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="delivery_party_chat_room")
-    private DeliveryPartyChatRoom deliveryPartyChatRoom;
+    @JoinColumn(name="menu_owner")
+    private DeliveryPartyMember menuOwner;
 
     private String title;
 
     private int price;
 
-    public DeliveryPartyChatMenu(DeliveryPartyChatRoom deliveryPartyChatRoom, String title, int price) {
-        this.deliveryPartyChatRoom = deliveryPartyChatRoom;
+    public DeliveryPartyMenu(DeliveryPartyMember menuOwner, String title, int price) {
+        this.menuOwner = menuOwner;
         this.title = title;
         this.price = price;
     }
