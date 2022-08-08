@@ -42,7 +42,7 @@ public class DeliveryParty extends BaseEntity {
     @OneToOne(fetch=FetchType.LAZY)
     private FoodCategory foodCategory;
 
-    @OneToMany(mappedBy = "party")
+    @OneToMany(mappedBy = "party", cascade = CascadeType.ALL)
     private List<DeliveryPartyMember> deliveryPartyMembers = new ArrayList<>();
 
     private String title;
@@ -103,6 +103,7 @@ public class DeliveryParty extends BaseEntity {
                 .storeUrl(dto.getStoreUrl())
                 .reportedCount(0)
                 .uuid(createUuid())
+                .deliveryPartyMembers(new ArrayList<>())
                 .build();
 
         party.setStatus(BaseStatus.ACTIVE);
@@ -158,6 +159,7 @@ public class DeliveryParty extends BaseEntity {
     }
 
     public void addPartyMember(DeliveryPartyMember partyMember){
+        System.out.println("deliveryPartyMembers = " + deliveryPartyMembers);
         this.deliveryPartyMembers.add(partyMember);
     }
 
