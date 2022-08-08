@@ -159,7 +159,6 @@ public class DeliveryParty extends BaseEntity {
     }
 
     public void addPartyMember(DeliveryPartyMember partyMember){
-        System.out.println("deliveryPartyMembers = " + deliveryPartyMembers);
         this.deliveryPartyMembers.add(partyMember);
     }
 
