@@ -8,7 +8,6 @@ import shop.geeksasang.domain.chat.DeliveryPartyChatRoom;
 
 import javax.persistence.*;
 
-
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity

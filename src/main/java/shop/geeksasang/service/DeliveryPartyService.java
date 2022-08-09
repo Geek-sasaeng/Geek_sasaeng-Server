@@ -93,7 +93,6 @@ public class DeliveryPartyService {
         deliveryParty.addPartyMember(new DeliveryPartyMember(chief, deliveryParty));
         //배달파티 저장
         deliveryPartyRepository.save(deliveryParty);
-        //배달파티 멤버에 방장을 추가.
 
         return PostDeliveryPartyRes.toDto(deliveryParty); //어차피 영속성이 관리하니 id가 들어가므로 생성한걸 보내줘도 된다. 테스트하기 편하므로 이게 더 좋은 코드
     }

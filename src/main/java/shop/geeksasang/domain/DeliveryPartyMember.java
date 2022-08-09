@@ -33,6 +33,7 @@ public class DeliveryPartyMember extends BaseEntity {
     @OneToMany(mappedBy = "menuOwner")
     private List<DeliveryPartyMenu> menuList = new ArrayList<>();
 
+
     public DeliveryPartyMember(Member participant, DeliveryParty party) {
         this.participant = participant;
         this.party = party;
