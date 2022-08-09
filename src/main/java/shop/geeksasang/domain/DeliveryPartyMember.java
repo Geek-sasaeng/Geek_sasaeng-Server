@@ -10,12 +10,10 @@ import shop.geeksasang.config.status.BaseStatus;
 import java.util.ArrayList;
 import java.util.List;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
-@Setter
+@ToString
 public class DeliveryPartyMember extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -57,5 +55,7 @@ public class DeliveryPartyMember extends BaseEntity {
     public void changeStatusToActive(){
         super.setStatus(BaseStatus.ACTIVE);
     }
+
+
 
 }
