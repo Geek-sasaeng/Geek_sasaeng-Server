@@ -1,9 +1,6 @@
 package shop.geeksasang.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -45,7 +42,7 @@ public class DeliveryParty extends BaseEntity {
     @OneToOne(fetch=FetchType.LAZY)
     private FoodCategory foodCategory;
 
-    @OneToMany(mappedBy = "party")
+    @OneToMany(mappedBy = "party", cascade = CascadeType.ALL)
     private List<DeliveryPartyMember> deliveryPartyMembers = new ArrayList<>();
 
     private String title;
@@ -106,6 +103,7 @@ public class DeliveryParty extends BaseEntity {
                 .storeUrl(dto.getStoreUrl())
                 .reportedCount(0)
                 .uuid(createUuid())
+                .deliveryPartyMembers(new ArrayList<>())
                 .build();
 
         party.setStatus(BaseStatus.ACTIVE);
@@ -160,9 +158,20 @@ public class DeliveryParty extends BaseEntity {
         return UUID.randomUUID().toString();
     }
 
+    public void addPartyMember(DeliveryPartyMember partyMember){
+        this.deliveryPartyMembers.add(partyMember);
+    }
+
 
     // 배달파티 삭제
     public void changeStatusToInactive(){
         super.setStatus(BaseStatus.INACTIVE);
+    }
+
+    public void addCurrentMatching(){
+        currentMatching++;
+    }
+    public void changeMatchingStatusToFinish() {
+        this.matchingStatus = MatchingStatus.FINISH;
     }
 }

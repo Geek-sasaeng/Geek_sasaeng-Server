@@ -43,7 +43,7 @@ public class DeliveryPartyController {
     public BaseResponse<PostDeliveryPartyRes> registerDeliveryParty(@PathVariable("dormitoryId") int dormitoryId, @Validated @RequestBody PostDeliveryPartyReq dto, HttpServletRequest request){
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
 
-        PostDeliveryPartyRes postDeliveryPartyRes = deliveryPartyService.registerDeliveryParty(dto, jwtInfo, dormitoryId);
+        PostDeliveryPartyRes postDeliveryPartyRes = deliveryPartyService.registerDeliveryParty(dto, jwtInfo.getUserId(), dormitoryId);
         return new BaseResponse<>(postDeliveryPartyRes);
     }
 

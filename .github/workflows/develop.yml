@@ -1,12 +1,10 @@
 # This is a basic workflow to help you get started with Actions
 
 name: geeksasaeng develop branch CI/CD
-
+# 테스트
 # Controls when the workflow will run
 on:
   push:
-    branches: [ main, develop ]
-  pull_request:
     branches: [ main ]
 
 env:
@@ -21,6 +19,20 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     steps:
+#      # ssh로 외부에서 직접 명령어 입력
+#      - name: executing remote ssh commands using ssh key
+#        uses: appleboy/ssh-action@master
+#        with:
+#          host: ${{ secrets.REMOTE_IP }}
+#          username: ${{ secrets.REMOTE_SSH_ID }}
+#          key: ${{ secrets.REMOTE_SSH_KEY }}
+#          port: ${{ secrets.REMOTE_SSH_PORT }}
+#          script: |
+#            cd /var/www/Geek_sasaeng-Server
+#            sudo git pull origin develop
+#            sudo ./gradlew clean build
+#            sudo nohup java -jar geeksasaeng-0.0.1-SNAPSHOT.jar &
+
       - run: ls -al
       - uses: actions/checkout@v2
 #        with:
@@ -95,13 +107,13 @@ jobs:
           --file-exists-behavior OVERWRITE \
           --s3-location bucket=geeksasaeng-s3,bundleType=zip,key=geeksasaeng.zip \
           --region ap-northeast-2
-
-#      - name: Deploy                  # S3에 배포하기
-#        env:
-#          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#        run: |
-#          aws s3 cp \
-#            --recursive \
-#            --region ap-northeast-2 \
-#            build s3://github-actions-dh/$BRANCH # 위에서 shell script로 작성한 현재 실행 중인 branch명을 사용, 해당 branch 디렉토리로 배포
+#
+##      - name: Deploy                  # S3에 배포하기
+##        env:
+##          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+##          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+##        run: |
+##          aws s3 cp \
+##            --recursive \
+##            --region ap-northeast-2 \
+##            build s3://github-actions-dh/$BRANCH # 위에서 shell script로 작성한 현재 실행 중인 branch명을 사용, 해당 branch 디렉토리로 배포

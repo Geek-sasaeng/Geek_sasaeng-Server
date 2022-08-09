@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 import shop.geeksasang.config.domain.BaseEntity;
 
 @NoArgsConstructor
-@AllArgsConstructor
 @Builder
 @Getter
 @Entity
@@ -21,4 +20,10 @@ public class FoodCategory extends BaseEntity {
     private int id;
 
     private String title;
+
+    //테스트 용
+    public FoodCategory(int id, String title) {
+        this.id = id;
+        this.title = title;
+    }
 }
