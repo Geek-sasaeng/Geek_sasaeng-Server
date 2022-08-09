@@ -95,6 +95,12 @@ public class GetDeliveryPartyDetailRes {
     @ApiParam(value = "기숙사 id")
     private int dormitory;
 
+    @ApiModelProperty(example = "07438ec2-b0e6-4771-8e1d-115bd93ce433")
+    @ApiParam(value = "채팅방 uuid")
+    private String uuid;
+
+
+
     //빌더
     static public GetDeliveryPartyDetailRes toDto(DeliveryParty deliveryParty,boolean authorStatus){
 
@@ -117,6 +123,7 @@ public class GetDeliveryPartyDetailRes {
                 .storeUrl(deliveryParty.getStoreUrl())
                 .authorStatus(authorStatus)
                 .dormitory(deliveryParty.getDormitory().getId())
+                .uuid(deliveryParty.getUuid())
                 .build();
     }
 
