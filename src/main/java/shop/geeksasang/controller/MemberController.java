@@ -179,6 +179,20 @@ public class MemberController {
         return new BaseResponse<>(patchDormitoryRes);
     }
 
+    // 수정: FCM토큰 수정
+    @ApiOperation(value = "수정: FCM토큰 수정하기", notes = "수정할 FCM토큰 입력받아 수정.")
+    @ApiResponses({
+            @ApiResponse(code =2009 ,message ="존재하지 않는 멤버입니다"),
+            @ApiResponse(code=4000,message = "서버 오류입니다.")
+    })
+    @PatchMapping("/fcm_token")
+    public BaseResponse<PatchFcmTokenRes> updateFcmToken(@RequestBody @Validated PatchFcmTokenReq dto, HttpServletRequest request){
+        JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
+
+        PatchFcmTokenRes res = memberService.updateFcmToken(dto, jwtInfo.getUserId());
+        return new BaseResponse<>(res);
+    }
+
     // 아이디 중복 확인하기
     @ApiOperation(value = "확인: 아이디 중복 확인하기", notes = "아이디 입력받아 중복 여부 체크.")
     @ApiResponses({
