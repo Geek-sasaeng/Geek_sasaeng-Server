@@ -18,6 +18,9 @@ public class PostDeliveryPartyFactory {
                 .latitude(1.11)
                 .longitude(1.22)
                 .hashTag(true)
+                .bank("TOSS")
+                .accountNumber("111-111-111111")
+                .chatRoomName("chatRoomName")
                 .build();
     }
 
@@ -34,3 +37,4 @@ public class PostDeliveryPartyFactory {
                 .build();
     }
 }
+
