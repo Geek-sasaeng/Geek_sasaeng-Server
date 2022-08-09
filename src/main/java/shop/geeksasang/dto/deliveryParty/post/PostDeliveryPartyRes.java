@@ -107,7 +107,8 @@ public class PostDeliveryPartyRes {
     }
 
     @Builder
-    public PostDeliveryPartyRes(String chief, String dormitory, String foodCategory, String title, String content, LocalDateTime orderTime, String createdAt, String orderTimeCategoryType, int currentMatching, int maxMatching, String matchingStatus, String storeUrl, Double latitude, Double longitude, boolean hashTag) {
+    public PostDeliveryPartyRes(int partyId, String chief, String dormitory, String foodCategory, String title, String content, LocalDateTime orderTime, String createdAt, String orderTimeCategoryType, int currentMatching, int maxMatching, String matchingStatus, String storeUrl, Double latitude, Double longitude, boolean hashTag, String uuid) {
+        this.partyId = partyId;
         this.chief = chief;
         this.dormitory = dormitory;
         this.foodCategory = foodCategory;
