@@ -283,6 +283,16 @@ public class MemberService {
         return member;
     }
 
+    // 수정: FCM토큰 수정
+    @Transactional(readOnly = false)
+    public PatchFcmTokenRes updateFcmToken(PatchFcmTokenReq dto, int memberId){
+        Member member = memberRepository.findMemberByIdAndStatus(memberId)
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTICIPANT));
+
+        member.updateFcmToken(dto.getFcmToken());
+        return PatchFcmTokenRes.toDto(member);
+    }
+
     // 로그인 아이디 중복 확인하기
     @Transactional(readOnly = false)
     public void checkId(GetCheckIdReq dto) {
