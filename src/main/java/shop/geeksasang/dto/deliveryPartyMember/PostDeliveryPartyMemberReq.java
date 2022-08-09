@@ -19,10 +19,4 @@ public class PostDeliveryPartyMemberReq {
     @ApiParam(value = "파티 id", required = true)
     @NotNull
     private int partyId;
-
-    public DeliveryPartyMember toEntity() {
-        return DeliveryPartyMember.builder()
-                .build();
-    }
-
 }

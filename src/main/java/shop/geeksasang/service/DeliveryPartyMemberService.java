@@ -33,8 +33,8 @@ public class DeliveryPartyMemberService {
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTICIPANT));
 
         // 매칭 시 중복 validation
-        if(deliveryPartyMemberRepository.findDeliveryPartyMemberById(userId).isPresent()) {
-            throw new BaseException(ALREADY_PARTICIPATE_ANOTHER_PARTY);
+        if(deliveryPartyMemberRepository.findDeliveryPartyMemberByMemberIdAndDeliveryPartyId(userId, dto.getPartyId()).isPresent()) {
+            throw new BaseException(ALREADY_PARTICIPATE_PARTY);
         }
 
         DeliveryParty party = deliveryPartyRepository.findDeliveryPartyById(dto.getPartyId())
