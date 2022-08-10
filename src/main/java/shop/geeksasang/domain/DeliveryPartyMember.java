@@ -5,6 +5,7 @@ import lombok.*;
 import javax.persistence.*;
 
 import shop.geeksasang.config.domain.BaseEntity;
+import shop.geeksasang.config.status.AccountTransferStatus;
 import shop.geeksasang.config.status.BaseStatus;
 
 import java.util.ArrayList;
@@ -30,7 +31,13 @@ public class DeliveryPartyMember extends BaseEntity {
     @OneToMany(mappedBy = "menuOwner")
     private List<DeliveryPartyMenu> menuList = new ArrayList<>();
 
+    @Enumerated(EnumType.STRING)
+    private AccountTransferStatus acccountTransferStatus; // 계좌이체 완료상태
 
+
+    /*
+    연관관계 편의 메서드
+     */
     public DeliveryPartyMember(Member participant, DeliveryParty party) {
         this.participant = participant;
         this.party = party;
@@ -41,5 +48,13 @@ public class DeliveryPartyMember extends BaseEntity {
     // 배달파티 멤버 삭제
     public void changeStatusToInactive(){
         super.setStatus(BaseStatus.INACTIVE);
+    }
+
+    public void changeAccountTransferStatusToY(){
+        this.acccountTransferStatus = AccountTransferStatus.Y;
+    }
+
+    public void changeAccountTransferStatusToN(){
+        this.acccountTransferStatus = AccountTransferStatus.N;
     }
 }

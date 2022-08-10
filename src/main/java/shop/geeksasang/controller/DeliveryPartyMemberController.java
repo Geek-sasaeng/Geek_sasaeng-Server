@@ -5,14 +5,14 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 import shop.geeksasang.config.response.BaseResponse;
 import shop.geeksasang.domain.DeliveryPartyMember;
 import shop.geeksasang.dto.deliveryPartyMember.PostDeliveryPartyMemberReq;
 import shop.geeksasang.dto.deliveryPartyMember.PostDeliveryPartyMemberRes;
+import shop.geeksasang.dto.deliveryPartyMember.patch.PatchAccountTransferStatusReq;
+import shop.geeksasang.dto.deliveryPartyMember.patch.PatchAccountTransferStatusRes;
 import shop.geeksasang.dto.login.JwtInfo;
 import shop.geeksasang.service.DeliveryPartyMemberService;
 
@@ -36,5 +36,19 @@ public class DeliveryPartyMemberController {
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
         PostDeliveryPartyMemberRes postDeliveryPartyMemberRes = deliveryPartyMemberService.joinDeliveryPartyMember(dto, jwtInfo.getUserId());
         return new BaseResponse<>(postDeliveryPartyMemberRes);
+    }
+
+    // 수정: 파티멤버 송금 완료상태 수정
+    @ApiOperation(value = "수정: 송금 완료상태 수정 값", notes = "파티멤버의 송금 완료상태를 입력받아 수정할 수 있다.")
+    @ApiResponses({
+            @ApiResponse(code = 1000 ,message ="요청에 성공하셨습니다."),
+            @ApiResponse(code = 2009 ,message ="존재하지 않는 멤버입니다"),
+            @ApiResponse(code = 4000 ,message = "서버 오류입니다.")
+    })
+    @PatchMapping("/deliveryPartyMember/account-transfer-status")
+    public BaseResponse<PatchAccountTransferStatusRes> updateAccountTransferStatus(@RequestBody @Validated PatchAccountTransferStatusReq dto, HttpServletRequest request){
+        JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
+        PatchAccountTransferStatusRes res = deliveryPartyMemberService.updateAccountTransferStatus(dto,jwtInfo.getUserId());
+        return new BaseResponse<>(res);
     }
 }
