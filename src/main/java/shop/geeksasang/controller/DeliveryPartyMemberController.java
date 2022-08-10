@@ -28,7 +28,10 @@ public class DeliveryPartyMemberController {
     @ApiResponses({
             @ApiResponse(code = 1000 ,message ="요청에 성공하셨습니다."),
             @ApiResponse(code = 2009 ,message ="존재하지 않는 멤버입니다"),
-            @ApiResponse(code = 2010 ,message ="존재하지 않는 파티입니다"),
+            @ApiResponse(code = 2020 ,message ="이미 파티에 참여하고 있습니다."),
+            @ApiResponse(code = 2611 ,message ="참여할 수 없는 파티입니다."),
+            @ApiResponse(code = 2615 ,message ="파티 신청 시간이 끝났습니다."),
+            @ApiResponse(code = 2614 ,message ="매칭이 완료된 파티입니다."),
             @ApiResponse(code = 4000 ,message = "서버 오류입니다.")
     })
     @PostMapping("/deliveryPartyMember")
