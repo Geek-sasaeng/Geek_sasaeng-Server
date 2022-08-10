@@ -18,13 +18,13 @@ public class PatchFcmTokenRes {
 
     @ApiModelProperty(example = "토큰예시 발급받으면 입력할 예정")
     @ApiParam(value = "FCM 토큰값")
-    private String FcmToken;
+    private String fcmToken;
 
     // 빌더
     static public PatchFcmTokenRes toDto(Member member){
         return PatchFcmTokenRes.builder()
                 .id(member.getId())
-                .FcmToken(member.getFcmToken())
+                .fcmToken(member.getFcmToken())
                 .build();
     }
 }
