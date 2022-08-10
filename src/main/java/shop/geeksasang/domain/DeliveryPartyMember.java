@@ -10,12 +10,9 @@ import shop.geeksasang.config.status.BaseStatus;
 import java.util.ArrayList;
 import java.util.List;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
-@Setter
 public class DeliveryPartyMember extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,21 +30,16 @@ public class DeliveryPartyMember extends BaseEntity {
     @OneToMany(mappedBy = "menuOwner")
     private List<DeliveryPartyMenu> menuList = new ArrayList<>();
 
-    //-// connect 메서드 //-//
-    public void connectParticipant(Member participant){
+
+    public DeliveryPartyMember(Member participant, DeliveryParty party) {
         this.participant = participant;
-    }
-    public void connectParty(DeliveryParty party){
-        this.party=party;
+        this.party = party;
+        party.addPartyMember(this);
+        super.setStatus(BaseStatus.ACTIVE);
     }
 
     // 배달파티 멤버 삭제
     public void changeStatusToInactive(){
         super.setStatus(BaseStatus.INACTIVE);
     }
-
-    public void changeStatusToActive(){
-        super.setStatus(BaseStatus.ACTIVE);
-    }
-
 }

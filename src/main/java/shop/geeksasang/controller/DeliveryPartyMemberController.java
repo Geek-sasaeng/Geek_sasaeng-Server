@@ -20,7 +20,6 @@ import shop.geeksasang.service.DeliveryPartyMemberService;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
-@RequestMapping
 @RequiredArgsConstructor
 public class DeliveryPartyMemberController {
     private final DeliveryPartyMemberService deliveryPartyMemberService;
@@ -34,11 +33,8 @@ public class DeliveryPartyMemberController {
     })
     @PostMapping("/deliveryPartyMember")
     public BaseResponse<PostDeliveryPartyMemberRes> joinDeliveryPartyMember(@RequestBody PostDeliveryPartyMemberReq dto, HttpServletRequest request){
-
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
-
-        DeliveryPartyMember deliveryPartyMember= deliveryPartyMemberService.joinDeliveryPartyMember(dto, jwtInfo);
-        PostDeliveryPartyMemberRes postDeliveryPartyMemberRes = PostDeliveryPartyMemberRes.toDto(deliveryPartyMember);
+        PostDeliveryPartyMemberRes postDeliveryPartyMemberRes = deliveryPartyMemberService.joinDeliveryPartyMember(dto, jwtInfo.getUserId());
         return new BaseResponse<>(postDeliveryPartyMemberRes);
     }
 }

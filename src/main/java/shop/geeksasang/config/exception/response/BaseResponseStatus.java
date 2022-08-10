@@ -73,7 +73,7 @@ public enum BaseResponseStatus {
     INVALID_REPORT_COUNT(false, 2017, "하루 신고 최대 횟수를 초과하셨습니다."),
     EXIST_REPORT_RECORD(false, 2018, "중복 신고는 불가능합니다."),
     NOT_EXISTS_REPORT_CATEGORY(false, 2019, "존재하지 않는 신고 카테고리입니다."),
-
+    ALREADY_PARTICIPATE_PARTY(false, 2020, "이미 파티에 참여하고 있습니다."),
 
     /**
      * 토마스최

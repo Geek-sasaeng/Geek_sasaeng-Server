@@ -3,23 +3,20 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.geeksasang.config.exception.BaseException;
-import shop.geeksasang.config.response.BaseResponse;
-import shop.geeksasang.config.status.BaseStatus;
 import shop.geeksasang.domain.DeliveryParty;
 import shop.geeksasang.domain.DeliveryPartyMember;
 import shop.geeksasang.domain.Member;
 import shop.geeksasang.dto.deliveryPartyMember.PostDeliveryPartyMemberReq;
-import shop.geeksasang.dto.login.JwtInfo;
+import shop.geeksasang.dto.deliveryPartyMember.PostDeliveryPartyMemberRes;
 import shop.geeksasang.repository.DeliveryPartyRepository;
 import shop.geeksasang.repository.DeliveryPartyMemberRepository;
 import shop.geeksasang.repository.MemberRepository;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 import static shop.geeksasang.config.exception.response.BaseResponseStatus.*;
 
-@Transactional
+@Transactional(readOnly = true)
 @Service
 @RequiredArgsConstructor
 public class DeliveryPartyMemberService {
@@ -29,22 +26,19 @@ public class DeliveryPartyMemberService {
 
     // 파티 들어가기 - 멤버 생성
     @Transactional(readOnly = false)
-    public DeliveryPartyMember joinDeliveryPartyMember(PostDeliveryPartyMemberReq dto, JwtInfo jwtInfo){
-
-        DeliveryPartyMember deliveryPartyMember = dto.toEntity();
-        int userId = jwtInfo.getUserId();
+    public PostDeliveryPartyMemberRes joinDeliveryPartyMember(PostDeliveryPartyMemberReq dto, int userId){
 
         //엔티티 조회
         Member participant = memberRepository.findById(userId)
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTICIPANT));
 
         // 매칭 시 중복 validation
-        if(deliveryPartyMemberRepository.findDeliveryPartyMemberById(userId).isPresent()) {
-            throw new BaseException(ALREADY_PARTICIPATE_ANOTHER_PARTY);
+        if(deliveryPartyMemberRepository.findDeliveryPartyMemberByMemberIdAndDeliveryPartyId(userId, dto.getPartyId()).isPresent()) {
+            throw new BaseException(ALREADY_PARTICIPATE_PARTY);
         }
 
-        DeliveryParty party= deliveryPartyRepository.findDeliveryPartyById(dto.getPartyId())
-        .orElseThrow(() -> new BaseException(CAN_NOT_PARTICIPATE));
+        DeliveryParty party = deliveryPartyRepository.findDeliveryPartyById(dto.getPartyId())
+                .orElseThrow(() -> new BaseException(CAN_NOT_PARTICIPATE));
 
         // orderTime전에만 신청 가능
         if(party.getOrderTime().isBefore(LocalDateTime.now())){
@@ -56,9 +50,8 @@ public class DeliveryPartyMemberService {
             throw new BaseException(MATCHING_COMPLITED);
         }
 
-        deliveryPartyMember.connectParticipant(participant);
-        deliveryPartyMember.connectParty(party);
-        deliveryPartyMember.changeStatusToActive();
+        DeliveryPartyMember deliveryPartyMember = new DeliveryPartyMember(participant, party);
+
         //currentMatching 올라감.
         party.addCurrentMatching();
 
@@ -66,8 +59,7 @@ public class DeliveryPartyMemberService {
         if(party.getCurrentMatching() == party.getMaxMatching()){
             party.changeMatchingStatusToFinish();
         }
-
         deliveryPartyMemberRepository.save(deliveryPartyMember);
-        return deliveryPartyMember;
+        return PostDeliveryPartyMemberRes.toDto(deliveryPartyMember);
     }
 }

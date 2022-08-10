@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiParam;
 import lombok.*;
 import shop.geeksasang.domain.*;
 
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 @Getter
@@ -13,6 +14,10 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Data
 public class PostDeliveryPartyRes {
+
+    @ApiModelProperty(example = "1")
+    @ApiParam(value = "파지 아이디")
+    private int partyId;
 
     @ApiModelProperty(example = "geeksasaeng")
     @ApiParam(value = "사용자 닉네임")
@@ -79,6 +84,18 @@ public class PostDeliveryPartyRes {
     @ApiParam(value = "채팅방 UUID 값")
     private String uuid;
 
+    @ApiModelProperty(example = "신한은행")
+    @ApiParam(value = "은행이름")
+    private String bank;
+
+    @ApiModelProperty(example = "111-22222-33333")
+    @ApiParam(value = "계좌번호")
+    private String accountNumber;
+
+    @ApiModelProperty(example = "교촌 채팅방입니다")
+    @ApiParam(value = "파티 채팅방 이름")
+    private String chatRoomName;
+
 
     static public PostDeliveryPartyRes toDto(DeliveryParty deliveryParty){
         return PostDeliveryPartyRes.builder()
@@ -98,10 +115,19 @@ public class PostDeliveryPartyRes {
                 .longitude(deliveryParty.getLocation().getLongitude())
                 .hashTag(!deliveryParty.getDeliveryPartyHashTags().isEmpty())
                 .uuid(deliveryParty.getUuid())
+                .partyId(deliveryParty.getId())
+                .bank(deliveryParty.getBank())
+                .accountNumber(deliveryParty.getAccountNumber())
+                .chatRoomName(deliveryParty.getChatRoomName())
                 .build();
     }
+
     @Builder
-    public PostDeliveryPartyRes(String chief, String dormitory, String foodCategory, String title, String content, LocalDateTime orderTime, String createdAt, String orderTimeCategoryType, int currentMatching, int maxMatching, String matchingStatus, String storeUrl, Double latitude, Double longitude, boolean hashTag, String uuid) {
+    public PostDeliveryPartyRes(int partyId, String chief, String dormitory, String foodCategory, String title, String content,
+                                LocalDateTime orderTime, String createdAt, String orderTimeCategoryType, int currentMatching, int maxMatching,
+                                String matchingStatus, String storeUrl, Double latitude, Double longitude, boolean hashTag, String uuid,
+                                String bank, String accountNumber, String chatRoomName) {
+        this.partyId = partyId;
         this.chief = chief;
         this.dormitory = dormitory;
         this.foodCategory = foodCategory;
@@ -118,6 +144,9 @@ public class PostDeliveryPartyRes {
         this.longitude = longitude;
         this.hashTag = hashTag;
         this.uuid = uuid;
+        this.bank = bank;
+        this.accountNumber = accountNumber;
+        this.chatRoomName = chatRoomName;
     }
 
     //테스트용

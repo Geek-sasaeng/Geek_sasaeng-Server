@@ -1,9 +1,9 @@
 package shop.geeksasang.repository;
 
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+
 import shop.geeksasang.domain.DeliveryPartyMember;
 
 import java.util.List;
@@ -15,6 +15,9 @@ public interface DeliveryPartyMemberRepository extends JpaRepository<DeliveryPar
     @Query("select dpm from DeliveryPartyMember dpm where dpm.status = 'ACTIVE' and dpm.party.id = :deliveryPartyId")
     List<DeliveryPartyMember> findDeliveryPartyMembersByPartyId(int deliveryPartyId);
 
-    @Query("select dpm from DeliveryPartyMember dpm where dpm.status = 'ACTIVE' and dpm.participant.id = :memberId")
-    Optional<DeliveryPartyMember> findDeliveryPartyMemberById(int memberId);
+    @Query("select dpm from DeliveryPartyMember dpm where dpm.status = 'ACTIVE' and dpm.participant.id = :memberId and dpm.party.id = :partyId")
+    Optional<DeliveryPartyMember> findDeliveryPartyMemberByMemberIdAndDeliveryPartyId(int memberId, int partyId);
+
+    @Query("select dpm from DeliveryPartyMember dpm join fetch dpm.party where dpm.participant.id = :userId and dpm.party.status = 'ACTIVE' ")
+    List<DeliveryPartyMember> findByPartiesByDeliveryPartyMemberId(int userId);
 }
