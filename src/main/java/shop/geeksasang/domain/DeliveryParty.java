@@ -171,6 +171,11 @@ public class DeliveryParty extends BaseEntity {
     public void addCurrentMatching(){
         currentMatching++;
     }
+
+    public void minusMatching(){
+        currentMatching--;
+    }
+
     public void changeMatchingStatusToFinish() {
         this.matchingStatus = MatchingStatus.FINISH;
     }
@@ -184,8 +189,10 @@ public class DeliveryParty extends BaseEntity {
     }
 
     public DeliveryParty deleteParty() {
+        minusMatching();
         deleteNowChief();
         changeStatusToInactive();
+        chief = null;
         return this;
     }
 
@@ -194,6 +201,7 @@ public class DeliveryParty extends BaseEntity {
     }
 
     public DeliveryParty leaveNowChiefAndChangeChief(Member candidateForChief) {
+        minusMatching();
         deleteNowChief();
         chief = candidateForChief;
         return this;
