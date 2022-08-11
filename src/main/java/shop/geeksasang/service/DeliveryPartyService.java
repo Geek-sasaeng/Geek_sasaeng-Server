@@ -250,4 +250,40 @@ public class DeliveryPartyService {
                 .build();
     }
 
+    @Transactional(readOnly = false)
+    public String chiefLeaveDeliveryParty(int partyId, int userId) {
+
+        Member attemptedChief = memberRepository.findMemberByIdAndStatus(userId).orElseThrow(() -> new RuntimeException("없는 멤버"));
+
+        DeliveryParty findParty = deliveryPartyRepository.findDeliveryPartyByIdAndStatus(partyId).orElseThrow(() -> new RuntimeException("없는 파티"));
+
+        if(findParty.isNotChief(attemptedChief)){
+            throw new RuntimeException("요청한 유저가 배달파티의 방장이 아닙니다");
+        }
+
+        //방장인게 밝혀짐.
+
+        //방장만 있을 때
+        if(findParty.memberIsOnlyChief()){
+            DeliveryParty deliveryParty = findParty.deleteParty();
+            System.out.println("deliveryParty = " + deliveryParty.getChief());
+            return "파티가 폭파되었습니다";
+        }
+
+        //여러명 있을 때
+
+        //제일 먼저 참여한 방장 후보의 멤버 아이디를 가져온다.
+        int secondDeliverPartyMemberId = findParty.getSecondDeliverPartyMemberId();
+        System.out.println("secondDeliverPartyMemberId = " + secondDeliverPartyMemberId);
+
+        DeliveryPartyMember candidateForChief =
+                deliveryPartyMemberRepository.findByDeliveryPartyMemberByIdAndStatus(secondDeliverPartyMemberId)
+                .orElseThrow(() -> new RuntimeException("엥 2번째 유저가 없어"));
+
+        DeliveryParty deliveryParty = findParty.leaveNowChiefAndChangeChief(candidateForChief.getParticipant());
+
+
+        //방장 말고 여러명 있을 때
+        return "방장 교체 완료!";
+    }
 }

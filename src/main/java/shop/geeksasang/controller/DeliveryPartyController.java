@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import shop.geeksasang.config.response.BaseResponse;
 import shop.geeksasang.dto.deliveryParty.get.*;
 import shop.geeksasang.dto.deliveryParty.patch.PatchDeliveryPartyStatusRes;
+import shop.geeksasang.dto.deliveryParty.patch.PatchLeaveChiefReq;
 import shop.geeksasang.dto.deliveryParty.post.PostDeliveryPartyReq;
 import shop.geeksasang.dto.deliveryParty.post.PostDeliveryPartyRes;
 import shop.geeksasang.dto.deliveryParty.put.PutDeliveryPartyReq;
@@ -138,5 +139,13 @@ public class DeliveryPartyController {
 
         PatchDeliveryPartyStatusRes response = deliveryPartyService.patchDeliveryPartyStatusById(partyId, jwtInfo);
         return new BaseResponse<>(response);
+    }
+
+    @PatchMapping("/delivery-party/chief")
+    public Object chiefLeaveDeliveryParty(@RequestBody PatchLeaveChiefReq req, HttpServletRequest request){
+        JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
+
+        String result = deliveryPartyService.chiefLeaveDeliveryParty(req.getPartyId(), jwtInfo.getUserId());
+        return result;
     }
 }
