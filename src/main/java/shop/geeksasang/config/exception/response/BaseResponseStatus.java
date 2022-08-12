@@ -86,7 +86,6 @@ public enum BaseResponseStatus {
     BLANK_KEYWORD(false,2205,"검색어를 입력해주세요"),
 
 
-
     /**
      * 미니
      * code : 2400~2599
