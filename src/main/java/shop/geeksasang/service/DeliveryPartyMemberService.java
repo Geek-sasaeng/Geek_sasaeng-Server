@@ -11,6 +11,9 @@ import shop.geeksasang.dto.deliveryPartyMember.patch.PatchLeaveMemberReq;
 import shop.geeksasang.dto.deliveryPartyMember.post.PostDeliveryPartyMemberReq;
 import shop.geeksasang.dto.deliveryPartyMember.post.PostDeliveryPartyMemberRes;
 import shop.geeksasang.dto.login.JwtInfo;
+import shop.geeksasang.dto.deliveryPartyMember.patch.PatchAccountTransferStatusReq;
+import shop.geeksasang.dto.deliveryPartyMember.patch.PatchAccountTransferStatusRes;
+
 import shop.geeksasang.repository.DeliveryPartyRepository;
 import shop.geeksasang.repository.DeliveryPartyMemberRepository;
 import shop.geeksasang.repository.MemberRepository;
@@ -54,6 +57,8 @@ public class DeliveryPartyMemberService {
         }
 
         DeliveryPartyMember deliveryPartyMember = new DeliveryPartyMember(participant, party);
+        // 송금완료 상태 default값이 N
+        deliveryPartyMember.changeAccountTransferStatusToN();
 
         //currentMatching 올라감.
         party.addCurrentMatching();
@@ -66,7 +71,7 @@ public class DeliveryPartyMemberService {
         return PostDeliveryPartyMemberRes.toDto(deliveryPartyMember);
     }
 
-    //파티(채팅방) 나오기
+    //파티(채팅방) 나오기 - 방장x
     @Transactional(readOnly = false)
     public String patchDeliveryPartyMemberStatus(PatchLeaveMemberReq dto, JwtInfo jwtInfo){
 
@@ -91,6 +96,19 @@ public class DeliveryPartyMemberService {
         String result = String.valueOf(BaseResponseStatus.LEAVE_CHATROOM_SUCCESS.getMessage());
       // PatchLeaveMemberRes res = new PatchLeaveMemberRes(result);
         return result;
+    }
+
+
+    // 수정: 송금 완료상태 수정
+    @Transactional(readOnly = false)
+    public PatchAccountTransferStatusRes updateAccountTransferStatus(PatchAccountTransferStatusReq dto, int memberId){
+        // 멤버 조회
+        DeliveryPartyMember deliveryPartyMember = deliveryPartyMemberRepository.findDeliveryPartyMemberByMemberIdAndDeliveryPartyId(memberId, dto.getPartyId())
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTICIPANT));
+        // 송금 완료상태 수정
+        deliveryPartyMember.changeAccountTransferStatusToY();
+        // dto형태로 병경해서 반환
+        return PatchAccountTransferStatusRes.toDto(deliveryPartyMember);
     }
 
 }

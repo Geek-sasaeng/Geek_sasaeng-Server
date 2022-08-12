@@ -9,11 +9,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import shop.geeksasang.config.status.BaseStatus;
+import shop.geeksasang.config.status.BelongStatus;
 import shop.geeksasang.config.type.OrderTimeCategoryType;
 import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.config.exception.response.BaseResponseStatus;
 import shop.geeksasang.domain.*;
 import shop.geeksasang.dto.deliveryParty.get.*;
+import shop.geeksasang.dto.deliveryParty.patch.PatchDeliveryPartyMatchingStatusRes;
 import shop.geeksasang.dto.deliveryParty.patch.PatchDeliveryPartyStatusRes;
 import shop.geeksasang.dto.deliveryParty.post.PostDeliveryPartyReq;
 import shop.geeksasang.dto.deliveryParty.post.PostDeliveryPartyRes;
@@ -145,7 +147,7 @@ public class DeliveryPartyService {
 
     //배달파티 상세조회:
     public GetDeliveryPartyDetailRes getDeliveryPartyDetailById(int partyId, JwtInfo jwtInfo){
-
+        BelongStatus belongStatus;
         //사용자 본인 여부
         boolean authorStatus = false;
 
@@ -162,7 +164,14 @@ public class DeliveryPartyService {
             authorStatus = true;
         }
 
-        GetDeliveryPartyDetailRes getDeliveryPartyDetailRes = GetDeliveryPartyDetailRes.toDto(deliveryParty,authorStatus);
+        //요청 보낸 사용자가 이미 파티멤버인지 조회
+        //로직: 요청 사용자 id, partyId -> deliveryPartyMember 에서 같은 partyId와 memberId 같은 멤버 조회
+        if(deliveryPartyMemberRepository.findDeliveryPartyMemberByMemberIdAndDeliveryPartyId(memberId, partyId).isPresent()){
+            belongStatus = BelongStatus.Y;
+        }
+        else{ belongStatus = BelongStatus.N;}
+
+        GetDeliveryPartyDetailRes getDeliveryPartyDetailRes = GetDeliveryPartyDetailRes.toDto(deliveryParty, authorStatus, belongStatus);
         return getDeliveryPartyDetailRes;
     }
 
@@ -239,6 +248,20 @@ public class DeliveryPartyService {
         return PatchDeliveryPartyStatusRes.builder()
                 .deliveryPartyId(deliveryParty.getId())
                 .status(deliveryParty.getStatus().toString())
+                .build();
+    }
+
+    // 배달 파티 수동 매칭 마감
+    @Transactional(readOnly = false)
+    public PatchDeliveryPartyMatchingStatusRes patchDeliveryPartyMatchingStatus(int partyId, JwtInfo jwtInfo) {
+        int userId = jwtInfo.getUserId();
+        DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyByIdAndUserId(partyId, userId).
+                orElseThrow(() -> new BaseException(BaseResponseStatus.CAN_NOT_FINISH_DELIVERY_PARTY));
+
+        deliveryParty.changeMatchingStatusToFinish();
+        return PatchDeliveryPartyMatchingStatusRes.builder()
+                .deliveryPartyId(deliveryParty.getId())
+                .matchingStatus(deliveryParty.getMatchingStatus().toString())
                 .build();
     }
 

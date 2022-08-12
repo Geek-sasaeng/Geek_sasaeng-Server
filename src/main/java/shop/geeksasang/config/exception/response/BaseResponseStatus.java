@@ -87,7 +87,6 @@ public enum BaseResponseStatus {
     BLANK_KEYWORD(false,2205,"검색어를 입력해주세요"),
 
 
-
     /**
      * 미니
      * code : 2400~2599
@@ -121,6 +120,7 @@ public enum BaseResponseStatus {
     ALREADY_PARTICIPATE_ANOTHER_PARTY(false, 2613, "이미 다른 파티에 참여하고 있습니다."),
     MATCHING_COMPLITED(false, 2614, "매칭이 완료된 파티입니다."),
     ORDER_TIME_OVER(false, 2615, "파티 신청 시간이 끝났습니다."),
+    CAN_NOT_FINISH_DELIVERY_PARTY(false, 2616, "파티 매칭 마감을 할 수 없는 유저이거나 이미 마감된 상태입니다."),
 
     /**
      * 네오
