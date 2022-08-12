@@ -15,6 +15,7 @@ import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.config.exception.response.BaseResponseStatus;
 import shop.geeksasang.domain.*;
 import shop.geeksasang.dto.deliveryParty.get.*;
+import shop.geeksasang.dto.deliveryParty.patch.PatchDeliveryPartyMatchingStatusRes;
 import shop.geeksasang.dto.deliveryParty.patch.PatchDeliveryPartyStatusRes;
 import shop.geeksasang.dto.deliveryParty.post.PostDeliveryPartyReq;
 import shop.geeksasang.dto.deliveryParty.post.PostDeliveryPartyRes;
@@ -247,6 +248,20 @@ public class DeliveryPartyService {
         return PatchDeliveryPartyStatusRes.builder()
                 .deliveryPartyId(deliveryParty.getId())
                 .status(deliveryParty.getStatus().toString())
+                .build();
+    }
+
+    // 배달 파티 수동 매칭 마감
+    @Transactional(readOnly = false)
+    public PatchDeliveryPartyMatchingStatusRes patchDeliveryPartyMatchingStatus(int partyId, JwtInfo jwtInfo) {
+        int userId = jwtInfo.getUserId();
+        DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyByIdAndUserId(partyId, userId).
+                orElseThrow(() -> new BaseException(BaseResponseStatus.CAN_NOT_FINISH_DELIVERY_PARTY));
+
+        deliveryParty.changeMatchingStatusToFinish();
+        return PatchDeliveryPartyMatchingStatusRes.builder()
+                .deliveryPartyId(deliveryParty.getId())
+                .matchingStatus(deliveryParty.getMatchingStatus().toString())
                 .build();
     }
 
