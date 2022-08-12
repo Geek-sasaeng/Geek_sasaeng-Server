@@ -16,6 +16,7 @@ import shop.geeksasang.config.exception.response.BaseResponseStatus;
 import shop.geeksasang.domain.*;
 import shop.geeksasang.dto.deliveryParty.get.*;
 import shop.geeksasang.dto.deliveryParty.patch.PatchDeliveryPartyStatusRes;
+import shop.geeksasang.dto.deliveryParty.patch.PatchLeaveChiefRes;
 import shop.geeksasang.dto.deliveryParty.post.PostDeliveryPartyReq;
 import shop.geeksasang.dto.deliveryParty.post.PostDeliveryPartyRes;
 import shop.geeksasang.dto.deliveryParty.put.PutDeliveryPartyReq;
@@ -26,7 +27,7 @@ import shop.geeksasang.utils.ordertime.OrderTimeUtils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -49,8 +50,8 @@ public class DeliveryPartyService {
 
     private static final int PAGING_SIZE = 10;
     private static final String PAGING_STANDARD = "orderTime";
-    private static final List<Integer> MATCHING_NUMBER = Arrays.asList(2, 4, 6, 8, 10);
-
+    private static final String DELETE_PARTY = "파티를 삭제했습니다.";
+    private static final String CHANGE_CHIEF = "기존 방장을 삭제하고 새로운 방장으로 교체했습니다.";
 
     @Transactional(readOnly = false)
     public PostDeliveryPartyRes registerDeliveryParty(PostDeliveryPartyReq dto, int chiefId, int dormitoryId){
@@ -251,39 +252,29 @@ public class DeliveryPartyService {
     }
 
     @Transactional(readOnly = false)
-    public String chiefLeaveDeliveryParty(int partyId, int userId) {
+    public PatchLeaveChiefRes chiefLeaveDeliveryParty(int partyId, int userId) {
 
-        Member attemptedChief = memberRepository.findMemberByIdAndStatus(userId).orElseThrow(() -> new RuntimeException("없는 멤버"));
-
-        DeliveryParty findParty = deliveryPartyRepository.findDeliveryPartyByIdAndStatus(partyId).orElseThrow(() -> new RuntimeException("없는 파티"));
+        Member attemptedChief = memberRepository.findMemberByIdAndStatus(userId).orElseThrow(() -> new BaseException(NOT_EXIST_USER));
+        DeliveryParty findParty = deliveryPartyRepository.findDeliveryPartyByIdAndStatus(partyId).orElseThrow(() -> new BaseException(NOT_EXISTS_PARTY));
 
         if(findParty.isNotChief(attemptedChief)){
-            throw new RuntimeException("요청한 유저가 배달파티의 방장이 아닙니다");
+            throw new BaseException(INVALID_DELIVERY_PARTY_CHIEF);
         }
-
-        //방장인게 밝혀짐.
 
         //방장만 있을 때
         if(findParty.memberIsOnlyChief()){
-            DeliveryParty deliveryParty = findParty.deleteParty();
-            System.out.println("deliveryParty = " + deliveryParty.getChief());
-            return "파티가 폭파되었습니다";
+            findParty.deleteParty();
+            return new PatchLeaveChiefRes(DELETE_PARTY);
         }
-
-        //여러명 있을 때
 
         //제일 먼저 참여한 방장 후보의 멤버 아이디를 가져온다.
         int secondDeliverPartyMemberId = findParty.getSecondDeliverPartyMemberId();
-        System.out.println("secondDeliverPartyMemberId = " + secondDeliverPartyMemberId);
 
-        DeliveryPartyMember candidateForChief =
-                deliveryPartyMemberRepository.findByDeliveryPartyMemberByIdAndStatus(secondDeliverPartyMemberId)
-                .orElseThrow(() -> new RuntimeException("엥 2번째 유저가 없어"));
+        DeliveryPartyMember candidateForChief = deliveryPartyMemberRepository.findByDeliveryPartyMemberByIdAndStatus(secondDeliverPartyMemberId)
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_DELIVERY_PARTY_PARTICIPANT));
 
-        DeliveryParty deliveryParty = findParty.leaveNowChiefAndChangeChief(candidateForChief.getParticipant());
+        findParty.leaveNowChiefAndChangeChief(candidateForChief.getParticipant());
 
-
-        //방장 말고 여러명 있을 때
-        return "방장 교체 완료!";
+        return new PatchLeaveChiefRes(CHANGE_CHIEF);
     }
 }
