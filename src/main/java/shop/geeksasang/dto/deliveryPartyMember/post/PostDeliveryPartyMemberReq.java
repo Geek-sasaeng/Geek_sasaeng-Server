@@ -1,4 +1,4 @@
-package shop.geeksasang.dto.deliveryPartyMember;
+package shop.geeksasang.dto.deliveryPartyMember.post;
 
 
 import io.swagger.annotations.ApiModelProperty;

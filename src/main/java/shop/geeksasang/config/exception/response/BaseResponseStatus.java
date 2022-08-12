@@ -31,6 +31,7 @@ public enum BaseResponseStatus {
      * 미니
      * code : 1400~1599
      */
+    LEAVE_CHATROOM_SUCCESS(true, 1400, "채팅방 목록에서 삭제되었습니다."),
 
     /**
      * 제로
@@ -96,6 +97,7 @@ public enum BaseResponseStatus {
     NOT_EXISTS_CATEGORY(false,2402,"존재하지 않는 카테고리입니다."),
     NOT_EXISTS_PERMISSION_UPDATE(false,2403,"수정권한이 없는 유저입니다."),
     CAN_NOT_CREATE_PARTY(false, 2404, "사용자 신고 3번 이상인 유저는 배달파티를 생성할 수 없습니다."),
+    NOT_EXISTS_PARTY_MEMBER(false, 2405, "참여중인 배달파티 정보를 찾을 수 없습니다."),
 
 
 

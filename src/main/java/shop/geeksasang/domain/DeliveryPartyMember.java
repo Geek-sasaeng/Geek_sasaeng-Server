@@ -42,4 +42,5 @@ public class DeliveryPartyMember extends BaseEntity {
     public void changeStatusToInactive(){
         super.setStatus(BaseStatus.INACTIVE);
     }
+
 }
