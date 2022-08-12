@@ -183,6 +183,10 @@ public class Member extends BaseEntity {
         this.fcmToken = fcmToken;
     }
 
+    public void changeProfileImgUrl(String profileImgUrl){
+        this.profileImgUrl = profileImgUrl;
+    }
+
     //테스트용
     public Member(int id, String nickName) {
         this.id = id;

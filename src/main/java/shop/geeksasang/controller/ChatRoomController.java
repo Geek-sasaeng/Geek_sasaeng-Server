@@ -26,7 +26,7 @@ public class ChatRoomController {
             @ApiResponse(code = 4000 ,message = "서버 오류입니다.")
     })
     @GetMapping("/chat-rooms")
-    public BaseResponse<List<GetChatRoomsRes> > getChatRooms(HttpServletRequest request){
+    public BaseResponse<List<GetChatRoomsRes>> getChatRooms(HttpServletRequest request){
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
         List<GetChatRoomsRes> chatRooms = chatRoomService.getChatRooms(jwtInfo.getUserId());
         return new BaseResponse<>(chatRooms);
