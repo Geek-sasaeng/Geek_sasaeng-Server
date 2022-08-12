@@ -23,6 +23,9 @@ public interface DeliveryPartyRepository extends JpaRepository<DeliveryParty,Int
     @Query("select dp from DeliveryParty dp where dp.id = :deliveryPartyId and dp.status = 'ACTIVE' and dp.matchingStatus = 'ONGOING'")
     Optional<DeliveryParty> findDeliveryPartyById(int deliveryPartyId);
 
+    @Query("select dp from DeliveryParty dp where dp.id = :deliveryPartyId and dp.status = 'ACTIVE' and dp.matchingStatus = 'ONGOING' and dp.chief.id = :userId")
+    Optional<DeliveryParty> findDeliveryPartyByIdAndUserId(int deliveryPartyId, int userId);
+
     // 배달파티 상세조회: 현재시각이 주문시각 전인 것
     @Query("select dp from DeliveryParty dp where dp.id = :deliveryPartyId and dp.status = 'ACTIVE' and dp.matchingStatus = 'ONGOING' and dp.orderTime >= :currentTime")
     Optional<DeliveryParty> findDeliveryPartyByIdBeforeOrderTime(int deliveryPartyId, @Param("currentTime") LocalDateTime currentTime);
