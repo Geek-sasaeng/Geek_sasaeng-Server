@@ -1,7 +1,6 @@
 package shop.geeksasang.controller;
 
 
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -17,11 +16,7 @@ import shop.geeksasang.dto.deliveryPartyMember.post.PostDeliveryPartyMemberReq;
 import shop.geeksasang.dto.deliveryPartyMember.post.PostDeliveryPartyMemberRes;
 import shop.geeksasang.dto.login.JwtInfo;
 import shop.geeksasang.service.DeliveryPartyMemberService;
-
-
 import javax.servlet.http.HttpServletRequest;
-
-import static shop.geeksasang.config.exception.response.BaseResponseStatus.NOT_EXISTS_PARTY_MEMBER;
 
 @RestController
 @RequiredArgsConstructor
