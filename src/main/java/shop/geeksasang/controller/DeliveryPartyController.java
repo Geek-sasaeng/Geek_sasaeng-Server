@@ -161,7 +161,6 @@ public class DeliveryPartyController {
         return new BaseResponse<>(res);
     }
 
-    // 배달 파티 수동 매칭 마감
     @ApiOperation(value = "마감 : 배달파티 수동 매칭 마감", notes = "매칭 마감시킬 배달 파티의 아이디를 받아 배달 파티 매칭 status를 FINISH로 바꿀 수 있다.")
     @ApiResponses({
             @ApiResponse(code =1000 ,message ="요청에 성공하였습니다."),
