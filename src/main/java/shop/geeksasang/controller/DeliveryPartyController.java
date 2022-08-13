@@ -20,6 +20,7 @@ import shop.geeksasang.dto.deliveryParty.post.PostDeliveryPartyReq;
 import shop.geeksasang.dto.deliveryParty.post.PostDeliveryPartyRes;
 import shop.geeksasang.dto.deliveryParty.put.PutDeliveryPartyReq;
 import shop.geeksasang.dto.deliveryParty.put.PutDeliveryPartyRes;
+
 import shop.geeksasang.dto.login.JwtInfo;
 import shop.geeksasang.service.DeliveryPartyService;
 
@@ -136,6 +137,7 @@ public class DeliveryPartyController {
             @ApiResponse(code=2609,message = "이미 삭제된 배달파티 입니다"),
             @ApiResponse(code=4000,message = "서버 오류입니다.")
     })
+
     @PatchMapping("/delivery-party/{partyId}")
     public BaseResponse<PatchDeliveryPartyStatusRes> patchDeliveryPartyStatusById(@PathVariable("partyId") int partyId, HttpServletRequest request){
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
@@ -174,4 +176,5 @@ public class DeliveryPartyController {
         PatchDeliveryPartyMatchingStatusRes response = deliveryPartyService.patchDeliveryPartyMatchingStatus(partyId, jwtInfo);
         return new BaseResponse<>(response);
     }
+
 }

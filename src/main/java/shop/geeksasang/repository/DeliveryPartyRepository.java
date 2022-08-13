@@ -40,4 +40,10 @@ public interface DeliveryPartyRepository extends JpaRepository<DeliveryParty,Int
     @Query("select dp from DeliveryParty dp " +
             "where dp.dormitory.id = :dormitoryId and (dp.title LIKE CONCAT('%',:keyword,'%') or dp.foodCategory.title = :keyword) and dp.matchingStatus = 'ONGOING' and dp.status = 'ACTIVE' and dp.orderTime >= :currentTime")
     Slice<DeliveryParty> findDeliveryPartiesByKeyword(int dormitoryId, @Param("keyword") String keyword, Pageable pageable, @Param("currentTime") LocalDateTime currentTime);
+
+    //배달파티 조회: uuid 이용
+    @Query("select dp from DeliveryParty dp where dp.uuid =:uuid and dp.status = 'ACTIVE'")
+    Optional<DeliveryParty> findDeliveryPartyByUuid(String uuid);
+
+
 }

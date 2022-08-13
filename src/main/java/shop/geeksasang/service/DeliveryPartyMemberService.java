@@ -7,10 +7,13 @@ import shop.geeksasang.config.exception.response.BaseResponseStatus;
 import shop.geeksasang.domain.DeliveryParty;
 import shop.geeksasang.domain.DeliveryPartyMember;
 import shop.geeksasang.domain.Member;
-import shop.geeksasang.dto.deliveryPartyMember.PostDeliveryPartyMemberReq;
-import shop.geeksasang.dto.deliveryPartyMember.PostDeliveryPartyMemberRes;
+import shop.geeksasang.dto.deliveryPartyMember.patch.PatchLeaveMemberReq;
+import shop.geeksasang.dto.deliveryPartyMember.post.PostDeliveryPartyMemberReq;
+import shop.geeksasang.dto.deliveryPartyMember.post.PostDeliveryPartyMemberRes;
+import shop.geeksasang.dto.login.JwtInfo;
 import shop.geeksasang.dto.deliveryPartyMember.patch.PatchAccountTransferStatusReq;
 import shop.geeksasang.dto.deliveryPartyMember.patch.PatchAccountTransferStatusRes;
+
 import shop.geeksasang.repository.DeliveryPartyRepository;
 import shop.geeksasang.repository.DeliveryPartyMemberRepository;
 import shop.geeksasang.repository.MemberRepository;
@@ -69,6 +72,36 @@ public class DeliveryPartyMemberService {
         return PostDeliveryPartyMemberRes.toDto(deliveryPartyMember);
     }
 
+    //파티(채팅방) 나오기 - 방장x
+    @Transactional(readOnly = false)
+    public String patchDeliveryPartyMemberStatus(PatchLeaveMemberReq dto, JwtInfo jwtInfo){
+
+        int chiefId = jwtInfo.getUserId();
+
+        //요청 보낸 사용자 Member
+        int memberId = jwtInfo.getUserId();
+        Member findMember = memberRepository.findMemberByIdAndStatus(memberId).
+                orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTICIPANT));
+
+        //uuid를 이용해 파티 조회
+        DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyByUuid(dto.getUuid()).
+                orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTY));
+
+        //파티 멤버 조회
+        DeliveryPartyMember deliveryPartyMember = deliveryPartyMemberRepository.findDeliveryPartyMemberByMemberIdAndDeliveryPartyId(findMember.getId(), deliveryParty.getId())
+                .orElseThrow(()-> new BaseException(NOT_EXISTS_PARTY_MEMBER));
+
+        //참여정보 STATUS 수정(ACTIVE -> INACTIVE)
+        deliveryPartyMember.changeStatusToInactive();
+
+        //현재 참여인원 -1
+        deliveryParty.minusMatching();
+
+        String result = String.valueOf(BaseResponseStatus.LEAVE_CHATROOM_SUCCESS.getMessage());
+      // PatchLeaveMemberRes res = new PatchLeaveMemberRes(result);
+        return result;
+    }
+
 
     // 수정: 송금 완료상태 수정
     @Transactional(readOnly = false)
@@ -81,4 +114,5 @@ public class DeliveryPartyMemberService {
         // dto형태로 병경해서 반환
         return PatchAccountTransferStatusRes.toDto(deliveryPartyMember);
     }
+
 }
