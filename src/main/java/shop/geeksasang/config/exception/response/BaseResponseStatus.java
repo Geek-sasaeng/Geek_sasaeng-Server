@@ -64,7 +64,7 @@ public enum BaseResponseStatus {
     DUPLICATE_USER_EMAIL(false, 2007, "중복되는 유저 이메일입니다"),
     NOT_EXISTS_UNIVERSITY(false, 2008, "존재하지 않는 학교 이름입니다"),
     NOT_EXISTS_PARTICIPANT(false,2009,"존재하지 않는 멤버입니다"),
-    NOT_EXISTS_PARTY(false,2010,"존재하지 않는 파티입니다"),
+    NOT_EXISTS_PARTY(false,2010,"존재하지 않는 파티입니다."),
     NOT_EXISTS_PASSWORD(false, 2011,"비밀번호가 틀립니다. "),
     INACTIVE_STATUS(false,2012,"회원 status가 INACITVE 입니다."),
     INVALID_SMS_VERIFY_NUMBER(false,2013,"인증번호가 틀렸습니다."),
@@ -74,6 +74,9 @@ public enum BaseResponseStatus {
     EXIST_REPORT_RECORD(false, 2018, "중복 신고는 불가능합니다."),
     NOT_EXISTS_REPORT_CATEGORY(false, 2019, "존재하지 않는 신고 카테고리입니다."),
     ALREADY_PARTICIPATE_PARTY(false, 2020, "이미 파티에 참여하고 있습니다."),
+    INVALID_DELIVERY_PARTY_CHIEF(false, 2021, "파티의 방장이 아닙니다."),
+    NOT_EXISTS_DELIVERY_PARTY_PARTICIPANT(false,2022,"존재하지 않는 배달 파티 멤버입니다."),
+
 
     /**
      * 토마스최
