@@ -45,6 +45,11 @@ public class DeliveryPartyMember extends BaseEntity {
         super.setStatus(BaseStatus.ACTIVE);
     }
 
+    public void leaveDeliveryParty(){
+        party = null;
+        changeStatusToInactive();
+    }
+
     // 배달파티 멤버 삭제
     public void changeStatusToInactive(){
         super.setStatus(BaseStatus.INACTIVE);

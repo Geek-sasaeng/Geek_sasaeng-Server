@@ -62,6 +62,7 @@ public class DeliveryPartyMemberService {
 
         //currentMatching 올라감.
         party.addCurrentMatching();
+        party.addPartyMember(deliveryPartyMember);
 
         // currentMatching과 maxMatching 같아지면 matching status바꿈.
         if(party.getCurrentMatching() == party.getMaxMatching()){
@@ -94,7 +95,7 @@ public class DeliveryPartyMemberService {
         deliveryPartyMember.changeStatusToInactive();
 
         //현재 참여인원 -1
-        deliveryParty.minusCurrentMatching();
+        deliveryParty.minusMatching();
 
         String result = String.valueOf(BaseResponseStatus.LEAVE_CHATROOM_SUCCESS.getMessage());
       // PatchLeaveMemberRes res = new PatchLeaveMemberRes(result);

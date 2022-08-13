@@ -171,12 +171,45 @@ public class DeliveryParty extends BaseEntity {
     public void addCurrentMatching(){
         currentMatching++;
     }
+
+    public void minusMatching(){
+        currentMatching--;
+    }
+
     public void changeMatchingStatusToFinish() {
         this.matchingStatus = MatchingStatus.FINISH;
     }
 
-    public void minusCurrentMatching() {
-        this.currentMatching--;
+    public boolean isNotChief(Member attemptedChief){
+        return attemptedChief != chief;
     }
 
+    public boolean memberIsOnlyChief() {
+        return deliveryPartyMembers.size() == 1;
+    }
+
+    public DeliveryParty deleteParty() {
+        minusMatching();
+        deleteNowChief();
+        changeStatusToInactive();
+        chief = null;
+        return this;
+    }
+
+    public int getSecondDeliverPartyMemberId() {
+        return deliveryPartyMembers.get(1).getId();
+    }
+
+    public DeliveryParty leaveNowChiefAndChangeChief(Member candidateForChief) {
+        minusMatching();
+        deleteNowChief();
+        chief = candidateForChief;
+        return this;
+    }
+
+    //관계를 끊어도 연관관계 처리를 애매하게 해서 데이터가 계속 남아있었다. 확실하게 다 지워버리자.
+    public void deleteNowChief(){
+        DeliveryPartyMember nowChief = deliveryPartyMembers.remove(0);
+        nowChief.leaveDeliveryParty();
+    }
 }
