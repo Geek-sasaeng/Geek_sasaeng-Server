@@ -174,4 +174,7 @@ public class DeliveryParty extends BaseEntity {
     public void changeMatchingStatusToFinish() {
         this.matchingStatus = MatchingStatus.FINISH;
     }
+    public void minusCurrentMatching() {
+        this.currentMatching--;
+    }
 }

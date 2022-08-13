@@ -93,6 +93,9 @@ public class DeliveryPartyMemberService {
         //참여정보 STATUS 수정(ACTIVE -> INACTIVE)
         deliveryPartyMember.changeStatusToInactive();
 
+        //현재 참여인원 -1
+        deliveryParty.minusCurrentMatching();
+
         String result = String.valueOf(BaseResponseStatus.LEAVE_CHATROOM_SUCCESS.getMessage());
       // PatchLeaveMemberRes res = new PatchLeaveMemberRes(result);
         return result;
