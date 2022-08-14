@@ -1,4 +1,4 @@
-package shop.geeksasang.dto.deliveryPartyMember;
+package shop.geeksasang.dto.deliveryPartyMember.post;
 
 
 import io.swagger.annotations.ApiModelProperty;
@@ -19,10 +19,4 @@ public class PostDeliveryPartyMemberReq {
     @ApiParam(value = "파티 id", required = true)
     @NotNull
     private int partyId;
-
-    public DeliveryPartyMember toEntity() {
-        return DeliveryPartyMember.builder()
-                .build();
-    }
-
 }

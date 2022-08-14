@@ -13,9 +13,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor
 @Data
+@NoArgsConstructor
 public class PostDeliveryPartyReq {
 
     @ApiModelProperty(example = "1")
@@ -93,5 +92,23 @@ public class PostDeliveryPartyReq {
                 .location(new Location(getLatitude(),getLongitude()))
                 .storeUrl(getStoreUrl())
                 .build();
+    }
+
+    //테스트용
+    @Builder
+
+    public PostDeliveryPartyReq(int foodCategory, String title, String content, LocalDateTime orderTime, int maxMatching, String storeUrl, Double latitude, Double longitude, boolean hashTag, String bank, String accountNumber, String chatRoomName) {
+        this.foodCategory = foodCategory;
+        this.title = title;
+        this.content = content;
+        this.orderTime = orderTime;
+        this.maxMatching = maxMatching;
+        this.storeUrl = storeUrl;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.hashTag = hashTag;
+        this.bank = bank;
+        this.accountNumber = accountNumber;
+        this.chatRoomName = chatRoomName;
     }
 }

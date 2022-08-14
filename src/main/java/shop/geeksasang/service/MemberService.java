@@ -81,6 +81,7 @@ public class MemberService {
         member.connectUniversity(university);
         member.changeStatusToActive();
         member.changeLoginStatusToNever(); // 로그인 안해본 상태 디폴트 저장
+        member.changeProfileImgUrl("https://geeksasaeng-s3.s3.ap-northeast-2.amazonaws.com/%ED%94%84%EB%A1%9C%ED%95%84+%EC%9D%B4%EB%AF%B8%EC%A7%80/baseProfileImg.png");// S3기본 프로필 이미지 저장
         memberRepository.save(member);
         PostRegisterRes postRegisterRes = PostRegisterRes.toDto(member, email, phoneNumber);
         return postRegisterRes;
@@ -134,6 +135,7 @@ public class MemberService {
         member.connectUniversity(university);
         member.changeStatusToActive();
         member.changeLoginStatusToNever(); // 로그인 안해본 상태 디폴트 저장
+        member.changeProfileImgUrl("https://geeksasaeng-s3.s3.ap-northeast-2.amazonaws.com/%ED%94%84%EB%A1%9C%ED%95%84+%EC%9D%B4%EB%AF%B8%EC%A7%80/baseProfileImg.png");// S3기본 프로필 이미지 저장
         memberRepository.save(member);
 
         // jwt 발급
@@ -281,6 +283,16 @@ public class MemberService {
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_DORMITORY));
         member.updateDormitory(dormitory);
         return member;
+    }
+
+    // 수정: FCM토큰 수정
+    @Transactional(readOnly = false)
+    public PatchFcmTokenRes updateFcmToken(PatchFcmTokenReq dto, int memberId){
+        Member member = memberRepository.findMemberByIdAndStatus(memberId)
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTICIPANT));
+
+        member.updateFcmToken(dto.getFcmToken());
+        return PatchFcmTokenRes.toDto(member);
     }
 
     // 로그인 아이디 중복 확인하기

@@ -1,9 +1,6 @@
 package shop.geeksasang.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -45,7 +42,7 @@ public class DeliveryParty extends BaseEntity {
     @OneToOne(fetch=FetchType.LAZY)
     private FoodCategory foodCategory;
 
-    @OneToMany(mappedBy = "party")
+    @OneToMany(mappedBy = "party", cascade = CascadeType.ALL)
     private List<DeliveryPartyMember> deliveryPartyMembers = new ArrayList<>();
 
     private String title;
@@ -106,6 +103,7 @@ public class DeliveryParty extends BaseEntity {
                 .storeUrl(dto.getStoreUrl())
                 .reportedCount(0)
                 .uuid(createUuid())
+                .deliveryPartyMembers(new ArrayList<>())
                 .build();
 
         party.setStatus(BaseStatus.ACTIVE);
@@ -160,6 +158,10 @@ public class DeliveryParty extends BaseEntity {
         return UUID.randomUUID().toString();
     }
 
+    public void addPartyMember(DeliveryPartyMember partyMember){
+        this.deliveryPartyMembers.add(partyMember);
+    }
+
 
     // 배달파티 삭제
     public void changeStatusToInactive(){
@@ -169,7 +171,45 @@ public class DeliveryParty extends BaseEntity {
     public void addCurrentMatching(){
         currentMatching++;
     }
+
+    public void minusMatching(){
+        currentMatching--;
+    }
+
     public void changeMatchingStatusToFinish() {
         this.matchingStatus = MatchingStatus.FINISH;
+    }
+
+    public boolean isNotChief(Member attemptedChief){
+        return attemptedChief != chief;
+    }
+
+    public boolean memberIsOnlyChief() {
+        return deliveryPartyMembers.size() == 1;
+    }
+
+    public DeliveryParty deleteParty() {
+        minusMatching();
+        deleteNowChief();
+        changeStatusToInactive();
+        chief = null;
+        return this;
+    }
+
+    public int getSecondDeliverPartyMemberId() {
+        return deliveryPartyMembers.get(1).getId();
+    }
+
+    public DeliveryParty leaveNowChiefAndChangeChief(Member candidateForChief) {
+        minusMatching();
+        deleteNowChief();
+        chief = candidateForChief;
+        return this;
+    }
+
+    //관계를 끊어도 연관관계 처리를 애매하게 해서 데이터가 계속 남아있었다. 확실하게 다 지워버리자.
+    public void deleteNowChief(){
+        DeliveryPartyMember nowChief = deliveryPartyMembers.remove(0);
+        nowChief.leaveDeliveryParty();
     }
 }

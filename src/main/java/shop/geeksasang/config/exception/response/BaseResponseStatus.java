@@ -31,6 +31,7 @@ public enum BaseResponseStatus {
      * 미니
      * code : 1400~1599
      */
+    LEAVE_CHATROOM_SUCCESS(true, 1400, "채팅방 목록에서 삭제되었습니다."),
 
     /**
      * 제로
@@ -64,7 +65,7 @@ public enum BaseResponseStatus {
     DUPLICATE_USER_EMAIL(false, 2007, "중복되는 유저 이메일입니다"),
     NOT_EXISTS_UNIVERSITY(false, 2008, "존재하지 않는 학교 이름입니다"),
     NOT_EXISTS_PARTICIPANT(false,2009,"존재하지 않는 멤버입니다"),
-    NOT_EXISTS_PARTY(false,2010,"존재하지 않는 파티입니다"),
+    NOT_EXISTS_PARTY(false,2010,"존재하지 않는 파티입니다."),
     NOT_EXISTS_PASSWORD(false, 2011,"비밀번호가 틀립니다. "),
     INACTIVE_STATUS(false,2012,"회원 status가 INACITVE 입니다."),
     INVALID_SMS_VERIFY_NUMBER(false,2013,"인증번호가 틀렸습니다."),
@@ -73,6 +74,9 @@ public enum BaseResponseStatus {
     INVALID_REPORT_COUNT(false, 2017, "하루 신고 최대 횟수를 초과하셨습니다."),
     EXIST_REPORT_RECORD(false, 2018, "중복 신고는 불가능합니다."),
     NOT_EXISTS_REPORT_CATEGORY(false, 2019, "존재하지 않는 신고 카테고리입니다."),
+    ALREADY_PARTICIPATE_PARTY(false, 2020, "이미 파티에 참여하고 있습니다."),
+    INVALID_DELIVERY_PARTY_CHIEF(false, 2021, "파티의 방장이 아닙니다."),
+    NOT_EXISTS_DELIVERY_PARTY_PARTICIPANT(false,2022,"존재하지 않는 배달 파티 멤버입니다."),
 
 
     /**
@@ -86,7 +90,6 @@ public enum BaseResponseStatus {
     BLANK_KEYWORD(false,2205,"검색어를 입력해주세요"),
 
 
-
     /**
      * 미니
      * code : 2400~2599
@@ -96,6 +99,7 @@ public enum BaseResponseStatus {
     NOT_EXISTS_CATEGORY(false,2402,"존재하지 않는 카테고리입니다."),
     NOT_EXISTS_PERMISSION_UPDATE(false,2403,"수정권한이 없는 유저입니다."),
     CAN_NOT_CREATE_PARTY(false, 2404, "사용자 신고 3번 이상인 유저는 배달파티를 생성할 수 없습니다."),
+    NOT_EXISTS_PARTY_MEMBER(false, 2405, "참여중인 배달파티 정보를 찾을 수 없습니다."),
 
 
 
@@ -119,6 +123,7 @@ public enum BaseResponseStatus {
     ALREADY_PARTICIPATE_ANOTHER_PARTY(false, 2613, "이미 다른 파티에 참여하고 있습니다."),
     MATCHING_COMPLITED(false, 2614, "매칭이 완료된 파티입니다."),
     ORDER_TIME_OVER(false, 2615, "파티 신청 시간이 끝났습니다."),
+    CAN_NOT_FINISH_DELIVERY_PARTY(false, 2616, "파티 매칭 마감을 할 수 없는 유저이거나 이미 마감된 상태입니다."),
 
     /**
      * 네오

@@ -83,11 +83,13 @@ public class Member extends BaseEntity {
     @JoinColumn(name = "dormitory_id")
     private Dormitory dormitory;
 
-    public void changeStatusToActive(){
-        super.setStatus(BaseStatus.ACTIVE);
-    }
+    private String fcmToken; // 파이어베이스 FCM 토큰
 
     //-// 연관 관계 편의 메서드 //-//
+    public void changeStatusToActive(){
+        super.setStatus(BaseStatus.ACTIVE);
+    }// status ACTIVE로 수정
+
     // 대학교 정보 저장
     public void connectUniversity(University university){
         this.university = university;
@@ -176,4 +178,19 @@ public class Member extends BaseEntity {
 
     //수정: 회원의 기숙사
     public void updateDormitory(Dormitory dormitory) { this.dormitory = dormitory; }
+
+    public void updateFcmToken(String fcmToken){
+        this.fcmToken = fcmToken;
+    }
+
+    public void changeProfileImgUrl(String profileImgUrl){
+        this.profileImgUrl = profileImgUrl;
+    }
+
+    //테스트용
+    public Member(int id, String nickName) {
+        this.id = id;
+        this.nickName = nickName;
+        super.setStatus(BaseStatus.ACTIVE);
+    }
 }

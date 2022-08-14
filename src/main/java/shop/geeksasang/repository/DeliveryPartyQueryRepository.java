@@ -96,8 +96,6 @@ public class DeliveryPartyQueryRepository {
 
         return new GetDeliveryPartiesRes(isFinalPage, deliveryPartiesVoList);
     }
-
-
 }
 
 //INACTIVE, REPORTED 조건 추가하기

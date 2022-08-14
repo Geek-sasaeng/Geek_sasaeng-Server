@@ -5,14 +5,15 @@ import lombok.*;
 import javax.persistence.*;
 
 import shop.geeksasang.config.domain.BaseEntity;
+import shop.geeksasang.config.status.AccountTransferStatus;
 import shop.geeksasang.config.status.BaseStatus;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+import java.util.ArrayList;
+import java.util.List;
+
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
-@Setter
 public class DeliveryPartyMember extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,12 +28,26 @@ public class DeliveryPartyMember extends BaseEntity {
     @JoinColumn(name="delivery_party_id")
     private DeliveryParty party;
 
-    //-// connect 메서드 //-//
-    public void connectParticipant(Member participant){
+    @OneToMany(mappedBy = "menuOwner")
+    private List<DeliveryPartyMenu> menuList = new ArrayList<>();
+
+    @Enumerated(EnumType.STRING)
+    private AccountTransferStatus acccountTransferStatus; // 계좌이체 완료상태
+
+
+    /*
+    연관관계 편의 메서드
+     */
+    public DeliveryPartyMember(Member participant, DeliveryParty party) {
         this.participant = participant;
+        this.party = party;
+        party.addPartyMember(this);
+        super.setStatus(BaseStatus.ACTIVE);
     }
-    public void connectParty(DeliveryParty party){
-        this.party=party;
+
+    public void leaveDeliveryParty(){
+        party = null;
+        changeStatusToInactive();
     }
 
     // 배달파티 멤버 삭제
@@ -40,8 +55,11 @@ public class DeliveryPartyMember extends BaseEntity {
         super.setStatus(BaseStatus.INACTIVE);
     }
 
-    public void changeStatusToActive(){
-        super.setStatus(BaseStatus.ACTIVE);
+    public void changeAccountTransferStatusToY(){
+        this.acccountTransferStatus = AccountTransferStatus.Y;
     }
 
+    public void changeAccountTransferStatusToN(){
+        this.acccountTransferStatus = AccountTransferStatus.N;
+    }
 }

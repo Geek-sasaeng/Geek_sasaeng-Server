@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiParam;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import shop.geeksasang.config.status.BelongStatus;
 import shop.geeksasang.config.status.MatchingStatus;
 import shop.geeksasang.domain.DeliveryParty;
 import shop.geeksasang.domain.DeliveryPartyHashTag;
@@ -95,8 +96,17 @@ public class GetDeliveryPartyDetailRes {
     @ApiParam(value = "기숙사 id")
     private int dormitory;
 
+    @ApiModelProperty(example = "07438ec2-b0e6-4771-8e1d-115bd93ce433")
+    @ApiParam(value = "채팅방 uuid")
+    private String uuid;
+
+    @ApiModelProperty(example = "Y")
+    @ApiParam(value = "사용자가 파티멤버에 속해있는지 여부. 속해있으면 Y, 아니면 N")
+    private BelongStatus belongStatus;
+
+
     //빌더
-    static public GetDeliveryPartyDetailRes toDto(DeliveryParty deliveryParty,boolean authorStatus){
+    static public GetDeliveryPartyDetailRes toDto(DeliveryParty deliveryParty, boolean authorStatus, BelongStatus belongStatus){
 
         return GetDeliveryPartyDetailRes.builder()
                 .id(deliveryParty.getId())
@@ -117,6 +127,8 @@ public class GetDeliveryPartyDetailRes {
                 .storeUrl(deliveryParty.getStoreUrl())
                 .authorStatus(authorStatus)
                 .dormitory(deliveryParty.getDormitory().getId())
+                .uuid(deliveryParty.getUuid())
+                .belongStatus(belongStatus)
                 .build();
     }
 

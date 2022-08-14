@@ -3,23 +3,26 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.geeksasang.config.exception.BaseException;
-import shop.geeksasang.config.response.BaseResponse;
-import shop.geeksasang.config.status.BaseStatus;
+import shop.geeksasang.config.exception.response.BaseResponseStatus;
 import shop.geeksasang.domain.DeliveryParty;
 import shop.geeksasang.domain.DeliveryPartyMember;
 import shop.geeksasang.domain.Member;
-import shop.geeksasang.dto.deliveryPartyMember.PostDeliveryPartyMemberReq;
+import shop.geeksasang.dto.deliveryPartyMember.patch.PatchLeaveMemberReq;
+import shop.geeksasang.dto.deliveryPartyMember.post.PostDeliveryPartyMemberReq;
+import shop.geeksasang.dto.deliveryPartyMember.post.PostDeliveryPartyMemberRes;
 import shop.geeksasang.dto.login.JwtInfo;
+import shop.geeksasang.dto.deliveryPartyMember.patch.PatchAccountTransferStatusReq;
+import shop.geeksasang.dto.deliveryPartyMember.patch.PatchAccountTransferStatusRes;
+
 import shop.geeksasang.repository.DeliveryPartyRepository;
 import shop.geeksasang.repository.DeliveryPartyMemberRepository;
 import shop.geeksasang.repository.MemberRepository;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 import static shop.geeksasang.config.exception.response.BaseResponseStatus.*;
 
-@Transactional
+@Transactional(readOnly = true)
 @Service
 @RequiredArgsConstructor
 public class DeliveryPartyMemberService {
@@ -29,22 +32,19 @@ public class DeliveryPartyMemberService {
 
     // 파티 들어가기 - 멤버 생성
     @Transactional(readOnly = false)
-    public DeliveryPartyMember joinDeliveryPartyMember(PostDeliveryPartyMemberReq dto, JwtInfo jwtInfo){
-
-        DeliveryPartyMember deliveryPartyMember = dto.toEntity();
-        int userId = jwtInfo.getUserId();
+    public PostDeliveryPartyMemberRes joinDeliveryPartyMember(PostDeliveryPartyMemberReq dto, int userId){
 
         //엔티티 조회
         Member participant = memberRepository.findById(userId)
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTICIPANT));
 
         // 매칭 시 중복 validation
-        if(deliveryPartyMemberRepository.findDeliveryPartyMemberById(userId).isPresent()) {
-            throw new BaseException(ALREADY_PARTICIPATE_ANOTHER_PARTY);
+        if(deliveryPartyMemberRepository.findDeliveryPartyMemberByMemberIdAndDeliveryPartyId(userId, dto.getPartyId()).isPresent()) {
+            throw new BaseException(ALREADY_PARTICIPATE_PARTY);
         }
 
-        DeliveryParty party= deliveryPartyRepository.findDeliveryPartyById(dto.getPartyId())
-        .orElseThrow(() -> new BaseException(CAN_NOT_PARTICIPATE));
+        DeliveryParty party = deliveryPartyRepository.findDeliveryPartyById(dto.getPartyId())
+                .orElseThrow(() -> new BaseException(CAN_NOT_PARTICIPATE));
 
         // orderTime전에만 신청 가능
         if(party.getOrderTime().isBefore(LocalDateTime.now())){
@@ -56,18 +56,63 @@ public class DeliveryPartyMemberService {
             throw new BaseException(MATCHING_COMPLITED);
         }
 
-        deliveryPartyMember.connectParticipant(participant);
-        deliveryPartyMember.connectParty(party);
-        deliveryPartyMember.changeStatusToActive();
+        DeliveryPartyMember deliveryPartyMember = new DeliveryPartyMember(participant, party);
+        // 송금완료 상태 default값이 N
+        deliveryPartyMember.changeAccountTransferStatusToN();
+
         //currentMatching 올라감.
         party.addCurrentMatching();
+        party.addPartyMember(deliveryPartyMember);
 
         // currentMatching과 maxMatching 같아지면 matching status바꿈.
         if(party.getCurrentMatching() == party.getMaxMatching()){
             party.changeMatchingStatusToFinish();
         }
-
         deliveryPartyMemberRepository.save(deliveryPartyMember);
-        return deliveryPartyMember;
+        return PostDeliveryPartyMemberRes.toDto(deliveryPartyMember);
     }
+
+    //파티(채팅방) 나오기 - 방장x
+    @Transactional(readOnly = false)
+    public String patchDeliveryPartyMemberStatus(PatchLeaveMemberReq dto, JwtInfo jwtInfo){
+
+        int chiefId = jwtInfo.getUserId();
+
+        //요청 보낸 사용자 Member
+        int memberId = jwtInfo.getUserId();
+        Member findMember = memberRepository.findMemberByIdAndStatus(memberId).
+                orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTICIPANT));
+
+        //uuid를 이용해 파티 조회
+        DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyByUuid(dto.getUuid()).
+                orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTY));
+
+        //파티 멤버 조회
+        DeliveryPartyMember deliveryPartyMember = deliveryPartyMemberRepository.findDeliveryPartyMemberByMemberIdAndDeliveryPartyId(findMember.getId(), deliveryParty.getId())
+                .orElseThrow(()-> new BaseException(NOT_EXISTS_PARTY_MEMBER));
+
+        //참여정보 STATUS 수정(ACTIVE -> INACTIVE)
+        deliveryPartyMember.changeStatusToInactive();
+
+        //현재 참여인원 -1
+        deliveryParty.minusMatching();
+
+        String result = String.valueOf(BaseResponseStatus.LEAVE_CHATROOM_SUCCESS.getMessage());
+      // PatchLeaveMemberRes res = new PatchLeaveMemberRes(result);
+        return result;
+    }
+
+
+    // 수정: 송금 완료상태 수정
+    @Transactional(readOnly = false)
+    public PatchAccountTransferStatusRes updateAccountTransferStatus(PatchAccountTransferStatusReq dto, int memberId){
+        // 멤버 조회
+        DeliveryPartyMember deliveryPartyMember = deliveryPartyMemberRepository.findDeliveryPartyMemberByMemberIdAndDeliveryPartyId(memberId, dto.getPartyId())
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTICIPANT));
+        // 송금 완료상태 수정
+        deliveryPartyMember.changeAccountTransferStatusToY();
+        // dto형태로 병경해서 반환
+        return PatchAccountTransferStatusRes.toDto(deliveryPartyMember);
+    }
+
 }
