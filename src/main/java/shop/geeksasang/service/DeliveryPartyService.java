@@ -30,6 +30,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static shop.geeksasang.config.exception.response.BaseResponseStatus.*;
@@ -253,10 +254,10 @@ public class DeliveryPartyService {
     }
 
     @Transactional(readOnly = false)
-    public PatchLeaveChiefRes chiefLeaveDeliveryParty(int partyId, int userId) {
+    public PatchLeaveChiefRes chiefLeaveDeliveryParty(String uuid, String nickName, int userId) {
 
         Member attemptedChief = memberRepository.findMemberByIdAndStatus(userId).orElseThrow(() -> new BaseException(NOT_EXIST_USER));
-        DeliveryParty findParty = deliveryPartyRepository.findDeliveryPartyByIdAndStatus(partyId).orElseThrow(() -> new BaseException(NOT_EXISTS_PARTY));
+        DeliveryParty findParty = deliveryPartyRepository.findDeliveryPartyByUuid(uuid).orElseThrow(() -> new BaseException(NOT_EXISTS_PARTY));
 
         if(findParty.isNotChief(attemptedChief)){
             throw new BaseException(INVALID_DELIVERY_PARTY_CHIEF);
@@ -268,11 +269,15 @@ public class DeliveryPartyService {
             return new PatchLeaveChiefRes(DELETE_PARTY);
         }
 
-        //제일 먼저 참여한 방장 후보의 멤버 아이디를 가져온다.
-        int secondDeliverPartyMemberId = findParty.getSecondDeliverPartyMemberId();
+//        //제일 먼저 참여한 방장 후보의 멤버 아이디를 가져온다.
+//        int secondDeliverPartyMemberId = findParty.getSecondDeliverPartyMemberId();
 
-        DeliveryPartyMember candidateForChief = deliveryPartyMemberRepository.findByDeliveryPartyMemberByIdAndStatus(secondDeliverPartyMemberId)
+        //TODO 프론트 요청에 의한 임시 수정. 나중에 무조건 바꿔아함.
+        DeliveryPartyMember candidateForChief = deliveryPartyMemberRepository.tempFindByDeliveryPartyMemberByUuidAndNickName(uuid, nickName)
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_DELIVERY_PARTY_PARTICIPANT));
+
+//        DeliveryPartyMember candidateForChief = deliveryPartyMemberRepository.findByDeliveryPartyMemberByIdAndStatus(secondDeliverPartyMemberId)
+//                .orElseThrow(() -> new BaseException(NOT_EXISTS_DELIVERY_PARTY_PARTICIPANT));
 
         findParty.leaveNowChiefAndChangeChief(candidateForChief.getParticipant());
 
