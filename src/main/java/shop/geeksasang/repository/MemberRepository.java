@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import shop.geeksasang.domain.Email;
 import shop.geeksasang.domain.Member;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -23,6 +24,9 @@ public interface MemberRepository extends JpaRepository<Member, Integer> {
     Optional<Member> findMemberByIdAndStatus(int id);
 
     Optional<Member> findMemberByPhoneNumberId(int phoneNumberId);
+
+    @Query("select m from Member m left join DeliveryPartyMember dpm on dpm.participant.id = m.id where dpm.party.id = :partyId and m.status = 'ACTIVE'")
+    List<Member> findMemberFcmTockenById(int partyId);
 
 
 }

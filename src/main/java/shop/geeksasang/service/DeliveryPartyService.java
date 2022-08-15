@@ -59,6 +59,7 @@ public class DeliveryPartyService {
     public PostDeliveryPartyRes registerDeliveryParty(PostDeliveryPartyReq dto, int chiefId, int dormitoryId){
 
         //파티장 조회
+        //TODO status도 검증하게 수정해야함.
        Member chief = memberRepository.findById(chiefId)
                 .orElseThrow(()-> new BaseException(NOT_EXISTS_PARTICIPANT));
 
@@ -286,9 +287,9 @@ public class DeliveryPartyService {
 
     // 배달 파티 수동 매칭 마감
     @Transactional(readOnly = false)
-    public PatchDeliveryPartyMatchingStatusRes patchDeliveryPartyMatchingStatus(int partyId, JwtInfo jwtInfo) {
-        int userId = jwtInfo.getUserId();
-        DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyByIdAndUserId(partyId, userId).
+    public PatchDeliveryPartyMatchingStatusRes patchDeliveryPartyMatchingStatus(String uuid, int userId) {
+
+        DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyByUuidAndUserId(uuid, userId).
                 orElseThrow(() -> new BaseException(BaseResponseStatus.CAN_NOT_FINISH_DELIVERY_PARTY));
 
         deliveryParty.changeMatchingStatusToFinish();
