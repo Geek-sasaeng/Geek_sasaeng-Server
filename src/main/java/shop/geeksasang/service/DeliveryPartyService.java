@@ -59,6 +59,7 @@ public class DeliveryPartyService {
     public PostDeliveryPartyRes registerDeliveryParty(PostDeliveryPartyReq dto, int chiefId, int dormitoryId){
 
         //파티장 조회
+        //TODO status도 검증하게 수정해야함.
        Member chief = memberRepository.findById(chiefId)
                 .orElseThrow(()-> new BaseException(NOT_EXISTS_PARTICIPANT));
 

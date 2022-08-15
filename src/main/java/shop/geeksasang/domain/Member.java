@@ -193,4 +193,10 @@ public class Member extends BaseEntity {
         this.nickName = nickName;
         super.setStatus(BaseStatus.ACTIVE);
     }
+
+    public Member(String nickName) {
+        this.id = id;
+        this.nickName = nickName;
+        super.setStatus(BaseStatus.ACTIVE);
+    }
 }

@@ -8,6 +8,7 @@ import javax.persistence.*;
 
 import lombok.NoArgsConstructor;
 import shop.geeksasang.config.domain.BaseEntity;
+import shop.geeksasang.config.status.BaseStatus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,5 +48,15 @@ public class Dormitory extends BaseEntity {
         this.university = university;
         this.name = name;
         this.location = location;
+    }
+
+    //테스트
+    public Dormitory(int id, University university, String name, Location location) {
+        this.id = id;
+        this.university = university;
+        this.name = name;
+        this.location = location;
+        setStatus(BaseStatus.ACTIVE);
+
     }
 }
