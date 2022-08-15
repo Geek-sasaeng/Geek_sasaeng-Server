@@ -1,22 +1,16 @@
 package shop.geeksasang.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.config.exception.response.BaseResponseStatus;
 import shop.geeksasang.domain.Announcement;
-import shop.geeksasang.domain.DeliveryPartyMember;
 import shop.geeksasang.domain.Member;
 import shop.geeksasang.dto.announcement.get.GetAnnouncementRes;
-import shop.geeksasang.dto.chatroom.GetChatRoomsRes;
-import shop.geeksasang.dto.commercial.GetCommercialsRes;
-import shop.geeksasang.dto.deliveryParty.get.GetDeliveryPartiesRes;
 import shop.geeksasang.dto.login.JwtInfo;
-import shop.geeksasang.dto.notification.get.GetAnnouncementDetailReq;
-import shop.geeksasang.dto.notification.get.GetAnnouncementDetailRes;
+import shop.geeksasang.dto.announcement.get.GetAnnouncementDetailReq;
+import shop.geeksasang.dto.announcement.get.GetAnnouncementDetailRes;
 import shop.geeksasang.repository.AnnouncementRepository;
 import shop.geeksasang.repository.MemberRepository;
 

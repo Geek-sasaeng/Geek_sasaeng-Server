@@ -1,4 +1,4 @@
-package shop.geeksasang.dto.notification.get;
+package shop.geeksasang.dto.announcement.get;
 
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiParam;

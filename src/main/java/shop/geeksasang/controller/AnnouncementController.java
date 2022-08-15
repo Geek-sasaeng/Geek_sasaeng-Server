@@ -8,12 +8,10 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import shop.geeksasang.config.response.BaseResponse;
 import shop.geeksasang.dto.login.JwtInfo;
-import shop.geeksasang.dto.notification.get.GetAnnouncementDetailReq;
-import shop.geeksasang.dto.notification.get.GetAnnouncementDetailRes;
+import shop.geeksasang.dto.announcement.get.GetAnnouncementDetailReq;
+import shop.geeksasang.dto.announcement.get.GetAnnouncementDetailRes;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-import shop.geeksasang.config.response.BaseResponse;
-import shop.geeksasang.dto.login.JwtInfo;
 import shop.geeksasang.dto.announcement.get.GetAnnouncementRes;
 import shop.geeksasang.service.AnnouncementService;
 
