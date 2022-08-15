@@ -1,6 +1,7 @@
 package shop.geeksasang.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -22,7 +23,7 @@ public interface MemberRepository extends JpaRepository<Member, Integer> {
     @Query("select m from Member m where m.id = :id and m.status = 'ACTIVE' ")
     Optional<Member> findMemberByIdAndStatus(int id);
 
-    Optional<Member> findMemberByPhoneNumberId(int phoneNumberId);
-
-
+    @Modifying
+    @Query("update Member m set m.perDayReportingCount = 0")
+    int bulkDayReportingCountInit();
 }
