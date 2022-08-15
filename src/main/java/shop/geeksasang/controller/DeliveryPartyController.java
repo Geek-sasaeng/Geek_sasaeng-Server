@@ -14,10 +14,13 @@ import shop.geeksasang.config.response.BaseResponse;
 import shop.geeksasang.dto.deliveryParty.get.*;
 import shop.geeksasang.dto.deliveryParty.patch.PatchDeliveryPartyMatchingStatusRes;
 import shop.geeksasang.dto.deliveryParty.patch.PatchDeliveryPartyStatusRes;
+import shop.geeksasang.dto.deliveryParty.patch.PatchLeaveChiefReq;
+import shop.geeksasang.dto.deliveryParty.patch.PatchLeaveChiefRes;
 import shop.geeksasang.dto.deliveryParty.post.PostDeliveryPartyReq;
 import shop.geeksasang.dto.deliveryParty.post.PostDeliveryPartyRes;
 import shop.geeksasang.dto.deliveryParty.put.PutDeliveryPartyReq;
 import shop.geeksasang.dto.deliveryParty.put.PutDeliveryPartyRes;
+
 import shop.geeksasang.dto.login.JwtInfo;
 import shop.geeksasang.service.DeliveryPartyService;
 
@@ -134,6 +137,7 @@ public class DeliveryPartyController {
             @ApiResponse(code=2609,message = "이미 삭제된 배달파티 입니다"),
             @ApiResponse(code=4000,message = "서버 오류입니다.")
     })
+
     @PatchMapping("/delivery-party/{partyId}")
     public BaseResponse<PatchDeliveryPartyStatusRes> patchDeliveryPartyStatusById(@PathVariable("partyId") int partyId, HttpServletRequest request){
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
@@ -142,18 +146,35 @@ public class DeliveryPartyController {
         return new BaseResponse<>(response);
     }
 
-    // 배달 파티 수동 매칭 마감
+    @ApiOperation(value = "배달파티 방장 삭제 및 교체 ",
+            notes = "배달 파티 인원이 방장 1명이라면 파티 삭제 및 방장도 삭제. 배달파티 인원이 2인 이상이면 방장을 배달 파티 멤버에서 제외하고, 방장을 다른 파티 멤버로 교체한다.")
+    @ApiResponses({
+            @ApiResponse(code = 1000 ,message ="요청에 성공하셨습니다."),
+            @ApiResponse(code = 2010 ,message ="존재하지 않는 파티입니다."),
+            @ApiResponse(code = 2021 ,message ="파티의 방장이 아닙니다."),
+            @ApiResponse(code = 2022 ,message ="존재하지 않는 배달 파티 멤버입니다."),
+            @ApiResponse(code = 2204 ,message ="존재하지 않는 회원 id 입니다."),
+            @ApiResponse(code = 4000 ,message = "서버 오류입니다.")
+    })
+    @PatchMapping("/delivery-party/chief")
+    public BaseResponse<PatchLeaveChiefRes> chiefLeaveDeliveryParty(@Validated @RequestBody PatchLeaveChiefReq req, HttpServletRequest request) {
+        JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
+        PatchLeaveChiefRes res = deliveryPartyService.chiefLeaveDeliveryParty(req.getUuid(), req.getNickName(),jwtInfo.getUserId());
+        return new BaseResponse<>(res);
+    }
+
     @ApiOperation(value = "마감 : 배달파티 수동 매칭 마감", notes = "매칭 마감시킬 배달 파티의 아이디를 받아 배달 파티 매칭 status를 FINISH로 바꿀 수 있다.")
     @ApiResponses({
             @ApiResponse(code =1000 ,message ="요청에 성공하였습니다."),
             @ApiResponse(code =2616 ,message ="파티 매칭 마감을 할 수 없는 유저이거나 이미 마감된 상태입니다."),
             @ApiResponse(code=4000,message = "서버 오류입니다.")
     })
-    @PatchMapping("/delivery-party/{partyId}/matching-status")
-    public BaseResponse<PatchDeliveryPartyMatchingStatusRes> patchDeliveryPartyMatchingStatus(@PathVariable("partyId") int partyId, HttpServletRequest request) {
+    @PatchMapping("/delivery-party/{uuid}/matching-status")
+    public BaseResponse<PatchDeliveryPartyMatchingStatusRes> patchDeliveryPartyMatchingStatus(@PathVariable String uuid, HttpServletRequest request) {
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
 
-        PatchDeliveryPartyMatchingStatusRes response = deliveryPartyService.patchDeliveryPartyMatchingStatus(partyId, jwtInfo);
+        PatchDeliveryPartyMatchingStatusRes response = deliveryPartyService.patchDeliveryPartyMatchingStatus(uuid, jwtInfo.getUserId());
         return new BaseResponse<>(response);
     }
+
 }

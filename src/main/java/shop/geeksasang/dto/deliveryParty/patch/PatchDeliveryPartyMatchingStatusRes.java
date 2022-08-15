@@ -13,12 +13,10 @@ import lombok.Setter;
 @Data
 public class PatchDeliveryPartyMatchingStatusRes {
 
-    @ApiModelProperty(example = "154")
-    @ApiParam(value = "배달파티 Id")
+    @ApiModelProperty(example = "154", value = "배달파티 Id")
     private int deliveryPartyId;
 
-    @ApiModelProperty(example = "FINISH")
-    @ApiParam(value = "배달파티 매칭상태")
+    @ApiModelProperty(example = "FINISH", value = "배달파티 매칭상태")
     private String matchingStatus;
 
 }

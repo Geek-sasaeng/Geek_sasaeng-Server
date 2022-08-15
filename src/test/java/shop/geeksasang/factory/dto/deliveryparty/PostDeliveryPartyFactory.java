@@ -19,6 +19,7 @@ public class PostDeliveryPartyFactory {
                 .longitude(1.22)
                 .hashTag(true)
                 .bank("TOSS")
+                .foodCategory(1)
                 .accountNumber("111-111-111111")
                 .chatRoomName("chatRoomName")
                 .build();

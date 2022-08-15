@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import shop.geeksasang.config.status.BaseStatus;
+import shop.geeksasang.config.status.BelongStatus;
 import shop.geeksasang.config.type.OrderTimeCategoryType;
 import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.config.exception.response.BaseResponseStatus;
@@ -16,6 +17,7 @@ import shop.geeksasang.domain.*;
 import shop.geeksasang.dto.deliveryParty.get.*;
 import shop.geeksasang.dto.deliveryParty.patch.PatchDeliveryPartyMatchingStatusRes;
 import shop.geeksasang.dto.deliveryParty.patch.PatchDeliveryPartyStatusRes;
+import shop.geeksasang.dto.deliveryParty.patch.PatchLeaveChiefRes;
 import shop.geeksasang.dto.deliveryParty.post.PostDeliveryPartyReq;
 import shop.geeksasang.dto.deliveryParty.post.PostDeliveryPartyRes;
 import shop.geeksasang.dto.deliveryParty.put.PutDeliveryPartyReq;
@@ -26,8 +28,9 @@ import shop.geeksasang.utils.ordertime.OrderTimeUtils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
+
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static shop.geeksasang.config.exception.response.BaseResponseStatus.*;
@@ -49,13 +52,14 @@ public class DeliveryPartyService {
 
     private static final int PAGING_SIZE = 10;
     private static final String PAGING_STANDARD = "orderTime";
-    private static final List<Integer> MATCHING_NUMBER = Arrays.asList(2, 4, 6, 8, 10);
-
+    private static final String DELETE_PARTY = "파티를 삭제했습니다.";
+    private static final String CHANGE_CHIEF = "기존 방장을 삭제하고 새로운 방장으로 교체했습니다.";
 
     @Transactional(readOnly = false)
     public PostDeliveryPartyRes registerDeliveryParty(PostDeliveryPartyReq dto, int chiefId, int dormitoryId){
 
         //파티장 조회
+        //TODO status도 검증하게 수정해야함.
        Member chief = memberRepository.findById(chiefId)
                 .orElseThrow(()-> new BaseException(NOT_EXISTS_PARTICIPANT));
 
@@ -146,7 +150,7 @@ public class DeliveryPartyService {
 
     //배달파티 상세조회:
     public GetDeliveryPartyDetailRes getDeliveryPartyDetailById(int partyId, JwtInfo jwtInfo){
-
+        BelongStatus belongStatus;
         //사용자 본인 여부
         boolean authorStatus = false;
 
@@ -163,7 +167,14 @@ public class DeliveryPartyService {
             authorStatus = true;
         }
 
-        GetDeliveryPartyDetailRes getDeliveryPartyDetailRes = GetDeliveryPartyDetailRes.toDto(deliveryParty,authorStatus);
+        //요청 보낸 사용자가 이미 파티멤버인지 조회
+        //로직: 요청 사용자 id, partyId -> deliveryPartyMember 에서 같은 partyId와 memberId 같은 멤버 조회
+        if(deliveryPartyMemberRepository.findDeliveryPartyMemberByMemberIdAndDeliveryPartyId(memberId, partyId).isPresent()){
+            belongStatus = BelongStatus.Y;
+        }
+        else{ belongStatus = BelongStatus.N;}
+
+        GetDeliveryPartyDetailRes getDeliveryPartyDetailRes = GetDeliveryPartyDetailRes.toDto(deliveryParty, authorStatus, belongStatus);
         return getDeliveryPartyDetailRes;
     }
 
@@ -243,11 +254,42 @@ public class DeliveryPartyService {
                 .build();
     }
 
+    @Transactional(readOnly = false)
+    public PatchLeaveChiefRes chiefLeaveDeliveryParty(String uuid, String nickName, int userId) {
+
+        Member attemptedChief = memberRepository.findMemberByIdAndStatus(userId).orElseThrow(() -> new BaseException(NOT_EXIST_USER));
+        DeliveryParty findParty = deliveryPartyRepository.findDeliveryPartyByUuid(uuid).orElseThrow(() -> new BaseException(NOT_EXISTS_PARTY));
+
+        if(findParty.isNotChief(attemptedChief)){
+            throw new BaseException(INVALID_DELIVERY_PARTY_CHIEF);
+        }
+
+        //방장만 있을 때
+        if(findParty.memberIsOnlyChief()){
+            findParty.deleteParty();
+            return new PatchLeaveChiefRes(DELETE_PARTY);
+        }
+
+//        //제일 먼저 참여한 방장 후보의 멤버 아이디를 가져온다.
+//        int secondDeliverPartyMemberId = findParty.getSecondDeliverPartyMemberId();
+
+        //TODO 프론트 요청에 의한 임시 수정. 나중에 무조건 바꿔아함.
+        DeliveryPartyMember candidateForChief = deliveryPartyMemberRepository.tempFindByDeliveryPartyMemberByUuidAndNickName(uuid, nickName)
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_DELIVERY_PARTY_PARTICIPANT));
+
+//        DeliveryPartyMember candidateForChief = deliveryPartyMemberRepository.findByDeliveryPartyMemberByIdAndStatus(secondDeliverPartyMemberId)
+//                .orElseThrow(() -> new BaseException(NOT_EXISTS_DELIVERY_PARTY_PARTICIPANT));
+
+        findParty.leaveNowChiefAndChangeChief(candidateForChief.getParticipant());
+
+        return new PatchLeaveChiefRes(CHANGE_CHIEF);
+    }
+
     // 배달 파티 수동 매칭 마감
     @Transactional(readOnly = false)
-    public PatchDeliveryPartyMatchingStatusRes patchDeliveryPartyMatchingStatus(int partyId, JwtInfo jwtInfo) {
-        int userId = jwtInfo.getUserId();
-        DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyByIdAndUserId(partyId, userId).
+    public PatchDeliveryPartyMatchingStatusRes patchDeliveryPartyMatchingStatus(String uuid, int userId) {
+
+        DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyByUuidAndUserId(uuid, userId).
                 orElseThrow(() -> new BaseException(BaseResponseStatus.CAN_NOT_FINISH_DELIVERY_PARTY));
 
         deliveryParty.changeMatchingStatusToFinish();
@@ -256,5 +298,4 @@ public class DeliveryPartyService {
                 .matchingStatus(deliveryParty.getMatchingStatus().toString())
                 .build();
     }
-
 }
