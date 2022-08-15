@@ -40,15 +40,15 @@ public class AnnouncementController {
             notes = "공지사항 id 로 공지사항 상세조회를 한다.")
     @ApiResponses({
             @ApiResponse(code = 1000 ,message ="요청에 성공하셨습니다."),
-            @ApiResponse(code = 2204 ,message ="존재하지 않는 회원 id 입니다."),
+            @ApiResponse(code = 2009, message ="존재하지 않는 멤버입니다"),
             @ApiResponse(code = 2206 ,message ="존재하지 않는 공지사항입니다."),
             @ApiResponse(code = 4000 ,message = "서버 오류입니다.")
     })
     @PostMapping("/announcement/detail")
     public BaseResponse<GetAnnouncementDetailRes> getAnnouncementDetail(@Validated @RequestBody GetAnnouncementDetailReq dto, HttpServletRequest request){
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
-
-        GetAnnouncementDetailRes res = announcementService.getAnnouncementDetail(dto);
+        int memberId = jwtInfo.getUserId();
+        GetAnnouncementDetailRes res = announcementService.getAnnouncementDetail(dto, memberId);
         return new BaseResponse<>(res);
     }
 }

@@ -46,7 +46,12 @@ public class AnnouncementService {
     }
 
     //조회: 공지사항 상세조회
-    public GetAnnouncementDetailRes getAnnouncementDetail(GetAnnouncementDetailReq dto){
+    public GetAnnouncementDetailRes getAnnouncementDetail(GetAnnouncementDetailReq dto, int memberId){
+
+        // 요청 보낸 멤버 조회 및 검증
+        Member findMember = memberRepository.findMemberByIdAndStatus(memberId).
+                orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTICIPANT));
+
         Announcement announcement = announcementRepository.findByIdAndStatus(dto.getAnnouncementId())
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXIST_ANNOUNCEMENT));
 
