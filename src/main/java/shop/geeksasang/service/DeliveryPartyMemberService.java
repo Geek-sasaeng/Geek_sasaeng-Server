@@ -119,5 +119,4 @@ public class DeliveryPartyMemberService {
         // dto형태로 병경해서 반환
         return PatchAccountTransferStatusRes.toDto(deliveryPartyMember);
     }
-
 }
