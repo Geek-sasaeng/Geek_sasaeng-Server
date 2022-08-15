@@ -101,6 +101,7 @@ public enum BaseResponseStatus {
     NOT_EXISTS_PERMISSION_UPDATE(false,2403,"수정권한이 없는 유저입니다."),
     CAN_NOT_CREATE_PARTY(false, 2404, "사용자 신고 3번 이상인 유저는 배달파티를 생성할 수 없습니다."),
     NOT_EXISTS_PARTY_MEMBER(false, 2405, "참여중인 배달파티 정보를 찾을 수 없습니다."),
+    NOT_EXISTS_ANNOUNCEMENTS(false, 2406, "공지사항이 없습닌다."),
 
 
 

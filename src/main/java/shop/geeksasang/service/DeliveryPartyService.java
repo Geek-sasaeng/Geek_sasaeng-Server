@@ -1,7 +1,6 @@
 package shop.geeksasang.service;
 
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -30,7 +29,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static shop.geeksasang.config.exception.response.BaseResponseStatus.*;
@@ -96,6 +94,7 @@ public class DeliveryPartyService {
         DeliveryParty deliveryParty = DeliveryParty.makeParty(dto, orderTimeCategory, dormitory, foodCategory, chief, hashTagList);
 
         deliveryParty.addPartyMember(new DeliveryPartyMember(chief, deliveryParty));
+
         //배달파티 저장
         deliveryPartyRepository.save(deliveryParty);
 
