@@ -97,6 +97,11 @@ public class DeliveryPartyMemberService {
         //현재 참여인원 -1
         deliveryParty.minusMatching();
 
+        //참여 인원이 0명이면 파티 삭제
+        if(deliveryParty.getCurrentMatching()<=0){
+            deliveryParty.changeStatusToInactive();
+        }
+
         String result = String.valueOf(BaseResponseStatus.LEAVE_CHATROOM_SUCCESS.getMessage());
       // PatchLeaveMemberRes res = new PatchLeaveMemberRes(result);
         return result;
