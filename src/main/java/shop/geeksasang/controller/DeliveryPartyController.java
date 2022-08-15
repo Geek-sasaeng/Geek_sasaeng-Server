@@ -157,9 +157,9 @@ public class DeliveryPartyController {
             @ApiResponse(code = 4000 ,message = "서버 오류입니다.")
     })
     @PatchMapping("/delivery-party/chief")
-    public BaseResponse<PatchLeaveChiefRes> chiefLeaveDeliveryParty(@RequestBody PatchLeaveChiefReq req, HttpServletRequest request) {
+    public BaseResponse<PatchLeaveChiefRes> chiefLeaveDeliveryParty(@Validated @RequestBody PatchLeaveChiefReq req, HttpServletRequest request) {
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
-        PatchLeaveChiefRes res = deliveryPartyService.chiefLeaveDeliveryParty(req.getPartyId(), jwtInfo.getUserId());
+        PatchLeaveChiefRes res = deliveryPartyService.chiefLeaveDeliveryParty(req.getUuid(), req.getNickName(),jwtInfo.getUserId());
         return new BaseResponse<>(res);
     }
 
