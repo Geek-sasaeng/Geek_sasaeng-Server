@@ -42,7 +42,7 @@ public interface DeliveryPartyRepository extends JpaRepository<DeliveryParty,Int
     Slice<DeliveryParty> findDeliveryPartiesByKeyword(int dormitoryId, @Param("keyword") String keyword, Pageable pageable, @Param("currentTime") LocalDateTime currentTime);
 
     @Query("select dp from DeliveryParty dp where dp.uuid = :uuid and dp.status = 'ACTIVE' and dp.matchingStatus = 'FINISH'")
-    Optional<DeliveryParty> findDeliveryPartyByUuid(String uuid);
+    Optional<DeliveryParty> findDeliveryPartyByUuidFinish(String uuid);
 
     //배달파티 조회: uuid 이용
     @Query("select dp from DeliveryParty dp where dp.uuid =:uuid and dp.status = 'ACTIVE'")
