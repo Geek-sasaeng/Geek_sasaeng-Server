@@ -63,7 +63,7 @@ public class FirebaseCloudMessageService {
 
     public void sendDeliveryComplicatedMessage(String uuid, int userId) throws IOException {
 
-        DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyByUuid(uuid).orElseThrow(
+        DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyByUuidFinish(uuid).orElseThrow(
                 () -> new BaseException(NOT_EXISTS_PARTY));
 
         // 방장이 아닌 경우
