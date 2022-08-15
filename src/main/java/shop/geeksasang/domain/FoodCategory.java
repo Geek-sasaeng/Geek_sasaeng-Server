@@ -8,6 +8,7 @@ import javax.persistence.*;
 
 import lombok.NoArgsConstructor;
 import shop.geeksasang.config.domain.BaseEntity;
+import shop.geeksasang.config.status.BaseStatus;
 
 @NoArgsConstructor
 @Builder
@@ -23,6 +24,7 @@ public class FoodCategory extends BaseEntity {
 
     //테스트 용
     public FoodCategory(int id, String title) {
+        setStatus(BaseStatus.ACTIVE);
         this.id = id;
         this.title = title;
     }
