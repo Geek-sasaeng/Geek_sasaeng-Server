@@ -212,4 +212,8 @@ public class DeliveryParty extends BaseEntity {
         DeliveryPartyMember nowChief = deliveryPartyMembers.remove(0);
         nowChief.leaveDeliveryParty();
     }
+
+    public void removeDeliveryPartyMember(DeliveryPartyMember deliveryPartyMember){
+        deliveryPartyMembers.remove(deliveryPartyMember);
+    }
 }
