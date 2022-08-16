@@ -100,7 +100,7 @@ public class DeliveryPartyController {
     @GetMapping("/delivery-party/{partyId}")
     public BaseResponse<GetDeliveryPartyDetailRes> getDeliveryPartyDetailById(@PathVariable("partyId") int partyId, HttpServletRequest request){
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
-        GetDeliveryPartyDetailRes response = deliveryPartyService.getDeliveryPartyDetailById(partyId, jwtInfo);
+        GetDeliveryPartyDetailRes response = deliveryPartyService.getDeliveryPartyDetailById(partyId, jwtInfo.getUserId());
 
         return new BaseResponse<>(response);
     }

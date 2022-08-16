@@ -148,13 +148,12 @@ public class DeliveryPartyService {
     }
 
     //배달파티 상세조회:
-    public GetDeliveryPartyDetailRes getDeliveryPartyDetailById(int partyId, JwtInfo jwtInfo){
-        BelongStatus belongStatus;
+    public GetDeliveryPartyDetailRes getDeliveryPartyDetailById(int partyId, int memberId){
+        BelongStatus belongStatus = BelongStatus.N;
         //사용자 본인 여부
         boolean authorStatus = false;
 
         //요청 보낸 사용자 Member 찾기
-        int memberId = jwtInfo.getUserId();
         Member findMember = memberRepository.findById(memberId).
                 orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTICIPANT));
 
@@ -171,7 +170,6 @@ public class DeliveryPartyService {
         if(deliveryPartyMemberRepository.findDeliveryPartyMemberByMemberIdAndDeliveryPartyId(memberId, partyId).isPresent()){
             belongStatus = BelongStatus.Y;
         }
-        else{ belongStatus = BelongStatus.N;}
 
         GetDeliveryPartyDetailRes getDeliveryPartyDetailRes = GetDeliveryPartyDetailRes.toDto(deliveryParty, authorStatus, belongStatus);
         return getDeliveryPartyDetailRes;
