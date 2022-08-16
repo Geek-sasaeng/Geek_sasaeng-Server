@@ -88,6 +88,7 @@ public enum BaseResponseStatus {
     DIFFERENT_PHONEVALIDKEY(false, 2203, "폰 인증번호가 다릅니다."),
     NOT_EXIST_USER(false,2204,"존재하지 않는 회원 id 입니다."),
     BLANK_KEYWORD(false,2205,"검색어를 입력해주세요"),
+    NOT_EXIST_ANNOUNCEMENT(false, 2206, "존재하지 않는 공지사항입니다."),
 
 
     /**
@@ -100,6 +101,7 @@ public enum BaseResponseStatus {
     NOT_EXISTS_PERMISSION_UPDATE(false,2403,"수정권한이 없는 유저입니다."),
     CAN_NOT_CREATE_PARTY(false, 2404, "사용자 신고 3번 이상인 유저는 배달파티를 생성할 수 없습니다."),
     NOT_EXISTS_PARTY_MEMBER(false, 2405, "참여중인 배달파티 정보를 찾을 수 없습니다."),
+    NOT_EXISTS_ANNOUNCEMENTS(false, 2406, "공지사항이 없습닌다."),
 
 
 
@@ -124,6 +126,7 @@ public enum BaseResponseStatus {
     MATCHING_COMPLITED(false, 2614, "매칭이 완료된 파티입니다."),
     ORDER_TIME_OVER(false, 2615, "파티 신청 시간이 끝났습니다."),
     CAN_NOT_FINISH_DELIVERY_PARTY(false, 2616, "파티 매칭 마감을 할 수 없는 유저이거나 이미 마감된 상태입니다."),
+    DIFFERENT_CHIEF_ID(false, 2617, "배달 완료가 불가능한 유저입니다."),
 
     /**
      * 네오

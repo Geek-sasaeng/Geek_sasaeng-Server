@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import shop.geeksasang.domain.Email;
 import shop.geeksasang.domain.Member;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -23,7 +24,13 @@ public interface MemberRepository extends JpaRepository<Member, Integer> {
     @Query("select m from Member m where m.id = :id and m.status = 'ACTIVE' ")
     Optional<Member> findMemberByIdAndStatus(int id);
 
+
     @Modifying
     @Query("update Member m set m.perDayReportingCount = 0")
     int bulkDayReportingCountInit();
+
+    Optional<Member> findMemberByPhoneNumberId(int phoneNumberId);
+
+    @Query("select m from Member m left join DeliveryPartyMember dpm on dpm.participant.id = m.id where dpm.party.id = :partyId and m.status = 'ACTIVE'")
+    List<Member> findMemberFcmTockenById(int partyId);
 }
