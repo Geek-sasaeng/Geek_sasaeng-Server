@@ -69,14 +69,34 @@ public class PostDeliveryPartyRes {
     @ApiModelProperty(example = "true", value = "작성자 본인 여부")
     private boolean authorStatus;
 
-    @ApiModelProperty(example = "1", value = "기숙사 id")
-    private int dormitory;
-
     @ApiModelProperty(example = "07438ec2-b0e6-4771-8e1d-115bd93ce433", value = "채팅방 uuid")
     private String uuid;
 
     @ApiModelProperty(example = "Y", value = "사용자가 파티멤버에 속해있는지 여부. 속해있으면 Y, 아니면 N")
     private BelongStatus belongStatus;
+
+    //2차 피드백으로 추가
+
+    @ApiModelProperty(example = "1", value = "기숙사 id")
+    private int dormitoryId;
+
+    @ApiModelProperty(example = "1기숙사", value = "기숙사 이름")
+    private String dormitoryName;
+
+    @ApiModelProperty(example = "2022-07-13 13:29:30", value = "배달 파티 생성 시간")
+    private String createdAt;
+
+    @ApiModelProperty(example = "DINNER", value = "주문시간 카테고리")
+    private String orderTimeCategoryType;
+
+    @ApiModelProperty(example = "교촌 채팅방입니다", value = "파티 채팅방 이름")
+    private String chatRoomName;
+
+    @ApiModelProperty(example = "111-22222-33333", value = "계좌번호")
+    private String accountNumber;
+
+    @ApiModelProperty(example = "신한은행", value = "은행이름")
+    private String bank;
 
     static public PostDeliveryPartyRes toDto(DeliveryParty deliveryParty){
         return PostDeliveryPartyRes.builder()
@@ -97,14 +117,23 @@ public class PostDeliveryPartyRes {
                 .longitude(deliveryParty.getLocation().getLongitude())
                 .storeUrl(deliveryParty.getStoreUrl())
                 .authorStatus(true)
-                .dormitory(deliveryParty.getDormitory().getId())
                 .uuid(deliveryParty.getUuid())
                 .belongStatus(BelongStatus.Y)
+                .dormitoryId(deliveryParty.getDormitory().getId())
+                .dormitoryName(deliveryParty.getDormitory().getName())
+                .createdAt(deliveryParty.getCreatedAt())
+                .orderTimeCategoryType(deliveryParty.getOrderTimeCategory().toString())
+                .chatRoomName(deliveryParty.getChatRoomName())
+                .accountNumber(deliveryParty.getAccountNumber())
+                .bank(deliveryParty.getBank())
                 .build();
     }
 
     @Builder
-    public PostDeliveryPartyRes(int id, String chief, int chiefId, String chiefProfileImgUrl, String foodCategory, boolean hashTag, String title, String content, LocalDateTime orderTime, int currentMatching, int maxMatching, MatchingStatus matchingStatus, String updatedAt, Double latitude, Double longitude, String storeUrl, boolean authorStatus, int dormitory, String uuid, BelongStatus belongStatus) {
+    public PostDeliveryPartyRes(int id, String chief, int chiefId, String chiefProfileImgUrl, String foodCategory, boolean hashTag, String title, String content,
+                                LocalDateTime orderTime, int currentMatching, int maxMatching, MatchingStatus matchingStatus, String updatedAt, Double latitude,
+                                Double longitude, String storeUrl, boolean authorStatus, String uuid, BelongStatus belongStatus, int dormitoryId,
+                                String dormitoryName, String createdAt, String orderTimeCategoryType, String chatRoomName, String accountNumber, String bank) {
         this.id = id;
         this.chief = chief;
         this.chiefId = chiefId;
@@ -122,9 +151,15 @@ public class PostDeliveryPartyRes {
         this.longitude = longitude;
         this.storeUrl = storeUrl;
         this.authorStatus = authorStatus;
-        this.dormitory = dormitory;
         this.uuid = uuid;
         this.belongStatus = belongStatus;
+        this.dormitoryId = dormitoryId;
+        this.dormitoryName = dormitoryName;
+        this.createdAt = createdAt;
+        this.orderTimeCategoryType = orderTimeCategoryType;
+        this.chatRoomName = chatRoomName;
+        this.accountNumber = accountNumber;
+        this.bank = bank;
     }
 
     //테스트용
@@ -133,3 +168,5 @@ public class PostDeliveryPartyRes {
         this.title = title;
     }
 }
+
+
