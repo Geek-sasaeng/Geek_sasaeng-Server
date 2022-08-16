@@ -18,11 +18,7 @@ public class VerificationSchedulerService {
 
     @Transactional(readOnly = false)
     public void resetVerificationCount(){
-        List<VerificationCount> verificationCountList = verificationCountRepository.findAll();
-        for(VerificationCount verificationCount: verificationCountList){
-            verificationCount.resetVerificationCount();
-        }
-
+        verificationCountRepository.bulkSmsVerificationCountInit();
+        verificationCountRepository.bulkSmsVerificationCountInit();
     }
-
 }

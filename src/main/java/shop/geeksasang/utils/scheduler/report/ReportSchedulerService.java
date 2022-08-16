@@ -16,9 +16,6 @@ public class ReportSchedulerService {
 
     @Transactional(readOnly = false)
     public void resetPerDayMemberReportingCount(){
-        List<Member> memberList = memberRepository.findAll();
-        for (Member member : memberList) {
-            member.resetPerDayReportingCount();
-        }
+        memberRepository.bulkDayReportingCountInit();
     }
 }
