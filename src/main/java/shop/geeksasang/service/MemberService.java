@@ -12,6 +12,7 @@ import shop.geeksasang.domain.*;
 
 import shop.geeksasang.dto.login.JwtInfo;
 import shop.geeksasang.dto.member.get.GetCheckIdReq;
+import shop.geeksasang.dto.member.get.GetMemberRes;
 import shop.geeksasang.dto.member.get.GetNickNameDuplicatedReq;
 import shop.geeksasang.dto.member.patch.*;
 import shop.geeksasang.dto.member.post.PostRegisterReq;
@@ -302,5 +303,15 @@ public class MemberService {
         if (!memberRepository.findMemberByLoginId(dto.getLoginId()).isEmpty()) {
             throw new BaseException(EXISTS_LOGIN_ID);
         }
+    }
+
+    // 조회: 사용자의 정보 조회
+    @Transactional
+    public GetMemberRes getMember(int memberId){
+        // 조회
+        Member member = memberRepository.findMemberByIdAndStatus(memberId)
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTICIPANT));
+        // 변환
+        return GetMemberRes.toDto(member);
     }
 }
