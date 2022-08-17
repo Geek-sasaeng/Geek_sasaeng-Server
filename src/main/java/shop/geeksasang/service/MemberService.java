@@ -22,6 +22,7 @@ import shop.geeksasang.dto.member.post.PostSocialRegisterRes;
 import shop.geeksasang.repository.*;
 import shop.geeksasang.utils.encrypt.SHA256;
 import shop.geeksasang.utils.jwt.JwtService;
+import shop.geeksasang.utils.password.PasswordUtils;
 import shop.geeksasang.utils.resttemplate.naverlogin.NaverLoginData;
 import shop.geeksasang.utils.resttemplate.naverlogin.NaverLoginService;
 
@@ -224,8 +225,19 @@ public class MemberService {
     }
 
     @Transactional(readOnly = false)
-    public PatchMemberRes updateMember(PatchMemberReq dto, int userId) {
-        return null;
+    public PatchMemberRes updateMember(PatchMemberReq dto, int memberId) {
+
+        Member member = memberRepository.findMemberByIdAndStatus(memberId).orElseThrow(() -> new BaseException(NOT_EXIST_USER));
+
+        Dormitory dormitory = dormitoryRepository.findDormitoryById(dto.getDormitoryId()).orElseThrow(() -> new BaseException(NOT_EXISTS_DORMITORY));
+
+        if(PasswordUtils.isNotSamePassword(dto.getNewPassword(), dto.getCheckNewPassword())) {
+            throw new BaseException(DIFFRENT_PASSWORDS);
+        }
+
+        Member updateMember = member.update(dormitory, dto.getProfileImgUrl(), dto.getNewPassword(), dto.getNickname());
+
+        return PatchMemberRes.toDto(updateMember);
     }
 
     @Transactional(readOnly = true)

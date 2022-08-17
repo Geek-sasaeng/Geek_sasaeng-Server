@@ -119,7 +119,9 @@ public class MemberController {
     // 수정: 멤버 정보 수정하기
     @ApiOperation(value = "수정: 멤버 정보 수정하기", notes = "맴버 정보 프로필, 기숙사, 닉네임, 비밀번호를 수정.")
     @ApiResponses({
-            @ApiResponse(code = 2009 , message = "존재하지 않는 멤버입니다"),
+            @ApiResponse(code = 1000 , message = "요청에 성공하셨습니다."),
+            @ApiResponse(code = 2005 , message = "입력하신 두 비밀번호가 다릅니다."),
+            @ApiResponse(code = 2204 , message = "존재하지 않는 회원 id 입니다."),
             @ApiResponse(code = 2606 , message = "기숙사가 존재하지 않습니다."),
             @ApiResponse(code = 4000 , message = "서버 오류입니다.")
     })
@@ -165,7 +167,7 @@ public class MemberController {
             @ApiResponse(code =2009 ,message ="존재하지 않는 멤버입니다"),
             @ApiResponse(code=4000,message = "서버 오류입니다.")
     })
-    @GetMapping("")
+    @GetMapping()
     public BaseResponse<GetMemberRes> getMember(HttpServletRequest request){
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
 
