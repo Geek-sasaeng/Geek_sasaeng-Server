@@ -295,4 +295,11 @@ public class DeliveryPartyService {
                 .matchingStatus(deliveryParty.getMatchingStatus().toString())
                 .build();
     }
+
+    public List<GetThreeRecentPartiesRes> getThreeRecentDeliveryParties(int userId) {
+        List<DeliveryParty> threeRecentDeliveryParty = deliveryPartyQueryRepository.findThreeRecentDeliveryParty(userId);
+        return threeRecentDeliveryParty.stream()
+                .map(deliveryParty -> GetThreeRecentPartiesRes.toDto(deliveryParty))
+                .collect(Collectors.toList());
+    }
 }

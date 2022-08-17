@@ -177,4 +177,16 @@ public class DeliveryPartyController {
         return new BaseResponse<>(response);
     }
 
+
+    @ApiOperation(value = "제일 최근에 들어간 배달파티 3개 ", notes = "가장 최근에 참여한 배달 파티 3개를 가져온다.")
+    @ApiResponses({
+            @ApiResponse(code =1000 ,message ="요청에 성공하였습니다."),
+            @ApiResponse(code=4000,message = "서버 오류입니다.")
+    })
+    @GetMapping("/delivery-parties/recent")
+    public BaseResponse<List<GetThreeRecentPartiesRes>> getThreeRecentDeliveryParties(HttpServletRequest request){
+        JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
+        List<GetThreeRecentPartiesRes> res = deliveryPartyService.getThreeRecentDeliveryParties(jwtInfo.getUserId());
+        return new BaseResponse<>(res);
+    }
 }
