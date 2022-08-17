@@ -14,6 +14,7 @@ import shop.geeksasang.config.response.BaseResponse;
 import shop.geeksasang.domain.Member;
 import shop.geeksasang.dto.login.JwtInfo;
 import shop.geeksasang.dto.member.get.GetCheckIdReq;
+import shop.geeksasang.dto.member.get.GetMemberRes;
 import shop.geeksasang.dto.member.get.GetNickNameDuplicatedReq;
 import shop.geeksasang.dto.member.patch.*;
 import shop.geeksasang.dto.member.post.PostRegisterReq;
@@ -157,5 +158,18 @@ public class MemberController {
     public BaseResponse<String> checkIdDuplicated(@RequestBody @Valid GetCheckIdReq dto) {
         memberService.checkId(dto);
         return new BaseResponse<>(BaseResponseStatus.VALID_ID);
+    }
+
+    @ApiOperation(value = "조회: 사용자의 정보 조회", notes = "사용자의 인덱스 id 입력받아 정보 조회")
+    @ApiResponses({
+            @ApiResponse(code =2009 ,message ="존재하지 않는 멤버입니다"),
+            @ApiResponse(code=4000,message = "서버 오류입니다.")
+    })
+    @GetMapping("")
+    public BaseResponse<GetMemberRes> getMember(HttpServletRequest request){
+        JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
+
+        GetMemberRes res = memberService.getMember(jwtInfo.getUserId());
+        return new BaseResponse<>(res);
     }
 }
