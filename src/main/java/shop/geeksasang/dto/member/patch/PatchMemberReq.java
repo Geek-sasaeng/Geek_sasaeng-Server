@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
@@ -25,8 +26,8 @@ public class PatchMemberReq {
     private String checkNewPassword;
 
     @ApiModelProperty(example = "1", value = "기숙사 인덱스")
-    @NotBlank
-    private int dormitoryId;
+    @NotNull
+    private Integer dormitoryId;
 
     @ApiModelProperty(example = "http://geeksasaeng.shop/s3/neo.jpg", value = "수정할 프로필 이미지 url")
     @NotBlank(message = "프로필 이미지 url 빈 값 허용 안함, 최소 1길이 이상")

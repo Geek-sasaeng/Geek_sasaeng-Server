@@ -126,7 +126,7 @@ public class MemberController {
             @ApiResponse(code = 4000 , message = "서버 오류입니다.")
     })
     @PatchMapping()
-    public BaseResponse<PatchMemberRes> updateDormitory(@RequestBody @Validated PatchMemberReq dto, HttpServletRequest request) {
+    public BaseResponse<PatchMemberRes> updateMember(@RequestBody @Validated PatchMemberReq dto, HttpServletRequest request) {
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
 
         PatchMemberRes res  = memberService.updateMember(dto, jwtInfo.getUserId());
