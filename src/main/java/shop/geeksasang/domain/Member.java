@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.util.StringUtils;
 import shop.geeksasang.config.domain.*;
 import shop.geeksasang.config.status.LoginStatus;
 import shop.geeksasang.config.status.BaseStatus;
@@ -11,6 +13,7 @@ import shop.geeksasang.config.type.MemberLoginType;
 import shop.geeksasang.domain.report.MemberReport;
 import shop.geeksasang.domain.report.record.DeliverPartyReportRecord;
 import shop.geeksasang.domain.report.record.MemberReportRecord;
+import shop.geeksasang.utils.encrypt.SHA256;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -20,6 +23,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@DynamicUpdate //변경된 것만 바꿔준다.
 @Entity
 @Getter
 public class Member extends BaseEntity {
@@ -100,16 +104,6 @@ public class Member extends BaseEntity {
         this.informationAgreeStatus = informationAgreeStatus;
     }
 
-    // 수정: 프로필 이미지
-    public void updateProfileImgUrl(String profileImgUrl){
-        this.profileImgUrl = profileImgUrl;
-    }
-
-    // 값 확인용 메서드
-    public void updateNickname(String nickName) { this.nickName = nickName; }
-
-    public void updatePassword(String password) { this.password = password; }
-
     // 회원 탈퇴
     public void changeStatusToInactive(){
         super.setStatus(BaseStatus.INACTIVE);
@@ -172,19 +166,24 @@ public class Member extends BaseEntity {
         return perDayReportingCount >= 3;
     }
 
-    public void resetPerDayReportingCount(){
-        perDayReportingCount = 0;
-    }
-
-    //수정: 회원의 기숙사
-    public void updateDormitory(Dormitory dormitory) { this.dormitory = dormitory; }
-
     public void updateFcmToken(String fcmToken){
         this.fcmToken = fcmToken;
     }
 
     public void changeProfileImgUrl(String profileImgUrl){
         this.profileImgUrl = profileImgUrl;
+    }
+
+    public Member update(Dormitory dormitory, String profileImgUrl, String newPassword, String newNickName) {
+        this.dormitory = dormitory;
+        this.profileImgUrl = profileImgUrl;
+        this.nickName = newNickName;
+
+        if(StringUtils.hasText(newPassword)){
+            this.password = SHA256.encrypt(newPassword);
+        }
+
+        return this;
     }
 
     //테스트용

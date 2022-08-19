@@ -7,7 +7,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import shop.geeksasang.domain.Announcement;
-import shop.geeksasang.dto.member.patch.PatchDormitoryRes;
 
 @Getter
 @Setter
