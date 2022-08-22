@@ -296,10 +296,10 @@ public class DeliveryPartyService {
                 .build();
     }
 
-    public List<GetThreeRecentPartiesRes> getRecentOngoingDeliveryParties(int userId) {
+    public List<GetRecentOngoingPartiesRes> getRecentOngoingDeliveryParties(int userId) {
         List<DeliveryParty> threeRecentDeliveryParty = deliveryPartyQueryRepository.findRecentOngoingDeliveryParty(userId);
         return threeRecentDeliveryParty.stream()
-                .map(deliveryParty -> GetThreeRecentPartiesRes.toDto(deliveryParty))
+                .map(deliveryParty -> GetRecentOngoingPartiesRes.toDto(deliveryParty))
                 .collect(Collectors.toList());
     }
 }
