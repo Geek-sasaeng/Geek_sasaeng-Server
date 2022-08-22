@@ -94,6 +94,11 @@ public class DeliveryPartyMemberService {
         //현재 참여인원 -1
         deliveryParty.minusMatching();
 
+        // 현재인원 == (최대인원-1) 이면 MatchingStatus를 FINISH -> ONGOING으로 수정
+        if(deliveryParty.getCurrentMatching() == deliveryParty.getMaxMatching()-1){
+            deliveryParty.changeMatchingStatusToOngoing();
+        }
+
         //참여 인원이 0명이면 파티 삭제
         if(deliveryParty.getCurrentMatching() <= 0){
             deliveryParty.changeStatusToInactive();

@@ -180,6 +180,10 @@ public class DeliveryParty extends BaseEntity {
         this.matchingStatus = MatchingStatus.FINISH;
     }
 
+    public void changeMatchingStatusToOngoing(){
+        this.matchingStatus = MatchingStatus.ONGOING;
+    }
+
     public boolean isNotChief(Member attemptedChief){
         return attemptedChief != chief;
     }
