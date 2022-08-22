@@ -179,9 +179,9 @@ public class DeliveryPartyController {
             @ApiResponse(code=4000,message = "서버 오류입니다.")
     })
     @GetMapping("/delivery-parties/recent/ongoing")
-    public BaseResponse<List<GetThreeRecentPartiesRes>> getRecentOngoingDeliveryParties(HttpServletRequest request){
+    public BaseResponse<List<GetRecentOngoingPartiesRes>> getRecentOngoingDeliveryParties(HttpServletRequest request){
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
-        List<GetThreeRecentPartiesRes> res = deliveryPartyService.getRecentOngoingDeliveryParties(jwtInfo.getUserId());
+        List<GetRecentOngoingPartiesRes> res = deliveryPartyService.getRecentOngoingDeliveryParties(jwtInfo.getUserId());
         return new BaseResponse<>(res);
     }
 
