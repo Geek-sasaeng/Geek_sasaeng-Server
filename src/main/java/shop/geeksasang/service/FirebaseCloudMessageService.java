@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import org.springframework.util.StringUtils;
 import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.config.response.BaseResponse;
 import shop.geeksasang.domain.DeliveryParty;
@@ -80,8 +81,9 @@ public class FirebaseCloudMessageService {
         OkHttpClient client = new OkHttpClient();
         int i = 0;
         for( Member member : members ){
-            String token = members.get(i).getFcmToken();
-            if(token.isEmpty()){
+            String token = member.getFcmToken();
+
+            if(!StringUtils.hasText(token)){
                 continue;
             }
 

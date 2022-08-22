@@ -1,12 +1,8 @@
 package shop.geeksasang.dto.firebase;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Data
+@Getter @Setter
 public class PostDeliveryComplicated {
 
     // 배달 파티의 uuid

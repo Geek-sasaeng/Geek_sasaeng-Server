@@ -36,7 +36,7 @@ public class FcmContoroller {
     }
 
     // 배달 완료 메시지 전송 API
-    @PostMapping("delivery-party/complicated")
+    @PostMapping("/delivery-party/complicated")
     public BaseResponse<String> deliveryComplicated(@RequestBody PostDeliveryComplicated requestDTO, HttpServletRequest request) throws IOException {
 
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
