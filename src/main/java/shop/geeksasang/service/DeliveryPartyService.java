@@ -296,8 +296,8 @@ public class DeliveryPartyService {
                 .build();
     }
 
-    public List<GetThreeRecentPartiesRes> getThreeRecentDeliveryParties(int userId) {
-        List<DeliveryParty> threeRecentDeliveryParty = deliveryPartyQueryRepository.findThreeRecentDeliveryParty(userId);
+    public List<GetThreeRecentPartiesRes> getRecentOngoingDeliveryParties(int userId) {
+        List<DeliveryParty> threeRecentDeliveryParty = deliveryPartyQueryRepository.findRecentOngoingDeliveryParty(userId);
         return threeRecentDeliveryParty.stream()
                 .map(deliveryParty -> GetThreeRecentPartiesRes.toDto(deliveryParty))
                 .collect(Collectors.toList());

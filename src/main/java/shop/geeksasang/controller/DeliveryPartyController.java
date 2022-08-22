@@ -183,10 +183,10 @@ public class DeliveryPartyController {
             @ApiResponse(code =1000 ,message ="요청에 성공하였습니다."),
             @ApiResponse(code=4000,message = "서버 오류입니다.")
     })
-    @GetMapping("/delivery-parties/recent")
-    public BaseResponse<List<GetThreeRecentPartiesRes>> getThreeRecentDeliveryParties(HttpServletRequest request){
+    @GetMapping("/delivery-parties/recent/ongoing")
+    public BaseResponse<List<GetThreeRecentPartiesRes>> getRecentOngoingDeliveryParties(HttpServletRequest request){
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
-        List<GetThreeRecentPartiesRes> res = deliveryPartyService.getThreeRecentDeliveryParties(jwtInfo.getUserId());
+        List<GetThreeRecentPartiesRes> res = deliveryPartyService.getRecentOngoingDeliveryParties(jwtInfo.getUserId());
         return new BaseResponse<>(res);
     }
 }

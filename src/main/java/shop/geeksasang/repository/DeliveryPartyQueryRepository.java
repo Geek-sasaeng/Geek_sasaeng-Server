@@ -99,9 +99,7 @@ public class DeliveryPartyQueryRepository {
         return new GetDeliveryPartiesRes(isFinalPage, deliveryPartiesVoList);
     }
 
-
-
-    public List<DeliveryParty> findThreeRecentDeliveryParty (int userId){
+    public List<DeliveryParty> findRecentOngoingDeliveryParty (int userId){
         return query.select(deliveryPartyMember.party)
                 .from(deliveryPartyMember)
                 .where(deliveryPartyMember.participant.id.eq(userId),
@@ -111,7 +109,6 @@ public class DeliveryPartyQueryRepository {
                         deliveryPartyMember.party.orderTime.after(LocalDateTime.now())
                 )
                 .orderBy(deliveryPartyMember.createdAt.desc())
-                .limit(3)
                 .fetch();
     }
 }
