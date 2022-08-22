@@ -57,7 +57,6 @@ public class DeliveryPartyService {
     public PostDeliveryPartyRes registerDeliveryParty(PostDeliveryPartyReq dto, int chiefId, int dormitoryId){
 
         //파티장 조회
-        //TODO status도 검증하게 수정해야함.
        Member chief = memberRepository.findById(chiefId)
                 .orElseThrow(()-> new BaseException(NOT_EXISTS_PARTICIPANT));
 
@@ -301,5 +300,19 @@ public class DeliveryPartyService {
         return threeRecentDeliveryParty.stream()
                 .map(deliveryParty -> GetRecentOngoingPartiesRes.toDto(deliveryParty))
                 .collect(Collectors.toList());
+    }
+
+    //진행했던(현재 비활성) 배달 파티 조회
+    public GetEndedDeliveryPartiesRes getEndedDeliveryParties(int userId, int cursor){
+
+        //요청 보낸 사용자 Member 찾기
+        Member findMember = memberRepository.findMemberByIdAndStatus(userId).
+                orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTICIPANT));
+
+        PageRequest paging = PageRequest.of(cursor, PAGING_SIZE, Sort.by(Sort.Direction.ASC, PAGING_STANDARD));
+
+        GetEndedDeliveryPartiesRes endedDeliveryParties = deliveryPartyQueryRepository.getEndedDeliveryParties(userId, paging);
+
+        return endedDeliveryParties;
     }
 }
