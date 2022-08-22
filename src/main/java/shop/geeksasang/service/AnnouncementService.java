@@ -24,6 +24,7 @@ public class AnnouncementService {
     private final AnnouncementRepository announcementRepository;
     private final MemberRepository memberRepository;
 
+    //공지사항 전체 조회
     public List<GetAnnouncementRes> getAnnouncements(JwtInfo jwtInfo){
 
         int chiefId = jwtInfo.getUserId();
