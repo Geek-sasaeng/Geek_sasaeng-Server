@@ -5,6 +5,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import shop.geeksasang.config.status.BaseStatus;
 import shop.geeksasang.config.status.MatchingStatus;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static shop.geeksasang.domain.QDeliveryParty.*;
+import static shop.geeksasang.domain.QDeliveryPartyMember.*;
 
 
 @Repository
@@ -95,6 +97,19 @@ public class DeliveryPartyQueryRepository {
                 .collect(Collectors.toList());
 
         return new GetDeliveryPartiesRes(isFinalPage, deliveryPartiesVoList);
+    }
+
+    public List<DeliveryParty> findRecentOngoingDeliveryParty (int userId){
+        return query.select(deliveryPartyMember.party)
+                .from(deliveryPartyMember)
+                .where(deliveryPartyMember.participant.id.eq(userId),
+                        deliveryPartyMember.status.eq(BaseStatus.ACTIVE),
+                        deliveryPartyMember.party.status.eq(BaseStatus.ACTIVE),
+                        deliveryPartyMember.party.matchingStatus.eq(MatchingStatus.ONGOING),
+                        deliveryPartyMember.party.orderTime.after(LocalDateTime.now())
+                )
+                .orderBy(deliveryPartyMember.createdAt.desc())
+                .fetch();
     }
 }
 

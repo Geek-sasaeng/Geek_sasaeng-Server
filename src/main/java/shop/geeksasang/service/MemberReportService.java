@@ -11,6 +11,7 @@ import shop.geeksasang.dto.login.JwtInfo;
 import shop.geeksasang.dto.report.PostMemberReportRegisterReq;
 import shop.geeksasang.repository.MemberReportRepository;
 import shop.geeksasang.repository.MemberRepository;
+import shop.geeksasang.repository.ReportCategoryRepository;
 
 import static shop.geeksasang.config.exception.response.BaseResponseStatus.*;
 

@@ -14,6 +14,7 @@ import shop.geeksasang.dto.report.PostDeliveryPartyReportRegisterReq;
 import shop.geeksasang.repository.DeliveryPartyReportRepository;
 import shop.geeksasang.repository.DeliveryPartyRepository;
 import shop.geeksasang.repository.MemberRepository;
+import shop.geeksasang.repository.ReportCategoryRepository;
 
 import static shop.geeksasang.config.exception.response.BaseResponseStatus.*;
 

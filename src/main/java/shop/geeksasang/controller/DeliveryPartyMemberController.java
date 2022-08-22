@@ -62,7 +62,7 @@ public class DeliveryPartyMemberController {
     public BaseResponse<String> patchDeliveryPartyMemberStatus(@Validated @RequestBody PatchLeaveMemberReq dto, HttpServletRequest request){
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
 
-        String response = deliveryPartyMemberService.patchDeliveryPartyMemberStatus(dto,jwtInfo);
+        String response = deliveryPartyMemberService.patchDeliveryPartyMemberStatus(dto, jwtInfo.getUserId());
 
         return new BaseResponse<>(response);
     }
@@ -79,6 +79,5 @@ public class DeliveryPartyMemberController {
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
         PatchAccountTransferStatusRes res = deliveryPartyMemberService.updateAccountTransferStatus(dto,jwtInfo.getUserId());
         return new BaseResponse<>(res);
-
     }
 }

@@ -45,6 +45,5 @@ public class DeliveryPartyIntegrationTest extends IntegrationTest {
         //then
         assertThat(result.getTitle()).isEqualTo("party");
         assertThat(result.getContent()).isEqualTo("content");
-
     }
 }

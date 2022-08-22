@@ -12,6 +12,7 @@ import shop.geeksasang.domain.*;
 
 import shop.geeksasang.dto.login.JwtInfo;
 import shop.geeksasang.dto.member.get.GetCheckIdReq;
+import shop.geeksasang.dto.member.get.GetMemberRes;
 import shop.geeksasang.dto.member.get.GetNickNameDuplicatedReq;
 import shop.geeksasang.dto.member.patch.*;
 import shop.geeksasang.dto.member.post.PostRegisterReq;
@@ -21,6 +22,7 @@ import shop.geeksasang.dto.member.post.PostSocialRegisterRes;
 import shop.geeksasang.repository.*;
 import shop.geeksasang.utils.encrypt.SHA256;
 import shop.geeksasang.utils.jwt.JwtService;
+import shop.geeksasang.utils.password.PasswordUtils;
 import shop.geeksasang.utils.resttemplate.naverlogin.NaverLoginData;
 import shop.geeksasang.utils.resttemplate.naverlogin.NaverLoginService;
 
@@ -28,7 +30,7 @@ import java.util.Optional;
 
 import static shop.geeksasang.config.exception.response.BaseResponseStatus.*;
 
-@Transactional
+@Transactional(readOnly = true)
 @Service
 @RequiredArgsConstructor
 public class MemberService {
@@ -163,18 +165,6 @@ public class MemberService {
         return findMember;
     }
 
-    // 수정: 프로필 이미지
-    @Transactional(readOnly = false)
-    public Member updateProfileImgUrl(int id, PatchProfileImgUrlReq dto) {
-        //멤버 아이디로 조회
-        Member findMember = memberRepository
-                .findById(id)
-                .orElseThrow(() -> new BaseException(NOT_EXIST_USER));
-        //프로필 이미지 수정
-        findMember.updateProfileImgUrl(dto.getProfileImgUrl());
-        return findMember;
-    }
-
     // 중복 확인: 닉네임
     @Transactional(readOnly = false)
     public void checkNickNameDuplicated(GetNickNameDuplicatedReq dto) {
@@ -183,20 +173,6 @@ public class MemberService {
         if (!memberRepository.findMemberByNickName(dto.getNickName()).isEmpty()) {
             throw new BaseException(DUPLICATE_USER_NICKNAME);
         }
-    }
-
-    // 닉네임 변경하기
-    @Transactional(readOnly = false)
-    public Member updateNickname(int id, PatchNicknameReq dto) {
-        if (!memberRepository.findMemberByNickName(dto.getNickName()).isEmpty()) {
-            throw new BaseException(DUPLICATE_USER_NICKNAME);
-        }
-
-        Member member = memberRepository.findMemberById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 유저는 존재하지 않습니다. id=" + id));
-
-        member.updateNickname(dto.getNickName());
-        return member;
     }
 
     // 회원 탈퇴하기
@@ -229,62 +205,6 @@ public class MemberService {
         return member;
     }
 
-    // 비밀번호 수정하기
-    @Transactional(readOnly = false)
-    public Member updatePassword(int id, PatchPasswordReq dto) {
-        Optional<Member> memberEntity = memberRepository.findMemberById(id);
-
-        // 해당 유저 X
-        if (memberRepository.findMemberById(id).isEmpty()) {
-            throw new BaseException(NOT_EXISTS_PARTICIPANT);
-        }
-        // 이미 탈퇴한 회원
-        if (memberEntity.get().getStatus().toString().equals("INACTIVE")) {
-            throw new BaseException(ALREADY_INACTIVE_USER);
-        }
-        // 입력한 두 비밀번호가 다를 때
-        if (!dto.getCheckNewPassword().equals(dto.getNewPassword())) {
-            throw new BaseException(DIFFRENT_PASSWORDS);
-        }
-        // 입력한 기존 비밀번호가 틀렸을 때
-        String password = SHA256.encrypt(dto.getPassword());
-        if (!memberEntity.get().getPassword().equals(password)) {
-            throw new BaseException(NOT_EXISTS_PASSWORD);
-        }
-        // 새로운 비밀번호가 기존의 비밀번호와 같을 때
-        String new_password = SHA256.encrypt(dto.getNewPassword());
-        if (memberEntity.get().getPassword().equals(new_password)) {
-            throw new BaseException(SAME_PASSWORDS);
-        }
-
-        dto.setNewPassword((SHA256.encrypt(dto.getNewPassword())));
-        Member member = memberRepository.findMemberById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 유저는 존재하지 않습니다. id=" + id));
-
-        member.updatePassword(dto.getNewPassword());
-        return member;
-    }
-
-    // 수정: 기숙사 수정하기
-    @Transactional(readOnly = false)
-    public Member updateDormitory(PatchDormitoryReq dto, JwtInfo jwtInfo) {
-        int memberId = jwtInfo.getUserId();
-
-        Member member = memberRepository.findMemberByIdAndStatus(memberId).
-                orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTICIPANT));
-
-        // 처음 로그인 시 loginStatus를 NEVER -> NOTNEVER
-        if (member.getLoginStatus().equals(LoginStatus.NEVER)) {
-            member.changeLoginStatusToNotNever();
-        }
-
-        // 수정할 기숙사 조회
-        Dormitory dormitory = dormitoryRepository.findDormitoryById(dto.getDormitoryId())
-                .orElseThrow(() -> new BaseException(NOT_EXISTS_DORMITORY));
-        member.updateDormitory(dormitory);
-        return member;
-    }
-
     // 수정: FCM토큰 수정
     @Transactional(readOnly = false)
     public PatchFcmTokenRes updateFcmToken(PatchFcmTokenReq dto, int memberId){
@@ -302,5 +222,30 @@ public class MemberService {
         if (!memberRepository.findMemberByLoginId(dto.getLoginId()).isEmpty()) {
             throw new BaseException(EXISTS_LOGIN_ID);
         }
+    }
+
+    @Transactional(readOnly = false)
+    public PatchMemberRes updateMember(PatchMemberReq dto, int memberId) {
+
+        Member member = memberRepository.findMemberByIdAndStatus(memberId).orElseThrow(() -> new BaseException(NOT_EXIST_USER));
+
+        Dormitory dormitory = dormitoryRepository.findDormitoryById(dto.getDormitoryId()).orElseThrow(() -> new BaseException(NOT_EXISTS_DORMITORY));
+
+        if(PasswordUtils.isNotSamePassword(dto.getNewPassword(), dto.getCheckNewPassword())) {
+            throw new BaseException(DIFFRENT_PASSWORDS);
+        }
+
+        Member updateMember = member.update(dormitory, dto.getProfileImgUrl(), dto.getNewPassword(), dto.getNickname());
+
+        return PatchMemberRes.toDto(updateMember);
+    }
+
+    @Transactional(readOnly = true)
+    public GetMemberRes getMember(int memberId){
+        // 조회
+        Member member = memberRepository.findMemberByIdAndStatus(memberId)
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTICIPANT));
+        // 변환
+        return GetMemberRes.toDto(member);
     }
 }

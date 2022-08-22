@@ -100,7 +100,7 @@ public class DeliveryPartyController {
     @GetMapping("/delivery-party/{partyId}")
     public BaseResponse<GetDeliveryPartyDetailRes> getDeliveryPartyDetailById(@PathVariable("partyId") int partyId, HttpServletRequest request){
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
-        GetDeliveryPartyDetailRes response = deliveryPartyService.getDeliveryPartyDetailById(partyId, jwtInfo);
+        GetDeliveryPartyDetailRes response = deliveryPartyService.getDeliveryPartyDetailById(partyId, jwtInfo.getUserId());
 
         return new BaseResponse<>(response);
     }
@@ -177,4 +177,16 @@ public class DeliveryPartyController {
         return new BaseResponse<>(response);
     }
 
+
+    @ApiOperation(value = "제일 최근에 들어간 진행중인 배달파티 리스트 ", notes = "가장 최근에 참여한 진행 중인 배달 파티들을 가져온다.")
+    @ApiResponses({
+            @ApiResponse(code =1000 ,message ="요청에 성공하였습니다."),
+            @ApiResponse(code=4000,message = "서버 오류입니다.")
+    })
+    @GetMapping("/delivery-parties/recent/ongoing")
+    public BaseResponse<List<GetThreeRecentPartiesRes>> getRecentOngoingDeliveryParties(HttpServletRequest request){
+        JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
+        List<GetThreeRecentPartiesRes> res = deliveryPartyService.getRecentOngoingDeliveryParties(jwtInfo.getUserId());
+        return new BaseResponse<>(res);
+    }
 }
