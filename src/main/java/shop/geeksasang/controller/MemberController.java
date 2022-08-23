@@ -129,7 +129,7 @@ public class MemberController {
             @ApiResponse(code = 4000 , message = "서버 오류입니다.")
     })
     @PatchMapping()
-    public BaseResponse<PatchMemberRes> updateMember(@RequestBody @Validated PatchMemberReq dto, HttpServletRequest request) {
+    public BaseResponse<PatchMemberRes> updateMember(@RequestBody PatchMemberReq dto, HttpServletRequest request) {
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
 
         PatchMemberRes res  = memberService.updateMember(dto, jwtInfo.getUserId());
@@ -207,5 +207,21 @@ public class MemberController {
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
         PatchDormitoryRes res = memberService.updateDormitory(dto, jwtInfo);
         return new BaseResponse<>(res);
+    }
+
+
+    // 수정: 비밀번호 수정하기
+    @ApiOperation(value = "수정: 비밀번호 수정하기", notes = "비밀번호를 수정하기.")
+    @ApiResponses({
+            @ApiResponse(code = 1000 , message = "요청에 성공하셨습니다."),
+            @ApiResponse(code = 2005 ,message = "입력하신 두 비밀번호가 다릅니다."),
+            @ApiResponse(code = 2204 , message = "존재하지 않는 회원 id 입니다."),
+            @ApiResponse(code = 4000 , message = "서버 오류입니다.")
+    })
+    @PatchMapping("/password")
+    public BaseResponse<String> changePassword(@RequestBody @Validated PatchPasswordReq dto, HttpServletRequest request) {
+        JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
+        memberService.changePassword(dto, jwtInfo.getUserId());
+        return new BaseResponse<>("비밀번호 수정에 성공하였습니다.");
     }
 }
