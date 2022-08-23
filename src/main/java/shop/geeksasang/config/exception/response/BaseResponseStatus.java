@@ -26,6 +26,8 @@ public enum BaseResponseStatus {
      */
     VALID_PHONEVALIDKEY(true,1201,"폰 인증번호가 일치합니다."),
     VALID_NICKNAME(true,1202,"사용 가능한 닉네임입니다."),
+    VALID_PASSWORD(true,1203,"비밀번호가 일치합니다."),
+
 
     /**
      * 미니

@@ -11,6 +11,7 @@ import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.domain.*;
 
 import shop.geeksasang.dto.login.JwtInfo;
+import shop.geeksasang.dto.member.get.GetCheckCurrentPasswordReq;
 import shop.geeksasang.dto.member.get.GetCheckIdReq;
 import shop.geeksasang.dto.member.get.GetMemberRes;
 import shop.geeksasang.dto.member.get.GetNickNameDuplicatedReq;
@@ -247,5 +248,20 @@ public class MemberService {
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTICIPANT));
         // 변환
         return GetMemberRes.toDto(member);
+    }
+
+    //체크: 사용자의 입력된 비밀번호 일치확인
+    @Transactional(readOnly = true)
+    public void checkCurrentPassword(GetCheckCurrentPasswordReq dto, int memberId){
+        // 멤버 조회
+        Member member = memberRepository.findMemberByIdAndStatus(memberId)
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTICIPANT));
+        // 비밀번호 암호화
+        String password = SHA256.encrypt(dto.getPassword());
+        // 비밀번호 비교
+        if(!password.equals(member.getPassword())){
+            throw new BaseException(BaseResponseStatus.NOT_EXISTS_PASSWORD);
+        }
+        // 반환
     }
 }
