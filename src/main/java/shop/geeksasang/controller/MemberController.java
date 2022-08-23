@@ -15,6 +15,7 @@ import shop.geeksasang.domain.Member;
 import shop.geeksasang.dto.dormitory.PatchDormitoryReq;
 import shop.geeksasang.dto.dormitory.PatchDormitoryRes;
 import shop.geeksasang.dto.login.JwtInfo;
+import shop.geeksasang.dto.member.get.GetCheckCurrentPasswordReq;
 import shop.geeksasang.dto.member.get.GetCheckIdReq;
 import shop.geeksasang.dto.member.get.GetMemberRes;
 import shop.geeksasang.dto.member.get.GetNickNameDuplicatedReq;
@@ -175,6 +176,23 @@ public class MemberController {
 
         GetMemberRes res = memberService.getMember(jwtInfo.getUserId());
         return new BaseResponse<>(res);
+    }
+
+
+    @ApiOperation(value = "체크: 사용자의 입력된 비밀번호 일치확인", notes = "사용자의 비밀번호를 입력받아 기존 비밀번호와 일치하는지 확인")
+    @ApiResponses({
+            @ApiResponse(code =2009 ,message ="존재하지 않는 멤버입니다"),
+            @ApiResponse(code = 2011, message ="비밀번호가 틀립니다."),
+            @ApiResponse(code = 1203, message ="비밀번호가 일치합니다."),
+            @ApiResponse(code=4000,message = "서버 오류입니다.")
+    })
+    @PostMapping("/password")
+    public BaseResponse<String> checkCurrentPassword(@Validated @RequestBody GetCheckCurrentPasswordReq dto, HttpServletRequest request){
+        JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
+        int memberId = jwtInfo.getUserId();
+
+        memberService.checkCurrentPassword(dto, memberId);
+        return new BaseResponse<>(BaseResponseStatus.VALID_PASSWORD);
     }
 
     // 수정: 기숙사 수정하기
