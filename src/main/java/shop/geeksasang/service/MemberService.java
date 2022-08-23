@@ -10,6 +10,8 @@ import shop.geeksasang.config.status.ValidStatus;
 import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.domain.*;
 
+import shop.geeksasang.dto.dormitory.PatchDormitoryReq;
+import shop.geeksasang.dto.dormitory.PatchDormitoryRes;
 import shop.geeksasang.dto.login.JwtInfo;
 import shop.geeksasang.dto.member.get.GetCheckCurrentPasswordReq;
 import shop.geeksasang.dto.member.get.GetCheckIdReq;
@@ -250,6 +252,7 @@ public class MemberService {
         return GetMemberRes.toDto(member);
     }
 
+
     //체크: 사용자의 입력된 비밀번호 일치확인
     @Transactional(readOnly = true)
     public void checkCurrentPassword(GetCheckCurrentPasswordReq dto, int memberId){
@@ -261,5 +264,24 @@ public class MemberService {
         if(!password.equals(member.getPassword())){
             throw new BaseException(BaseResponseStatus.NOT_EXISTS_PASSWORD);
         }
+
+    // 수정: 기숙사 수정하기
+    @Transactional(readOnly = false)
+    public PatchDormitoryRes updateDormitory(PatchDormitoryReq dto, JwtInfo jwtInfo) {
+        int memberId = jwtInfo.getUserId();
+
+        Member member = memberRepository.findMemberByIdAndStatus(memberId).
+                orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTICIPANT));
+
+        // 처음 로그인 시 loginStatus를 NEVER -> NOTNEVER
+        if (member.getLoginStatus().equals(LoginStatus.NEVER)) {
+            member.changeLoginStatusToNotNever();
+        }
+
+        // 수정할 기숙사 조회
+        Dormitory dormitory = dormitoryRepository.findDormitoryById(dto.getDormitoryId())
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_DORMITORY));
+        member.updateDormitory(dormitory);
+        return PatchDormitoryRes.toDto(member);
     }
 }

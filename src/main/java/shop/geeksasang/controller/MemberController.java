@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import shop.geeksasang.config.exception.response.BaseResponseStatus;
 import shop.geeksasang.config.response.BaseResponse;
 import shop.geeksasang.domain.Member;
+import shop.geeksasang.dto.dormitory.PatchDormitoryReq;
+import shop.geeksasang.dto.dormitory.PatchDormitoryRes;
 import shop.geeksasang.dto.login.JwtInfo;
 import shop.geeksasang.dto.member.get.GetCheckCurrentPasswordReq;
 import shop.geeksasang.dto.member.get.GetCheckIdReq;
@@ -176,6 +178,7 @@ public class MemberController {
         return new BaseResponse<>(res);
     }
 
+
     @ApiOperation(value = "체크: 사용자의 입력된 비밀번호 일치확인", notes = "사용자의 비밀번호를 입력받아 기존 비밀번호와 일치하는지 확인")
     @ApiResponses({
             @ApiResponse(code =2009 ,message ="존재하지 않는 멤버입니다"),
@@ -190,5 +193,19 @@ public class MemberController {
 
         memberService.checkCurrentPassword(dto, memberId);
         return new BaseResponse<>(BaseResponseStatus.VALID_PASSWORD);
+    }
+
+    // 수정: 기숙사 수정하기
+    @ApiOperation(value = "수정: 기숙사 수정하기", notes = "수정할 기숙사를 입력받아 수정.")
+    @ApiResponses({
+            @ApiResponse(code = 2009 , message = "존재하지 않는 멤버입니다"),
+            @ApiResponse(code = 2606 , message = "기숙사가 존재하지 않습니다."),
+            @ApiResponse(code = 4000 , message = "서버 오류입니다.")
+    })
+    @PatchMapping("/dormitory")
+    public BaseResponse<PatchDormitoryRes> updateDormitory(@RequestBody @Validated PatchDormitoryReq dto, HttpServletRequest request) {
+        JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
+        PatchDormitoryRes res = memberService.updateDormitory(dto, jwtInfo);
+        return new BaseResponse<>(res);
     }
 }
