@@ -253,7 +253,6 @@ public class MemberService {
     //체크: 사용자의 입력된 비밀번호 일치확인
     @Transactional(readOnly = true)
     public void checkCurrentPassword(GetCheckCurrentPasswordReq dto, int memberId){
-        // 멤버 조회
         Member member = memberRepository.findMemberByIdAndStatus(memberId)
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTICIPANT));
         // 비밀번호 암호화
@@ -262,6 +261,5 @@ public class MemberService {
         if(!password.equals(member.getPassword())){
             throw new BaseException(BaseResponseStatus.NOT_EXISTS_PASSWORD);
         }
-        // 반환
     }
 }
