@@ -10,6 +10,8 @@ import shop.geeksasang.config.status.ValidStatus;
 import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.domain.*;
 
+import shop.geeksasang.dto.dormitory.PatchDormitoryReq;
+import shop.geeksasang.dto.dormitory.PatchDormitoryRes;
 import shop.geeksasang.dto.login.JwtInfo;
 import shop.geeksasang.dto.member.get.GetCheckIdReq;
 import shop.geeksasang.dto.member.get.GetMemberRes;
@@ -247,5 +249,25 @@ public class MemberService {
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTICIPANT));
         // 변환
         return GetMemberRes.toDto(member);
+    }
+
+    // 수정: 기숙사 수정하기
+    @Transactional(readOnly = false)
+    public PatchDormitoryRes updateDormitory(PatchDormitoryReq dto, JwtInfo jwtInfo) {
+        int memberId = jwtInfo.getUserId();
+
+        Member member = memberRepository.findMemberByIdAndStatus(memberId).
+                orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTICIPANT));
+
+        // 처음 로그인 시 loginStatus를 NEVER -> NOTNEVER
+        if (member.getLoginStatus().equals(LoginStatus.NEVER)) {
+            member.changeLoginStatusToNotNever();
+        }
+
+        // 수정할 기숙사 조회
+        Dormitory dormitory = dormitoryRepository.findDormitoryById(dto.getDormitoryId())
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_DORMITORY));
+        member.updateDormitory(dormitory);
+        return PatchDormitoryRes.toDto(member);
     }
 }

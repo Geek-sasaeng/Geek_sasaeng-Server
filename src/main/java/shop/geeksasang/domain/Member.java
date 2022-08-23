@@ -198,4 +198,8 @@ public class Member extends BaseEntity {
         this.nickName = nickName;
         super.setStatus(BaseStatus.ACTIVE);
     }
+
+    public void updateDormitory(Dormitory dormitory) {
+        this.dormitory = dormitory;
+    }
 }

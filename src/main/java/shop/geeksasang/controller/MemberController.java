@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import shop.geeksasang.config.exception.response.BaseResponseStatus;
 import shop.geeksasang.config.response.BaseResponse;
 import shop.geeksasang.domain.Member;
+import shop.geeksasang.dto.dormitory.PatchDormitoryReq;
+import shop.geeksasang.dto.dormitory.PatchDormitoryRes;
 import shop.geeksasang.dto.login.JwtInfo;
 import shop.geeksasang.dto.member.get.GetCheckIdReq;
 import shop.geeksasang.dto.member.get.GetMemberRes;
@@ -172,6 +174,20 @@ public class MemberController {
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
 
         GetMemberRes res = memberService.getMember(jwtInfo.getUserId());
+        return new BaseResponse<>(res);
+    }
+
+    // 수정: 기숙사 수정하기
+    @ApiOperation(value = "수정: 기숙사 수정하기", notes = "수정할 기숙사를 입력받아 수정.")
+    @ApiResponses({
+            @ApiResponse(code = 2009 , message = "존재하지 않는 멤버입니다"),
+            @ApiResponse(code = 2606 , message = "기숙사가 존재하지 않습니다."),
+            @ApiResponse(code = 4000 , message = "서버 오류입니다.")
+    })
+    @PatchMapping("/dormitory")
+    public BaseResponse<PatchDormitoryRes> updateDormitory(@RequestBody @Validated PatchDormitoryReq dto, HttpServletRequest request) {
+        JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
+        PatchDormitoryRes res = memberService.updateDormitory(dto, jwtInfo);
         return new BaseResponse<>(res);
     }
 }
