@@ -232,13 +232,13 @@ public class MemberService {
 
         Member member = memberRepository.findMemberByIdAndStatus(memberId).orElseThrow(() -> new BaseException(NOT_EXIST_USER));
 
-        Dormitory dormitory = dormitoryRepository.findDormitoryById(dto.getDormitoryId()).orElseThrow(() -> new BaseException(NOT_EXISTS_DORMITORY));
+        Dormitory dormitory = null;
 
-        if(PasswordUtils.isNotSamePassword(dto.getNewPassword(), dto.getCheckNewPassword())) {
-            throw new BaseException(DIFFRENT_PASSWORDS);
+        if(dto.getDormitoryId() != null){
+            dormitory = dormitoryRepository.findDormitoryById(dto.getDormitoryId()).orElseThrow(() -> new BaseException(NOT_EXISTS_DORMITORY));
         }
 
-        Member updateMember = member.update(dormitory, dto.getProfileImgUrl(), dto.getNewPassword(), dto.getNickname());
+        Member updateMember = member.update(dormitory, dto.getProfileImgUrl(), dto.getNickname());
 
         return PatchMemberRes.toDto(updateMember);
     }
@@ -284,5 +284,16 @@ public class MemberService {
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_DORMITORY));
         member.updateDormitory(dormitory);
         return PatchDormitoryRes.toDto(member);
+    }
+
+    //비밀번호 바꾸기
+    @Transactional(readOnly = false)
+    public void changePassword(PatchPasswordReq dto, int memberId) {
+        Member member = memberRepository.findMemberByIdAndStatus(memberId).orElseThrow(() -> new BaseException(NOT_EXIST_USER));
+
+        if(PasswordUtils.isNotSamePassword(dto.getNewPassword(), dto.getCheckNewPassword())){
+            throw new BaseException(DIFFRENT_PASSWORDS);
+        }
+        member.updatePassword(SHA256.encrypt(dto.getNewPassword()));
     }
 }

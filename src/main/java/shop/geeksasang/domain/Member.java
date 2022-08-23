@@ -23,7 +23,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@DynamicUpdate //변경된 것만 바꿔준다.
+//@DynamicUpdate //변경된 것만 바꿔준다.
 @Entity
 @Getter
 public class Member extends BaseEntity {
@@ -174,13 +174,18 @@ public class Member extends BaseEntity {
         this.profileImgUrl = profileImgUrl;
     }
 
-    public Member update(Dormitory dormitory, String profileImgUrl, String newPassword, String newNickName) {
-        this.dormitory = dormitory;
-        this.profileImgUrl = profileImgUrl;
-        this.nickName = newNickName;
+    public Member update(Dormitory dormitory, String profileImgUrl, String newNickName) {
 
-        if(StringUtils.hasText(newPassword)){
-            this.password = SHA256.encrypt(newPassword);
+        if(dormitory != null ){
+            this.dormitory = dormitory;
+        }
+
+        if(StringUtils.hasText(profileImgUrl)){
+            this.profileImgUrl = profileImgUrl;
+        }
+
+        if(StringUtils.hasText(profileImgUrl)){
+            this.nickName = newNickName;
         }
 
         return this;
@@ -201,5 +206,9 @@ public class Member extends BaseEntity {
 
     public void updateDormitory(Dormitory dormitory) {
         this.dormitory = dormitory;
+    }
+
+    public void updatePassword(String newPassword) {
+        this.password = newPassword;
     }
 }
