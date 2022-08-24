@@ -9,6 +9,7 @@ import org.springframework.util.StringUtils;
 
 import shop.geeksasang.config.status.BaseStatus;
 import shop.geeksasang.config.status.BelongStatus;
+import shop.geeksasang.config.status.MatchingStatus;
 import shop.geeksasang.config.type.OrderTimeCategoryType;
 import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.config.exception.response.BaseResponseStatus;
@@ -156,8 +157,16 @@ public class DeliveryPartyService {
         Member findMember = memberRepository.findById(memberId).
                 orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTICIPANT));
 
-        DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyByIdBeforeOrderTime(partyId, LocalDateTime.now()).
+//        DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyByIdBeforeOrderTime(partyId, LocalDateTime.now()).
+//                orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTY));
+
+        DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyByIdAndStatus(partyId).
                 orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTY));
+
+        //주문 시간이 현재 시간보다 이전이거나 매칭 상태가 Finish 면 오직 방장만이 배달파티 상세보기를 할 수 있다.
+        if((deliveryParty.getOrderTime().isBefore(LocalDateTime.now()) | deliveryParty.getMatchingStatus() == MatchingStatus.FINISH) & deliveryParty.getChief() != findMember){
+            throw new BaseException(CHIEF_ONLY_SEE_DELIVERY_PARTY);
+        }
 
         //요청 보낸 사용자와 파티 chief 비교
         if(findMember.equals(deliveryParty.getChief())){

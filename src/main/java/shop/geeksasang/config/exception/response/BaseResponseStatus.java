@@ -79,6 +79,8 @@ public enum BaseResponseStatus {
     ALREADY_PARTICIPATE_PARTY(false, 2020, "이미 파티에 참여하고 있습니다."),
     INVALID_DELIVERY_PARTY_CHIEF(false, 2021, "파티의 방장이 아닙니다."),
     NOT_EXISTS_DELIVERY_PARTY_PARTICIPANT(false,2022,"존재하지 않는 배달 파티 멤버입니다."),
+    CHIEF_ONLY_SEE_DELIVERY_PARTY(false,2023,"배달 파티 주문 시간이 지나거나 매팅 상태가 마감인 경우는 방장만 배달 파티 상세보기가 가능합니다."),
+
 
 
     /**
