@@ -84,6 +84,7 @@ public class GetDeliveryPartyDetailRes {
     @ApiModelProperty(example = "Y", value = "사용자가 파티멤버에 속해있는지 여부. 속해있으면 Y, 아니면 N")
     private BelongStatus belongStatus;
 
+
     //빌더
     static public GetDeliveryPartyDetailRes toDto(DeliveryParty deliveryParty, boolean authorStatus, BelongStatus belongStatus){
 
@@ -112,7 +113,9 @@ public class GetDeliveryPartyDetailRes {
     }
 
     @Builder
-    public GetDeliveryPartyDetailRes(int id, String chief, int chiefId, String chiefProfileImgUrl, String foodCategory, boolean hashTag, String title, String content, LocalDateTime orderTime, int currentMatching, int maxMatching, MatchingStatus matchingStatus, String updatedAt, Double latitude, Double longitude, String storeUrl, boolean authorStatus, int dormitory, String uuid, BelongStatus belongStatus) {
+    public GetDeliveryPartyDetailRes(int id, String chief, int chiefId, String chiefProfileImgUrl, String foodCategory, boolean hashTag, String title, String content,
+                                     LocalDateTime orderTime, int currentMatching, int maxMatching, MatchingStatus matchingStatus, String updatedAt, Double latitude,
+                                     Double longitude, String storeUrl, boolean authorStatus, int dormitory, String uuid, BelongStatus belongStatus) {
         this.id = id;
         this.chief = chief;
         this.chiefId = chiefId;

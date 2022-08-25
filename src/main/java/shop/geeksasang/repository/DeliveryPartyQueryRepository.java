@@ -110,7 +110,7 @@ public class DeliveryPartyQueryRepository {
                         deliveryPartyMember.party.matchingStatus.eq(MatchingStatus.ONGOING),
                         deliveryPartyMember.party.orderTime.after(LocalDateTime.now())
                 )
-                .orderBy(deliveryPartyMember.createdAt.desc())
+                .orderBy(deliveryPartyMember.party.createdAt.desc())
                 .fetch();
     }
 
