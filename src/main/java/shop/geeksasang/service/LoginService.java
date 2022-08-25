@@ -34,6 +34,7 @@ public class LoginService {
 
     public PostLoginRes login(PostLoginReq dto){
 
+        //로그인 id 조회
         Member member = memberRepository.findMemberByLoginId(dto.getLoginId())
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_LOGINID));
 
@@ -41,7 +42,7 @@ public class LoginService {
 
         LoginStatus loginStatus = member.getLoginStatus(); // 로그인 횟수 상태
 
-        //password
+        //password 비교
         if(!password.equals(member.getPassword())){
             throw new BaseException(BaseResponseStatus.NOT_EXISTS_PASSWORD);
         }
