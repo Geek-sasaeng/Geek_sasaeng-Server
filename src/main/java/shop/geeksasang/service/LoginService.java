@@ -51,6 +51,9 @@ public class LoginService {
             throw new BaseException(BaseResponseStatus.INACTIVE_STATUS);
         }
 
+        // 로그인 시 fcm 자동 저장
+        member.updateFcmToken(dto.getFcmToken());
+
         JwtInfo vo = JwtInfo.builder()
                 .userId(member.getId())
                 .universityId(member.getUniversity().getId())
@@ -67,6 +70,7 @@ public class LoginService {
                     .dormitoryId(member.getDormitory().getId())
                     .dormitoryName(member.getDormitory().getName())
                     .profileImgUrl(member.getProfileImgUrl())
+                    .fcmToken(member.getFcmToken())
                     .build();
         }
         else{
@@ -75,6 +79,7 @@ public class LoginService {
                     .nickName(member.getNickName())
                     .loginStatus(loginStatus)
                     .profileImgUrl(member.getProfileImgUrl())
+                    .fcmToken(member.getFcmToken())
                     .build();
         }
     }
@@ -102,6 +107,9 @@ public class LoginService {
 
         LoginStatus loginStatus = member.getLoginStatus(); // 로그인 횟수 상태
 
+        // 로그인 시 fcm 자동 저장
+        member.updateFcmToken(dto.getFcmToken());
+
         JwtInfo vo = JwtInfo.builder()
                 .userId(member.getId())
                 .universityId(member.getUniversity().getId())
@@ -118,6 +126,7 @@ public class LoginService {
                     .profileImgUrl(member.getProfileImgUrl())
                     .dormitoryId(member.getDormitory().getId())
                     .dormitoryName(member.getDormitory().getName())
+                    .fcmToken(member.getFcmToken())
                     .build();
         }
         else {
@@ -126,6 +135,7 @@ public class LoginService {
                     .nickName(member.getNickName())
                     .loginStatus(loginStatus)
                     .profileImgUrl(member.getProfileImgUrl())
+                    .fcmToken(member.getFcmToken())
                     .build();
         }
     }
