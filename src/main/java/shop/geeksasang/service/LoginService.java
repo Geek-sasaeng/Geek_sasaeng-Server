@@ -53,7 +53,9 @@ public class LoginService {
         }
 
         // 로그인 시 fcm 자동 저장
-        member.updateFcmToken(dto.getFcmToken());
+        if(dto.getFcmToken() != null){
+            member.updateFcmToken(dto.getFcmToken());
+        }
 
         JwtInfo vo = JwtInfo.builder()
                 .userId(member.getId())
@@ -109,7 +111,9 @@ public class LoginService {
         LoginStatus loginStatus = member.getLoginStatus(); // 로그인 횟수 상태
 
         // 로그인 시 fcm 자동 저장
-        member.updateFcmToken(dto.getFcmToken());
+        if(dto.getFcmToken() != null){
+            member.updateFcmToken(dto.getFcmToken());
+        }
 
         JwtInfo vo = JwtInfo.builder()
                 .userId(member.getId())
