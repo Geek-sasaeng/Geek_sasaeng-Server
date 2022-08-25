@@ -10,6 +10,8 @@ import lombok.Setter;
 import shop.geeksasang.config.status.LoginStatus;
 import shop.geeksasang.utils.login.LoginDtoFilter;
 
+import javax.validation.constraints.NotBlank;
+
 
 @Getter @Setter
 @Builder
@@ -38,4 +40,9 @@ public class PostLoginRes {
     @ApiModelProperty(example="https://geeksasaeng-s3.s3.ap-northeast-2.amazonaws.com/%EA%B4%91%EA%B3%A0.png")
     @ApiParam(value = "유저 프로필 이미지 주소")
     private String profileImgUrl;
+
+    @ApiModelProperty(example = "c1aTnbZPaWP0_KZbcSuh_h:APA91bFG4r3Z6-dw88UQFikVxkNApaUeq508RNeYxgmrj7miyGdSIy6YXMLJj3jAmCZERNqSLgLm4gn3fyhnBn2iUsra_EriXMqsOlXkyUf9ugNAKMPiKZGNYbn6gKLhMYWB3xTJoRVk")
+    @ApiParam(value = "FCM 토큰값")
+    @NotBlank
+    private String fcmToken;
 }
