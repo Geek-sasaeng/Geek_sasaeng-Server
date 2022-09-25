@@ -31,6 +31,6 @@ public interface MemberRepository extends JpaRepository<Member, Integer> {
 
     Optional<Member> findMemberByPhoneNumberId(int phoneNumberId);
 
-    @Query("select m from Member m left join DeliveryPartyMember dpm on dpm.participant.id = m.id where dpm.party.id = :partyId and m.status = 'ACTIVE'")
-    List<Member> findMemberFcmTockenById(int partyId);
+    @Query("select m from Member m left join DeliveryPartyMember dpm on dpm.participant.id = m.id where dpm.party.id = :partyId and not m.id = :userId and m.status = 'ACTIVE'")
+    List<Member> findMemberFcmTockenById(int partyId, int userId);
 }
