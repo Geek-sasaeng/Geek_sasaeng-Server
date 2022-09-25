@@ -73,7 +73,7 @@ public class FirebaseCloudMessageService {
             throw new BaseException(DIFFERENT_CHIEF_ID);
         }
 
-        List<Member> members = memberRepository.findMemberFcmTockenById(deliveryParty.getId());
+        List<Member> members = memberRepository.findMemberFcmTockenById(deliveryParty.getId(), userId);
         String title = "배달이 완료되었습니다!";
         String body = "수령장소에서 받아가세요(❁´◡`❁)";
 
