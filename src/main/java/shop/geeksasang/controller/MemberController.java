@@ -22,6 +22,7 @@ import shop.geeksasang.service.MemberService;
 import shop.geeksasang.utils.jwt.NoIntercept;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.io.IOException;
 
@@ -128,6 +129,19 @@ public class MemberController {
     public BaseResponse<PostMemberInfoRes> updateMember(@ModelAttribute PostMemberInfoReq dto, HttpServletRequest request) throws IOException {
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
         PostMemberInfoRes res  = memberService.updateMember(dto, jwtInfo.getUserId());
+        return new BaseResponse<>(res);
+    }
+
+    // 조회 : 멤버 정보 조회 (마이페이지)
+    @ApiOperation(value = "조회: 멤버 정보 수정을 위한 조회", notes = "(jwt 토큰 필요) 수정을 위한 멤버 정보(프로필 이미지, 아이디, 기숙사, 닉네임)를 조회.")
+    @ApiResponses({
+            @ApiResponse(code = 1000 , message = "요청에 성공하셨습니다."),
+            @ApiResponse(code = 4000 , message = "서버 오류입니다.")
+    })
+    @GetMapping(value = "/info")
+    public BaseResponse<GetMemberInfoRes> getMemberInfo(HttpServletRequest request) throws IOException {
+        JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
+        GetMemberInfoRes res  = memberService.getMemberInfo(jwtInfo.getUserId());
         return new BaseResponse<>(res);
     }
 

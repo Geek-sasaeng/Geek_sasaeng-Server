@@ -10,11 +10,11 @@ import shop.geeksasang.config.status.LoginStatus;
 import shop.geeksasang.config.status.ValidStatus;
 import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.domain.*;
-
 import shop.geeksasang.dto.dormitory.PatchDormitoryReq;
 import shop.geeksasang.dto.dormitory.PatchDormitoryRes;
 import shop.geeksasang.dto.login.JwtInfo;
 import shop.geeksasang.dto.member.get.*;
+import shop.geeksasang.dto.member.get.vo.DormitoriesVo;
 import shop.geeksasang.dto.member.patch.*;
 import shop.geeksasang.dto.member.post.*;
 import shop.geeksasang.repository.*;
@@ -25,9 +25,11 @@ import shop.geeksasang.utils.resttemplate.naverlogin.NaverLoginData;
 import shop.geeksasang.utils.resttemplate.naverlogin.NaverLoginService;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static shop.geeksasang.config.exception.response.BaseResponseStatus.*;
 
@@ -274,6 +276,20 @@ public class MemberService {
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTICIPANT));
         // 변환
         return GetMemberRes.toDto(member);
+    }
+
+    //조회 : 회원 정보 조회 (마이페이지)
+    @Transactional(readOnly = true)
+    public GetMemberInfoRes getMemberInfo(int memberId){
+        Member member = memberRepository.findMemberById(memberId).orElseThrow(() -> new BaseException(NOT_EXIST_USER));
+
+        List<Dormitory> dormitoryList = member.getUniversity().getDormitories();
+
+        List<DormitoriesVo> dormitoriesVoList = dormitoryList.stream()
+                .map(dormitory -> new DormitoriesVo(dormitory))
+                .collect(Collectors.toList());
+
+        return GetMemberInfoRes.toDto(member,dormitoriesVoList);
     }
 
 
