@@ -4,8 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.DynamicUpdate;
-import org.springframework.util.StringUtils;
 import shop.geeksasang.config.domain.*;
 import shop.geeksasang.config.status.LoginStatus;
 import shop.geeksasang.config.status.BaseStatus;
@@ -13,10 +11,9 @@ import shop.geeksasang.config.type.MemberLoginType;
 import shop.geeksasang.domain.report.MemberReport;
 import shop.geeksasang.domain.report.record.DeliverPartyReportRecord;
 import shop.geeksasang.domain.report.record.MemberReportRecord;
-import shop.geeksasang.utils.encrypt.SHA256;
+import shop.geeksasang.dto.member.post.PostMemberInfoReq;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -174,20 +171,12 @@ public class Member extends BaseEntity {
         this.profileImgUrl = profileImgUrl;
     }
 
-    public Member update(Dormitory dormitory, String profileImgUrl, String newNickName) {
-
-        if(dormitory != null ){
-            this.dormitory = dormitory;
-        }
-
-        if(StringUtils.hasText(profileImgUrl)){
-            this.profileImgUrl = profileImgUrl;
-        }
-
-        if(StringUtils.hasText(profileImgUrl)){
-            this.nickName = newNickName;
-        }
-
+    public Member update(PostMemberInfoReq dto, String imgUrl, Dormitory dormitory, String password) {
+        this.loginId = dto.getLoginId();
+        this.nickName = dto.getNickname();
+        this.dormitory = dormitory;
+        this.profileImgUrl = imgUrl;
+        this.password = password;
         return this;
     }
 
