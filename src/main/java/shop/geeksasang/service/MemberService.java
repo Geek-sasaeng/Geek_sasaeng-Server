@@ -4,24 +4,19 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.web.multipart.MultipartFile;
 import shop.geeksasang.config.exception.response.BaseResponseStatus;
 import shop.geeksasang.config.status.LoginStatus;
 import shop.geeksasang.config.status.ValidStatus;
 import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.domain.*;
-
 import shop.geeksasang.dto.dormitory.PatchDormitoryReq;
 import shop.geeksasang.dto.dormitory.PatchDormitoryRes;
 import shop.geeksasang.dto.login.JwtInfo;
-import shop.geeksasang.dto.member.get.GetCheckCurrentPasswordReq;
-import shop.geeksasang.dto.member.get.GetCheckIdReq;
-import shop.geeksasang.dto.member.get.GetMemberRes;
-import shop.geeksasang.dto.member.get.GetNickNameDuplicatedReq;
+import shop.geeksasang.dto.member.get.*;
+import shop.geeksasang.dto.member.get.vo.DormitoriesVo;
 import shop.geeksasang.dto.member.patch.*;
-import shop.geeksasang.dto.member.post.PostRegisterReq;
-import shop.geeksasang.dto.member.post.PostRegisterRes;
-import shop.geeksasang.dto.member.post.PostSocialRegisterReq;
-import shop.geeksasang.dto.member.post.PostSocialRegisterRes;
+import shop.geeksasang.dto.member.post.*;
 import shop.geeksasang.repository.*;
 import shop.geeksasang.utils.encrypt.SHA256;
 import shop.geeksasang.utils.jwt.JwtService;
@@ -29,7 +24,12 @@ import shop.geeksasang.utils.password.PasswordUtils;
 import shop.geeksasang.utils.resttemplate.naverlogin.NaverLoginData;
 import shop.geeksasang.utils.resttemplate.naverlogin.NaverLoginService;
 
+import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static shop.geeksasang.config.exception.response.BaseResponseStatus.*;
 
@@ -47,6 +47,8 @@ public class MemberService {
 
     private final NaverLoginService naverLoginRequest;
     private final JwtService jwtService;
+
+    private final AwsS3Service awsS3Service;
 
     // 회원 가입하기
     @Transactional(readOnly = false)
@@ -227,20 +229,44 @@ public class MemberService {
         }
     }
 
+    //수정 : 회원 정보 수정 (마이페이지)
     @Transactional(readOnly = false)
-    public PatchMemberRes updateMember(PatchMemberReq dto, int memberId) {
+    public PostMemberInfoRes updateMember(PostMemberInfoReq dto, int memberId) throws IOException {
 
-        Member member = memberRepository.findMemberByIdAndStatus(memberId).orElseThrow(() -> new BaseException(NOT_EXIST_USER));
+        Member member = memberRepository.findMemberById(memberId).orElseThrow(() -> new BaseException(NOT_EXIST_USER));
+        String password = member.getPassword(); //비밀번호
+        String imgUrl = member.getProfileImgUrl(); //프로필 이미지 url
 
-        Dormitory dormitory = null;
-
-        if(dto.getDormitoryId() != null){
-            dormitory = dormitoryRepository.findDormitoryById(dto.getDormitoryId()).orElseThrow(() -> new BaseException(NOT_EXISTS_DORMITORY));
+        //aws에 업로드
+        if(!dto.getProfileImg().isEmpty()){
+            MultipartFile image = dto.getProfileImg();
+            imgUrl = awsS3Service.upload(image.getInputStream(),image.getOriginalFilename(), image.getSize());
         }
 
-        Member updateMember = member.update(dormitory, dto.getProfileImgUrl(), dto.getNickname());
+        //선택한 기숙사 validation
+        Dormitory dormitory = dormitoryRepository.findDormitoryById(dto.getDormitoryId())
+                .orElseThrow(() ->  new BaseException(BaseResponseStatus.NOT_EXISTS_DORMITORY));
 
-        return PatchMemberRes.toDto(updateMember);
+        //비밀번호 변경 여부 체크
+        if(!dto.getPassword().isEmpty()){
+
+            //비밀번호 정규식 확인
+            if(!validatePassword(dto.getPassword())){
+                throw new BaseException(INVALID_PASSWORD);
+            }
+
+            //비밀번호 변경 & 비밀번호 일치 여부 확인
+            if(!dto.getPassword().equals(dto.getCheckPassword())){
+                throw new BaseException(DIFFRENT_PASSWORDS);
+            }
+            //비밀번호 암호화
+            password = SHA256.encrypt(dto.getPassword());
+        }
+
+        //수정
+        Member updateMember = member.update(dto,imgUrl,dormitory,password);
+
+        return PostMemberInfoRes.toDto(updateMember);
     }
 
     @Transactional(readOnly = true)
@@ -250,6 +276,20 @@ public class MemberService {
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTICIPANT));
         // 변환
         return GetMemberRes.toDto(member);
+    }
+
+    //조회 : 회원 정보 조회 (마이페이지)
+    @Transactional(readOnly = true)
+    public GetMemberInfoRes getMemberInfo(int memberId){
+        Member member = memberRepository.findMemberById(memberId).orElseThrow(() -> new BaseException(NOT_EXIST_USER));
+
+        List<Dormitory> dormitoryList = member.getUniversity().getDormitories();
+
+        List<DormitoriesVo> dormitoriesVoList = dormitoryList.stream()
+                .map(dormitory -> new DormitoriesVo(dormitory))
+                .collect(Collectors.toList());
+
+        return GetMemberInfoRes.toDto(member,dormitoriesVoList);
     }
 
 
@@ -295,5 +335,15 @@ public class MemberService {
             throw new BaseException(DIFFRENT_PASSWORDS);
         }
         member.updatePassword(SHA256.encrypt(dto.getNewPassword()));
+    }
+
+    //비밀번호 정규식 판별 메소드
+    private boolean validatePassword(String pw){
+        Pattern p = Pattern.compile("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[$@$!%*#?&])[A-Za-z\\d$@$!%*#?&]{8,15}$");
+        Matcher m = p.matcher(pw);
+        if(m.matches()){
+            return true;
+        }
+        return false;
     }
 }

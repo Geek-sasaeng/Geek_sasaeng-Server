@@ -15,20 +15,16 @@ import shop.geeksasang.domain.Member;
 import shop.geeksasang.dto.dormitory.PatchDormitoryReq;
 import shop.geeksasang.dto.dormitory.PatchDormitoryRes;
 import shop.geeksasang.dto.login.JwtInfo;
-import shop.geeksasang.dto.member.get.GetCheckCurrentPasswordReq;
-import shop.geeksasang.dto.member.get.GetCheckIdReq;
-import shop.geeksasang.dto.member.get.GetMemberRes;
-import shop.geeksasang.dto.member.get.GetNickNameDuplicatedReq;
+import shop.geeksasang.dto.member.get.*;
 import shop.geeksasang.dto.member.patch.*;
-import shop.geeksasang.dto.member.post.PostRegisterReq;
-import shop.geeksasang.dto.member.post.PostRegisterRes;
-import shop.geeksasang.dto.member.post.PostSocialRegisterReq;
-import shop.geeksasang.dto.member.post.PostSocialRegisterRes;
+import shop.geeksasang.dto.member.post.*;
 import shop.geeksasang.service.MemberService;
 import shop.geeksasang.utils.jwt.NoIntercept;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import javax.validation.Valid;
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/members")
@@ -119,21 +115,33 @@ public class MemberController {
         return new BaseResponse<>(response);
     }
 
-    // 수정: 멤버 정보 수정하기
-    @ApiOperation(value = "수정: 멤버 정보 수정하기", notes = "맴버 정보 프로필, 기숙사, 닉네임, 비밀번호를 수정.")
+    // 수정: 멤버 정보 수정하기 (마이페이지)
+    @ApiOperation(value = "수정: 멤버 정보 수정하기", notes = "(jwt 토큰 필요) 멤버 정보(프로필 이미지, 기숙사, 닉네임, 비밀번호, 아이디)를 수정.")
     @ApiResponses({
             @ApiResponse(code = 1000 , message = "요청에 성공하셨습니다."),
             @ApiResponse(code = 2005 , message = "입력하신 두 비밀번호가 다릅니다."),
             @ApiResponse(code = 2204 , message = "존재하지 않는 회원 id 입니다."),
             @ApiResponse(code = 2606 , message = "기숙사가 존재하지 않습니다."),
+            @ApiResponse(code = 2407 , message = "비밀번호는 최소 8 자로 문자, 숫자 및 특수 문자를 최소 하나씩 포함해서 8-15자리 이내로 입력해주세요."),
             @ApiResponse(code = 4000 , message = "서버 오류입니다.")
     })
-    @PatchMapping()
-    public BaseResponse<PatchMemberRes> updateMember(@RequestBody PatchMemberReq dto, HttpServletRequest request) {
+    @PostMapping(value = "/info")
+    public BaseResponse<PostMemberInfoRes> updateMember(@ModelAttribute PostMemberInfoReq dto, HttpServletRequest request) throws IOException {
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
+        PostMemberInfoRes res  = memberService.updateMember(dto, jwtInfo.getUserId());
+        return new BaseResponse<>(res);
+    }
 
-        PatchMemberRes res  = memberService.updateMember(dto, jwtInfo.getUserId());
-
+    // 조회 : 멤버 정보 조회 (마이페이지)
+    @ApiOperation(value = "조회: 멤버 정보 수정을 위한 조회", notes = "(jwt 토큰 필요) 수정을 위한 멤버 정보(프로필 이미지, 아이디, 기숙사, 닉네임)를 조회.")
+    @ApiResponses({
+            @ApiResponse(code = 1000 , message = "요청에 성공하셨습니다."),
+            @ApiResponse(code = 4000 , message = "서버 오류입니다.")
+    })
+    @GetMapping(value = "/info")
+    public BaseResponse<GetMemberInfoRes> getMemberInfo(HttpServletRequest request) throws IOException {
+        JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
+        GetMemberInfoRes res  = memberService.getMemberInfo(jwtInfo.getUserId());
         return new BaseResponse<>(res);
     }
 
@@ -224,4 +232,7 @@ public class MemberController {
         memberService.changePassword(dto, jwtInfo.getUserId());
         return new BaseResponse<>("비밀번호 수정에 성공하였습니다.");
     }
+
+
+
 }
