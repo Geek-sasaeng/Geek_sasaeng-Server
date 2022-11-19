@@ -16,6 +16,8 @@ public class GetMemberInfoRes {
     private String loginId; //현재 로그인 id
     private String imgUrl; //현재 프로필 이미지
 
+    private String nickname; //현재 닉네임
+
 
     public static GetMemberInfoRes toDto(Member member, List<DormitoriesVo> dormitoryList){
         return GetMemberInfoRes.builder()
@@ -23,17 +25,19 @@ public class GetMemberInfoRes {
                 .dormitoryName(member.getDormitory().getName())
                 .loginId(member.getLoginId())
                 .imgUrl(member.getProfileImgUrl())
+                .nickname(member.getNickName())
                 .dormitoryList(dormitoryList).build();
     }
 
     @Builder
     public GetMemberInfoRes(List<DormitoriesVo> dormitoryList, int dormitoryId, String dormitoryName, String loginId
-                                    ,String imgUrl){
+                                    ,String imgUrl,String nickname){
         this.dormitoryName = dormitoryName;
         this.dormitoryId = dormitoryId;
         this.dormitoryList = dormitoryList;
         this.loginId = loginId;
         this.imgUrl = imgUrl;
+        this.nickname = nickname;
     }
 
 }
