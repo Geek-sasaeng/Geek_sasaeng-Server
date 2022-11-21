@@ -11,15 +11,16 @@ import shop.geeksasang.config.type.MemberLoginType;
 import shop.geeksasang.domain.report.MemberReport;
 import shop.geeksasang.domain.report.record.DeliverPartyReportRecord;
 import shop.geeksasang.domain.report.record.MemberReportRecord;
+import shop.geeksasang.dto.member.post.PostMemberInfoReq;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+//@DynamicUpdate //변경된 것만 바꿔준다.
 @Entity
 @Getter
 public class Member extends BaseEntity {
@@ -100,16 +101,6 @@ public class Member extends BaseEntity {
         this.informationAgreeStatus = informationAgreeStatus;
     }
 
-    // 수정: 프로필 이미지
-    public void updateProfileImgUrl(String profileImgUrl){
-        this.profileImgUrl = profileImgUrl;
-    }
-
-    // 값 확인용 메서드
-    public void updateNickname(String nickName) { this.nickName = nickName; }
-
-    public void updatePassword(String password) { this.password = password; }
-
     // 회원 탈퇴
     public void changeStatusToInactive(){
         super.setStatus(BaseStatus.INACTIVE);
@@ -172,13 +163,6 @@ public class Member extends BaseEntity {
         return perDayReportingCount >= 3;
     }
 
-    public void resetPerDayReportingCount(){
-        perDayReportingCount = 0;
-    }
-
-    //수정: 회원의 기숙사
-    public void updateDormitory(Dormitory dormitory) { this.dormitory = dormitory; }
-
     public void updateFcmToken(String fcmToken){
         this.fcmToken = fcmToken;
     }
@@ -187,10 +171,33 @@ public class Member extends BaseEntity {
         this.profileImgUrl = profileImgUrl;
     }
 
+    public Member update(PostMemberInfoReq dto, String imgUrl, Dormitory dormitory, String password) {
+        this.loginId = dto.getLoginId();
+        this.nickName = dto.getNickname();
+        this.dormitory = dormitory;
+        this.profileImgUrl = imgUrl;
+        this.password = password;
+        return this;
+    }
+
     //테스트용
     public Member(int id, String nickName) {
         this.id = id;
         this.nickName = nickName;
         super.setStatus(BaseStatus.ACTIVE);
+    }
+
+    public Member(String nickName) {
+        this.id = id;
+        this.nickName = nickName;
+        super.setStatus(BaseStatus.ACTIVE);
+    }
+
+    public void updateDormitory(Dormitory dormitory) {
+        this.dormitory = dormitory;
+    }
+
+    public void updatePassword(String newPassword) {
+        this.password = newPassword;
     }
 }

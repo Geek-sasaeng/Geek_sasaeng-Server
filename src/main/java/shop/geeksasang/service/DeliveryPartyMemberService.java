@@ -74,12 +74,8 @@ public class DeliveryPartyMemberService {
 
     //파티(채팅방) 나오기 - 방장x
     @Transactional(readOnly = false)
-    public String patchDeliveryPartyMemberStatus(PatchLeaveMemberReq dto, JwtInfo jwtInfo){
-
-        int chiefId = jwtInfo.getUserId();
-
+    public String patchDeliveryPartyMemberStatus(PatchLeaveMemberReq dto, int memberId){
         //요청 보낸 사용자 Member
-        int memberId = jwtInfo.getUserId();
         Member findMember = memberRepository.findMemberByIdAndStatus(memberId).
                 orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTICIPANT));
 
@@ -93,9 +89,20 @@ public class DeliveryPartyMemberService {
 
         //참여정보 STATUS 수정(ACTIVE -> INACTIVE)
         deliveryPartyMember.changeStatusToInactive();
+        deliveryParty.removeDeliveryPartyMember(deliveryPartyMember);
 
         //현재 참여인원 -1
         deliveryParty.minusMatching();
+
+        // 현재인원 == (최대인원-1) 이면 MatchingStatus를 FINISH -> ONGOING으로 수정
+        if(deliveryParty.getCurrentMatching() == deliveryParty.getMaxMatching()-1){
+            deliveryParty.changeMatchingStatusToOngoing();
+        }
+
+        //참여 인원이 0명이면 파티 삭제
+        if(deliveryParty.getCurrentMatching() <= 0){
+            deliveryParty.changeStatusToInactive();
+        }
 
         String result = String.valueOf(BaseResponseStatus.LEAVE_CHATROOM_SUCCESS.getMessage());
       // PatchLeaveMemberRes res = new PatchLeaveMemberRes(result);
@@ -114,5 +121,4 @@ public class DeliveryPartyMemberService {
         // dto형태로 병경해서 반환
         return PatchAccountTransferStatusRes.toDto(deliveryPartyMember);
     }
-
 }

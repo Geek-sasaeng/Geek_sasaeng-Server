@@ -1,6 +1,4 @@
-package shop.geeksasang.dto.member.patch;
-
-
+package shop.geeksasang.dto.dormitory;
 
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiParam;
@@ -8,7 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotBlank;
 
 @NoArgsConstructor
 @Data

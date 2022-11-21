@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiParam;
 import lombok.*;
+import shop.geeksasang.config.status.BelongStatus;
+import shop.geeksasang.config.status.MatchingStatus;
 import shop.geeksasang.domain.*;
 
 import javax.validation.constraints.NotBlank;
@@ -11,148 +13,160 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@NoArgsConstructor
-@Data
 public class PostDeliveryPartyRes {
 
-    @ApiModelProperty(example = "1")
-    @ApiParam(value = "파지 아이디")
-    private int partyId;
+    @ApiModelProperty(example = "1", value = "배달파티 ID")
+    private int id;
 
-    @ApiModelProperty(example = "geeksasaeng")
-    @ApiParam(value = "사용자 닉네임")
+    @ApiModelProperty(example = "토마스최", value = "파티장 닉네임")
     private String chief;
 
-    @ApiModelProperty(example = "1기숙사")
-    @ApiParam(value = "기숙사 이름")
-    private String dormitory;
+    @ApiModelProperty(example = "2")
+    @ApiParam(value = "파티장 memberId")
+    private int chiefId;
 
-    @ApiModelProperty(example = "한식")
-    @ApiParam(value = "음식 카테고리")
+    @ApiModelProperty(example = "http://geeksasaeng.shop/s3/neo.jpg", value = "파티장 프로필 이미지 url")
+    private String chiefProfileImgUrl;
+
+    @ApiModelProperty(example = "한식", value = "음식 카테고리")
     private String foodCategory;
 
-    @ApiModelProperty(example = "초밥 같이 먹어요")
-    @ApiParam(value = "배달 파티 제목")
+    @ApiModelProperty(example = "true", value = "해시태그 추가 여부")
+    private boolean hashTag;
+
+    @ApiModelProperty(example = "한식 같이 먹어요!!", value = "배달파티 제목")
     private String title;
 
-    @ApiModelProperty(example = "편하게 채팅 주세요")
-    @ApiParam(value = "배달 파티 내용")
+    @ApiModelProperty(example = "불고기 전골 먹으실분 신청하세요.", value = "배달파티 내용")
     private String content;
 
-    @ApiModelProperty(example = "2022-07-13 16:29:30")
-    @ApiParam(value = "주문 시간")
+    @ApiModelProperty(example = "2022-07-11 15:30:00", value = "주문 예정 시간")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime orderTime;
 
-    @ApiModelProperty(example = "2022-07-13 13:29:30")
-    @ApiParam(value = "배달 파티 생성 시간")
-    private String createdAt;
-
-    @ApiModelProperty(example = "DINNER")
-    @ApiParam(value = "주문시간 카테고리")
-    private String orderTimeCategoryType;
-
-    @ApiModelProperty(example = "1")
-    @ApiParam(value = "배달파티 현재 인원")
+    @ApiModelProperty(example = "2", value = "현재까지 매칭 된 인원")
     private int currentMatching;
 
-    @ApiModelProperty(example = "4")
-    @ApiParam(value = "배달 파티 총 인원")
+    @ApiModelProperty(example = "4", value = "최대 미칭 인원")
     private int maxMatching;
 
-    @ApiModelProperty(example = "ONGOING")
-    @ApiParam(value = "주문 진행 상태")
-    private String matchingStatus;
+    @ApiModelProperty(example = "ONGOING", value = "배달 매칭 상태, 모집중 ONGOING, 모집마감 FINISH")
+    private MatchingStatus matchingStatus;
 
-    @ApiModelProperty(example = "https://baemin.me/mUpLJ7qBk")
-    @ApiParam(value = "배달 업소 url")
-    private String storeUrl;
+    @ApiModelProperty(example = "2022-07-11 15:30:00", value = "배달파티 정보 업데이트 시각")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+    private String updatedAt;
 
-    @ApiModelProperty(example = "37.456335")
-    @ApiParam(value="위도")
+    @ApiModelProperty(example = "37.456335", value = "위도")
     private Double latitude;
 
-    @ApiModelProperty(example = "127.135331")
-    @ApiParam(value="경도")
+    @ApiModelProperty(example = "127.135331", value =" 경도")
     private Double longitude;
 
-    @ApiModelProperty(example = "true")
-    @ApiParam(value = "해시태그 추가 여부")
-    private boolean hashTag;
+    @ApiModelProperty(example = "https://baemin.me/mUpLJ7qBk", value = "배달앱 주소")
+    private String storeUrl;
 
-    @ApiModelProperty(example = "2f48f241-9d64-4d16-bf56-70b9d4e0e79a")
-    @ApiParam(value = "채팅방 UUID 값")
+    @ApiModelProperty(example = "true", value = "작성자 본인 여부")
+    private boolean authorStatus;
+
+    @ApiModelProperty(example = "07438ec2-b0e6-4771-8e1d-115bd93ce433", value = "채팅방 uuid")
     private String uuid;
 
-    @ApiModelProperty(example = "신한은행")
-    @ApiParam(value = "은행이름")
-    private String bank;
+    @ApiModelProperty(example = "Y", value = "사용자가 파티멤버에 속해있는지 여부. 속해있으면 Y, 아니면 N")
+    private BelongStatus belongStatus;
 
-    @ApiModelProperty(example = "111-22222-33333")
-    @ApiParam(value = "계좌번호")
-    private String accountNumber;
+    //2차 피드백으로 추가
 
-    @ApiModelProperty(example = "교촌 채팅방입니다")
-    @ApiParam(value = "파티 채팅방 이름")
+    @ApiModelProperty(example = "1", value = "기숙사 id")
+    private int dormitoryId;
+
+    @ApiModelProperty(example = "1기숙사", value = "기숙사 이름")
+    private String dormitoryName;
+
+    @ApiModelProperty(example = "2022-07-13 13:29:30", value = "배달 파티 생성 시간")
+    private String createdAt;
+
+    @ApiModelProperty(example = "DINNER", value = "주문시간 카테고리")
+    private String orderTimeCategoryType;
+
+    @ApiModelProperty(example = "교촌 채팅방입니다", value = "파티 채팅방 이름")
     private String chatRoomName;
 
+    @ApiModelProperty(example = "111-22222-33333", value = "계좌번호")
+    private String accountNumber;
+
+    @ApiModelProperty(example = "신한은행", value = "은행이름")
+    private String bank;
 
     static public PostDeliveryPartyRes toDto(DeliveryParty deliveryParty){
         return PostDeliveryPartyRes.builder()
+                .id(deliveryParty.getId())
                 .chief(deliveryParty.getChief().getNickName())
-                .dormitory(deliveryParty.getDormitory().getName())
+                .chiefId(deliveryParty.getChief().getId())
+                .chiefProfileImgUrl(deliveryParty.getChief().getProfileImgUrl())
                 .foodCategory(deliveryParty.getFoodCategory().getTitle())
+                .hashTag(!deliveryParty.getDeliveryPartyHashTags().isEmpty())
                 .title(deliveryParty.getTitle())
                 .content(deliveryParty.getContent())
                 .orderTime(deliveryParty.getOrderTime())
-                .createdAt(deliveryParty.getCreatedAt())
-                .orderTimeCategoryType(deliveryParty.getOrderTimeCategory().toString())
                 .currentMatching(deliveryParty.getCurrentMatching())
                 .maxMatching(deliveryParty.getMaxMatching())
-                .matchingStatus(deliveryParty.getMatchingStatus().toString())
-                .storeUrl(deliveryParty.getStoreUrl())
+                .matchingStatus(deliveryParty.getMatchingStatus())
+                .updatedAt(deliveryParty.getUpdatedAt())
                 .latitude(deliveryParty.getLocation().getLatitude())
                 .longitude(deliveryParty.getLocation().getLongitude())
-                .hashTag(!deliveryParty.getDeliveryPartyHashTags().isEmpty())
+                .storeUrl(deliveryParty.getStoreUrl())
+                .authorStatus(true)
                 .uuid(deliveryParty.getUuid())
-                .partyId(deliveryParty.getId())
-                .bank(deliveryParty.getBank())
-                .accountNumber(deliveryParty.getAccountNumber())
+                .belongStatus(BelongStatus.Y)
+                .dormitoryId(deliveryParty.getDormitory().getId())
+                .dormitoryName(deliveryParty.getDormitory().getName())
+                .createdAt(deliveryParty.getCreatedAt())
+                .orderTimeCategoryType(deliveryParty.getOrderTimeCategory().toString())
                 .chatRoomName(deliveryParty.getChatRoomName())
+                .accountNumber(deliveryParty.getAccountNumber())
+                .bank(deliveryParty.getBank())
                 .build();
     }
 
     @Builder
-    public PostDeliveryPartyRes(int partyId, String chief, String dormitory, String foodCategory, String title, String content,
-                                LocalDateTime orderTime, String createdAt, String orderTimeCategoryType, int currentMatching, int maxMatching,
-                                String matchingStatus, String storeUrl, Double latitude, Double longitude, boolean hashTag, String uuid,
-                                String bank, String accountNumber, String chatRoomName) {
-        this.partyId = partyId;
+    public PostDeliveryPartyRes(int id, String chief, int chiefId, String chiefProfileImgUrl, String foodCategory, boolean hashTag, String title, String content,
+                                LocalDateTime orderTime, int currentMatching, int maxMatching, MatchingStatus matchingStatus, String updatedAt, Double latitude,
+                                Double longitude, String storeUrl, boolean authorStatus, String uuid, BelongStatus belongStatus, int dormitoryId,
+                                String dormitoryName, String createdAt, String orderTimeCategoryType, String chatRoomName, String accountNumber, String bank) {
+        this.id = id;
         this.chief = chief;
-        this.dormitory = dormitory;
+        this.chiefId = chiefId;
+        this.chiefProfileImgUrl = chiefProfileImgUrl;
         this.foodCategory = foodCategory;
+        this.hashTag = hashTag;
         this.title = title;
         this.content = content;
         this.orderTime = orderTime;
-        this.createdAt = createdAt;
-        this.orderTimeCategoryType = orderTimeCategoryType;
         this.currentMatching = currentMatching;
         this.maxMatching = maxMatching;
         this.matchingStatus = matchingStatus;
-        this.storeUrl = storeUrl;
+        this.updatedAt = updatedAt;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.hashTag = hashTag;
+        this.storeUrl = storeUrl;
+        this.authorStatus = authorStatus;
         this.uuid = uuid;
-        this.bank = bank;
-        this.accountNumber = accountNumber;
+        this.belongStatus = belongStatus;
+        this.dormitoryId = dormitoryId;
+        this.dormitoryName = dormitoryName;
+        this.createdAt = createdAt;
+        this.orderTimeCategoryType = orderTimeCategoryType;
         this.chatRoomName = chatRoomName;
+        this.accountNumber = accountNumber;
+        this.bank = bank;
     }
 
     //테스트용
     public PostDeliveryPartyRes(String dormitory, String foodCategory, String title) {
-        this.dormitory = dormitory;
         this.foodCategory = foodCategory;
         this.title = title;
     }
 }
+
+

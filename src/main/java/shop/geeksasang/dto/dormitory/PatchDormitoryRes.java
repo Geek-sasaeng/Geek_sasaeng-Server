@@ -1,4 +1,4 @@
-package shop.geeksasang.dto.member.patch;
+package shop.geeksasang.dto.dormitory;
 
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiParam;
@@ -8,7 +8,6 @@ import lombok.Setter;
 import shop.geeksasang.domain.Member;
 
 @Getter
-@Setter
 @Builder
 public class PatchDormitoryRes {
 
@@ -32,5 +31,4 @@ public class PatchDormitoryRes {
                 .dormitoryName(member.getDormitory().getName())
                 .build();
     }
-
 }

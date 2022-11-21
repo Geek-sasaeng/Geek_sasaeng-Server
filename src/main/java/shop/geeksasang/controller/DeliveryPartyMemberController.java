@@ -40,7 +40,7 @@ public class DeliveryPartyMemberController {
             @ApiResponse(code = 2614 ,message ="매칭이 완료된 파티입니다."),
             @ApiResponse(code = 4000 ,message = "서버 오류입니다.")
     })
-    @PostMapping("/deliveryPartyMember")
+    @PostMapping("/delivery-party-member")
     public BaseResponse<PostDeliveryPartyMemberRes> joinDeliveryPartyMember(@RequestBody PostDeliveryPartyMemberReq dto, HttpServletRequest request){
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
         PostDeliveryPartyMemberRes postDeliveryPartyMemberRes = deliveryPartyMemberService.joinDeliveryPartyMember(dto, jwtInfo.getUserId());
@@ -58,11 +58,11 @@ public class DeliveryPartyMemberController {
             @ApiResponse(code = 4000 ,message = "서버 오류입니다.")
     }
     )
-    @PatchMapping("/delivery-party/leave")
+    @PatchMapping("/delivery-party/member")
     public BaseResponse<String> patchDeliveryPartyMemberStatus(@Validated @RequestBody PatchLeaveMemberReq dto, HttpServletRequest request){
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
 
-        String response = deliveryPartyMemberService.patchDeliveryPartyMemberStatus(dto,jwtInfo);
+        String response = deliveryPartyMemberService.patchDeliveryPartyMemberStatus(dto, jwtInfo.getUserId());
 
         return new BaseResponse<>(response);
     }
@@ -74,11 +74,10 @@ public class DeliveryPartyMemberController {
             @ApiResponse(code = 2009 ,message ="존재하지 않는 멤버입니다"),
             @ApiResponse(code = 4000 ,message = "서버 오류입니다.")
     })
-    @PatchMapping("/deliveryPartyMember/account-transfer-status")
+    @PatchMapping("/delivery-party-member/account-transfer-status")
     public BaseResponse<PatchAccountTransferStatusRes> updateAccountTransferStatus(@RequestBody @Validated PatchAccountTransferStatusReq dto, HttpServletRequest request){
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
         PatchAccountTransferStatusRes res = deliveryPartyMemberService.updateAccountTransferStatus(dto,jwtInfo.getUserId());
         return new BaseResponse<>(res);
-
     }
 }

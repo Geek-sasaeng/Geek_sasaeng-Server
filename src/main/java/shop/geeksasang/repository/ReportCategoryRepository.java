@@ -1,4 +1,4 @@
-package shop.geeksasang.service;
+package shop.geeksasang.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

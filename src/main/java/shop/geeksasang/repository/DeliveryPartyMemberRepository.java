@@ -15,12 +15,12 @@ public interface DeliveryPartyMemberRepository extends JpaRepository<DeliveryPar
     @Query("select dpm from DeliveryPartyMember dpm where dpm.status = 'ACTIVE' and dpm.party.id = :deliveryPartyId")
     List<DeliveryPartyMember> findDeliveryPartyMembersByPartyId(int deliveryPartyId);
 
-    @Query("select dpm from DeliveryPartyMember dpm where dpm.status = 'ACTIVE' and dpm.participant.id = :memberId and dpm.party.id = :partyId")
+    @Query("select dpm from DeliveryPartyMember dpm where dpm.status = 'ACTIVE' and dpm.participant.id = :memberId and dpm.party.id = :partyId and dpm.participant.status ='ACTIVE'")
     Optional<DeliveryPartyMember> findDeliveryPartyMemberByMemberIdAndDeliveryPartyId(int memberId, int partyId);
 
-    @Query("select dpm from DeliveryPartyMember dpm join fetch dpm.party where dpm.participant.id = :userId and dpm.party.status = 'ACTIVE' ")
+    @Query("select dpm from DeliveryPartyMember dpm join fetch dpm.party where dpm.participant.id = :userId and dpm.party.status = 'ACTIVE'and dpm.status = 'ACTIVE'")
     List<DeliveryPartyMember> findByPartiesByDeliveryPartyMemberId(int userId);
 
-    @Query("select dpm from DeliveryPartyMember dpm where dpm.id = :deliveryPartyMemberId and dpm.status = 'ACTIVE'")
-    Optional<DeliveryPartyMember> findByDeliveryPartyMemberByIdAndStatus(int deliveryPartyMemberId);
+    @Query("select dpm from DeliveryPartyMember dpm where dpm.party.uuid = :uuid and dpm.participant.nickName = :nickName and dpm.status = 'ACTIVE'")
+    Optional<DeliveryPartyMember> tempFindByDeliveryPartyMemberByUuidAndNickName(String uuid, String nickName);
 }

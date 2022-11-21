@@ -34,6 +34,7 @@ public class LoginService {
 
     public PostLoginRes login(PostLoginReq dto){
 
+        //로그인 id 조회
         Member member = memberRepository.findMemberByLoginId(dto.getLoginId())
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_LOGINID));
 
@@ -41,7 +42,7 @@ public class LoginService {
 
         LoginStatus loginStatus = member.getLoginStatus(); // 로그인 횟수 상태
 
-        //password
+        //password 비교
         if(!password.equals(member.getPassword())){
             throw new BaseException(BaseResponseStatus.NOT_EXISTS_PASSWORD);
         }
@@ -49,6 +50,11 @@ public class LoginService {
         //status
         if(member.getStatus().equals(BaseStatus.INACTIVE)){
             throw new BaseException(BaseResponseStatus.INACTIVE_STATUS);
+        }
+
+        // 로그인 시 fcm 자동 저장
+        if(dto.getFcmToken() != null){
+            member.updateFcmToken(dto.getFcmToken());
         }
 
         JwtInfo vo = JwtInfo.builder()
@@ -67,6 +73,7 @@ public class LoginService {
                     .dormitoryId(member.getDormitory().getId())
                     .dormitoryName(member.getDormitory().getName())
                     .profileImgUrl(member.getProfileImgUrl())
+                    .fcmToken(member.getFcmToken())
                     .build();
         }
         else{
@@ -75,6 +82,7 @@ public class LoginService {
                     .nickName(member.getNickName())
                     .loginStatus(loginStatus)
                     .profileImgUrl(member.getProfileImgUrl())
+                    .fcmToken(member.getFcmToken())
                     .build();
         }
     }
@@ -102,6 +110,11 @@ public class LoginService {
 
         LoginStatus loginStatus = member.getLoginStatus(); // 로그인 횟수 상태
 
+        // 로그인 시 fcm 자동 저장
+        if(dto.getFcmToken() != null){
+            member.updateFcmToken(dto.getFcmToken());
+        }
+
         JwtInfo vo = JwtInfo.builder()
                 .userId(member.getId())
                 .universityId(member.getUniversity().getId())
@@ -118,6 +131,7 @@ public class LoginService {
                     .profileImgUrl(member.getProfileImgUrl())
                     .dormitoryId(member.getDormitory().getId())
                     .dormitoryName(member.getDormitory().getName())
+                    .fcmToken(member.getFcmToken())
                     .build();
         }
         else {
@@ -126,6 +140,7 @@ public class LoginService {
                     .nickName(member.getNickName())
                     .loginStatus(loginStatus)
                     .profileImgUrl(member.getProfileImgUrl())
+                    .fcmToken(member.getFcmToken())
                     .build();
         }
     }

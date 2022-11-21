@@ -180,6 +180,10 @@ public class DeliveryParty extends BaseEntity {
         this.matchingStatus = MatchingStatus.FINISH;
     }
 
+    public void changeMatchingStatusToOngoing(){
+        this.matchingStatus = MatchingStatus.ONGOING;
+    }
+
     public boolean isNotChief(Member attemptedChief){
         return attemptedChief != chief;
     }
@@ -210,6 +214,11 @@ public class DeliveryParty extends BaseEntity {
     //관계를 끊어도 연관관계 처리를 애매하게 해서 데이터가 계속 남아있었다. 확실하게 다 지워버리자.
     public void deleteNowChief(){
         DeliveryPartyMember nowChief = deliveryPartyMembers.remove(0);
+        nowChief.changeStatusToInactive();
         nowChief.leaveDeliveryParty();
+    }
+
+    public void removeDeliveryPartyMember(DeliveryPartyMember deliveryPartyMember){
+        deliveryPartyMembers.remove(deliveryPartyMember);
     }
 }

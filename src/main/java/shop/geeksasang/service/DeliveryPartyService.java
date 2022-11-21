@@ -1,7 +1,6 @@
 package shop.geeksasang.service;
 
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -10,6 +9,7 @@ import org.springframework.util.StringUtils;
 
 import shop.geeksasang.config.status.BaseStatus;
 import shop.geeksasang.config.status.BelongStatus;
+import shop.geeksasang.config.status.MatchingStatus;
 import shop.geeksasang.config.type.OrderTimeCategoryType;
 import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.config.exception.response.BaseResponseStatus;
@@ -94,6 +94,7 @@ public class DeliveryPartyService {
         DeliveryParty deliveryParty = DeliveryParty.makeParty(dto, orderTimeCategory, dormitory, foodCategory, chief, hashTagList);
 
         deliveryParty.addPartyMember(new DeliveryPartyMember(chief, deliveryParty));
+
         //배달파티 저장
         deliveryPartyRepository.save(deliveryParty);
 
@@ -147,18 +148,25 @@ public class DeliveryPartyService {
     }
 
     //배달파티 상세조회:
-    public GetDeliveryPartyDetailRes getDeliveryPartyDetailById(int partyId, JwtInfo jwtInfo){
-        BelongStatus belongStatus;
+    public GetDeliveryPartyDetailRes getDeliveryPartyDetailById(int partyId, int memberId){
+        BelongStatus belongStatus = BelongStatus.N;
         //사용자 본인 여부
         boolean authorStatus = false;
 
         //요청 보낸 사용자 Member 찾기
-        int memberId = jwtInfo.getUserId();
         Member findMember = memberRepository.findById(memberId).
                 orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTICIPANT));
 
-        DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyByIdBeforeOrderTime(partyId, LocalDateTime.now()).
+//        DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyByIdBeforeOrderTime(partyId, LocalDateTime.now()).
+//                orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTY));
+
+        DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyByIdAndStatus(partyId).
                 orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTY));
+
+        //주문 시간이 현재 시간보다 이전이거나 매칭 상태가 Finish 면 오직 방장만이 배달파티 상세보기를 할 수 있다.
+        if((deliveryParty.getOrderTime().isBefore(LocalDateTime.now()) | deliveryParty.getMatchingStatus() == MatchingStatus.FINISH) & deliveryParty.getChief() != findMember){
+            throw new BaseException(CHIEF_ONLY_SEE_DELIVERY_PARTY);
+        }
 
         //요청 보낸 사용자와 파티 chief 비교
         if(findMember.equals(deliveryParty.getChief())){
@@ -170,7 +178,6 @@ public class DeliveryPartyService {
         if(deliveryPartyMemberRepository.findDeliveryPartyMemberByMemberIdAndDeliveryPartyId(memberId, partyId).isPresent()){
             belongStatus = BelongStatus.Y;
         }
-        else{ belongStatus = BelongStatus.N;}
 
         GetDeliveryPartyDetailRes getDeliveryPartyDetailRes = GetDeliveryPartyDetailRes.toDto(deliveryParty, authorStatus, belongStatus);
         return getDeliveryPartyDetailRes;
@@ -253,10 +260,10 @@ public class DeliveryPartyService {
     }
 
     @Transactional(readOnly = false)
-    public PatchLeaveChiefRes chiefLeaveDeliveryParty(int partyId, int userId) {
+    public PatchLeaveChiefRes chiefLeaveDeliveryParty(String uuid, String nickName, int userId) {
 
         Member attemptedChief = memberRepository.findMemberByIdAndStatus(userId).orElseThrow(() -> new BaseException(NOT_EXIST_USER));
-        DeliveryParty findParty = deliveryPartyRepository.findDeliveryPartyByIdAndStatus(partyId).orElseThrow(() -> new BaseException(NOT_EXISTS_PARTY));
+        DeliveryParty findParty = deliveryPartyRepository.findDeliveryPartyByUuid(uuid).orElseThrow(() -> new BaseException(NOT_EXISTS_PARTY));
 
         if(findParty.isNotChief(attemptedChief)){
             throw new BaseException(INVALID_DELIVERY_PARTY_CHIEF);
@@ -268,11 +275,15 @@ public class DeliveryPartyService {
             return new PatchLeaveChiefRes(DELETE_PARTY);
         }
 
-        //제일 먼저 참여한 방장 후보의 멤버 아이디를 가져온다.
-        int secondDeliverPartyMemberId = findParty.getSecondDeliverPartyMemberId();
+//        //제일 먼저 참여한 방장 후보의 멤버 아이디를 가져온다.
+//        int secondDeliverPartyMemberId = findParty.getSecondDeliverPartyMemberId();
 
-        DeliveryPartyMember candidateForChief = deliveryPartyMemberRepository.findByDeliveryPartyMemberByIdAndStatus(secondDeliverPartyMemberId)
+        //TODO 프론트 요청에 의한 임시 수정. 나중에 무조건 바꿔아함.
+        DeliveryPartyMember candidateForChief = deliveryPartyMemberRepository.tempFindByDeliveryPartyMemberByUuidAndNickName(uuid, nickName)
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_DELIVERY_PARTY_PARTICIPANT));
+
+//        DeliveryPartyMember candidateForChief = deliveryPartyMemberRepository.findByDeliveryPartyMemberByIdAndStatus(secondDeliverPartyMemberId)
+//                .orElseThrow(() -> new BaseException(NOT_EXISTS_DELIVERY_PARTY_PARTICIPANT));
 
         findParty.leaveNowChiefAndChangeChief(candidateForChief.getParticipant());
 
@@ -281,9 +292,9 @@ public class DeliveryPartyService {
 
     // 배달 파티 수동 매칭 마감
     @Transactional(readOnly = false)
-    public PatchDeliveryPartyMatchingStatusRes patchDeliveryPartyMatchingStatus(int partyId, JwtInfo jwtInfo) {
-        int userId = jwtInfo.getUserId();
-        DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyByIdAndUserId(partyId, userId).
+    public PatchDeliveryPartyMatchingStatusRes patchDeliveryPartyMatchingStatus(String uuid, int userId) {
+
+        DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyByUuidAndUserId(uuid, userId).
                 orElseThrow(() -> new BaseException(BaseResponseStatus.CAN_NOT_FINISH_DELIVERY_PARTY));
 
         deliveryParty.changeMatchingStatusToFinish();
@@ -291,5 +302,26 @@ public class DeliveryPartyService {
                 .deliveryPartyId(deliveryParty.getId())
                 .matchingStatus(deliveryParty.getMatchingStatus().toString())
                 .build();
+    }
+
+    public List<GetRecentOngoingPartiesRes> getRecentOngoingDeliveryParties(int userId) {
+        List<DeliveryParty> threeRecentDeliveryParty = deliveryPartyQueryRepository.findRecentOngoingDeliveryParty(userId);
+        return threeRecentDeliveryParty.stream()
+                .map(deliveryParty -> GetRecentOngoingPartiesRes.toDto(deliveryParty))
+                .collect(Collectors.toList());
+    }
+
+    //진행했던(현재 비활성) 배달 파티 조회
+    public GetEndedDeliveryPartiesRes getEndedDeliveryParties(int userId, int cursor){
+
+        //요청 보낸 사용자 Member 찾기
+        Member findMember = memberRepository.findMemberByIdAndStatus(userId).
+                orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTICIPANT));
+
+        PageRequest paging = PageRequest.of(cursor, PAGING_SIZE, Sort.by(Sort.Direction.ASC, PAGING_STANDARD));
+
+        GetEndedDeliveryPartiesRes endedDeliveryParties = deliveryPartyQueryRepository.getEndedDeliveryParties(userId, paging);
+
+        return endedDeliveryParties;
     }
 }

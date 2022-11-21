@@ -5,14 +5,17 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import shop.geeksasang.config.status.BaseStatus;
 import shop.geeksasang.config.status.MatchingStatus;
 import shop.geeksasang.config.type.OrderTimeCategoryType;
 import shop.geeksasang.domain.DeliveryParty;
 import shop.geeksasang.domain.Member;
+import shop.geeksasang.dto.deliveryParty.get.GetEndedDeliveryPartiesRes;
 import shop.geeksasang.dto.deliveryParty.get.vo.DeliveryPartiesVo;
 import shop.geeksasang.dto.deliveryParty.get.GetDeliveryPartiesRes;
+import shop.geeksasang.dto.deliveryParty.get.vo.EndedDeliveryPartiesVo;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
@@ -20,6 +23,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static shop.geeksasang.domain.QDeliveryParty.*;
+import static shop.geeksasang.domain.QDeliveryPartyMember.*;
 
 
 @Repository
@@ -95,6 +99,48 @@ public class DeliveryPartyQueryRepository {
                 .collect(Collectors.toList());
 
         return new GetDeliveryPartiesRes(isFinalPage, deliveryPartiesVoList);
+    }
+
+    public List<DeliveryParty> findRecentOngoingDeliveryParty (int userId){
+        return query.select(deliveryPartyMember.party)
+                .from(deliveryPartyMember)
+                .where(deliveryPartyMember.participant.id.eq(userId),
+                        deliveryPartyMember.status.eq(BaseStatus.ACTIVE),
+                        deliveryPartyMember.party.status.eq(BaseStatus.ACTIVE),
+                        deliveryPartyMember.party.matchingStatus.eq(MatchingStatus.ONGOING),
+                        deliveryPartyMember.party.orderTime.after(LocalDateTime.now())
+                )
+                .orderBy(deliveryPartyMember.party.createdAt.desc())
+                .fetch();
+    }
+
+    //사용자가 진행했던(현재 비활성화)활동들 조회
+    public GetEndedDeliveryPartiesRes getEndedDeliveryParties(int userId, Pageable pageable){
+
+        List<DeliveryParty> deliveryParties = query.select(deliveryPartyMember.party)
+                .from(deliveryPartyMember)
+                .where(deliveryPartyMember.participant.id.eq(userId),
+                        deliveryPartyMember.status.eq(BaseStatus.ACTIVE),
+                        deliveryPartyMember.party.status.eq(BaseStatus.INACTIVE)
+                                .or(deliveryPartyMember.party.matchingStatus.eq(MatchingStatus.FINISH)))
+                .orderBy(deliveryPartyMember.createdAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize() + 1) // 페이징을 위해 11개를 가져온다.
+                .fetch();
+
+        boolean isFinalPage = true;
+
+        if(deliveryParties.size() == pageable.getPageSize() + 1){
+            deliveryParties.remove(pageable.getPageSize());
+            isFinalPage = false;
+        }
+
+        List<EndedDeliveryPartiesVo> endedDeliveryPartiesVoList =
+                deliveryParties.stream()
+                .map(deliveryParty -> EndedDeliveryPartiesVo.toDto(deliveryParty))
+                .collect(Collectors.toList());
+
+        return new GetEndedDeliveryPartiesRes(isFinalPage, endedDeliveryPartiesVoList);
     }
 }
 

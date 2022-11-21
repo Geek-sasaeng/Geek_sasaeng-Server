@@ -1,15 +1,11 @@
 package shop.geeksasang.controller;
 
-import io.jsonwebtoken.Jwt;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
 import shop.geeksasang.config.response.BaseResponse;
 import shop.geeksasang.dto.deliveryParty.get.*;
 import shop.geeksasang.dto.deliveryParty.patch.PatchDeliveryPartyMatchingStatusRes;
@@ -20,7 +16,6 @@ import shop.geeksasang.dto.deliveryParty.post.PostDeliveryPartyReq;
 import shop.geeksasang.dto.deliveryParty.post.PostDeliveryPartyRes;
 import shop.geeksasang.dto.deliveryParty.put.PutDeliveryPartyReq;
 import shop.geeksasang.dto.deliveryParty.put.PutDeliveryPartyRes;
-
 import shop.geeksasang.dto.login.JwtInfo;
 import shop.geeksasang.service.DeliveryPartyService;
 
@@ -92,15 +87,16 @@ public class DeliveryPartyController {
     //배달파티 조회: 상세조회
     @ApiOperation(value = "조회: 배달파티 상세조회", notes = "배달파티 게시물을 선택하면 상세 정보들을 볼 수 있다.")
     @ApiResponses({
-            @ApiResponse(code =1000 ,message ="요청에 성공하셨습니다."),
-            @ApiResponse(code = 2010, message = "존재하지 않는 파티입니다."),
-            @ApiResponse(code =2009 ,message ="존재하지 않는 멤버입니다"),
-            @ApiResponse(code=4000,message = "서버 오류입니다.")
+            @ApiResponse(code = 1000 , message = "요청에 성공하셨습니다."),
+            @ApiResponse(code = 2010,  message = "존재하지 않는 파티입니다."),
+            @ApiResponse(code = 2009 , message = "존재하지 않는 멤버입니다"),
+            @ApiResponse(code = 2023 , message = "배달 파티 주문 시간이 지나거나 매팅 상태가 마감인 경우는 방장만 배달 파티 상세보기가 가능합니다."),
+            @ApiResponse(code = 4000,  message = "서버 오류입니다.")
     })
     @GetMapping("/delivery-party/{partyId}")
     public BaseResponse<GetDeliveryPartyDetailRes> getDeliveryPartyDetailById(@PathVariable("partyId") int partyId, HttpServletRequest request){
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
-        GetDeliveryPartyDetailRes response = deliveryPartyService.getDeliveryPartyDetailById(partyId, jwtInfo);
+        GetDeliveryPartyDetailRes response = deliveryPartyService.getDeliveryPartyDetailById(partyId, jwtInfo.getUserId());
 
         return new BaseResponse<>(response);
     }
@@ -157,9 +153,9 @@ public class DeliveryPartyController {
             @ApiResponse(code = 4000 ,message = "서버 오류입니다.")
     })
     @PatchMapping("/delivery-party/chief")
-    public BaseResponse<PatchLeaveChiefRes> chiefLeaveDeliveryParty(@RequestBody PatchLeaveChiefReq req, HttpServletRequest request) {
+    public BaseResponse<PatchLeaveChiefRes> chiefLeaveDeliveryParty(@Validated @RequestBody PatchLeaveChiefReq req, HttpServletRequest request) {
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
-        PatchLeaveChiefRes res = deliveryPartyService.chiefLeaveDeliveryParty(req.getPartyId(), jwtInfo.getUserId());
+        PatchLeaveChiefRes res = deliveryPartyService.chiefLeaveDeliveryParty(req.getUuid(), req.getNickName(),jwtInfo.getUserId());
         return new BaseResponse<>(res);
     }
 
@@ -169,12 +165,38 @@ public class DeliveryPartyController {
             @ApiResponse(code =2616 ,message ="파티 매칭 마감을 할 수 없는 유저이거나 이미 마감된 상태입니다."),
             @ApiResponse(code=4000,message = "서버 오류입니다.")
     })
-    @PatchMapping("/delivery-party/{partyId}/matching-status")
-    public BaseResponse<PatchDeliveryPartyMatchingStatusRes> patchDeliveryPartyMatchingStatus(@PathVariable("partyId") int partyId, HttpServletRequest request) {
+    @PatchMapping("/delivery-party/{uuid}/matching-status")
+    public BaseResponse<PatchDeliveryPartyMatchingStatusRes> patchDeliveryPartyMatchingStatus(@PathVariable String uuid, HttpServletRequest request) {
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
 
-        PatchDeliveryPartyMatchingStatusRes response = deliveryPartyService.patchDeliveryPartyMatchingStatus(partyId, jwtInfo);
+        PatchDeliveryPartyMatchingStatusRes response = deliveryPartyService.patchDeliveryPartyMatchingStatus(uuid, jwtInfo.getUserId());
         return new BaseResponse<>(response);
     }
 
+
+    @ApiOperation(value = "제일 최근에 들어간 진행중인 배달파티 리스트 ", notes = "가장 최근에 참여한 진행 중인 배달 파티들을 가져온다.")
+    @ApiResponses({
+            @ApiResponse(code =1000 ,message ="요청에 성공하였습니다."),
+            @ApiResponse(code=4000,message = "서버 오류입니다.")
+    })
+    @GetMapping("/delivery-parties/recent/ongoing")
+    public BaseResponse<List<GetRecentOngoingPartiesRes>> getRecentOngoingDeliveryParties(HttpServletRequest request){
+        JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
+        List<GetRecentOngoingPartiesRes> res = deliveryPartyService.getRecentOngoingDeliveryParties(jwtInfo.getUserId());
+        return new BaseResponse<>(res);
+    }
+
+    @ApiOperation(value = "사용자가 진행했던 배달파티 리스트", notes = "사용자가 참여 or 진행했던 배달파티들을 가져온다.(현재는 비활성화 상태인 배달파티) \n"+
+            "cursor값을 넣어 줘야 합니다.(cursor값 넣지 않으면 4000 에러 발생) \n"+"URL 예시 : https://geeksasaeng.shop/delivery-parties/end?cursor=2 \n")
+    @ApiResponses({
+            @ApiResponse(code = 1000 ,message = "요청에 성공하였습니다."),
+            @ApiResponse(code = 4000,message = "서버 오류입니다."),
+            @ApiResponse(code = 2009, message = "존재하지 않는 멤버입니다.")
+    })
+    @GetMapping("/delivery-parties/end")
+    public BaseResponse<GetEndedDeliveryPartiesRes> getEndedDeliveryParties(HttpServletRequest request,@RequestParam int cursor){
+        JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
+        GetEndedDeliveryPartiesRes getEndedDeliveryPartiesRes = deliveryPartyService.getEndedDeliveryParties(jwtInfo.getUserId(),cursor);
+        return new BaseResponse<>(getEndedDeliveryPartiesRes);
+    }
 }

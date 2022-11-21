@@ -26,6 +26,8 @@ public enum BaseResponseStatus {
      */
     VALID_PHONEVALIDKEY(true,1201,"폰 인증번호가 일치합니다."),
     VALID_NICKNAME(true,1202,"사용 가능한 닉네임입니다."),
+    VALID_PASSWORD(true,1203,"비밀번호가 일치합니다."),
+
 
     /**
      * 미니
@@ -66,7 +68,7 @@ public enum BaseResponseStatus {
     NOT_EXISTS_UNIVERSITY(false, 2008, "존재하지 않는 학교 이름입니다"),
     NOT_EXISTS_PARTICIPANT(false,2009,"존재하지 않는 멤버입니다"),
     NOT_EXISTS_PARTY(false,2010,"존재하지 않는 파티입니다."),
-    NOT_EXISTS_PASSWORD(false, 2011,"비밀번호가 틀립니다. "),
+    NOT_EXISTS_PASSWORD(false, 2011,"비밀번호가 틀립니다."),
     INACTIVE_STATUS(false,2012,"회원 status가 INACITVE 입니다."),
     INVALID_SMS_VERIFY_NUMBER(false,2013,"인증번호가 틀렸습니다."),
     INVALID_SMS_COUNT(false,2015,"일일 최대 전송 횟수를 초과했습니다."),
@@ -77,6 +79,8 @@ public enum BaseResponseStatus {
     ALREADY_PARTICIPATE_PARTY(false, 2020, "이미 파티에 참여하고 있습니다."),
     INVALID_DELIVERY_PARTY_CHIEF(false, 2021, "파티의 방장이 아닙니다."),
     NOT_EXISTS_DELIVERY_PARTY_PARTICIPANT(false,2022,"존재하지 않는 배달 파티 멤버입니다."),
+    CHIEF_ONLY_SEE_DELIVERY_PARTY(false,2023,"배달 파티 주문 시간이 지나거나 매팅 상태가 마감인 경우는 방장만 배달 파티 상세보기가 가능합니다."),
+
 
 
     /**
@@ -88,6 +92,7 @@ public enum BaseResponseStatus {
     DIFFERENT_PHONEVALIDKEY(false, 2203, "폰 인증번호가 다릅니다."),
     NOT_EXIST_USER(false,2204,"존재하지 않는 회원 id 입니다."),
     BLANK_KEYWORD(false,2205,"검색어를 입력해주세요"),
+    NOT_EXIST_ANNOUNCEMENT(false, 2206, "존재하지 않는 공지사항입니다."),
 
 
     /**
@@ -100,6 +105,8 @@ public enum BaseResponseStatus {
     NOT_EXISTS_PERMISSION_UPDATE(false,2403,"수정권한이 없는 유저입니다."),
     CAN_NOT_CREATE_PARTY(false, 2404, "사용자 신고 3번 이상인 유저는 배달파티를 생성할 수 없습니다."),
     NOT_EXISTS_PARTY_MEMBER(false, 2405, "참여중인 배달파티 정보를 찾을 수 없습니다."),
+    NOT_EXISTS_ANNOUNCEMENTS(false, 2406, "공지사항이 없습니다."),
+    INVALID_PASSWORD(false,2407,"비밀번호는 최소 8 자로 문자, 숫자 및 특수 문자를 최소 하나씩 포함해서 8-15자리 이내로 입력해주세요."),
 
 
 
@@ -124,6 +131,7 @@ public enum BaseResponseStatus {
     MATCHING_COMPLITED(false, 2614, "매칭이 완료된 파티입니다."),
     ORDER_TIME_OVER(false, 2615, "파티 신청 시간이 끝났습니다."),
     CAN_NOT_FINISH_DELIVERY_PARTY(false, 2616, "파티 매칭 마감을 할 수 없는 유저이거나 이미 마감된 상태입니다."),
+    DIFFERENT_CHIEF_ID(false, 2617, "배달 완료가 불가능한 유저입니다."),
 
     /**
      * 네오
