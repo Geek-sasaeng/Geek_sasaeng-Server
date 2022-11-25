@@ -4,7 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import shop.geeksasang.config.domain.BaseEntity;
-import shop.geeksasang.domain.chat.DeliveryPartyChatRoom;
+
 
 import javax.persistence.*;
 

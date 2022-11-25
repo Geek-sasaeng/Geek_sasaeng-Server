@@ -1,9 +1,8 @@
-package shop.geeksasang.dto.chatting;
+package shop.geeksasang.dto.chat;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import net.bytebuddy.asm.Advice;
 
 import javax.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
@@ -17,7 +16,7 @@ public class PostChattingRes {
     private String email;
 
     @NotEmpty
-    private String chattingRoomId;
+    private String ChatRoomId;
 
     @NotEmpty
     private String content;
@@ -25,15 +24,15 @@ public class PostChattingRes {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
 
-    public PostChattingRes(String chattingRoomId, String content, LocalDateTime createdAt) {
-        this.chattingRoomId = chattingRoomId;
+    public PostChattingRes(String ChatRoomId, String content, LocalDateTime createdAt) {
+        this.ChatRoomId = ChatRoomId;
         this.content = content;
         this.createdAt = createdAt;
     }
 
-    public PostChattingRes(String email, String chattingRoomId, String content, LocalDateTime createdAt) {
+    public PostChattingRes(String email, String ChatRoomId, String content, LocalDateTime createdAt) {
         this.email = email;
-        this.chattingRoomId = chattingRoomId;
+        this.ChatRoomId = ChatRoomId;
         this.content = content;
         this.createdAt = createdAt;
     }

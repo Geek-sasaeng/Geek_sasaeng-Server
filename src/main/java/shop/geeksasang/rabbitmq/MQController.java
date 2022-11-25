@@ -19,9 +19,9 @@ public class MQController {
 
     @GetMapping("/create")
     @NoIntercept //TODO:개발을 위해 임시로 jwt 허용되게한 것. 추후 제거 바람.
-    public String createChattingRoom(@RequestParam String email, @RequestParam String chattingRoomUUID){
+    public String createChatRoom(@RequestParam String email, @RequestParam String ChatRoomUUID){
 
-        String exchangeName = "chatting-" + "exchange-" + chattingRoomUUID;
+        String exchangeName = "chatting-" + "exchange-" + ChatRoomUUID;
         Exchange exchange = new FanoutExchange(exchangeName);
         admin.declareExchange(exchange);
 
@@ -39,9 +39,9 @@ public class MQController {
 
     @GetMapping
     @NoIntercept//TODO:개발을 위해 임시로 jwt 허용되게한 것. 추후 제거 바람.
-    public String joinChattingRoom(@RequestParam String email, @RequestParam String chattingRoomUUID){
+    public String joinChatRoom(@RequestParam String email, @RequestParam String ChatRoomUUID){
 
-        String exchangeName = "chatting-" + "exchange-" + chattingRoomUUID;
+        String exchangeName = "chatting-" + "exchange-" + ChatRoomUUID;
 
         Queue queue = new Queue(email, true, false, false);
         QueueInformation queueInfo = admin.getQueueInfo(email);
@@ -57,8 +57,8 @@ public class MQController {
 
     @GetMapping("/msg")
     @NoIntercept//TODO:개발을 위해 임시로 jwt 허용되게한 것. 추후 제거 바람.
-    public String sendMessage(@RequestParam String msg, @RequestParam String chattingRoomUUID){
-        String exchangeName = "chatting-" + "exchange-" + chattingRoomUUID;
+    public String sendMessage(@RequestParam String msg, @RequestParam String ChatRoomUUID){
+        String exchangeName = "chatting-" + "exchange-" + ChatRoomUUID;
 
         rabbitTemplate.convertAndSend(exchangeName, "asdf", msg);
         return "OK";

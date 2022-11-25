@@ -1,4 +1,4 @@
-package shop.geeksasang.domain.chatting;
+package shop.geeksasang.domain.chat;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

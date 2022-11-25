@@ -1,4 +1,4 @@
-package shop.geeksasang.domain.chatting;
+package shop.geeksasang.domain.chat;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,18 +11,18 @@ import java.util.List;
 @Document
 @Getter
 @NoArgsConstructor
-public class PartyChattingRoom extends ChattingRoom{
+public class PartyChatRoom extends ChatRoom{
 
     private String title;
 
     //TODO:채팅과 일대다 연관관계 테스트 중
     @DocumentReference // 일대다
-    private List<Chatting> chattings = new ArrayList<>();
+    private List<Chat> chattings = new ArrayList<>();
 
     private List<ParticipantInfo> participants = new ArrayList<>();
 
 //    @DocumentReference // 일대다
-//    private List<PartyChattingRoomMember> participants = new ArrayList<>();
+//    private List<PartyChatRoomMember> participants = new ArrayList<>();
 
     private String accountNumber;
     private String bank;
@@ -30,18 +30,18 @@ public class PartyChattingRoom extends ChattingRoom{
     private Boolean isFinish;
     private Integer maxMatching;
 
-    public PartyChattingRoom(String title) {
+    public PartyChatRoom(String title) {
         super();
         this.title = title;
     }
 
-    public PartyChattingRoom(String title, List<Chatting> chattings) {
+    public PartyChatRoom(String title, List<Chat> chattings) {
         super();
         this.title = title;
         this.chattings = chattings;
     }
 
-    public PartyChattingRoom(String title, List<Chatting> chattings, List<ParticipantInfo> participants, String accountNumber, String bank, String category, Boolean isFinish, Integer maxMatching) {
+    public PartyChatRoom(String title, List<Chat> chattings, List<ParticipantInfo> participants, String accountNumber, String bank, String category, Boolean isFinish, Integer maxMatching) {
         super();
         this.title = title;
         this.chattings = chattings;
@@ -55,7 +55,7 @@ public class PartyChattingRoom extends ChattingRoom{
 
     @Override
     public String toString() {
-        return "DeliveryPartyChattingRoom{" +
+        return "DeliveryPartyChatRoom{" +
                 "id='" + id + '\'' +
                 ", baseEntityMongo=" + baseEntityMongo +
                 ", title='" + title + '\'' +

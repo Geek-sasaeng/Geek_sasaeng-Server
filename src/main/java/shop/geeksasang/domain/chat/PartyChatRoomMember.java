@@ -1,4 +1,4 @@
-package shop.geeksasang.domain.chatting;
+package shop.geeksasang.domain.chat;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,7 +12,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PartyChattingRoomMember {
+public class PartyChatRoomMember {
 
     @Id
     private String id;
@@ -20,6 +20,6 @@ public class PartyChattingRoomMember {
     private int memberId;
 
 //    @DocumentReference(lazy = true) // 다대일
-//    private PartyChattingRoom partyChattingRoom;
+//    private PartyChatRoom partyChatRoom;
 
 }

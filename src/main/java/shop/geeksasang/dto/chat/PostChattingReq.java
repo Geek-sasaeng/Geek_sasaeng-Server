@@ -1,4 +1,4 @@
-package shop.geeksasang.dto.chatting;
+package shop.geeksasang.dto.chat;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,13 +9,13 @@ import javax.validation.constraints.NotEmpty;
 public class PostChattingReq {
 
     @NotEmpty
-    private String chattingRoomId;
+    private String ChatRoomId;
 
     @NotEmpty
     private String content;
 
-    public PostChattingReq(String chattingRoomId, String content) {
-        this.chattingRoomId = chattingRoomId;
+    public PostChattingReq(String ChatRoomId, String content) {
+        this.ChatRoomId = ChatRoomId;
         this.content = content;
     }
 }
