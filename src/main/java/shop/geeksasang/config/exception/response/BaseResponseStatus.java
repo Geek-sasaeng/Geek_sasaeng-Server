@@ -93,6 +93,8 @@ public enum BaseResponseStatus {
     NOT_EXIST_USER(false,2204,"존재하지 않는 회원 id 입니다."),
     BLANK_KEYWORD(false,2205,"검색어를 입력해주세요"),
     NOT_EXIST_ANNOUNCEMENT(false, 2206, "존재하지 않는 공지사항입니다."),
+    NOT_EXISTS_CHATTING_ROOM(false,2207,"채팅방이 존재하지 않습니다."),
+
 
 
     /**

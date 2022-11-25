@@ -1,5 +1,13 @@
-package shop.geeksasang.rabbitmq;
-
+package shop.geeksasang.rabbitmq;//
+//package shop.geeksasangchat.rabbitmq;
+//
+//
+//import org.springframework.amqp.rabbit.core.RabbitTemplate;
+//import org.springframework.boot.CommandLineRunner;
+//import org.springframework.stereotype.Component;
+//
+//import java.util.concurrent.TimeUnit;
+//
 //@Component
 //public class Runner implements CommandLineRunner {
 //

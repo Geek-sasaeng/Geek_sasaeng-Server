@@ -9,6 +9,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import shop.geeksasang.domain.chatting.Chatting;
 import shop.geeksasang.dto.chatting.PostChattingRes;
 
+
 public class PartyChattingQueue2 {
 
     private Queue queue;
