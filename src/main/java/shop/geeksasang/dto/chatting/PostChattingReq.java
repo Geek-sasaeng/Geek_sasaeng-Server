@@ -14,11 +14,8 @@ public class PostChattingReq {
     @NotEmpty
     private String content;
 
-    private int participantsCnt;
-
-    public PostChattingReq(String chattingRoomId, String content, int participantsCnt) {
+    public PostChattingReq(String chattingRoomId, String content) {
         this.chattingRoomId = chattingRoomId;
         this.content = content;
-        this.participantsCnt = participantsCnt;
     }
 }

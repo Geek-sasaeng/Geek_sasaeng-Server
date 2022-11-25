@@ -1,5 +1,9 @@
-package shop.geeksasang.rabbitmq;
-
+package shop.geeksasang.rabbitmq;//package shop.geeksasangchat.rabbitmq;
+//
+//import org.springframework.stereotype.Component;
+//
+//import java.util.concurrent.CountDownLatch;
+//
 //@Component
 //public class Receiver {
 //
