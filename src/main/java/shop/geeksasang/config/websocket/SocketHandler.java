@@ -1,4 +1,4 @@
-package shop.geeksasang.config.socket;
+package shop.geeksasang.config.websocket;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
@@ -7,7 +7,6 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.util.HashMap;
-import java.util.List;
 
 @Component
 public class SocketHandler extends TextWebSocketHandler {

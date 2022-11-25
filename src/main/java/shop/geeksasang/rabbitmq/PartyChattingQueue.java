@@ -16,9 +16,10 @@ public class PartyChattingQueue {
     private TopicExchange topicExchange;
     private RabbitTemplate rabbitTemplate;
 
-    static final String EXCHANGE_NAME = "chatting-room-exchange-test6";
-    static final String QUEUE_NAME = "chatting-room-queue-test6";
-    static final String ROUTING_KEY = "chatting.test.room.#"; // 라우팅 키, publishing 하는 방법을 결정.
+    static final String EXCHANGE_NAME = "chatting-exchange-1234";
+    static final String QUEUE_NAME = "chatting-room-queue-test9";
+    static final String ROUTING_KEY = "chatting.test.room3.#"; // 라우팅 키, publishing 하는 방법을 결정.
+    static final String FANOUT_EXCHANGE_NAME = "test1.fanout";
 
     public PartyChattingQueue(RabbitTemplate rabbitTemplate ) {
         this.rabbitTemplate = rabbitTemplate;
@@ -35,10 +36,11 @@ public class PartyChattingQueue {
     }
 
     // publish 메소드: 큐애 메시지 보내기
-    public void send(Chatting saveChatting, String chattingRoomId, int participantsCnt) {
+    public void send(Chatting saveChatting, String chattingRoomId) {
         System.out.println("====================" + chattingRoomId);
         System.out.println("chattingRoomId = " + chattingRoomId);
         System.out.println("saveChatting = " + saveChatting);
+        String exchangeName = "chatting-" + "exchange-" + chattingRoomId;
         // json 형식으로 변환 후 전송
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
         PostChattingRes postChattingRes = new PostChattingRes(chattingRoomId, saveChatting.getContent(), saveChatting.getBaseEntityMongo().getCreatedAt()); // ObjectMapper가 java8의 LocalDateTime을 지원하지 않는 에러 해결
@@ -48,9 +50,10 @@ public class PartyChattingQueue {
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-        for(int i=0;i<participantsCnt;i++){
-            rabbitTemplate.convertAndSend(EXCHANGE_NAME, chattingRoomId, saveChattingJsonStr); // convertAndSend(exchange, 라우팅 키, 메시지 내용) : EXCHANGE를 통해 라우팅 키에 해당하는 큐에 메시지 전송.
-        }
+
+        rabbitTemplate.convertAndSend(exchangeName, chattingRoomId, saveChattingJsonStr); // convertAndSend(exchange, 라우팅 키, 메시지 내용) : EXCHANGE를 통해 라우팅 키에 해당하는 큐에 메시지 전송.
+//            rabbitTemplate.convertAndSend(FANOUT_EXCHANGE_NAME, chattingRoomId, saveChattingJsonStr);
+
     }
 }
 
