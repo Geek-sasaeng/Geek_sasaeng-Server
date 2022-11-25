@@ -2,8 +2,7 @@ package shop.geeksasang.domain.report;
 
 import lombok.Builder;
 import lombok.NoArgsConstructor;
-import shop.geeksasang.domain.Member;
-import shop.geeksasang.domain.ReportCategory;
+import shop.geeksasang.domain.member.Member;
 
 import javax.persistence.*;
 

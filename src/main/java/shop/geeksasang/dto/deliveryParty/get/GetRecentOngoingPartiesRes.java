@@ -3,7 +3,7 @@ package shop.geeksasang.dto.deliveryParty.get;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
-import shop.geeksasang.domain.DeliveryParty;
+import shop.geeksasang.domain.deliveryparty.DeliveryParty;
 
 @Getter
 public class GetRecentOngoingPartiesRes {

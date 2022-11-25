@@ -1,18 +1,20 @@
 package shop.geeksasang.integration;
 
-import org.aspectj.lang.annotation.Before;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.event.annotation.BeforeTestClass;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
-import shop.geeksasang.domain.*;
-import shop.geeksasang.repository.DormitoryRepository;
-import shop.geeksasang.repository.FoodCategoryRepository;
+import shop.geeksasang.domain.deliveryparty.FoodCategory;
+import shop.geeksasang.domain.deliveryparty.HashTag;
+import shop.geeksasang.domain.location.Location;
+import shop.geeksasang.domain.university.Dormitory;
+import shop.geeksasang.domain.university.University;
+import shop.geeksasang.repository.university.DormitoryRepository;
+import shop.geeksasang.repository.deliveryparty.FoodCategoryRepository;
 import shop.geeksasang.repository.HashTagRepository;
-import shop.geeksasang.repository.UniversityRepository;
+import shop.geeksasang.repository.university.UniversityRepository;
 
 @WebAppConfiguration
 @SpringBootTest

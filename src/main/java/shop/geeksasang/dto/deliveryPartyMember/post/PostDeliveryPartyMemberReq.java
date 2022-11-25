@@ -6,7 +6,6 @@ import io.swagger.annotations.ApiParam;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import shop.geeksasang.domain.DeliveryPartyMember;
 
 import javax.validation.constraints.NotNull;
 

@@ -6,12 +6,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import shop.geeksasang.config.type.MemberLoginType;
-import shop.geeksasang.domain.Email;
-import shop.geeksasang.domain.Member;
-import shop.geeksasang.domain.PhoneNumber;
+import shop.geeksasang.domain.auth.Email;
+import shop.geeksasang.domain.member.Member;
+import shop.geeksasang.domain.auth.PhoneNumber;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 @AllArgsConstructor

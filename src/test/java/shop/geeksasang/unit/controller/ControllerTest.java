@@ -8,8 +8,29 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.test.web.servlet.MockMvc;
 
-import shop.geeksasang.controller.*;
-import shop.geeksasang.service.*;
+import shop.geeksasang.controller.auth.EmailController;
+import shop.geeksasang.controller.auth.LoginController;
+import shop.geeksasang.controller.auth.SmsController;
+import shop.geeksasang.controller.common.CommercialController;
+import shop.geeksasang.controller.deliveryparty.DeliveryPartyController;
+import shop.geeksasang.controller.deliveryparty.DeliveryPartyMemberController;
+import shop.geeksasang.controller.member.MemberController;
+import shop.geeksasang.controller.report.DeliveryPartyReportController;
+import shop.geeksasang.controller.report.MemberReportController;
+import shop.geeksasang.controller.university.DormitoryController;
+import shop.geeksasang.controller.university.UniversityController;
+import shop.geeksasang.service.auth.EmailService;
+import shop.geeksasang.service.auth.LoginService;
+import shop.geeksasang.service.auth.SmsService;
+import shop.geeksasang.service.block.BlockService;
+import shop.geeksasang.service.common.CommercialService;
+import shop.geeksasang.service.deliveryparty.DeliveryPartyMemberService;
+import shop.geeksasang.service.deliveryparty.DeliveryPartyService;
+import shop.geeksasang.service.member.MemberService;
+import shop.geeksasang.service.report.DeliveryPartyReportService;
+import shop.geeksasang.service.report.MemberReportService;
+import shop.geeksasang.service.university.DormitoryService;
+import shop.geeksasang.service.university.UniversityService;
 import shop.geeksasang.utils.jwt.JwtService;
 
 @WebMvcTest({

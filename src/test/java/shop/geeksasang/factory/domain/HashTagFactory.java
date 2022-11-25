@@ -1,6 +1,6 @@
 package shop.geeksasang.factory.domain;
 
-import shop.geeksasang.domain.HashTag;
+import shop.geeksasang.domain.deliveryparty.HashTag;
 
 public class HashTagFactory {
     public static HashTag create(){

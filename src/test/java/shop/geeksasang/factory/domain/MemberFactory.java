@@ -1,6 +1,6 @@
 package shop.geeksasang.factory.domain;
 
-import shop.geeksasang.domain.Member;
+import shop.geeksasang.domain.member.Member;
 
 public class MemberFactory {
     public static Member create(){

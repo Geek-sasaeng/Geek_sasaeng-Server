@@ -5,9 +5,9 @@ import io.swagger.annotations.ApiParam;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Range;
-import shop.geeksasang.domain.DeliveryParty;
-import shop.geeksasang.domain.Member;
-import shop.geeksasang.domain.ReportCategory;
+import shop.geeksasang.domain.deliveryparty.DeliveryParty;
+import shop.geeksasang.domain.member.Member;
+import shop.geeksasang.domain.report.ReportCategory;
 import shop.geeksasang.domain.report.DeliveryPartyReport;
 
 import javax.validation.constraints.NotNull;

@@ -10,7 +10,7 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 import shop.geeksasang.dto.chat.PostChattingRes;
-import shop.geeksasang.service.DeliveryPartyChatService;
+import shop.geeksasang.service.chat.DeliveryPartyChatService;
 
 import java.util.HashMap;
 

@@ -4,9 +4,9 @@ import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiParam;
 import lombok.Builder;
 import lombok.Data;
-import shop.geeksasang.domain.Email;
-import shop.geeksasang.domain.Member;
-import shop.geeksasang.domain.PhoneNumber;
+import shop.geeksasang.domain.auth.Email;
+import shop.geeksasang.domain.member.Member;
+import shop.geeksasang.domain.auth.PhoneNumber;
 
 @Builder // .builder() 사용
 @Data// Getter, Setter 포함

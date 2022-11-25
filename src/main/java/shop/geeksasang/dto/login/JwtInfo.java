@@ -1,7 +1,6 @@
 package shop.geeksasang.dto.login;
 
 import lombok.*;
-import shop.geeksasang.domain.University;
 
 @Getter @Setter
 @Builder

@@ -1,12 +1,10 @@
 package shop.geeksasang.dto.member.patch;
 
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiParam;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import shop.geeksasang.domain.Member;
 
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;

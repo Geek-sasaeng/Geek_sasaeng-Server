@@ -5,8 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import shop.geeksasang.domain.DeliveryParty;
-import shop.geeksasang.dto.deliveryParty.get.GetEndedDeliveryPartiesRes;
+import shop.geeksasang.domain.deliveryparty.DeliveryParty;
 
 @Getter
 @Setter

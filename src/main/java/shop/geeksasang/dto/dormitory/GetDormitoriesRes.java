@@ -3,7 +3,7 @@ package shop.geeksasang.dto.dormitory;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import shop.geeksasang.domain.Dormitory;
+import shop.geeksasang.domain.university.Dormitory;
 
 @Builder
 @Getter
