@@ -9,13 +9,21 @@ import javax.validation.constraints.NotEmpty;
 public class PostChattingReq {
 
     @NotEmpty
-    private String ChatRoomId;
-
-    @NotEmpty
     private String content;
 
-    public PostChattingReq(String ChatRoomId, String content) {
-        this.ChatRoomId = ChatRoomId;
+    @NotEmpty
+    private String chatRoomId;
+
+    private Boolean isSystemMessage;
+
+    private int memberId;
+
+    private String email;
+
+    private String profileImgUrl;
+
+    public PostChattingReq(String chatRoomId, String content) {
+        this.chatRoomId = chatRoomId;
         this.content = content;
     }
 }

@@ -13,5 +13,5 @@ public class PostPartyChatRoomMemberReq {
 
     private Boolean isRemittance;
 
-    private Long memberId;
+    private int memberId;
 }

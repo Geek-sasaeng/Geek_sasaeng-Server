@@ -44,7 +44,7 @@ public class DeliveryPartyChatController {
     public BaseResponse<String> createPartyChatting(HttpServletRequest request, @RequestBody PostChattingReq dto){
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
         System.out.println("dto.getChatRoomId() = " + dto.getChatRoomId());
-        deliveryPartyChattingService.createChatting(jwtInfo.getUserId(), "tomas", dto.getChatRoomId(), dto.getContent());
+        deliveryPartyChattingService.createChat(jwtInfo.getUserId(), dto.getEmail(), dto.getChatRoomId(), dto.getContent(), dto.getIsSystemMessage(), dto.getProfileImgUrl());
         return new BaseResponse("채팅송신을 성공했습니다.");
     }
 
