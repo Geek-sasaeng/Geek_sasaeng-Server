@@ -15,14 +15,11 @@ public class PartyChatRoom extends ChatRoom{
 
     private String title;
 
-    //TODO:채팅과 일대다 연관관계 테스트 중
     @DocumentReference // 일대다
     private List<Chat> chattings = new ArrayList<>();
 
-    private List<ParticipantInfo> participants = new ArrayList<>();
-
-//    @DocumentReference // 일대다
-//    private List<PartyChatRoomMember> participants = new ArrayList<>();
+    @DocumentReference
+    private List<PartyChatRoomMember> participants = new ArrayList<>();
 
     private String accountNumber;
     private String bank;
@@ -41,7 +38,7 @@ public class PartyChatRoom extends ChatRoom{
         this.chattings = chattings;
     }
 
-    public PartyChatRoom(String title, List<Chat> chattings, List<ParticipantInfo> participants, String accountNumber, String bank, String category, Boolean isFinish, Integer maxMatching) {
+    public PartyChatRoom(String title, List<Chat> chattings, List<PartyChatRoomMember> participants, String accountNumber, String bank, String category, Boolean isFinish, Integer maxMatching) {
         super();
         this.title = title;
         this.chattings = chattings;
@@ -62,8 +59,8 @@ public class PartyChatRoom extends ChatRoom{
                 '}';
     }
 
-    public void changeParticipants(ParticipantInfo participantInfo){
-        this.participants.add(participantInfo);
+    public void changeParticipants(PartyChatRoomMember partyChatRoomMember){
+        this.participants.add(partyChatRoomMember);
     }
 
 }

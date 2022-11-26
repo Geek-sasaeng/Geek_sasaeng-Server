@@ -10,7 +10,7 @@ import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.config.exception.response.BaseResponseStatus;
 import shop.geeksasang.domain.chat.Chat;
 import shop.geeksasang.domain.chat.ChatRoom;
-import shop.geeksasang.domain.chat.ParticipantInfo;
+import shop.geeksasang.domain.chat.PartyChatRoomMember;
 import shop.geeksasang.domain.chat.PartyChatRoom;
 import shop.geeksasang.dto.chat.PostChattingRes;
 import shop.geeksasang.repository.chat.PartyChatRoomRepository;
@@ -35,7 +35,7 @@ public class DeliveryPartyChatService {
     @Transactional(readOnly = false)
     public String createChatRoom(int userId, String title){
         List<Chat> chattings = new ArrayList<>();
-        List<ParticipantInfo> participants = new ArrayList<>();
+        List<PartyChatRoomMember> participants = new ArrayList<>();
         PartyChatRoom ChatRoom = new PartyChatRoom(title, chattings, participants, "123", "국민", "Delivery", false, 5);
         PartyChatRoom saveChatRoom = partyChatRoomRepository.save(ChatRoom);
         return saveChatRoom.getId();
@@ -46,7 +46,6 @@ public class DeliveryPartyChatService {
         // mongoDB 채팅 저장
         Chat chatting = new Chat(content);
         Chat saveChatting = chattingRepository.save(chatting);
-//        partyChattingQueue.send(saveChatting, ChatRoomId); // 저장한 채팅 rabbitmq를 이용해 Consumer에게 메시지 전송
 
         // json 형식으로 변환 후 RabbitMQ 전송
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
@@ -67,9 +66,9 @@ public class DeliveryPartyChatService {
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_CHATTING_ROOM));
 
         // 파티 입장하는 멤버 정보 추가
-        ParticipantInfo participantInfo = new ParticipantInfo(LocalDateTime.now(), isRemittance, memberId);
+        PartyChatRoomMember partyChatRoomMember = new PartyChatRoomMember(LocalDateTime.now(), isRemittance, memberId);
 
-        partyChatRoom.changeParticipants(participantInfo);
+        partyChatRoom.changeParticipants(partyChatRoomMember);
         partyChatRoomRepository.save(partyChatRoom); // MongoDB는 JPA처럼 변경감지가 안되어서 직접 저장해줘야 한다.
     }
 

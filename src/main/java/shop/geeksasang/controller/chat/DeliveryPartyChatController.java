@@ -10,7 +10,7 @@ import shop.geeksasang.config.response.BaseResponse;
 import shop.geeksasang.domain.chat.Chat;
 import shop.geeksasang.domain.chat.ChatRoom;
 import shop.geeksasang.dto.chat.PostChattingReq;
-import shop.geeksasang.dto.chat.chatmember.PostParticipantInfoReq;
+import shop.geeksasang.dto.chat.chatmember.PostPartyChatRoomMemberReq;
 import shop.geeksasang.dto.chat.partyChatRoom.PostPartyChatRoomReq;
 import shop.geeksasang.dto.login.JwtInfo;
 import shop.geeksasang.service.chat.DeliveryPartyChatService;
@@ -47,17 +47,8 @@ public class DeliveryPartyChatController {
         deliveryPartyChattingService.createChatting(jwtInfo.getUserId(), "tomas", dto.getChatRoomId(), dto.getContent());
         return new BaseResponse("채팅송신을 성공했습니다.");
     }
-//    @NoIntercept //TODO:개발을 위해 임시로 jwt 허용되게한 것. 추후 제거 바람.
-//    public BaseResponse<String> createPartyChatting(HttpServletRequest request, @RequestBody PostChattingReq dto){
-////        JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
-//        System.out.println("dto.getChatRoomId() = " + dto.getChatRoomId());
-//        deliveryPartyChattingService.createChatting(1, dto.getChatRoomId(), dto.getContent(), dto.getParticipantsCnt());
-//        return new BaseResponse("채팅송신을 성공했습니다.");
-//    }
 
-    /**
-     * @author 토마스
-     */
+
     @ApiOperation(value = "채팅방 멤버 추가", notes = "(jwt 토큰 필요)멤버의 정보만 추가")
     @ApiResponses({
             @ApiResponse(code = 1000 ,message ="요청에 성공하셨습니다."),
@@ -67,8 +58,8 @@ public class DeliveryPartyChatController {
     })
     @PostMapping("/member")
     @NoIntercept //TODO:개발을 위해 임시로 jwt 허용되게한 것. 추후 제거 바람.
-    public BaseResponse<String> joinPartyChatRoom(HttpServletRequest request, @RequestBody PostParticipantInfoReq postParticipantInfoReq){
-        deliveryPartyChattingService.joinPartyChatRoom(postParticipantInfoReq.getChatRoomId(), LocalDateTime.now(), postParticipantInfoReq.getIsRemittance(), postParticipantInfoReq.getMemberId());
+    public BaseResponse<String> joinPartyChatRoom(HttpServletRequest request, @RequestBody PostPartyChatRoomMemberReq postPartyChatRoomMemberReq){
+        deliveryPartyChattingService.joinPartyChatRoom(postPartyChatRoomMemberReq.getChatRoomId(), LocalDateTime.now(), postPartyChatRoomMemberReq.getIsRemittance(), postPartyChatRoomMemberReq.getMemberId());
         return new BaseResponse("채팅방에 멤버가 추가되었습니다.");
     }
 
@@ -85,6 +76,7 @@ public class DeliveryPartyChatController {
         return new BaseResponse(deliveryPartyChattingService.findAllPartyChatRooms(jwtInfo.getUserId()));
     }
 
+
     @ApiOperation(value = "채팅방 조회", notes = "(jwt 토큰 필요)전체 조회")
     @ApiResponses({
             @ApiResponse(code = 1000 ,message ="요청에 성공하셨습니다."),
@@ -96,6 +88,7 @@ public class DeliveryPartyChatController {
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
         return new BaseResponse(deliveryPartyChattingService.findPartyChatRoom(jwtInfo.getUserId(),partyChatRoomId));
     }
+
 
     @ApiOperation(value = "채팅 전체 조회", notes = "(jwt 토큰 필요)전체 조회")
     @ApiResponses({

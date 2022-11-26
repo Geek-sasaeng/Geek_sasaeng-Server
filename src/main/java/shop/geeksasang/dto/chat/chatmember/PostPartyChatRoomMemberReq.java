@@ -7,7 +7,7 @@ import javax.validation.constraints.NotEmpty;
 
 @NoArgsConstructor
 @Getter
-public class PostParticipantInfoReq {
+public class PostPartyChatRoomMemberReq {
     @NotEmpty
     private String ChatRoomId;
 
