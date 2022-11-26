@@ -15,7 +15,6 @@ import shop.geeksasang.utils.jwt.NoIntercept;
 public class MQController {
     private final AmqpAdmin admin;
     private final RabbitTemplate rabbitTemplate;
-    private final String EXCHANGE = "chatting-room-exchange-test2";
 
     @GetMapping("/create")
     @NoIntercept //TODO:개발을 위해 임시로 jwt 허용되게한 것. 추후 제거 바람.

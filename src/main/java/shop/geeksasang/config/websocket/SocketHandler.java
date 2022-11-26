@@ -18,16 +18,11 @@ import java.util.HashMap;
 @RequiredArgsConstructor
 public class SocketHandler extends TextWebSocketHandler {
 
-    private final RabbitTemplate rabbitTemplate;
-    private final String EXCHANGE = "chatting-room-exchange-test2";
     private final DeliveryPartyChatService deliveryPartyChattingService;
 
     HashMap<String, WebSocketSession> sessionMap = new HashMap<>(); //웹소켓 세션을 담아둘 맵
 
-    /**
-     * 메시지 발송
-     * @author 토마스, 네오
-     */
+    // 메시지 발송
     @Override
     public void handleTextMessage(WebSocketSession session, TextMessage message) {
         String msg = message.getPayload();
@@ -44,10 +39,7 @@ public class SocketHandler extends TextWebSocketHandler {
         }
     }
 
-    /**
-     * 소켓 연결
-     * @author 토마스, 네오
-     */
+    // 소켓 연결 후
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 
@@ -56,10 +48,7 @@ public class SocketHandler extends TextWebSocketHandler {
         System.out.println("connect");
     }
 
-    /**
-     * 소켓 종료
-     * @author 토마스, 네오
-     */
+    // 소켓 연결 종료 후
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
 
@@ -67,19 +56,4 @@ public class SocketHandler extends TextWebSocketHandler {
         super.afterConnectionClosed(session, status);
     }
 
-    /**
-     *
-     * @author 토마스, 네오
-     */
-    public String getRoutingKey(String queueName) {
-        String[] routingKey = queueName.split("\\.");
-
-        StringBuilder sb = new StringBuilder();
-
-        sb.append(routingKey[0]);
-        sb.append(".");
-        sb.append(routingKey[1]);
-        sb.append(".*");
-        return sb.toString();
-    }
 }

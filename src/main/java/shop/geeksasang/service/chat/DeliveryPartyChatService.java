@@ -46,7 +46,6 @@ public class DeliveryPartyChatService {
         // mongoDB 채팅 저장
         Chat chatting = new Chat(content);
         Chat saveChatting = chattingRepository.save(chatting);
-//        partyChattingQueue.send(saveChatting, ChatRoomId); // 저장한 채팅 rabbitmq를 이용해 Consumer에게 메시지 전송
 
         // json 형식으로 변환 후 RabbitMQ 전송
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());

@@ -15,14 +15,11 @@ public class PartyChatRoom extends ChatRoom{
 
     private String title;
 
-    //TODO:채팅과 일대다 연관관계 테스트 중
     @DocumentReference // 일대다
     private List<Chat> chattings = new ArrayList<>();
 
+    @DocumentReference
     private List<ParticipantInfo> participants = new ArrayList<>();
-
-//    @DocumentReference // 일대다
-//    private List<PartyChatRoomMember> participants = new ArrayList<>();
 
     private String accountNumber;
     private String bank;
