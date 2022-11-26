@@ -8,13 +8,10 @@ import lombok.Getter;
 import lombok.Setter;
 import shop.geeksasang.config.status.BelongStatus;
 import shop.geeksasang.config.status.MatchingStatus;
-import shop.geeksasang.domain.DeliveryParty;
-import shop.geeksasang.domain.DeliveryPartyHashTag;
+import shop.geeksasang.domain.deliveryparty.DeliveryParty;
 
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Getter

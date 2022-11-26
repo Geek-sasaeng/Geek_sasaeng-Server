@@ -1,6 +1,6 @@
 package shop.geeksasang.factory.domain;
 
-import shop.geeksasang.domain.FoodCategory;
+import shop.geeksasang.domain.deliveryparty.FoodCategory;
 
 public class FoodCategoryFactory {
 

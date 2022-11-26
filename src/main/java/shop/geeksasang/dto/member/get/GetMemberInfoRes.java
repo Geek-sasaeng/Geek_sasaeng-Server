@@ -3,7 +3,7 @@ package shop.geeksasang.dto.member.get;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import shop.geeksasang.domain.Member;
+import shop.geeksasang.domain.member.Member;
 import shop.geeksasang.dto.member.get.vo.DormitoriesVo;
 
 import java.util.List;

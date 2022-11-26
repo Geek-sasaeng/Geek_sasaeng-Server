@@ -2,11 +2,10 @@ package shop.geeksasang.dto.announcement.get;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
-import io.swagger.annotations.ApiParam;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import shop.geeksasang.domain.Announcement;
+import shop.geeksasang.domain.announcement.Announcement;
 
 @Getter
 @Setter

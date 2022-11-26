@@ -1,28 +1,26 @@
 package shop.geeksasang.domain.chat;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Unwrapped;
+import shop.geeksasang.config.domain.BaseEntityMongo;
 
-import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
-@Entity
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name = "chat_room_type")
-public abstract class ChatRoom {
+//@Document  //추상 클래스로 때려 박을 수 있음. 신기
+public abstract class ChatRoom { // 배달, 중고거래, 커뮤니티 등 서로다른 분류의 채팅방 공통 부분 추상 클래스
+
     @Id
-    @GeneratedValue
-    @Column(name = "chat_room_id")
-    private int id;
+    protected String id;
 
-    private String title;
+    @Unwrapped(onEmpty = Unwrapped.OnEmpty.USE_EMPTY)
+    protected BaseEntityMongo baseEntityMongo;
 
-    @OneToMany(mappedBy = "chatRoom")
-    List<Chat> chats = new ArrayList<>();
-
-    public ChatRoom(String title) {
-        this.title = title;
+    public ChatRoom() {
+        this.baseEntityMongo = new BaseEntityMongo();
     }
+
+    public String getId() {
+        return id;
+    }
+
+
 }

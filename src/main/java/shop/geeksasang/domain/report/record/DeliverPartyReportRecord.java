@@ -1,8 +1,8 @@
 package shop.geeksasang.domain.report.record;
 
 import lombok.NoArgsConstructor;
-import shop.geeksasang.domain.DeliveryParty;
-import shop.geeksasang.domain.Member;
+import shop.geeksasang.domain.deliveryparty.DeliveryParty;
+import shop.geeksasang.domain.member.Member;
 
 import javax.persistence.*;
 

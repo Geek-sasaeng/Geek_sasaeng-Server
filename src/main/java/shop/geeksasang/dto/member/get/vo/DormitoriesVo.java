@@ -3,7 +3,7 @@ package shop.geeksasang.dto.member.get.vo;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
-import shop.geeksasang.domain.Dormitory;
+import shop.geeksasang.domain.university.Dormitory;
 
 @Getter @Setter
 public class DormitoriesVo {

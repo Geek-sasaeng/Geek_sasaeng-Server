@@ -6,9 +6,8 @@ import io.swagger.annotations.ApiParam;
 import lombok.*;
 import shop.geeksasang.config.status.BelongStatus;
 import shop.geeksasang.config.status.MatchingStatus;
-import shop.geeksasang.domain.*;
+import shop.geeksasang.domain.deliveryparty.DeliveryParty;
 
-import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 @Getter

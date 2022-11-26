@@ -5,7 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Getter;
 
-import shop.geeksasang.domain.Member;
+import shop.geeksasang.domain.member.Member;
 
 @Getter
 public class PostMemberInfoRes {

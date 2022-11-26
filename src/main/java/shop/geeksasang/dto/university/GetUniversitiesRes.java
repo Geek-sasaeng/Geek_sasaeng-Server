@@ -2,7 +2,7 @@ package shop.geeksasang.dto.university;
 
 import lombok.Getter;
 import lombok.Setter;
-import shop.geeksasang.domain.University;
+import shop.geeksasang.domain.university.University;
 
 @Getter
 @Setter

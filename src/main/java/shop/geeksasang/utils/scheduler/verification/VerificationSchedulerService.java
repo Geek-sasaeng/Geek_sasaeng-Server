@@ -5,10 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import shop.geeksasang.domain.VerificationCount;
-import shop.geeksasang.repository.VerificationCountRepository;
-
-import java.util.List;
+import shop.geeksasang.repository.auth.VerificationCountRepository;
 
 @Service
 @RequiredArgsConstructor

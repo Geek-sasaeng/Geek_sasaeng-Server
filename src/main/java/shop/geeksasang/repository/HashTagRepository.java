@@ -1,11 +1,7 @@
 package shop.geeksasang.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import shop.geeksasang.domain.FoodCategory;
-import shop.geeksasang.domain.HashTag;
-
-import java.util.Optional;
+import shop.geeksasang.domain.deliveryparty.HashTag;
 
 public interface HashTagRepository extends JpaRepository<HashTag,Integer> {
 }

@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import shop.geeksasang.config.status.BaseStatus;
-import shop.geeksasang.domain.Announcement;
+import shop.geeksasang.domain.announcement.Announcement;
 
 @Getter
 @Setter

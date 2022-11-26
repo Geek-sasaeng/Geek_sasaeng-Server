@@ -9,8 +9,8 @@ import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
-import shop.geeksasang.dto.chatting.PostChattingRes;
-import shop.geeksasang.service.DeliveryPartyChattingService;
+import shop.geeksasang.dto.chat.PostChattingRes;
+import shop.geeksasang.service.chat.DeliveryPartyChatService;
 
 import java.util.HashMap;
 
@@ -20,7 +20,7 @@ public class SocketHandler extends TextWebSocketHandler {
 
     private final RabbitTemplate rabbitTemplate;
     private final String EXCHANGE = "chatting-room-exchange-test2";
-    private final DeliveryPartyChattingService deliveryPartyChattingService;
+    private final DeliveryPartyChatService deliveryPartyChattingService;
 
     HashMap<String, WebSocketSession> sessionMap = new HashMap<>(); //웹소켓 세션을 담아둘 맵
 
@@ -38,7 +38,7 @@ public class SocketHandler extends TextWebSocketHandler {
             ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
             PostChattingRes postChattingRes = mapper.readValue(msg, PostChattingRes.class);
 
-            deliveryPartyChattingService.createChatting(1, postChattingRes.getEmail(), postChattingRes.getChattingRoomId(), postChattingRes.getContent());//TODO: userId 넣는 부분 멤버 엔티티 구현 후 수정
+            deliveryPartyChattingService.createChatting(1, postChattingRes.getEmail(), postChattingRes.getChatRoomId(), postChattingRes.getContent());//TODO: userId 넣는 부분 멤버 엔티티 구현 후 수정
         } catch (Exception e) {
             System.out.println("웹소켓 메시지 전송 에러 발생");
         }

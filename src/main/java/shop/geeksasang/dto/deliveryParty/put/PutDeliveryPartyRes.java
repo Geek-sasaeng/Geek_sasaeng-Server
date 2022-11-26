@@ -7,7 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-import shop.geeksasang.domain.DeliveryParty;
+import shop.geeksasang.domain.deliveryparty.DeliveryParty;
 
 import java.time.LocalDateTime;
 

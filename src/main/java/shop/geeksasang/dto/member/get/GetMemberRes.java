@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import shop.geeksasang.config.status.LoginStatus;
 import shop.geeksasang.config.type.MemberLoginType;
-import shop.geeksasang.domain.*;
+import shop.geeksasang.domain.member.Member;
 
 @Getter
 @Setter
