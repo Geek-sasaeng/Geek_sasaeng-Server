@@ -10,7 +10,7 @@ import shop.geeksasang.config.response.BaseResponse;
 import shop.geeksasang.domain.chat.Chat;
 import shop.geeksasang.domain.chat.ChatRoom;
 import shop.geeksasang.dto.chat.PostChattingReq;
-import shop.geeksasang.dto.chat.chatmember.PostParticipantInfoReq;
+import shop.geeksasang.dto.chat.chatmember.PostPartyChatRoomMemberReq;
 import shop.geeksasang.dto.chat.partyChatRoom.PostPartyChatRoomReq;
 import shop.geeksasang.dto.login.JwtInfo;
 import shop.geeksasang.service.chat.DeliveryPartyChatService;
@@ -58,8 +58,8 @@ public class DeliveryPartyChatController {
     })
     @PostMapping("/member")
     @NoIntercept //TODO:개발을 위해 임시로 jwt 허용되게한 것. 추후 제거 바람.
-    public BaseResponse<String> joinPartyChatRoom(HttpServletRequest request, @RequestBody PostParticipantInfoReq postParticipantInfoReq){
-        deliveryPartyChattingService.joinPartyChatRoom(postParticipantInfoReq.getChatRoomId(), LocalDateTime.now(), postParticipantInfoReq.getIsRemittance(), postParticipantInfoReq.getMemberId());
+    public BaseResponse<String> joinPartyChatRoom(HttpServletRequest request, @RequestBody PostPartyChatRoomMemberReq postPartyChatRoomMemberReq){
+        deliveryPartyChattingService.joinPartyChatRoom(postPartyChatRoomMemberReq.getChatRoomId(), LocalDateTime.now(), postPartyChatRoomMemberReq.getIsRemittance(), postPartyChatRoomMemberReq.getMemberId());
         return new BaseResponse("채팅방에 멤버가 추가되었습니다.");
     }
 

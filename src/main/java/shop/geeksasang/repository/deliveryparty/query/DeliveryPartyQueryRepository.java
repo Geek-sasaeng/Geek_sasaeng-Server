@@ -21,8 +21,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static shop.geeksasang.domain.QDeliveryParty.*;
-import static shop.geeksasang.domain.QDeliveryPartyMember.*;
+import static shop.geeksasang.domain.deliveryparty.QDeliveryParty.*;
+import static shop.geeksasang.domain.deliveryparty.QDeliveryPartyMember.*;
 
 
 @Repository

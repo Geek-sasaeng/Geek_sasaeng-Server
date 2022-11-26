@@ -19,7 +19,7 @@ public class PartyChatRoom extends ChatRoom{
     private List<Chat> chattings = new ArrayList<>();
 
     @DocumentReference
-    private List<ParticipantInfo> participants = new ArrayList<>();
+    private List<PartyChatRoomMember> participants = new ArrayList<>();
 
     private String accountNumber;
     private String bank;
@@ -38,7 +38,7 @@ public class PartyChatRoom extends ChatRoom{
         this.chattings = chattings;
     }
 
-    public PartyChatRoom(String title, List<Chat> chattings, List<ParticipantInfo> participants, String accountNumber, String bank, String category, Boolean isFinish, Integer maxMatching) {
+    public PartyChatRoom(String title, List<Chat> chattings, List<PartyChatRoomMember> participants, String accountNumber, String bank, String category, Boolean isFinish, Integer maxMatching) {
         super();
         this.title = title;
         this.chattings = chattings;
@@ -59,8 +59,8 @@ public class PartyChatRoom extends ChatRoom{
                 '}';
     }
 
-    public void changeParticipants(ParticipantInfo participantInfo){
-        this.participants.add(participantInfo);
+    public void changeParticipants(PartyChatRoomMember partyChatRoomMember){
+        this.participants.add(partyChatRoomMember);
     }
 
 }

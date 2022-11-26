@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ParticipantInfo {
+public class PartyChatRoomMember {
     @Id
     private Long id;
 
@@ -26,7 +26,7 @@ public class ParticipantInfo {
     @DocumentReference(lazy = true) // 다대일
     private PartyChatRoom partyChatRoom;
 
-    public ParticipantInfo(LocalDateTime enterTime, boolean isRemittance, Long memberId) {
+    public PartyChatRoomMember(LocalDateTime enterTime, boolean isRemittance, Long memberId) {
         this.enterTime = enterTime;
         this.isRemittance = isRemittance;
         this.memberId = memberId;
