@@ -28,11 +28,12 @@ public class Chat implements Serializable {
 
     private Boolean isSystemMessage;
 
-    private String nickName;
+    @DocumentReference(lazy = true)
+    private PartyChatRoomMember partyChatRoomMember;
 
     private String profileImgUrl;
 
-    private List<Long> readMembers = new ArrayList<>(); // 읽은 멤버 ID 리스트
+    private List<Integer> readMembers = new ArrayList<>(); // 읽은 멤버 ID 리스트
 
     @Unwrapped(onEmpty = Unwrapped.OnEmpty.USE_EMPTY)
     private BaseEntityMongo baseEntityMongo;
@@ -42,14 +43,14 @@ public class Chat implements Serializable {
         this.baseEntityMongo = new BaseEntityMongo();
     }
 
-    public Chat(String content, PartyChatRoom partyChatRoom, Boolean isSystemMessage, String nickName, String profileImgUrl, List<Long> readMembers, BaseEntityMongo baseEntityMongo) {
+    public Chat(String content, PartyChatRoom partyChatRoom, Boolean isSystemMessage, PartyChatRoomMember partyChatRoomMember, String profileImgUrl, List<Integer> readMembers) {
         this.content = content;
         this.partyChatRoom = partyChatRoom;
         this.isSystemMessage = isSystemMessage;
-        this.nickName = nickName;
+        this.partyChatRoomMember = partyChatRoomMember;
         this.profileImgUrl = profileImgUrl;
         this.readMembers = readMembers;
-        this.baseEntityMongo = baseEntityMongo;
+        this.baseEntityMongo = new BaseEntityMongo();
     }
 }
 

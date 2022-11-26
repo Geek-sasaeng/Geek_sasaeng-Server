@@ -12,7 +12,8 @@ import shop.geeksasang.domain.chat.Chat;
 import shop.geeksasang.domain.chat.ChatRoom;
 import shop.geeksasang.domain.chat.PartyChatRoomMember;
 import shop.geeksasang.domain.chat.PartyChatRoom;
-import shop.geeksasang.dto.chat.PostChattingRes;
+import shop.geeksasang.dto.chat.PostChatRes;
+import shop.geeksasang.repository.chat.PartyChatRoomMemberRepository;
 import shop.geeksasang.repository.chat.PartyChatRoomRepository;
 import shop.geeksasang.rabbitmq.MQController;
 import shop.geeksasang.repository.chat.ChatRepository;
@@ -27,13 +28,14 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class DeliveryPartyChatService {
 
-    private final ChatRoomRepository ChatRoomRepository;
-    private final ChatRepository chattingRepository;
+    private final ChatRoomRepository chatRoomRepository;
+    private final ChatRepository chatRepository;
     private final PartyChatRoomRepository partyChatRoomRepository;
     private final MQController mqController;
+    private final PartyChatRoomMemberRepository partyChatRoomMemberRepository;
 
     @Transactional(readOnly = false)
-    public String createChatRoom(int userId, String title){
+    public String createChatRoom(int memberId, String title){
         List<Chat> chattings = new ArrayList<>();
         List<PartyChatRoomMember> participants = new ArrayList<>();
         PartyChatRoom ChatRoom = new PartyChatRoom(title, chattings, participants, "123", "국민", "Delivery", false, 5);
@@ -42,25 +44,34 @@ public class DeliveryPartyChatService {
     }
 
     @Transactional(readOnly = false)
-    public void createChatting(int userId, String email, String ChatRoomId, String content) {
+    public void createChat(int memberId, String email, String chatRoomId, String content, Boolean isSystemMessage, String profileImgUrl) {
+
+        PartyChatRoom partyChatRoom = partyChatRoomRepository.findByPartyChatRoomId(chatRoomId)
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_CHATTING_ROOM));
+
+        PartyChatRoomMember partyChatRoomMember = partyChatRoomMemberRepository.findByMemberIdAndChatRoomId(memberId, chatRoomId)
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTYCHATROOM_MEMBER));
+
+        List<Integer> readMembers = new ArrayList<>();
+
         // mongoDB 채팅 저장
-        Chat chatting = new Chat(content);
-        Chat saveChatting = chattingRepository.save(chatting);
+        Chat chat = new Chat(content, partyChatRoom, isSystemMessage, partyChatRoomMember, profileImgUrl, readMembers);
+        Chat saveChat = chatRepository.save(chat);
 
         // json 형식으로 변환 후 RabbitMQ 전송
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
-        PostChattingRes postChattingRes = new PostChattingRes(email, ChatRoomId, saveChatting.getContent(), saveChatting.getBaseEntityMongo().getCreatedAt()); // ObjectMapper가 java8의 LocalDateTime을 지원하지 않는 에러 해결
-        String saveChattingJsonStr = null;
+        PostChatRes postChatRes = PostChatRes.toDto(saveChat, email);
+        String saveChatJson = null;
         try {
-            saveChattingJsonStr = mapper.writeValueAsString(postChattingRes);
+            saveChatJson = mapper.writeValueAsString(postChatRes);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-        mqController.sendMessage(saveChattingJsonStr, ChatRoomId); // rabbitMQ 메시지 publish
+        mqController.sendMessage(saveChatJson, chatRoomId); // rabbitMQ 메시지 publish
     }
 
     @Transactional(readOnly = false)
-    public void joinPartyChatRoom(String ChatRoomId, LocalDateTime enterTime, boolean isRemittance, Long memberId){
+    public void joinPartyChatRoom(String ChatRoomId, LocalDateTime enterTime, boolean isRemittance, int memberId){
 
         PartyChatRoom partyChatRoom = partyChatRoomRepository.findByPartyChatRoomId(ChatRoomId)
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_CHATTING_ROOM));
@@ -73,27 +84,27 @@ public class DeliveryPartyChatService {
     }
 
     @Transactional(readOnly = true)
-    public List<ChatRoom> findAllPartyChatRooms(int userId){
-//        List<String> partyChatRoomList = ChatRoomRepository.findAll().stream()
+    public List<ChatRoom> findAllPartyChatRooms(int memberId){
+//        List<String> partyChatRoomList = chatRoomRepository.findAll().stream()
 //                .map(ChatRoom -> ChatRoom.getId())
 //                .collect(Collectors.toList());
-        List<ChatRoom> partyChatRoomList = ChatRoomRepository.findAll();
+        List<ChatRoom> partyChatRoomList = chatRoomRepository.findAll();
 
         return partyChatRoomList;
     }
 
     @Transactional(readOnly = true)
-    public List<ChatRoom> findPartyChatRoom(int userId, String partyChatRoomId){
+    public List<ChatRoom> findPartyChatRoom(int memberId, String partyChatRoomId){
 //        Query query = new Query();
 //        query.addCriteria(Criteria.where("id").is(partyChatRoomId));
-        List<ChatRoom> partyChatRoomList = ChatRoomRepository.findAllByPartyChatRoomId(partyChatRoomId);
+        List<ChatRoom> partyChatRoomList = chatRoomRepository.findAllByPartyChatRoomId(partyChatRoomId);
 
         return partyChatRoomList;
     }
 
     @Transactional(readOnly = true)
-    public List<Chat> findPartyChattings(int userId, String partyChatRoomId){
-        List<Chat> chattingList = chattingRepository.findAll();
+    public List<Chat> findPartyChattings(int memberId, String partyChatRoomId){
+        List<Chat> chattingList = chatRepository.findAll();
 
 
         return chattingList;

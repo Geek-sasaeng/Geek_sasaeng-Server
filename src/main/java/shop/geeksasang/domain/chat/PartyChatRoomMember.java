@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Document //@Document는객체를 몽고DB에 영속화시킴 = SpringDataJpa의 @Entity와 같은 역할
 @ToString
@@ -17,16 +18,18 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class PartyChatRoomMember {
     @Id
-    private Long id;
+    private int id;
 
-    private Long memberId;
+    private int memberId;
     private LocalDateTime enterTime;
     private boolean isRemittance;
 
     @DocumentReference(lazy = true) // 다대일
     private PartyChatRoom partyChatRoom;
 
-    public PartyChatRoomMember(LocalDateTime enterTime, boolean isRemittance, Long memberId) {
+    private String email;
+
+    public PartyChatRoomMember(LocalDateTime enterTime, boolean isRemittance, int memberId) {
         this.enterTime = enterTime;
         this.isRemittance = isRemittance;
         this.memberId = memberId;
