@@ -11,7 +11,8 @@ import shop.geeksasang.domain.chat.Chat;
 import shop.geeksasang.domain.chat.ChatRoom;
 import shop.geeksasang.dto.chat.PostChattingReq;
 import shop.geeksasang.dto.chat.chatmember.PostPartyChatRoomMemberReq;
-import shop.geeksasang.dto.chat.partyChatRoom.PostPartyChatRoomReq;
+import shop.geeksasang.dto.chat.partychatroom.PartyChatRoomRes;
+import shop.geeksasang.dto.chat.partychatroom.post.PostPartyChatRoomReq;
 import shop.geeksasang.dto.login.JwtInfo;
 import shop.geeksasang.service.chat.DeliveryPartyChatService;
 import shop.geeksasang.utils.jwt.NoIntercept;
@@ -27,17 +28,17 @@ public class DeliveryPartyChatController {
 
     private final DeliveryPartyChatService deliveryPartyChattingService;
 
-    @ApiOperation(value = "채팅방 생성", notes = "(jwt 토큰 필요)마이페이지-공지사항에서 공지사항을 전체 조회")
+    @ApiOperation(value = "채팅방 생성", notes = "(jwt 토큰 필요)배달 채팅방 생성 요청")
     @ApiResponses({
             @ApiResponse(code = 1000 ,message ="요청에 성공하셨습니다."),
             @ApiResponse(code = 2009, message ="존재하지 않는 멤버입니다"),
             @ApiResponse(code = 4000 ,message ="서버 오류입니다.")
     })
     @PostMapping
-    public BaseResponse<Long> createPartyChatRoom(HttpServletRequest request, @RequestBody @Validated PostPartyChatRoomReq postPartyChatRoomReq){
+    public BaseResponse<PartyChatRoomRes> createPartyChatRoom(HttpServletRequest request, @RequestBody @Validated PostPartyChatRoomReq dto){
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
-        String id = deliveryPartyChattingService.createChatRoom(jwtInfo.getUserId(), postPartyChatRoomReq.getTitle());
-        return new BaseResponse(id);
+        PartyChatRoomRes res = deliveryPartyChattingService.createChatRoom(jwtInfo.getUserId(), dto.getTitle(), dto.getAccountNumber(), dto.getBank(), dto.getCategory(), dto.getMaxMatching());
+        return new BaseResponse<>(res);
     }
 
     @PostMapping("/chatting")

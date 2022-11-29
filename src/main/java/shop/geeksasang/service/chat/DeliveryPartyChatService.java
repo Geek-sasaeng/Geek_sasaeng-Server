@@ -12,12 +12,15 @@ import shop.geeksasang.domain.chat.Chat;
 import shop.geeksasang.domain.chat.ChatRoom;
 import shop.geeksasang.domain.chat.PartyChatRoomMember;
 import shop.geeksasang.domain.chat.PartyChatRoom;
+import shop.geeksasang.domain.member.Member;
 import shop.geeksasang.dto.chat.PostChatRes;
+import shop.geeksasang.dto.chat.partychatroom.PartyChatRoomRes;
 import shop.geeksasang.repository.chat.PartyChatRoomMemberRepository;
 import shop.geeksasang.repository.chat.PartyChatRoomRepository;
 import shop.geeksasang.rabbitmq.MQController;
 import shop.geeksasang.repository.chat.ChatRepository;
 import shop.geeksasang.repository.chat.ChatRoomRepository;
+import shop.geeksasang.repository.member.MemberRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -33,14 +36,28 @@ public class DeliveryPartyChatService {
     private final PartyChatRoomRepository partyChatRoomRepository;
     private final MQController mqController;
     private final PartyChatRoomMemberRepository partyChatRoomMemberRepository;
+    private final MemberRepository memberRepository;
 
     @Transactional(readOnly = false)
-    public String createChatRoom(int memberId, String title){
+    public PartyChatRoomRes createChatRoom(int memberId, String title, String accountNumber, String bank, String category, Integer maxMatching){
+
+        Member member = memberRepository.findMemberById(memberId)
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXIST_USER));
+
         List<Chat> chattings = new ArrayList<>();
         List<PartyChatRoomMember> participants = new ArrayList<>();
-        PartyChatRoom ChatRoom = new PartyChatRoom(title, chattings, participants, "123", "국민", "Delivery", false, 5);
-        PartyChatRoom saveChatRoom = partyChatRoomRepository.save(ChatRoom);
-        return saveChatRoom.getId();
+        PartyChatRoom chatRoom = new PartyChatRoom(title, chattings, participants, accountNumber, bank, category, false, maxMatching);
+        partyChatRoomRepository.save(chatRoom);
+
+        //rabbitMQ 채팅방 생성 요청
+        try{
+            mqController.createChatRoom(member.getEmail().toString(), chatRoom.getId());
+        }catch (Exception e){
+            System.out.println("mqController에서 채팅방 생성 에러 발생");
+        }
+
+        PartyChatRoomRes res = PartyChatRoomRes.toDto(chatRoom);
+        return res;
     }
 
     @Transactional(readOnly = false)
