@@ -12,4 +12,5 @@ public interface ChatRoomRepository extends MongoRepository<ChatRoom, String> {
 
     @Query("{id:'?0'}") // 0번째 파라미터 조건
     List<ChatRoom> findAllByPartyChatRoomId(String id);
+
 }
