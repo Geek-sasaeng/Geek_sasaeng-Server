@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import shop.geeksasang.config.response.BaseResponse;
 import shop.geeksasang.domain.chat.Chat;
 import shop.geeksasang.domain.chat.ChatRoom;
+import shop.geeksasang.dto.chat.GetPartyChattingRoomsReq;
 import shop.geeksasang.dto.chat.PostChattingReq;
 import shop.geeksasang.dto.chat.chatmember.PostPartyChatRoomMemberReq;
 import shop.geeksasang.dto.chat.partyChatRoom.PostPartyChatRoomReq;
@@ -71,9 +72,9 @@ public class DeliveryPartyChatController {
             @ApiResponse(code = 4000 ,message ="서버 오류입니다.")
     })
     @GetMapping
-    public BaseResponse<List<ChatRoom>> findPartyChatRooms(HttpServletRequest request){
+    public BaseResponse<GetPartyChattingRoomsReq> findPartyChatRooms(HttpServletRequest request, @RequestParam int cursor){
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
-        return new BaseResponse(deliveryPartyChattingService.findPartyChatRooms(jwtInfo.getUserId()));
+        return new BaseResponse(deliveryPartyChattingService.findPartyChatRooms(jwtInfo.getUserId(), cursor));
     }
 
 

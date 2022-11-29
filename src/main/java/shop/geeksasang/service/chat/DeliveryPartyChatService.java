@@ -4,6 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.geeksasang.config.exception.BaseException;
@@ -13,6 +16,7 @@ import shop.geeksasang.domain.chat.Chat;
 import shop.geeksasang.domain.chat.ChatRoom;
 import shop.geeksasang.domain.chat.PartyChatRoomMember;
 import shop.geeksasang.domain.chat.PartyChatRoom;
+import shop.geeksasang.dto.chat.GetPartyChattingRoomsReq;
 import shop.geeksasang.dto.chat.PostChatRes;
 import shop.geeksasang.repository.chat.PartyChatRoomMemberRepository;
 import shop.geeksasang.repository.chat.PartyChatRoomRepository;
@@ -35,6 +39,8 @@ public class DeliveryPartyChatService {
     private final PartyChatRoomRepository partyChatRoomRepository;
     private final MQController mqController;
     private final PartyChatRoomMemberRepository partyChatRoomMemberRepository;
+
+    private static final String PAGING_STANDARD = "createdAt";
 
     @Transactional(readOnly = false)
     public String createChatRoom(int memberId, String title){
@@ -87,12 +93,14 @@ public class DeliveryPartyChatService {
     }
 
     @Transactional(readOnly = true)
-    public List<PartyChatRoom> findPartyChatRooms(int memberId){
-        List<PartyChatRoomMember> members = partyChatRoomMemberRepository.findPartyChatRoomMemberByMemberId(memberId);
+    public GetPartyChattingRoomsReq findPartyChatRooms(int memberId, int cursor){
 
-        return members.stream()
+        PageRequest page = PageRequest.of(cursor, 10, Sort.by(Sort.Direction.ASC, PAGING_STANDARD));
+        Slice<PartyChatRoomMember> members = partyChatRoomMemberRepository.findPartyChatRoomMemberByMemberId(memberId, page);
+        List<PartyChatRoom> result = members.stream()
                 .map(member -> member.getPartyChatRoom())
                 .collect(Collectors.toList());
+        return new GetPartyChattingRoomsReq(result, members.isLast());
 
 
         //return null;

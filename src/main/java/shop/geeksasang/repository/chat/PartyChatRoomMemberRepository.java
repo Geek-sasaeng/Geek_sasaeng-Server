@@ -1,11 +1,13 @@
 package shop.geeksasang.repository.chat;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 import shop.geeksasang.domain.chat.PartyChatRoomMember;
 
-import java.util.List;
+
 import java.util.Optional;
 
 @Repository
@@ -18,5 +20,5 @@ public interface PartyChatRoomMemberRepository extends MongoRepository<PartyChat
 
     //TODO STATUS 추가해야함
     @Query(value = "{ 'memberId' : ?0 }")
-    List<PartyChatRoomMember> findPartyChatRoomMemberByMemberId(int memberId);
+    Slice<PartyChatRoomMember> findPartyChatRoomMemberByMemberId(int memberId, Pageable pageable);
 }
