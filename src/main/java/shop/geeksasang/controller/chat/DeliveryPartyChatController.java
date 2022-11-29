@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import shop.geeksasang.config.response.BaseResponse;
 import shop.geeksasang.domain.chat.Chat;
 import shop.geeksasang.domain.chat.ChatRoom;
+import shop.geeksasang.dto.chat.partychatroom.GetPartyChatRoomsRes;
 import shop.geeksasang.dto.chat.PostChattingReq;
 import shop.geeksasang.dto.chat.chatmember.PartyChatRoomMemberRes;
 import shop.geeksasang.dto.chat.chatmember.PostPartyChatRoomMemberReq;
@@ -16,14 +17,13 @@ import shop.geeksasang.dto.chat.partychatroom.PartyChatRoomRes;
 import shop.geeksasang.dto.chat.partychatroom.post.PostPartyChatRoomReq;
 import shop.geeksasang.dto.login.JwtInfo;
 import shop.geeksasang.service.chat.DeliveryPartyChatService;
-import shop.geeksasang.utils.jwt.NoIntercept;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-@RequestMapping("/party-chatting-room")
+@RequestMapping("/party-chat-room")
 @RequiredArgsConstructor
 public class DeliveryPartyChatController {
 
@@ -42,7 +42,7 @@ public class DeliveryPartyChatController {
         return new BaseResponse<>(res);
     }
 
-    @PostMapping("/chatting")
+    @PostMapping("/chat")
     public BaseResponse<String> createPartyChatting(HttpServletRequest request, @RequestBody PostChattingReq dto){
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
         System.out.println("dto.getChatRoomId() = " + dto.getChatRoomId());
@@ -69,13 +69,13 @@ public class DeliveryPartyChatController {
     @ApiOperation(value = "채팅방 전체 조회", notes = "(jwt 토큰 필요)전체 조회")
     @ApiResponses({
             @ApiResponse(code = 1000 ,message ="요청에 성공하셨습니다."),
-            @ApiResponse(code = 2009, message ="존재하지 않는 멤버입니다"),
+//            @ApiResponse(code = 2009, message ="존재하지 않는 멤버입니다"),
             @ApiResponse(code = 4000 ,message ="서버 오류입니다.")
     })
-    @PostMapping("/get")
-    public BaseResponse<List<ChatRoom>> findAllPartyChatRooms(HttpServletRequest request){
+    @GetMapping
+    public BaseResponse<GetPartyChatRoomsRes> findPartyChatRooms(HttpServletRequest request, @RequestParam int cursor){
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
-        return new BaseResponse(deliveryPartyChatService.findAllPartyChatRooms(jwtInfo.getUserId()));
+        return new BaseResponse(deliveryPartyChatService.findPartyChatRooms(jwtInfo.getUserId(), cursor));
     }
 
 
@@ -88,7 +88,7 @@ public class DeliveryPartyChatController {
     @PostMapping("/get/{partyChatRoomId}")
     public BaseResponse<List<ChatRoom>> findPartyChatRoom(HttpServletRequest request, @PathVariable("partyChatRoomId") String partyChatRoomId){
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
-        return new BaseResponse(deliveryPartyChatService.findPartyChatRoom(jwtInfo.getUserId(),partyChatRoomId));
+        return new BaseResponse(deliveryPartyChatService.findPartyChatRoom(jwtInfo.getUserId(), partyChatRoomId));
     }
 
 

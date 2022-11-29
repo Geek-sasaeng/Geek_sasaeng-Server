@@ -4,13 +4,13 @@ import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiParam;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
 
 @NoArgsConstructor
 @Getter
+@ToString
 public class PostPartyChatRoomMemberReq {
 
     @ApiModelProperty(example = "637fa741bba4cf6c34bc13ef")

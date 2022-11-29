@@ -4,6 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.geeksasang.config.exception.BaseException;
@@ -13,6 +16,8 @@ import shop.geeksasang.domain.chat.ChatRoom;
 import shop.geeksasang.domain.chat.PartyChatRoomMember;
 import shop.geeksasang.domain.chat.PartyChatRoom;
 import shop.geeksasang.domain.member.Member;
+import shop.geeksasang.dto.chat.partychatroom.GetPartyChatRoomRes;
+import shop.geeksasang.dto.chat.partychatroom.GetPartyChatRoomsRes;
 import shop.geeksasang.dto.chat.PostChatRes;
 import shop.geeksasang.dto.chat.chatmember.PartyChatRoomMemberRes;
 import shop.geeksasang.dto.chat.partychatroom.PartyChatRoomRes;
@@ -39,6 +44,8 @@ public class DeliveryPartyChatService {
     private final MQController mqController;
     private final PartyChatRoomMemberRepository partyChatRoomMemberRepository;
     private final MemberRepository memberRepository;
+
+    private static final String PAGING_STANDARD = "createdAt";
 
     @Transactional(readOnly = false)
     public PartyChatRoomRes createChatRoom(int memberId, String title, String accountNumber, String bank, String category, Integer maxMatching){
@@ -116,19 +123,23 @@ public class DeliveryPartyChatService {
     }
 
     @Transactional(readOnly = true)
-    public List<ChatRoom> findAllPartyChatRooms(int memberId){
-//        List<String> partyChatRoomList = chatRoomRepository.findAll().stream()
-//                .map(ChatRoom -> ChatRoom.getId())
-//                .collect(Collectors.toList());
-        List<ChatRoom> partyChatRoomList = chatRoomRepository.findAll();
+    public GetPartyChatRoomsRes findPartyChatRooms(int memberId, int cursor){
 
-        return partyChatRoomList;
+        PageRequest page = PageRequest.of(cursor, 10, Sort.by(Sort.Direction.ASC, PAGING_STANDARD));
+        Slice<PartyChatRoomMember> members = partyChatRoomMemberRepository.findPartyChatRoomMemberByMemberId(memberId, page);
+        List<GetPartyChatRoomRes> result= members.stream()
+                .map(member -> GetPartyChatRoomRes.of(member.getPartyChatRoom()))
+                .collect(Collectors.toList());
+
+        return new GetPartyChatRoomsRes(result, members.isLast());
     }
 
     @Transactional(readOnly = true)
     public List<ChatRoom> findPartyChatRoom(int memberId, String partyChatRoomId){
 //        Query query = new Query();
 //        query.addCriteria(Criteria.where("id").is(partyChatRoomId));
+
+
         List<ChatRoom> partyChatRoomList = chatRoomRepository.findAllByPartyChatRoomId(partyChatRoomId);
 
         return partyChatRoomList;
@@ -137,8 +148,6 @@ public class DeliveryPartyChatService {
     @Transactional(readOnly = true)
     public List<Chat> findPartyChattings(int memberId, String partyChatRoomId){
         List<Chat> chattingList = chatRepository.findAll();
-
-
         return chattingList;
     }
 
