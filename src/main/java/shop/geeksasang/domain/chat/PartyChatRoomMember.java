@@ -35,4 +35,12 @@ public class PartyChatRoomMember {
         this.isRemittance = isRemittance;
         this.memberId = memberId;
     }
+
+    public PartyChatRoomMember(int memberId, LocalDateTime enterTime, boolean isRemittance, PartyChatRoom partyChatRoom, String email) {
+        this.memberId = memberId;
+        this.enterTime = enterTime;
+        this.isRemittance = isRemittance;
+        this.partyChatRoom = partyChatRoom;
+        this.email = email;
+    }
 }

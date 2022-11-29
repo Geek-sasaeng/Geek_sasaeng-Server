@@ -15,14 +15,18 @@ import shop.geeksasang.domain.chat.Chat;
 import shop.geeksasang.domain.chat.ChatRoom;
 import shop.geeksasang.domain.chat.PartyChatRoomMember;
 import shop.geeksasang.domain.chat.PartyChatRoom;
+import shop.geeksasang.domain.member.Member;
 import shop.geeksasang.dto.chat.partychatroom.GetPartyChatRoomRes;
 import shop.geeksasang.dto.chat.partychatroom.GetPartyChatRoomsRes;
 import shop.geeksasang.dto.chat.PostChatRes;
+import shop.geeksasang.dto.chat.chatmember.PartyChatRoomMemberRes;
+import shop.geeksasang.dto.chat.partychatroom.PartyChatRoomRes;
 import shop.geeksasang.repository.chat.PartyChatRoomMemberRepository;
 import shop.geeksasang.repository.chat.PartyChatRoomRepository;
 import shop.geeksasang.rabbitmq.MQController;
 import shop.geeksasang.repository.chat.ChatRepository;
 import shop.geeksasang.repository.chat.ChatRoomRepository;
+import shop.geeksasang.repository.member.MemberRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -39,16 +43,30 @@ public class DeliveryPartyChatService {
     private final PartyChatRoomRepository partyChatRoomRepository;
     private final MQController mqController;
     private final PartyChatRoomMemberRepository partyChatRoomMemberRepository;
+    private final MemberRepository memberRepository;
 
     private static final String PAGING_STANDARD = "createdAt";
 
     @Transactional(readOnly = false)
-    public String createChatRoom(int memberId, String title){
+    public PartyChatRoomRes createChatRoom(int memberId, String title, String accountNumber, String bank, String category, Integer maxMatching){
+
+        Member member = memberRepository.findMemberById(memberId)
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXIST_USER));
+
         List<Chat> chattings = new ArrayList<>();
         List<PartyChatRoomMember> participants = new ArrayList<>();
-        PartyChatRoom ChatRoom = new PartyChatRoom(title, chattings, participants, "123", "국민", "Delivery", false, 5);
-        PartyChatRoom saveChatRoom = partyChatRoomRepository.save(ChatRoom);
-        return saveChatRoom.getId();
+        PartyChatRoom chatRoom = new PartyChatRoom(title, chattings, participants, accountNumber, bank, category, false, maxMatching);
+        partyChatRoomRepository.save(chatRoom);
+
+        //rabbitMQ 채팅방 생성 요청
+        try{
+            mqController.createChatRoom(member.getEmail().toString(), chatRoom.getId());
+        }catch (Exception e){
+            System.out.println("mqController에서 채팅방 생성 에러 발생");
+        }
+
+        PartyChatRoomRes res = PartyChatRoomRes.toDto(chatRoom);
+        return res;
     }
 
     @Transactional(readOnly = false)
@@ -79,17 +97,29 @@ public class DeliveryPartyChatService {
     }
 
     @Transactional(readOnly = false)
-    public void joinPartyChatRoom(String ChatRoomId, LocalDateTime enterTime, boolean isRemittance, int memberId){
+    public PartyChatRoomMemberRes joinPartyChatRoom(int memberId, String chatRoomId, LocalDateTime enterTime){
 
-        PartyChatRoom partyChatRoom = partyChatRoomRepository.findByPartyChatRoomId(ChatRoomId)
+        Member member = memberRepository.findMemberById(memberId)
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXIST_USER));
+
+        PartyChatRoom partyChatRoom = partyChatRoomRepository.findByPartyChatRoomId(chatRoomId)
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_CHATTING_ROOM));
 
-        // 파티 입장하는 멤버 정보 추가
-        PartyChatRoomMember partyChatRoomMember = new PartyChatRoomMember(LocalDateTime.now(), isRemittance, memberId);
+        //Validation 기존의 멤버인지 예외 처리
+        if(partyChatRoom.getParticipants().stream().anyMatch(participant -> participant.getMemberId() == memberId)){
+            throw new BaseException(BaseResponseStatus.ALREADY_PARTICIPATE_CHATROOM);
+        }
+
+        PartyChatRoomMember partyChatRoomMember = new PartyChatRoomMember(memberId, LocalDateTime.now(), false, partyChatRoom, member.getEmail().toString());
+        partyChatRoomMemberRepository.save(partyChatRoomMember);
 
         partyChatRoom.changeParticipants(partyChatRoomMember);
-        partyChatRoomMemberRepository.save(partyChatRoomMember);
         partyChatRoomRepository.save(partyChatRoom); // MongoDB는 JPA처럼 변경감지가 안되어서 직접 저장해줘야 한다.
+
+        mqController.joinChatRoom(member.getEmail().toString(), partyChatRoom.getId());         // rabbitmq 큐 생성 및 채팅방 exchange와 바인딩
+
+        PartyChatRoomMemberRes res = PartyChatRoomMemberRes.toDto(partyChatRoomMember, partyChatRoom);
+        return res;
     }
 
     @Transactional(readOnly = true)

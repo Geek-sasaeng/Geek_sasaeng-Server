@@ -23,16 +23,8 @@ public class MQController {
         String exchangeName = "chatting-" + "exchange-" + ChatRoomUUID;
         Exchange exchange = new FanoutExchange(exchangeName);
         admin.declareExchange(exchange);
+        System.out.println("rabbitMQ fanOutExchange가 생성되었습니다.");
 
-        Queue queue = new Queue(email, true, false, false);
-        QueueInformation queueInfo = admin.getQueueInfo(email); // 기존 큐 조회
-        // 큐가 없으면 생성
-        if(queueInfo == null){
-            admin.declareQueue(queue);
-        }
-
-        Binding binding = new Binding(email, Binding.DestinationType.QUEUE, exchangeName, "asdf",null); //TODO: fanoutExchange는 routingKey가 필요없지만 없으면 에러나서 임시로 입력 함.
-        admin.declareBinding(binding);
         return "OK";
     }
 
@@ -48,9 +40,10 @@ public class MQController {
         if(queueInfo == null){
             admin.declareQueue(queue);
         }
-
+        System.out.println("");
         Binding binding = new Binding(email, Binding.DestinationType.QUEUE, exchangeName, "asdf",null);
         admin.declareBinding(binding);
+        System.out.println("rabbitmq 멤버 큐 바인딩 성공했습니다.");
         return "OK";
     }
 
