@@ -18,7 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 public class PartyChatRoomMember {
     @Id
-    private int id;
+    private String id;
 
     private int memberId;
     private LocalDateTime enterTime;
@@ -33,5 +33,13 @@ public class PartyChatRoomMember {
         this.enterTime = enterTime;
         this.isRemittance = isRemittance;
         this.memberId = memberId;
+    }
+
+    public PartyChatRoomMember(int memberId, LocalDateTime enterTime, boolean isRemittance, PartyChatRoom partyChatRoom, String email) {
+        this.memberId = memberId;
+        this.enterTime = enterTime;
+        this.isRemittance = isRemittance;
+        this.partyChatRoom = partyChatRoom;
+        this.email = email;
     }
 }

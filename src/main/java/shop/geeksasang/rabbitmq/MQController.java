@@ -40,9 +40,10 @@ public class MQController {
         if(queueInfo == null){
             admin.declareQueue(queue);
         }
-
+        System.out.println("");
         Binding binding = new Binding(email, Binding.DestinationType.QUEUE, exchangeName, "asdf",null);
         admin.declareBinding(binding);
+        System.out.println("rabbitmq 멤버 큐 바인딩 성공했습니다.");
         return "OK";
     }
 

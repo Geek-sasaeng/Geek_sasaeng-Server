@@ -95,6 +95,7 @@ public enum BaseResponseStatus {
     NOT_EXIST_ANNOUNCEMENT(false, 2206, "존재하지 않는 공지사항입니다."),
     NOT_EXISTS_CHATTING_ROOM(false,2207,"채팅방이 존재하지 않습니다."),
     NOT_EXISTS_PARTYCHATROOM_MEMBER(false,2208,"채팅방 멤버가 존재하지 않습니다."),
+    ALREADY_PARTICIPATE_CHATROOM(false, 2209, "이미 채팅방에 참여하고 있습니다."),
 
 
 

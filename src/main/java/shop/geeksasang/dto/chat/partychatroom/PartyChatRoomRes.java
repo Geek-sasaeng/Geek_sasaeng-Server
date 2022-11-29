@@ -12,7 +12,7 @@ import shop.geeksasang.domain.chat.PartyChatRoom;
 public class PartyChatRoomRes {
 
     @ApiModelProperty(example = "637fa741bba4cf6c34bc13ef")
-    @ApiParam(value = "배달 파티 채팅방 제목")
+    @ApiParam(value = "배달 파티 채팅방 ID")
     private String partyChatRoomId;
 
     @ApiModelProperty(example = "치킨 시키실 분 구합니다.")

@@ -10,6 +10,7 @@ import shop.geeksasang.config.response.BaseResponse;
 import shop.geeksasang.domain.chat.Chat;
 import shop.geeksasang.domain.chat.ChatRoom;
 import shop.geeksasang.dto.chat.PostChattingReq;
+import shop.geeksasang.dto.chat.chatmember.PartyChatRoomMemberRes;
 import shop.geeksasang.dto.chat.chatmember.PostPartyChatRoomMemberReq;
 import shop.geeksasang.dto.chat.partychatroom.PartyChatRoomRes;
 import shop.geeksasang.dto.chat.partychatroom.post.PostPartyChatRoomReq;
@@ -58,10 +59,10 @@ public class DeliveryPartyChatController {
             @ApiResponse(code = 4000 ,message ="서버 오류입니다.")
     })
     @PostMapping("/member")
-    @NoIntercept //TODO:개발을 위해 임시로 jwt 허용되게한 것. 추후 제거 바람.
-    public BaseResponse<String> joinPartyChatRoom(HttpServletRequest request, @RequestBody PostPartyChatRoomMemberReq dto){
-        deliveryPartyChatService.joinPartyChatRoom(dto.getChatRoomId(), LocalDateTime.now(), dto.getIsRemittance(), dto.getMemberId());
-        return new BaseResponse("채팅방에 멤버가 추가되었습니다.");
+    public BaseResponse<PartyChatRoomMemberRes> joinPartyChatRoom(HttpServletRequest request, @RequestBody PostPartyChatRoomMemberReq dto){
+        JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
+        PartyChatRoomMemberRes res = deliveryPartyChatService.joinPartyChatRoom(jwtInfo.getUserId(), dto.getPartyChatRoomId(), LocalDateTime.now());
+        return new BaseResponse<>(res);
     }
 
 
