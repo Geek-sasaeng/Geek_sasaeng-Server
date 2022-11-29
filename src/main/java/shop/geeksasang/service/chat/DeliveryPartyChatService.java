@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.config.exception.response.BaseResponseStatus;
+import shop.geeksasang.controller.chat.DeliveryPartyChatController;
 import shop.geeksasang.domain.chat.Chat;
 import shop.geeksasang.domain.chat.ChatRoom;
 import shop.geeksasang.domain.chat.PartyChatRoomMember;
@@ -22,6 +23,7 @@ import shop.geeksasang.repository.chat.ChatRoomRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -80,23 +82,28 @@ public class DeliveryPartyChatService {
         PartyChatRoomMember partyChatRoomMember = new PartyChatRoomMember(LocalDateTime.now(), isRemittance, memberId);
 
         partyChatRoom.changeParticipants(partyChatRoomMember);
+        partyChatRoomMemberRepository.save(partyChatRoomMember);
         partyChatRoomRepository.save(partyChatRoom); // MongoDB는 JPA처럼 변경감지가 안되어서 직접 저장해줘야 한다.
     }
 
     @Transactional(readOnly = true)
-    public List<ChatRoom> findAllPartyChatRooms(int memberId){
-//        List<String> partyChatRoomList = chatRoomRepository.findAll().stream()
-//                .map(ChatRoom -> ChatRoom.getId())
-//                .collect(Collectors.toList());
-        List<ChatRoom> partyChatRoomList = chatRoomRepository.findAll();
+    public List<PartyChatRoom> findPartyChatRooms(int memberId){
+        List<PartyChatRoomMember> members = partyChatRoomMemberRepository.findPartyChatRoomMemberByMemberId(memberId);
 
-        return partyChatRoomList;
+        return members.stream()
+                .map(member -> member.getPartyChatRoom())
+                .collect(Collectors.toList());
+
+
+        //return null;
     }
 
     @Transactional(readOnly = true)
     public List<ChatRoom> findPartyChatRoom(int memberId, String partyChatRoomId){
 //        Query query = new Query();
 //        query.addCriteria(Criteria.where("id").is(partyChatRoomId));
+
+
         List<ChatRoom> partyChatRoomList = chatRoomRepository.findAllByPartyChatRoomId(partyChatRoomId);
 
         return partyChatRoomList;
@@ -105,8 +112,6 @@ public class DeliveryPartyChatService {
     @Transactional(readOnly = true)
     public List<Chat> findPartyChattings(int memberId, String partyChatRoomId){
         List<Chat> chattingList = chatRepository.findAll();
-
-
         return chattingList;
     }
 

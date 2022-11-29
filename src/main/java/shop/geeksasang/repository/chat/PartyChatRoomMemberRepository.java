@@ -5,6 +5,7 @@ import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 import shop.geeksasang.domain.chat.PartyChatRoomMember;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -14,6 +15,8 @@ public interface PartyChatRoomMemberRepository extends MongoRepository<PartyChat
     @Query(value = "{ 'memberId' : ?0 , 'chatRoomId': ?1 , 'status' : 'ACTIVE'}")
     Optional<PartyChatRoomMember> findByMemberIdAndChatRoomId(int memberId, String chatRoomId);
 
-//    @Query(value="{ 'firstname' : ?0 }", fields="{ 'firstname' : 1, 'lastname' : 1}")
-//    List<Person> findByThePersonsFirstname(String firstname);
+
+    //TODO STATUS 추가해야함
+    @Query(value = "{ 'memberId' : ?0 }")
+    List<PartyChatRoomMember> findPartyChatRoomMemberByMemberId(int memberId);
 }

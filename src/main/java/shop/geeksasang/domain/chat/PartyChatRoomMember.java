@@ -15,10 +15,10 @@ import java.util.List;
 @ToString
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 public class PartyChatRoomMember {
+
     @Id
-    private int id;
+    private String id;
 
     private int memberId;
     private LocalDateTime enterTime;

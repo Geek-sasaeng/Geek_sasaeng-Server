@@ -16,7 +16,7 @@ public class PartyChatRoom extends ChatRoom{
     private String title;
 
     @DocumentReference // 일대다
-    private List<Chat> chattings = new ArrayList<>();
+    private List<Chat> chats = new ArrayList<>();
 
     @DocumentReference
     private List<PartyChatRoomMember> participants = new ArrayList<>();
@@ -32,16 +32,16 @@ public class PartyChatRoom extends ChatRoom{
         this.title = title;
     }
 
-    public PartyChatRoom(String title, List<Chat> chattings) {
+    public PartyChatRoom(String title, List<Chat> chats) {
         super();
         this.title = title;
-        this.chattings = chattings;
+        this.chats = chats;
     }
 
-    public PartyChatRoom(String title, List<Chat> chattings, List<PartyChatRoomMember> participants, String accountNumber, String bank, String category, Boolean isFinish, Integer maxMatching) {
+    public PartyChatRoom(String title, List<Chat> chats, List<PartyChatRoomMember> participants, String accountNumber, String bank, String category, Boolean isFinish, Integer maxMatching) {
         super();
         this.title = title;
-        this.chattings = chattings;
+        this.chats = chats;
         this.participants = participants;
         this.accountNumber = accountNumber;
         this.bank = bank;
