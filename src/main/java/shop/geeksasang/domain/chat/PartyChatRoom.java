@@ -18,7 +18,7 @@ public class PartyChatRoom extends ChatRoom{
     @DocumentReference // 일대다
     private List<Chat> chats = new ArrayList<>();
 
-    @DocumentReference
+    @DocumentReference()
     private List<PartyChatRoomMember> participants = new ArrayList<>();
 
     private String accountNumber;

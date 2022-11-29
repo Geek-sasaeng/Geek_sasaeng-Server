@@ -11,12 +11,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.config.exception.response.BaseResponseStatus;
-import shop.geeksasang.controller.chat.DeliveryPartyChatController;
 import shop.geeksasang.domain.chat.Chat;
 import shop.geeksasang.domain.chat.ChatRoom;
 import shop.geeksasang.domain.chat.PartyChatRoomMember;
 import shop.geeksasang.domain.chat.PartyChatRoom;
-import shop.geeksasang.dto.chat.GetPartyChattingRoomsReq;
+import shop.geeksasang.dto.chat.partychatroom.GetPartyChatRoomRes;
+import shop.geeksasang.dto.chat.partychatroom.GetPartyChatRoomsRes;
 import shop.geeksasang.dto.chat.PostChatRes;
 import shop.geeksasang.repository.chat.PartyChatRoomMemberRepository;
 import shop.geeksasang.repository.chat.PartyChatRoomRepository;
@@ -93,17 +93,15 @@ public class DeliveryPartyChatService {
     }
 
     @Transactional(readOnly = true)
-    public GetPartyChattingRoomsReq findPartyChatRooms(int memberId, int cursor){
+    public GetPartyChatRoomsRes findPartyChatRooms(int memberId, int cursor){
 
         PageRequest page = PageRequest.of(cursor, 10, Sort.by(Sort.Direction.ASC, PAGING_STANDARD));
         Slice<PartyChatRoomMember> members = partyChatRoomMemberRepository.findPartyChatRoomMemberByMemberId(memberId, page);
-        List<PartyChatRoom> result = members.stream()
-                .map(member -> member.getPartyChatRoom())
+        List<GetPartyChatRoomRes> result= members.stream()
+                .map(member -> GetPartyChatRoomRes.of(member.getPartyChatRoom()))
                 .collect(Collectors.toList());
-        return new GetPartyChattingRoomsReq(result, members.isLast());
 
-
-        //return null;
+        return new GetPartyChatRoomsRes(result, members.isLast());
     }
 
     @Transactional(readOnly = true)
