@@ -26,7 +26,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DeliveryPartyChatController {
 
-    private final DeliveryPartyChatService deliveryPartyChattingService;
+    private final DeliveryPartyChatService deliveryPartyChatService;
 
     @ApiOperation(value = "채팅방 생성", notes = "(jwt 토큰 필요)배달 채팅방 생성 요청")
     @ApiResponses({
@@ -37,7 +37,7 @@ public class DeliveryPartyChatController {
     @PostMapping
     public BaseResponse<PartyChatRoomRes> createPartyChatRoom(HttpServletRequest request, @RequestBody @Validated PostPartyChatRoomReq dto){
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
-        PartyChatRoomRes res = deliveryPartyChattingService.createChatRoom(jwtInfo.getUserId(), dto.getTitle(), dto.getAccountNumber(), dto.getBank(), dto.getCategory(), dto.getMaxMatching());
+        PartyChatRoomRes res = deliveryPartyChatService.createChatRoom(jwtInfo.getUserId(), dto.getTitle(), dto.getAccountNumber(), dto.getBank(), dto.getCategory(), dto.getMaxMatching());
         return new BaseResponse<>(res);
     }
 
@@ -45,12 +45,12 @@ public class DeliveryPartyChatController {
     public BaseResponse<String> createPartyChatting(HttpServletRequest request, @RequestBody PostChattingReq dto){
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
         System.out.println("dto.getChatRoomId() = " + dto.getChatRoomId());
-        deliveryPartyChattingService.createChat(jwtInfo.getUserId(), dto.getEmail(), dto.getChatRoomId(), dto.getContent(), dto.getIsSystemMessage(), dto.getProfileImgUrl());
+        deliveryPartyChatService.createChat(jwtInfo.getUserId(), dto.getEmail(), dto.getChatRoomId(), dto.getContent(), dto.getIsSystemMessage(), dto.getProfileImgUrl());
         return new BaseResponse("채팅송신을 성공했습니다.");
     }
 
 
-    @ApiOperation(value = "채팅방 멤버 추가", notes = "(jwt 토큰 필요)멤버의 정보만 추가")
+    @ApiOperation(value = "채팅방 멤버 추가 및 rabbitmq 큐 생성", notes = "(jwt 토큰 필요)멤버의 정보만 추가")
     @ApiResponses({
             @ApiResponse(code = 1000 ,message ="요청에 성공하셨습니다."),
             @ApiResponse(code = 2009, message ="존재하지 않는 멤버입니다"),
@@ -59,8 +59,8 @@ public class DeliveryPartyChatController {
     })
     @PostMapping("/member")
     @NoIntercept //TODO:개발을 위해 임시로 jwt 허용되게한 것. 추후 제거 바람.
-    public BaseResponse<String> joinPartyChatRoom(HttpServletRequest request, @RequestBody PostPartyChatRoomMemberReq postPartyChatRoomMemberReq){
-        deliveryPartyChattingService.joinPartyChatRoom(postPartyChatRoomMemberReq.getChatRoomId(), LocalDateTime.now(), postPartyChatRoomMemberReq.getIsRemittance(), postPartyChatRoomMemberReq.getMemberId());
+    public BaseResponse<String> joinPartyChatRoom(HttpServletRequest request, @RequestBody PostPartyChatRoomMemberReq dto){
+        deliveryPartyChatService.joinPartyChatRoom(dto.getChatRoomId(), LocalDateTime.now(), dto.getIsRemittance(), dto.getMemberId());
         return new BaseResponse("채팅방에 멤버가 추가되었습니다.");
     }
 
@@ -74,7 +74,7 @@ public class DeliveryPartyChatController {
     @PostMapping("/get")
     public BaseResponse<List<ChatRoom>> findAllPartyChatRooms(HttpServletRequest request){
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
-        return new BaseResponse(deliveryPartyChattingService.findAllPartyChatRooms(jwtInfo.getUserId()));
+        return new BaseResponse(deliveryPartyChatService.findAllPartyChatRooms(jwtInfo.getUserId()));
     }
 
 
@@ -87,7 +87,7 @@ public class DeliveryPartyChatController {
     @PostMapping("/get/{partyChatRoomId}")
     public BaseResponse<List<ChatRoom>> findPartyChatRoom(HttpServletRequest request, @PathVariable("partyChatRoomId") String partyChatRoomId){
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
-        return new BaseResponse(deliveryPartyChattingService.findPartyChatRoom(jwtInfo.getUserId(),partyChatRoomId));
+        return new BaseResponse(deliveryPartyChatService.findPartyChatRoom(jwtInfo.getUserId(),partyChatRoomId));
     }
 
 
@@ -100,6 +100,6 @@ public class DeliveryPartyChatController {
     @PostMapping("/chatting/get/{partyChatRoomId}")
     public BaseResponse<List<Chat>> findPartyChattings(HttpServletRequest request, @PathVariable("partyChatRoomId") String partyChatRoomId){
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
-        return new BaseResponse(deliveryPartyChattingService.findPartyChattings(jwtInfo.getUserId(), partyChatRoomId));
+        return new BaseResponse(deliveryPartyChatService.findPartyChattings(jwtInfo.getUserId(), partyChatRoomId));
     }
 }
