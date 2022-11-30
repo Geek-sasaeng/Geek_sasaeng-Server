@@ -53,9 +53,14 @@ public class DeliveryPartyChatService {
         Member member = memberRepository.findMemberById(memberId)
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXIST_USER));
 
-        List<Chat> chattings = new ArrayList<>();
+        List<Chat> chats = new ArrayList<>();
         List<PartyChatRoomMember> participants = new ArrayList<>();
-        PartyChatRoom chatRoom = new PartyChatRoom(title, chattings, participants, accountNumber, bank, category, false, maxMatching);
+        PartyChatRoomMember chief = new PartyChatRoomMember(LocalDateTime.now(), false, memberId);
+        PartyChatRoom chatRoom = new PartyChatRoom(title, chats, participants, accountNumber, bank, category, false, maxMatching, chief);
+        chatRoom.addParticipants(chief);
+
+
+        partyChatRoomMemberRepository.save(chief);
         partyChatRoomRepository.save(chatRoom);
 
         //rabbitMQ 채팅방 생성 요청
@@ -113,7 +118,7 @@ public class DeliveryPartyChatService {
         PartyChatRoomMember partyChatRoomMember = new PartyChatRoomMember(memberId, LocalDateTime.now(), false, partyChatRoom, member.getEmail().toString());
         partyChatRoomMemberRepository.save(partyChatRoomMember);
 
-        partyChatRoom.changeParticipants(partyChatRoomMember);
+        partyChatRoom.addParticipants(partyChatRoomMember);
         partyChatRoomRepository.save(partyChatRoom); // MongoDB는 JPA처럼 변경감지가 안되어서 직접 저장해줘야 한다.
 
         mqController.joinChatRoom(member.getEmail().toString(), partyChatRoom.getId());         // rabbitmq 큐 생성 및 채팅방 exchange와 바인딩

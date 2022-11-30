@@ -194,7 +194,6 @@ public class Member extends BaseEntity {
     }
 
     public Member(String nickName) {
-        this.id = id;
         this.nickName = nickName;
         super.setStatus(BaseStatus.ACTIVE);
     }
