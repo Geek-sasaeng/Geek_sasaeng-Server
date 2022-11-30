@@ -71,7 +71,7 @@ public class PostChatRes {
                 .chatRoomId(chat.getPartyChatRoom().getId())
                 .isSystemMessage(chat.getIsSystemMessage())
                 .memberId(chat.getPartyChatRoomMember().getMemberId())
-                .email(chat.getPartyChatRoomMember().getEmail())
+                .email(email)
                 .profileImgUrl(chat.getProfileImgUrl())
                 .readMembers(chat.getReadMembers())
                 .createdAt(chat.getBaseEntityMongo().getCreatedAt())
