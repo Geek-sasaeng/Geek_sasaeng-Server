@@ -30,18 +30,19 @@ public class MQController {
 
     @GetMapping
     @NoIntercept//TODO:개발을 위해 임시로 jwt 허용되게한 것. 추후 제거 바람.
-    public String joinChatRoom(@RequestParam String email, @RequestParam String ChatRoomUUID){
+    public String joinChatRoom(@RequestParam int memberId, @RequestParam String ChatRoomUUID){
 
+        String memberIdStr = Integer.toString(memberId);
         String exchangeName = "chatting-" + "exchange-" + ChatRoomUUID;
 
-        Queue queue = new Queue(email, true, false, false);
-        QueueInformation queueInfo = admin.getQueueInfo(email);
+        Queue queue = new Queue(memberIdStr, true, false, false);
+        QueueInformation queueInfo = admin.getQueueInfo(memberIdStr);
         // 큐가 없으면 생성
         if(queueInfo == null){
             admin.declareQueue(queue);
         }
         System.out.println("");
-        Binding binding = new Binding(email, Binding.DestinationType.QUEUE, exchangeName, "asdf",null);
+        Binding binding = new Binding(memberIdStr, Binding.DestinationType.QUEUE, exchangeName, "asdf",null);
         admin.declareBinding(binding);
         System.out.println("rabbitmq 멤버 큐 바인딩 성공했습니다.");
         return "OK";
