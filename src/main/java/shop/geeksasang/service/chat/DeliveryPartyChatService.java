@@ -72,6 +72,7 @@ public class DeliveryPartyChatService {
         //rabbitMQ 채팅방 생성 요청
         try{
             mqController.createChatRoom(member.getEmail().toString(), chatRoom.getId());
+            mqController.joinChatRoom(memberId, chatRoom.getId());
         }catch (Exception e){
             System.out.println("mqController에서 채팅방 생성 에러 발생");
         }
@@ -93,9 +94,9 @@ public class DeliveryPartyChatService {
         List<Integer> readMembers = new ArrayList<>();
 
         // mongoDB 채팅 저장
-        Chat chat;
-        if(chatId.equals("none")){ chat = new Chat(content, partyChatRoom, isSystemMessage, partyChatRoomMember, profileImgUrl, readMembers); }
-        else{ chat = chatRepository.findByChatId(chatId).orElseThrow(() -> new BaseException(NOT_EXISTS_CHAT)); }
+        Chat chat = null;
+        if(chatType.equals("publish")){ chat = new Chat(content, partyChatRoom, isSystemMessage, partyChatRoomMember, profileImgUrl, readMembers); }
+        else if(chatType.equals("read")){ chat = chatRepository.findByChatId(chatId).orElseThrow(() -> new BaseException(NOT_EXISTS_CHAT)); }
 
         chat.addReadMember(memberId);// 읽은 멤버 추가
         Chat saveChat = chatRepository.save(chat);
