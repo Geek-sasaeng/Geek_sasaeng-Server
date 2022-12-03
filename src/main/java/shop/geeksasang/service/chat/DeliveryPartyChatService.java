@@ -185,8 +185,8 @@ public class DeliveryPartyChatService {
         }
 
         chatRoom.removeParticipant(removedMember);
-        removedMember.delete();
-        partyChatRoomRepository.save(chatRoom);
+        partyChatRoomRepository.deleteParticipant(new ObjectId(chatRoom.getId()),new ObjectId(removedMember.getId()));
+        //partyChatRoomRepository.save(chatRoom);
         partyChatRoomMemberRepository.save(removedMember);
     }
 }
