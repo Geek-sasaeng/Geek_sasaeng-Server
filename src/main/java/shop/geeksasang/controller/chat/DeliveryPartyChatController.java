@@ -11,7 +11,7 @@ import shop.geeksasang.domain.chat.Chat;
 import shop.geeksasang.domain.chat.ChatRoom;
 import shop.geeksasang.dto.chat.chatchief.PostRemoveMemberByChiefReq;
 import shop.geeksasang.dto.chat.partychatroom.GetPartyChatRoomsRes;
-import shop.geeksasang.dto.chat.PostChattingReq;
+import shop.geeksasang.dto.chat.PostChatReq;
 import shop.geeksasang.dto.chat.chatmember.PartyChatRoomMemberRes;
 import shop.geeksasang.dto.chat.chatmember.PostPartyChatRoomMemberReq;
 import shop.geeksasang.dto.chat.partychatroom.PartyChatRoomRes;
@@ -44,10 +44,9 @@ public class DeliveryPartyChatController {
     }
 
     @PostMapping("/chat")
-    public BaseResponse<String> createPartyChatting(HttpServletRequest request, @RequestBody PostChattingReq dto){
+    public BaseResponse<String> createChat(HttpServletRequest request, @RequestBody PostChatReq dto){
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
-        System.out.println("dto.getChatRoomId() = " + dto.getChatRoomId());
-        deliveryPartyChatService.createChat(jwtInfo.getUserId(), dto.getEmail(), dto.getChatRoomId(), dto.getContent(), dto.getIsSystemMessage(), dto.getProfileImgUrl());
+        deliveryPartyChatService.createChat(jwtInfo.getUserId(), dto.getEmail(), dto.getChatRoomId(), dto.getContent(), dto.getIsSystemMessage(), dto.getProfileImgUrl(), dto.getChatType(), dto.getChatId());
         return new BaseResponse("채팅송신을 성공했습니다.");
     }
 

@@ -11,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.geeksasang.config.exception.BaseException;
+import shop.geeksasang.config.exception.response.BaseResponseStatus;
 import shop.geeksasang.config.status.BaseStatus;
 import shop.geeksasang.domain.chat.Chat;
 import shop.geeksasang.domain.chat.ChatRoom;
@@ -71,6 +72,7 @@ public class DeliveryPartyChatService {
         //rabbitMQ 채팅방 생성 요청
         try{
             mqController.createChatRoom(member.getEmail().toString(), chatRoom.getId());
+            mqController.joinChatRoom(memberId, chatRoom.getId());
         }catch (Exception e){
             System.out.println("mqController에서 채팅방 생성 에러 발생");
         }
@@ -80,7 +82,7 @@ public class DeliveryPartyChatService {
     }
 
     @Transactional(readOnly = false)
-    public void createChat(int memberId, String email, String chatRoomId, String content, Boolean isSystemMessage, String profileImgUrl) {
+    public void createChat(int memberId, String email, String chatRoomId, String content, Boolean isSystemMessage, String profileImgUrl, String chatType, String chatId) {
 
         PartyChatRoom partyChatRoom = partyChatRoomRepository.findByPartyChatRoomId(chatRoomId)
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_CHATTING_ROOM));
@@ -92,12 +94,18 @@ public class DeliveryPartyChatService {
         List<Integer> readMembers = new ArrayList<>();
 
         // mongoDB 채팅 저장
-        Chat chat = new Chat(content, partyChatRoom, isSystemMessage, partyChatRoomMember, profileImgUrl, readMembers);
+        Chat chat = null;
+        if(chatType.equals("publish")){ chat = new Chat(content, partyChatRoom, isSystemMessage, partyChatRoomMember, profileImgUrl, readMembers); }
+        else if(chatType.equals("read")){ chat = chatRepository.findByChatId(chatId).orElseThrow(() -> new BaseException(NOT_EXISTS_CHAT)); }
+
+        chat.addReadMember(memberId);// 읽은 멤버 추가
         Chat saveChat = chatRepository.save(chat);
+
+        int unreadMemberCnt = saveChat.getUnreadMemberCnt(); // 안읽은 멤버 수 계산
 
         // json 형식으로 변환 후 RabbitMQ 전송
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
-        PostChatRes postChatRes = PostChatRes.toDto(saveChat, email);
+        PostChatRes postChatRes = PostChatRes.toDto(saveChat, email, chatType, unreadMemberCnt);
         String saveChatJson = null;
         try {
             saveChatJson = mapper.writeValueAsString(postChatRes);
@@ -127,7 +135,7 @@ public class DeliveryPartyChatService {
         partyChatRoom.addParticipants(partyChatRoomMember);
         partyChatRoomRepository.save(partyChatRoom); // MongoDB는 JPA처럼 변경감지가 안되어서 직접 저장해줘야 한다.
 
-        mqController.joinChatRoom(member.getEmail().toString(), partyChatRoom.getId());         // rabbitmq 큐 생성 및 채팅방 exchange와 바인딩
+        mqController.joinChatRoom(member.getId(), partyChatRoom.getId());         // rabbitmq 큐 생성 및 채팅방 exchange와 바인딩
 
         PartyChatRoomMemberRes res = PartyChatRoomMemberRes.toDto(partyChatRoomMember, partyChatRoom);
         return res;

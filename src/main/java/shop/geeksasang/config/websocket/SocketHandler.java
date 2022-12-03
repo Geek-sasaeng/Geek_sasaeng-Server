@@ -32,7 +32,8 @@ public class SocketHandler extends TextWebSocketHandler {
             ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
             PostChatRes postChatRes = mapper.readValue(msg, PostChatRes.class);
 
-            deliveryPartyChatService.createChat(postChatRes.getMemberId(), postChatRes.getEmail(), postChatRes.getChatRoomId(), postChatRes.getContent(), postChatRes.getIsSystemMessage(), postChatRes.getProfileImgUrl());//TODO: userId 넣는 부분 멤버 엔티티 구현 후 수정
+            deliveryPartyChatService.createChat(postChatRes.getMemberId(), postChatRes.getEmail(), postChatRes.getChatRoomId(), postChatRes.getContent(), postChatRes.getIsSystemMessage(), postChatRes.getProfileImgUrl(), postChatRes.getChatType(), postChatRes.getChatId());
+
         } catch (Exception e) {
             System.out.println("웹소켓 메시지 전송 에러 발생");
             e.printStackTrace();

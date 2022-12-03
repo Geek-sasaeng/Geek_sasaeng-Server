@@ -13,7 +13,7 @@ import java.util.Optional;
 
 @Repository
 public interface PartyChatRoomRepository extends MongoRepository<PartyChatRoom, String> {
-    @Query("{_id:'?0'}") // 0번째 파라미터 조건
+    @Query("{_id:'?0', 'status' : 'ACTIVE'}") // 0번째 파라미터 조건
     Optional<PartyChatRoom> findByPartyChatRoomId(String id);
 
     @Query("{ chief: ?0, 'status' : 'ACTIVE'}")

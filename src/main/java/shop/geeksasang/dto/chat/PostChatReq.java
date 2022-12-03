@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import javax.validation.constraints.NotEmpty;
 @NoArgsConstructor
 @Getter
-public class PostChattingReq {
+public class PostChatReq {
 
     @NotEmpty
     private String content;
@@ -22,7 +22,11 @@ public class PostChattingReq {
 
     private String profileImgUrl;
 
-    public PostChattingReq(String chatRoomId, String content) {
+    private String chatType;
+
+    private String chatId;
+
+    public PostChatReq(String chatRoomId, String content) {
         this.chatRoomId = chatRoomId;
         this.content = content;
     }
