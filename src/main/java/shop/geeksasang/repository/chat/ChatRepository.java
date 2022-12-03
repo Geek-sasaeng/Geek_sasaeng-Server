@@ -13,8 +13,6 @@ import java.util.Optional;
 @Repository
 public interface ChatRepository extends MongoRepository<Chat, String> {
 
-    @Query(" {'id' : :#{#id}, 'status' : 'ACTIVE'}")
+    @Query("{'id' : :#{#id}, 'status' : 'ACTIVE'}")
     Optional<Chat> findByChatId(@Param("id") String id);
-//    @Query("{'author' : :#{#author}, 'category' : :#{#category}}")
-//    List<Book> findNamedParameters(@Param("author") String author, @Param("category") String category);
 }
