@@ -4,18 +4,20 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.RequiredArgsConstructor;
+import org.bson.types.ObjectId;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.geeksasang.config.exception.BaseException;
-import shop.geeksasang.config.exception.response.BaseResponseStatus;
+import shop.geeksasang.config.status.BaseStatus;
 import shop.geeksasang.domain.chat.Chat;
 import shop.geeksasang.domain.chat.ChatRoom;
 import shop.geeksasang.domain.chat.PartyChatRoomMember;
 import shop.geeksasang.domain.chat.PartyChatRoom;
 import shop.geeksasang.domain.member.Member;
+import shop.geeksasang.dto.chat.chatchief.PostRemoveMemberByChiefReq;
 import shop.geeksasang.dto.chat.partychatroom.GetPartyChatRoomRes;
 import shop.geeksasang.dto.chat.partychatroom.GetPartyChatRoomsRes;
 import shop.geeksasang.dto.chat.PostChatRes;
@@ -32,6 +34,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static shop.geeksasang.config.exception.response.BaseResponseStatus.*;
 
 @Service
 @RequiredArgsConstructor
@@ -51,13 +55,19 @@ public class DeliveryPartyChatService {
     public PartyChatRoomRes createChatRoom(int memberId, String title, String accountNumber, String bank, String category, Integer maxMatching){
 
         Member member = memberRepository.findMemberById(memberId)
-                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXIST_USER));
+                .orElseThrow(() -> new BaseException(NOT_EXIST_USER));
 
-        List<Chat> chattings = new ArrayList<>();
+        List<Chat> chats = new ArrayList<>();
         List<PartyChatRoomMember> participants = new ArrayList<>();
-        PartyChatRoom chatRoom = new PartyChatRoom(title, chattings, participants, accountNumber, bank, category, false, maxMatching);
-        partyChatRoomRepository.save(chatRoom);
+        PartyChatRoomMember chief = new PartyChatRoomMember(LocalDateTime.now(), false, memberId);
+        PartyChatRoom chatRoom = new PartyChatRoom(title, chats, participants, accountNumber, bank, category, false, maxMatching, chief);
+        chatRoom.addParticipants(chief);
 
+        partyChatRoomRepository.save(chatRoom); //초기 생성
+
+        chief.enterRoom(chatRoom);
+        partyChatRoomMemberRepository.save(chief);
+        partyChatRoomRepository.save(chatRoom); //방장 업데이트
         //rabbitMQ 채팅방 생성 요청
         try{
             mqController.createChatRoom(member.getEmail().toString(), chatRoom.getId());
@@ -73,10 +83,11 @@ public class DeliveryPartyChatService {
     public void createChat(int memberId, String email, String chatRoomId, String content, Boolean isSystemMessage, String profileImgUrl) {
 
         PartyChatRoom partyChatRoom = partyChatRoomRepository.findByPartyChatRoomId(chatRoomId)
-                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_CHATTING_ROOM));
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_CHATTING_ROOM));
 
-        PartyChatRoomMember partyChatRoomMember = partyChatRoomMemberRepository.findByMemberIdAndChatRoomId(memberId, chatRoomId)
-                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTYCHATROOM_MEMBER));
+        PartyChatRoomMember partyChatRoomMember = partyChatRoomMemberRepository
+                .findByMemberIdAndChatRoomId(memberId, new ObjectId(partyChatRoom.getId()))
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTYCHATROOM_MEMBER));
 
         List<Integer> readMembers = new ArrayList<>();
 
@@ -100,20 +111,20 @@ public class DeliveryPartyChatService {
     public PartyChatRoomMemberRes joinPartyChatRoom(int memberId, String chatRoomId, LocalDateTime enterTime){
 
         Member member = memberRepository.findMemberById(memberId)
-                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXIST_USER));
+                .orElseThrow(() -> new BaseException(NOT_EXIST_USER));
 
         PartyChatRoom partyChatRoom = partyChatRoomRepository.findByPartyChatRoomId(chatRoomId)
-                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_CHATTING_ROOM));
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_CHATTING_ROOM));
 
         //Validation 기존의 멤버인지 예외 처리
         if(partyChatRoom.getParticipants().stream().anyMatch(participant -> participant.getMemberId() == memberId)){
-            throw new BaseException(BaseResponseStatus.ALREADY_PARTICIPATE_CHATROOM);
+            throw new BaseException(ALREADY_PARTICIPATE_CHATROOM);
         }
 
         PartyChatRoomMember partyChatRoomMember = new PartyChatRoomMember(memberId, LocalDateTime.now(), false, partyChatRoom, member.getEmail().toString());
         partyChatRoomMemberRepository.save(partyChatRoomMember);
 
-        partyChatRoom.changeParticipants(partyChatRoomMember);
+        partyChatRoom.addParticipants(partyChatRoomMember);
         partyChatRoomRepository.save(partyChatRoom); // MongoDB는 JPA처럼 변경감지가 안되어서 직접 저장해줘야 한다.
 
         mqController.joinChatRoom(member.getEmail().toString(), partyChatRoom.getId());         // rabbitmq 큐 생성 및 채팅방 exchange와 바인딩
@@ -152,5 +163,31 @@ public class DeliveryPartyChatService {
     }
 
 
+    //TODO 몽고 트랜잭션 매니저를 달아야하는데, 트랜잭션 매니저 달면 JPA랑 충돌해서 문제가 일어나는듯
+    public void removeMemberByChief(int chiefId, PostRemoveMemberByChiefReq dto) {
+        PartyChatRoomMember chief = partyChatRoomMemberRepository
+                .findByMemberIdAndChatRoomId(chiefId, new ObjectId(dto.getRoomId()))
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTYCHATROOM_MEMBER));
+
+        PartyChatRoomMember removedMember = partyChatRoomMemberRepository
+                .findByIdAndChatRoomId(new ObjectId(dto.getRemovedMemberId()), new ObjectId(dto.getRoomId()))
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTYCHATROOM_MEMBER));
+
+        PartyChatRoom chatRoom = partyChatRoomRepository.findPartyChatRoomByChiefId(new ObjectId(chief.getId()))
+                .orElseThrow(() -> new BaseException(NOT_EXIST_CHAT_ROOM_CHIEF));
+
+        if(chatRoom.isNotChief(chief)){
+            throw new BaseException(NOT_CHAT_ROOM_CHIEF);
+        }
+
+        if(removedMember.alreadyRemit()){
+            throw new BaseException(CANT_REMOVE_REMIT_MEMBER);
+        }
+
+        chatRoom.removeParticipant(removedMember);
+        removedMember.delete();
+        partyChatRoomRepository.save(chatRoom);
+        partyChatRoomMemberRepository.save(removedMember);
+    }
 }
 // String exchange, String routingKey, Object message
