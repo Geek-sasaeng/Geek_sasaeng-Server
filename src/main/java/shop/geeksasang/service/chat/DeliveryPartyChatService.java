@@ -11,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.geeksasang.config.exception.BaseException;
+import shop.geeksasang.config.exception.response.BaseResponseStatus;
 import shop.geeksasang.config.status.BaseStatus;
 import shop.geeksasang.domain.chat.Chat;
 import shop.geeksasang.domain.chat.ChatRoom;
@@ -80,7 +81,7 @@ public class DeliveryPartyChatService {
     }
 
     @Transactional(readOnly = false)
-    public void createChat(int memberId, String email, String chatRoomId, String content, Boolean isSystemMessage, String profileImgUrl) {
+    public void createChat(int memberId, String email, String chatRoomId, String content, Boolean isSystemMessage, String profileImgUrl, String chatType, String chatId) {
 
         PartyChatRoom partyChatRoom = partyChatRoomRepository.findByPartyChatRoomId(chatRoomId)
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_CHATTING_ROOM));
@@ -92,12 +93,18 @@ public class DeliveryPartyChatService {
         List<Integer> readMembers = new ArrayList<>();
 
         // mongoDB 채팅 저장
-        Chat chat = new Chat(content, partyChatRoom, isSystemMessage, partyChatRoomMember, profileImgUrl, readMembers);
+        Chat chat;
+        if(chatId.equals("none")){ chat = new Chat(content, partyChatRoom, isSystemMessage, partyChatRoomMember, profileImgUrl, readMembers); }
+        else{ chat = chatRepository.findByChatId(chatId).orElseThrow(() -> new BaseException(NOT_EXISTS_CHAT)); }
+
+        chat.addReadMember(memberId);// 읽은 멤버 추가
         Chat saveChat = chatRepository.save(chat);
+
+        int unreadMemberCnt = saveChat.getUnreadMemberCnt(); // 안읽은 멤버 수 계산
 
         // json 형식으로 변환 후 RabbitMQ 전송
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
-        PostChatRes postChatRes = PostChatRes.toDto(saveChat, email);
+        PostChatRes postChatRes = PostChatRes.toDto(saveChat, email, chatType, unreadMemberCnt);
         String saveChatJson = null;
         try {
             saveChatJson = mapper.writeValueAsString(postChatRes);

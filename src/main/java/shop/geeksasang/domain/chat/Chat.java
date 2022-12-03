@@ -52,6 +52,17 @@ public class Chat implements Serializable {
         this.readMembers = readMembers;
         this.baseEntityMongo = new BaseEntityMongo();
     }
+
+    /*
+    연관관계 편의 메서드
+     */
+    public void addReadMember(Integer memberId){
+        this.readMembers.add(memberId);
+    }
+
+    public int getUnreadMemberCnt(){
+        return this.partyChatRoom.getParticipants().size() - this.readMembers.size();
+    }
 }
 
 /**

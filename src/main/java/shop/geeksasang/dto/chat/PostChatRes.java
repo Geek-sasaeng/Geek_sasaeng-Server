@@ -36,6 +36,10 @@ public class PostChatRes {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
 
+    private String chatType;
+
+    private int unreadMemberCnt;
+
     public PostChatRes(String chatRoomId, String content, LocalDateTime createdAt, int memberId) {
         this.chatRoomId = chatRoomId;
         this.content = content;
@@ -52,7 +56,7 @@ public class PostChatRes {
     }
 
     @Builder
-    public PostChatRes(String chatId, String content, String chatRoomId, Boolean isSystemMessage, int memberId, String email, String profileImgUrl, List<Integer> readMembers, LocalDateTime createdAt) {
+    public PostChatRes(String chatId, String content, String chatRoomId, Boolean isSystemMessage, int memberId, String email, String profileImgUrl, List<Integer> readMembers, LocalDateTime createdAt, String chatType, int unreadMemberCnt) {
         this.chatId = chatId;
         this.content = content;
         this.chatRoomId = chatRoomId;
@@ -62,9 +66,11 @@ public class PostChatRes {
         this.profileImgUrl = profileImgUrl;
         this.readMembers = readMembers;
         this.createdAt = createdAt;
+        this.chatType = chatType;
+        this.unreadMemberCnt = unreadMemberCnt;
     }
 
-    public static PostChatRes toDto(Chat chat, String email){
+    public static PostChatRes toDto(Chat chat, String email, String chatType, int unreadMemberCnt){
         return PostChatRes.builder()
                 .chatId(chat.getId())
                 .content(chat.getContent())
@@ -75,6 +81,8 @@ public class PostChatRes {
                 .profileImgUrl(chat.getProfileImgUrl())
                 .readMembers(chat.getReadMembers())
                 .createdAt(chat.getBaseEntityMongo().getCreatedAt())
+                .chatType(chatType)
+                .unreadMemberCnt(unreadMemberCnt)
                 .build();
     }
 }

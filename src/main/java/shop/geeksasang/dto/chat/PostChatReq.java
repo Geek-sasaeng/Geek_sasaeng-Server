@@ -22,6 +22,10 @@ public class PostChatReq {
 
     private String profileImgUrl;
 
+    private String chatType;
+
+    private String chatId;
+
     public PostChatReq(String chatRoomId, String content) {
         this.chatRoomId = chatRoomId;
         this.content = content;
