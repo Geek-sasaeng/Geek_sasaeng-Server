@@ -1,6 +1,7 @@
 package shop.geeksasang.integration;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,7 +20,7 @@ import shop.geeksasang.repository.university.UniversityRepository;
 @WebAppConfiguration
 @SpringBootTest
 @Transactional
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+//@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class IntegrationTest {
 
     @Autowired
@@ -36,7 +37,7 @@ public abstract class IntegrationTest {
 
 
 
-    @BeforeAll
+    @BeforeEach
     void beforeAll(){
         University ex = universityRepository.save(new University("예시대학교", "ex", "example"));
         foodCategoryRepository.save(new FoodCategory(1, "한식"));

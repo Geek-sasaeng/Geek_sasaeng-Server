@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import shop.geeksasang.config.response.BaseResponse;
 import shop.geeksasang.domain.chat.Chat;
 import shop.geeksasang.domain.chat.ChatRoom;
+import shop.geeksasang.dto.chat.chatchief.PostRemoveMemberByChiefReq;
 import shop.geeksasang.dto.chat.partychatroom.GetPartyChatRoomsRes;
 import shop.geeksasang.dto.chat.PostChattingReq;
 import shop.geeksasang.dto.chat.chatmember.PartyChatRoomMemberRes;
@@ -103,4 +104,17 @@ public class DeliveryPartyChatController {
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
         return new BaseResponse(deliveryPartyChatService.findPartyChattings(jwtInfo.getUserId(), partyChatRoomId));
     }
+
+    /**
+     * 방장 관련 API 추후 컨트롤러 빼버리는게 좋을 듯
+     *
+     */
+    @DeleteMapping("/members")
+    public BaseResponse<List<Chat>> removeChatRoomMemberByChief(HttpServletRequest request, @RequestBody PostRemoveMemberByChiefReq dto){
+        JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
+        deliveryPartyChatService.removeMemberByChief(jwtInfo.getUserId(), dto);
+        return new BaseResponse("success");
+    }
+
+
 }

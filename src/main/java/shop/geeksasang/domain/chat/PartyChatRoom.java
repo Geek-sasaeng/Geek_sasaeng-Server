@@ -1,5 +1,6 @@
 package shop.geeksasang.domain.chat;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -55,6 +56,14 @@ public class PartyChatRoom extends ChatRoom{
 
     public void addParticipants(PartyChatRoomMember partyChatRoomMember){
         this.participants.add(partyChatRoomMember);
+    }
+
+    public boolean isNotChief(PartyChatRoomMember chief) {
+        return !chief.getId().equals(this.chief.getId());
+    }
+
+    public void removeParticipant(PartyChatRoomMember removedMember) {
+        this.participants.remove(removedMember);
     }
 
 }
