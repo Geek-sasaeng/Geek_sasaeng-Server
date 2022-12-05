@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import shop.geeksasang.config.response.BaseResponse;
 import shop.geeksasang.domain.chat.Chat;
 import shop.geeksasang.domain.chat.ChatRoom;
+import shop.geeksasang.dto.SuccessCommonRes;
 import shop.geeksasang.dto.chat.chatchief.PostRemoveMemberByChiefReq;
 import shop.geeksasang.dto.chat.partychatroom.GetPartyChatRoomsRes;
 import shop.geeksasang.dto.chat.PostChatReq;
@@ -20,6 +21,7 @@ import shop.geeksasang.dto.login.JwtInfo;
 import shop.geeksasang.service.chat.DeliveryPartyChatService;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -104,16 +106,20 @@ public class DeliveryPartyChatController {
         return new BaseResponse(deliveryPartyChatService.findPartyChattings(jwtInfo.getUserId(), partyChatRoomId));
     }
 
-    /**
-     * 방장 관련 API 추후 컨트롤러 빼버리는게 좋을 듯
-     *
-     */
+
+    @ApiOperation(value = "방장이 배달 파티 채팅 멤버를 강제퇴장", notes = "(jwt 토큰 필요)전체 조회")
+    @ApiResponses({
+            @ApiResponse(code = 1000 ,message ="요청에 성공하셨습니다."),
+            @ApiResponse(code = 2008 ,message ="채팅방 멤버가 존재하지 않습니다."),
+            @ApiResponse(code = 2024 ,message ="배달 파티 채팅방 방장이 존재하지 않습니다."),
+            @ApiResponse(code = 2025 ,message ="배달 파티 채팅방 방장이 아닙니다."),
+            @ApiResponse(code = 2026 ,message ="송금을 완료한 멤버는 방에서 퇴장시킬 수 없습니다."),
+            @ApiResponse(code = 4000 ,message ="서버 오류입니다.")
+    })
     @DeleteMapping("/members")
-    public BaseResponse<List<Chat>> removeChatRoomMemberByChief(HttpServletRequest request, @RequestBody PostRemoveMemberByChiefReq dto){
+    public BaseResponse<SuccessCommonRes> removeChatRoomMemberByChief(HttpServletRequest request, @Valid @RequestBody PostRemoveMemberByChiefReq dto){
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
         deliveryPartyChatService.removeMemberByChief(jwtInfo.getUserId(), dto);
-        return new BaseResponse("success");
+        return new BaseResponse(new SuccessCommonRes());
     }
-
-
 }
