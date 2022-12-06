@@ -27,4 +27,9 @@ public class RabbitMqConfig {
     public AmqpAdmin amqpAdmin() {
         return new RabbitAdmin(rabbitTemplate.getConnectionFactory());
     }
+
+    @Bean
+    public RabbitMQTut5Receiver receiver(){
+        return new RabbitMQTut5Receiver();
+    }
 }
