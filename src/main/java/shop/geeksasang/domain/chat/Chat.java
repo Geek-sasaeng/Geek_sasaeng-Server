@@ -35,6 +35,8 @@ public class Chat implements Serializable {
 
     private List<Integer> readMembers = new ArrayList<>(); // 읽은 멤버 ID 리스트
 
+    private Boolean isImageMessage;
+
     @Unwrapped(onEmpty = Unwrapped.OnEmpty.USE_EMPTY)
     private BaseEntityMongo baseEntityMongo;
 
@@ -50,6 +52,18 @@ public class Chat implements Serializable {
         this.partyChatRoomMember = partyChatRoomMember;
         this.profileImgUrl = profileImgUrl;
         this.readMembers = readMembers;
+        this.isImageMessage = false;
+        this.baseEntityMongo = new BaseEntityMongo();
+    }
+
+    public Chat(String content, PartyChatRoom partyChatRoom, Boolean isSystemMessage, PartyChatRoomMember partyChatRoomMember, String profileImgUrl, List<Integer> readMembers, Boolean isimageMessage) {
+        this.content = content;
+        this.partyChatRoom = partyChatRoom;
+        this.isSystemMessage = isSystemMessage;
+        this.partyChatRoomMember = partyChatRoomMember;
+        this.profileImgUrl = profileImgUrl;
+        this.readMembers = readMembers;
+        this.isImageMessage = isimageMessage;
         this.baseEntityMongo = new BaseEntityMongo();
     }
 

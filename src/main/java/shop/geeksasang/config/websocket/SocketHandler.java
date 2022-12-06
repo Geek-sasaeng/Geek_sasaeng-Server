@@ -30,9 +30,9 @@ public class SocketHandler extends TextWebSocketHandler {
         try {
             // json 형식으로 변환 후 전송
             ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
-            PostChatRes postChatRes = mapper.readValue(msg, PostChatRes.class);
+            PostChatRes dto = mapper.readValue(msg, PostChatRes.class);
 
-            deliveryPartyChatService.createChat(postChatRes.getMemberId(), postChatRes.getEmail(), postChatRes.getChatRoomId(), postChatRes.getContent(), postChatRes.getIsSystemMessage(), postChatRes.getProfileImgUrl(), postChatRes.getChatType(), postChatRes.getChatId());
+            deliveryPartyChatService.createChat(dto.getMemberId(), dto.getEmail(), dto.getChatRoomId(), dto.getContent(), dto.getIsSystemMessage(), dto.getProfileImgUrl(), dto.getChatType(), dto.getChatId(), dto.getIsImageMessage());
 
         } catch (Exception e) {
             System.out.println("웹소켓 메시지 전송 에러 발생");

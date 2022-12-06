@@ -1,22 +1,24 @@
 package shop.geeksasang.dto.chat;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotBlank;
+import java.util.List;
+
 @NoArgsConstructor
-@Getter
-public class PostChatReq {
+@AllArgsConstructor
+@Data
+public class PostChatImageReq {
 
-    @NotEmpty
     private String content;
 
-    @NotEmpty
     private String chatRoomId;
 
     private Boolean isSystemMessage;
-
-    private int memberId;
 
     private String email;
 
@@ -26,10 +28,7 @@ public class PostChatReq {
 
     private String chatId;
 
-    private Boolean isImageMessage;
+    private List<MultipartFile> images; // 최대 5개
 
-    public PostChatReq(String chatRoomId, String content) {
-        this.chatRoomId = chatRoomId;
-        this.content = content;
-    }
+    private Boolean isImageMessage;
 }
