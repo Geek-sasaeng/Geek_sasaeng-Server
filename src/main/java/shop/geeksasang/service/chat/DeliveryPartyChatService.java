@@ -62,7 +62,7 @@ public class DeliveryPartyChatService {
 
         Member member = memberRepository.findMemberById(memberId)
                 .orElseThrow(() -> new BaseException(NOT_EXIST_USER));
-
+        String email = member.getEmail().getAddress();
         List<Chat> chats = new ArrayList<>();
         List<PartyChatRoomMember> participants = new ArrayList<>();
         PartyChatRoomMember chief = new PartyChatRoomMember(LocalDateTime.now(), false, memberId);
@@ -76,7 +76,7 @@ public class DeliveryPartyChatService {
         partyChatRoomRepository.save(chatRoom); //방장 업데이트
         //rabbitMQ 채팅방 생성 요청
         try{
-            mqController.createChatRoom(member.getEmail().toString(), chatRoom.getId());
+            mqController.createChatRoom(email, chatRoom.getId());
             mqController.joinChatRoom(memberId, chatRoom.getId());
         }catch (Exception e){
             System.out.println("mqController에서 채팅방 생성 에러 발생");
@@ -177,6 +177,9 @@ public class DeliveryPartyChatService {
         Member member = memberRepository.findMemberById(memberId)
                 .orElseThrow(() -> new BaseException(NOT_EXIST_USER));
 
+        String email = member.getEmail().getAddress();
+        String profileImgUrl = member.getProfileImgUrl();
+
         PartyChatRoom partyChatRoom = partyChatRoomRepository.findByPartyChatRoomId(new ObjectId(chatRoomId))
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_CHATTING_ROOM));
 
@@ -192,6 +195,9 @@ public class DeliveryPartyChatService {
         partyChatRoomRepository.save(partyChatRoom); // MongoDB는 JPA처럼 변경감지가 안되어서 직접 저장해줘야 한다.
 
         mqController.joinChatRoom(member.getId(), partyChatRoom.getId());         // rabbitmq 큐 생성 및 채팅방 exchange와 바인딩
+
+        // 입장 시스템 메시지 전송
+        this.createChat(memberId, email, chatRoomId, "입장하였습니다.", true, profileImgUrl, "publish", "none", false);
 
         PartyChatRoomMemberRes res = PartyChatRoomMemberRes.toDto(partyChatRoomMember, partyChatRoom);
         return res;
