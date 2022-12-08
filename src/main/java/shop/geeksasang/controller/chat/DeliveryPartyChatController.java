@@ -39,7 +39,7 @@ public class DeliveryPartyChatController {
     @PostMapping
     public BaseResponse<PartyChatRoomRes> createPartyChatRoom(HttpServletRequest request, @RequestBody @Validated PostPartyChatRoomReq dto){
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
-        PartyChatRoomRes res = deliveryPartyChatService.createChatRoom(jwtInfo.getUserId(), dto.getTitle(), dto.getAccountNumber(), dto.getBank(), dto.getCategory(), dto.getMaxMatching());
+        PartyChatRoomRes res = deliveryPartyChatService.createChatRoom(jwtInfo.getUserId(), dto.getTitle(), dto.getAccountNumber(), dto.getBank(), dto.getCategory(), dto.getMaxMatching(), dto.getDeliveryPartyId());
         return new BaseResponse<>(res);
     }
 

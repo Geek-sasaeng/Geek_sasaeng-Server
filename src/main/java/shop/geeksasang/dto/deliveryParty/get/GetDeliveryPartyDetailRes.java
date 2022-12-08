@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import shop.geeksasang.config.status.BelongStatus;
 import shop.geeksasang.config.status.MatchingStatus;
+import shop.geeksasang.domain.chat.PartyChatRoom;
 import shop.geeksasang.domain.deliveryparty.DeliveryParty;
 
 
@@ -81,9 +82,11 @@ public class GetDeliveryPartyDetailRes {
     @ApiModelProperty(example = "Y", value = "사용자가 파티멤버에 속해있는지 여부. 속해있으면 Y, 아니면 N")
     private BelongStatus belongStatus;
 
+    @ApiModelProperty(value = "배달 파티 채팅방 ID", example = "637fa741bba4cf6c34bc13ef")
+    private String partyChatRoomId;
 
     //빌더
-    static public GetDeliveryPartyDetailRes toDto(DeliveryParty deliveryParty, boolean authorStatus, BelongStatus belongStatus){
+    static public GetDeliveryPartyDetailRes toDto(DeliveryParty deliveryParty, boolean authorStatus, BelongStatus belongStatus, PartyChatRoom partyChatRoom){
 
         return GetDeliveryPartyDetailRes.builder()
                 .id(deliveryParty.getId())
@@ -106,13 +109,14 @@ public class GetDeliveryPartyDetailRes {
                 .dormitory(deliveryParty.getDormitory().getId())
                 .uuid(deliveryParty.getUuid())
                 .belongStatus(belongStatus)
+                .partyChatRoomId(partyChatRoom.getId())
                 .build();
     }
 
     @Builder
     public GetDeliveryPartyDetailRes(int id, String chief, int chiefId, String chiefProfileImgUrl, String foodCategory, boolean hashTag, String title, String content,
                                      LocalDateTime orderTime, int currentMatching, int maxMatching, MatchingStatus matchingStatus, String updatedAt, Double latitude,
-                                     Double longitude, String storeUrl, boolean authorStatus, int dormitory, String uuid, BelongStatus belongStatus) {
+                                     Double longitude, String storeUrl, boolean authorStatus, int dormitory, String uuid, BelongStatus belongStatus, String partyChatRoomId) {
         this.id = id;
         this.chief = chief;
         this.chiefId = chiefId;
@@ -133,5 +137,6 @@ public class GetDeliveryPartyDetailRes {
         this.dormitory = dormitory;
         this.uuid = uuid;
         this.belongStatus = belongStatus;
+        this.partyChatRoomId = partyChatRoomId;
     }
 }

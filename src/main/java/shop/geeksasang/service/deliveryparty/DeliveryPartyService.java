@@ -13,6 +13,7 @@ import shop.geeksasang.config.status.MatchingStatus;
 import shop.geeksasang.config.type.OrderTimeCategoryType;
 import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.config.exception.response.BaseResponseStatus;
+import shop.geeksasang.domain.chat.PartyChatRoom;
 import shop.geeksasang.domain.deliveryparty.DeliveryParty;
 import shop.geeksasang.domain.deliveryparty.DeliveryPartyMember;
 import shop.geeksasang.domain.deliveryparty.FoodCategory;
@@ -30,6 +31,7 @@ import shop.geeksasang.dto.deliveryParty.put.PutDeliveryPartyRes;
 import shop.geeksasang.dto.login.JwtInfo;
 import shop.geeksasang.repository.*;
 import shop.geeksasang.repository.block.BlockRepository;
+import shop.geeksasang.repository.chat.PartyChatRoomRepository;
 import shop.geeksasang.repository.deliveryparty.DeliveryPartyMemberRepository;
 import shop.geeksasang.repository.deliveryparty.query.DeliveryPartyQueryRepository;
 import shop.geeksasang.repository.deliveryparty.DeliveryPartyRepository;
@@ -60,6 +62,7 @@ public class DeliveryPartyService {
     private final HashTagRepository hashTagRepository;
     private final DeliveryPartyQueryRepository deliveryPartyQueryRepository;
     private final BlockRepository blockRepository;
+    private final PartyChatRoomRepository partyChatRoomRepository;
 
     private static final int PAGING_SIZE = 10;
     private static final String PAGING_STANDARD = "orderTime";
@@ -191,7 +194,10 @@ public class DeliveryPartyService {
             belongStatus = BelongStatus.Y;
         }
 
-        GetDeliveryPartyDetailRes getDeliveryPartyDetailRes = GetDeliveryPartyDetailRes.toDto(deliveryParty, authorStatus, belongStatus);
+        PartyChatRoom partyChatRoom = partyChatRoomRepository.findByDeliveryPartyId(partyId)
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_CHAT_ROOM));
+
+        GetDeliveryPartyDetailRes getDeliveryPartyDetailRes = GetDeliveryPartyDetailRes.toDto(deliveryParty, authorStatus, belongStatus, partyChatRoom);
         return getDeliveryPartyDetailRes;
     }
 
