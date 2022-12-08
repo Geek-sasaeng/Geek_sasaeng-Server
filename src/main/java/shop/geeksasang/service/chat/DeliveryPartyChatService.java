@@ -58,7 +58,7 @@ public class DeliveryPartyChatService {
     private static final String PAGING_STANDARD = "createdAt";
 
     @Transactional(readOnly = false)
-    public PartyChatRoomRes createChatRoom(int memberId, String title, String accountNumber, String bank, String category, Integer maxMatching){
+    public PartyChatRoomRes createChatRoom(int memberId, String title, String accountNumber, String bank, String category, Integer maxMatching, int deliveryPartyId){
 
         Member member = memberRepository.findMemberById(memberId)
                 .orElseThrow(() -> new BaseException(NOT_EXIST_USER));
@@ -66,7 +66,7 @@ public class DeliveryPartyChatService {
         List<Chat> chats = new ArrayList<>();
         List<PartyChatRoomMember> participants = new ArrayList<>();
         PartyChatRoomMember chief = new PartyChatRoomMember(LocalDateTime.now(), false, memberId);
-        PartyChatRoom chatRoom = new PartyChatRoom(title, chats, participants, accountNumber, bank, category, false, maxMatching, chief);
+        PartyChatRoom chatRoom = new PartyChatRoom(title, chats, participants, accountNumber, bank, category, false, maxMatching, chief, deliveryPartyId);
         chatRoom.addParticipants(chief);
 
         partyChatRoomRepository.save(chatRoom); //초기 생성
@@ -90,7 +90,7 @@ public class DeliveryPartyChatService {
     public void createChat(int memberId, String email, String chatRoomId, String content, Boolean isSystemMessage, String profileImgUrl, String chatType, String chatId, Boolean isImageMessage) {
 
         PartyChatRoom partyChatRoom = partyChatRoomRepository.findByPartyChatRoomId(new ObjectId(chatRoomId))
-                .orElseThrow(() -> new BaseException(NOT_EXISTS_CHATTING_ROOM));
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_CHAT_ROOM));
 
         PartyChatRoomMember partyChatRoomMember = partyChatRoomMemberRepository
                 .findByMemberIdAndChatRoomId(memberId, new ObjectId(partyChatRoom.getId()))
@@ -125,7 +125,7 @@ public class DeliveryPartyChatService {
     public void createChatImage(int memberId, String email, String chatRoomId, String content, Boolean isSystemMessage, String profileImgUrl, String chatType, String chatId, List<MultipartFile> images, Boolean isImageMessage) {
 
         PartyChatRoom partyChatRoom = partyChatRoomRepository.findByPartyChatRoomId(new ObjectId(chatRoomId))
-                .orElseThrow(() -> new BaseException(NOT_EXISTS_CHATTING_ROOM));
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_CHAT_ROOM));
 
         PartyChatRoomMember partyChatRoomMember = partyChatRoomMemberRepository
                 .findByMemberIdAndChatRoomId(memberId, new ObjectId(chatRoomId))
@@ -181,7 +181,7 @@ public class DeliveryPartyChatService {
         String profileImgUrl = member.getProfileImgUrl();
 
         PartyChatRoom partyChatRoom = partyChatRoomRepository.findByPartyChatRoomId(new ObjectId(chatRoomId))
-                .orElseThrow(() -> new BaseException(NOT_EXISTS_CHATTING_ROOM));
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_CHAT_ROOM));
 
         //Validation 기존의 멤버인지 예외 처리
         if(partyChatRoom.getParticipants().stream().anyMatch(participant -> participant.getMemberId() == memberId)){
