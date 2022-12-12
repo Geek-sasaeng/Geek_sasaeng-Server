@@ -65,4 +65,8 @@ public class PartyChatRoomMember {
     public void enterRoom(PartyChatRoom chatRoom) {
         this.partyChatRoom = chatRoom;
     }
+
+    public void upgradeChief(PartyChatRoom partyChatRoom) {
+        this.partyChatRoom = partyChatRoom;
+    }
 }

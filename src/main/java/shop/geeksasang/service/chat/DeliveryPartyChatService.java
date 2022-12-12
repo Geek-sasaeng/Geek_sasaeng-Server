@@ -11,14 +11,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.geeksasang.config.exception.BaseException;
-import shop.geeksasang.config.exception.response.BaseResponseStatus;
-import shop.geeksasang.config.status.BaseStatus;
 import shop.geeksasang.domain.chat.Chat;
 import shop.geeksasang.domain.chat.ChatRoom;
 import shop.geeksasang.domain.chat.PartyChatRoomMember;
 import shop.geeksasang.domain.chat.PartyChatRoom;
 import shop.geeksasang.domain.member.Member;
-import shop.geeksasang.dto.chat.chatchief.PostRemoveMemberByChiefReq;
+import shop.geeksasang.dto.chat.chatchief.DeleteMemberByChiefReq;
 import shop.geeksasang.dto.chat.partychatroom.GetPartyChatRoomRes;
 import shop.geeksasang.dto.chat.partychatroom.GetPartyChatRoomsRes;
 import shop.geeksasang.dto.chat.PostChatRes;
@@ -172,7 +170,7 @@ public class DeliveryPartyChatService {
 
 
     //TODO 몽고 트랜잭션 매니저를 달아야하는데, 트랜잭션 매니저 달면 JPA랑 충돌해서 문제가 일어나는듯
-    public void removeMemberByChief(int chiefId, PostRemoveMemberByChiefReq dto) {
+    public void removeMemberByChief(int chiefId, DeleteMemberByChiefReq dto) {
         PartyChatRoomMember chief = partyChatRoomMemberRepository
                 .findByMemberIdAndChatRoomId(chiefId, new ObjectId(dto.getRoomId()))
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTYCHATROOM_MEMBER));
@@ -196,6 +194,55 @@ public class DeliveryPartyChatService {
         partyChatRoomRepository.deleteParticipant(new ObjectId(chatRoom.getId()),new ObjectId(removedMember.getId()));
         //partyChatRoomRepository.save(chatRoom);
         partyChatRoomMemberRepository.save(removedMember);
+    }
+
+    public void changeChief(int chiefId, String roomId) {
+        PartyChatRoomMember chief = partyChatRoomMemberRepository
+                .findByMemberIdAndChatRoomId(chiefId, new ObjectId(roomId))
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTYCHATROOM_MEMBER));
+
+        PartyChatRoom chatRoom = partyChatRoomRepository.findPartyChatRoomByChiefId(new ObjectId(chief.getId()))
+                .orElseThrow(() -> new BaseException(NOT_EXIST_CHAT_ROOM_CHIEF));
+
+        //송금한 사람이 존재한다면 거절
+        if(chatRoom.existAlreadyRemittanceParticipant()){
+            throw new RuntimeException("이미 송금한 사람이 있습니다");
+        }
+
+        //방장만 존재한다면 삭제
+        if(chatRoom.isOnlyChief()){
+            //방장 지우고, 채팅방도 삭제
+            chief.delete();
+            chatRoom.removeParticipant(chief);
+            chatRoom.deleteChief();
+            partyChatRoomRepository.save(chatRoom);
+            partyChatRoomRepository.deleteParticipant(new ObjectId(chatRoom.getId()),new ObjectId(chief.getId()));
+            partyChatRoomMemberRepository.save(chief);
+            return;
+        };
+
+        //이미 송금한 사람이 없다고 검사함.방장을 빼고 첫 번째 사람을 가져와서 방장으로 임명해야함.
+        //chatRoom.removeParticipant(chief);
+
+        partyChatRoomRepository.deleteParticipant(new ObjectId(chatRoom.getId()),new ObjectId(chief.getId()));
+
+        PartyChatRoomMember changeChief = chatRoom.changeChief();
+        chief.delete();
+
+        partyChatRoomRepository.save(chatRoom);
+        partyChatRoomMemberRepository.save(chief);
+        partyChatRoomMemberRepository.save(changeChief);
+    }
+
+    public void removeMember(int memberId, String roomId) {
+        PartyChatRoomMember member = partyChatRoomMemberRepository
+                .findByMemberIdAndChatRoomId(memberId, new ObjectId(roomId))
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTYCHATROOM_MEMBER));
+
+        partyChatRoomRepository.deleteParticipant(new ObjectId(roomId),new ObjectId(member.getId()));
+
+        member.delete();
+        partyChatRoomMemberRepository.save(member);
     }
 }
 // String exchange, String routingKey, Object message

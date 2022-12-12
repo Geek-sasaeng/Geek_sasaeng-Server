@@ -8,7 +8,7 @@ import javax.validation.constraints.NotBlank;
 
 @Getter
 @NoArgsConstructor
-public class PostRemoveMemberByChiefReq {
+public class DeleteMemberByChiefReq {
 
     @ApiParam(value = "배달 채팅방 id", required = true, example = "638dba87ca6fd27d74c17be8")
     @NotBlank
@@ -18,7 +18,7 @@ public class PostRemoveMemberByChiefReq {
     @NotBlank
     private String removedMemberId;
 
-    public PostRemoveMemberByChiefReq(String roomId, String removedMemberId) {
+    public DeleteMemberByChiefReq(String roomId, String removedMemberId) {
         this.roomId = roomId;
         this.removedMemberId = removedMemberId;
     }
