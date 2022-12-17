@@ -6,8 +6,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import shop.geeksasang.config.status.ValidStatus;
-import shop.geeksasang.domain.*;
-import shop.geeksasang.repository.*;
+import shop.geeksasang.domain.auth.Email;
+import shop.geeksasang.domain.auth.PhoneNumber;
+import shop.geeksasang.domain.location.Location;
+import shop.geeksasang.domain.member.Member;
+import shop.geeksasang.domain.university.Dormitory;
+import shop.geeksasang.domain.university.University;
+import shop.geeksasang.repository.auth.EmailRepository;
+import shop.geeksasang.repository.auth.PhoneNumberRepository;
+import shop.geeksasang.repository.member.MemberRepository;
+import shop.geeksasang.repository.university.DormitoryRepository;
+import shop.geeksasang.repository.university.UniversityRepository;
+
 import java.util.Optional;
 import static org.assertj.core.api.Assertions.*;
 

@@ -6,8 +6,8 @@ import io.swagger.annotations.ApiParam;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import shop.geeksasang.domain.DeliveryParty;
-import shop.geeksasang.domain.DeliveryPartyHashTag;
+import shop.geeksasang.domain.deliveryparty.DeliveryParty;
+import shop.geeksasang.domain.deliveryparty.DeliveryPartyHashTag;
 
 import java.time.LocalDateTime;
 import java.util.List;

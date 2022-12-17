@@ -8,9 +8,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import shop.geeksasang.config.status.LoginStatus;
 import shop.geeksasang.config.type.MemberLoginType;
-import shop.geeksasang.domain.Email;
-import shop.geeksasang.domain.PhoneNumber;
-import shop.geeksasang.domain.University;
 
 @NoArgsConstructor
 @AllArgsConstructor

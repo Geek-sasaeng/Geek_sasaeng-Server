@@ -5,7 +5,7 @@ import io.swagger.annotations.ApiParam;
 
 import lombok.Getter;
 
-import shop.geeksasang.domain.Commercial;
+import shop.geeksasang.domain.commercial.Commercial;
 
 @Getter
 public class GetCommercialsRes {

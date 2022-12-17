@@ -11,9 +11,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import shop.geeksasang.config.type.OrderTimeCategoryType;
-import shop.geeksasang.dto.deliveryParty.get.GetDeliveryPartiesRes;
-import shop.geeksasang.dto.deliveryParty.get.vo.DeliveryPartiesVo;
 import shop.geeksasang.dto.deliveryParty.post.PostDeliveryPartyReq;
 import shop.geeksasang.dto.deliveryParty.post.PostDeliveryPartyRes;
 import shop.geeksasang.factory.domain.DormitoryFactory;
@@ -22,9 +19,15 @@ import shop.geeksasang.factory.domain.HashTagFactory;
 import shop.geeksasang.factory.domain.MemberFactory;
 import shop.geeksasang.factory.dto.deliveryparty.PostDeliveryPartyFactory;
 import shop.geeksasang.repository.*;
-import shop.geeksasang.service.DeliveryPartyService;
+import shop.geeksasang.repository.block.BlockRepository;
+import shop.geeksasang.repository.deliveryparty.DeliveryPartyMemberRepository;
+import shop.geeksasang.repository.deliveryparty.query.DeliveryPartyQueryRepository;
+import shop.geeksasang.repository.deliveryparty.DeliveryPartyRepository;
+import shop.geeksasang.repository.deliveryparty.FoodCategoryRepository;
+import shop.geeksasang.repository.member.MemberRepository;
+import shop.geeksasang.repository.university.DormitoryRepository;
+import shop.geeksasang.service.deliveryparty.DeliveryPartyService;
 
-import java.util.List;
 import java.util.Optional;
 
 

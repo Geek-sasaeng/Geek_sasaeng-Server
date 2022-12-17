@@ -1,7 +1,7 @@
 package shop.geeksasang.factory.domain;
 
-import shop.geeksasang.domain.Dormitory;
-import shop.geeksasang.domain.Location;
+import shop.geeksasang.domain.university.Dormitory;
+import shop.geeksasang.domain.location.Location;
 
 public class DormitoryFactory {
 

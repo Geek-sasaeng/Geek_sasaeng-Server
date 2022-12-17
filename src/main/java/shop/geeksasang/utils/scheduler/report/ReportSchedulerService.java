@@ -3,10 +3,7 @@ package shop.geeksasang.utils.scheduler.report;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import shop.geeksasang.domain.Member;
-import shop.geeksasang.repository.MemberRepository;
-
-import java.util.List;
+import shop.geeksasang.repository.member.MemberRepository;
 
 @Service
 @RequiredArgsConstructor
@@ -16,9 +13,6 @@ public class ReportSchedulerService {
 
     @Transactional(readOnly = false)
     public void resetPerDayMemberReportingCount(){
-        List<Member> memberList = memberRepository.findAll();
-        for (Member member : memberList) {
-            member.resetPerDayReportingCount();
-        }
+        memberRepository.bulkDayReportingCountInit();
     }
 }

@@ -1,14 +1,13 @@
 package shop.geeksasang.config.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import shop.geeksasang.config.status.BaseStatus;
-
 import javax.persistence.*;
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 

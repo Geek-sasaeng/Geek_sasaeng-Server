@@ -7,11 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import shop.geeksasang.domain.Dormitory;
-import shop.geeksasang.domain.Location;
-import shop.geeksasang.domain.University;
-import shop.geeksasang.repository.DormitoryRepository;
-import shop.geeksasang.repository.UniversityRepository;
+import shop.geeksasang.domain.university.Dormitory;
+import shop.geeksasang.domain.location.Location;
+import shop.geeksasang.domain.university.University;
+import shop.geeksasang.repository.university.DormitoryRepository;
+import shop.geeksasang.repository.university.UniversityRepository;
 
 import java.util.List;
 

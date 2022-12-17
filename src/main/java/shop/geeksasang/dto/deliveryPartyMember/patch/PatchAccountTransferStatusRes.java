@@ -6,9 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import shop.geeksasang.config.status.AccountTransferStatus;
-import shop.geeksasang.domain.DeliveryPartyMember;
-
-import javax.validation.constraints.NotBlank;
+import shop.geeksasang.domain.deliveryparty.DeliveryPartyMember;
 
 @Getter
 @Setter
