@@ -111,10 +111,10 @@ public class DeliveryPartyChatController {
     @ApiOperation(value = "방장이 배달 파티 채팅 멤버를 강제퇴장", notes = "(jwt 토큰 필요)전체 조회")
     @ApiResponses({
             @ApiResponse(code = 1000 ,message ="요청에 성공하셨습니다."),
-            @ApiResponse(code = 2008 ,message ="채팅방 멤버가 존재하지 않습니다."),
             @ApiResponse(code = 2024 ,message ="배달 파티 채팅방 방장이 존재하지 않습니다."),
             @ApiResponse(code = 2025 ,message ="배달 파티 채팅방 방장이 아닙니다."),
             @ApiResponse(code = 2026 ,message ="송금을 완료한 멤버는 방에서 퇴장시킬 수 없습니다."),
+            @ApiResponse(code = 2208 ,message ="채팅방 멤버가 존재하지 않습니다."),
             @ApiResponse(code = 4000 ,message ="서버 오류입니다.")
     })
     @DeleteMapping("/members")
@@ -125,6 +125,12 @@ public class DeliveryPartyChatController {
     }
 
     @ApiOperation(value = "방장 퇴장", notes = "(jwt 토큰 필요)전체 조회")
+    @ApiResponses({
+            @ApiResponse(code = 1000 ,message ="요청에 성공하셨습니다."),
+            @ApiResponse(code = 2024 ,message ="배달 파티 채팅방 방장이 존재하지 않습니다."),
+            @ApiResponse(code = 2208 ,message ="채팅방 멤버가 존재하지 않습니다."),
+            @ApiResponse(code = 4000 ,message ="서버 오류입니다.")
+    })
     @PatchMapping("/chief")
     public BaseResponse<SuccessCommonRes> changeChief(HttpServletRequest request, @Valid @RequestBody PatchChiefReq dto){
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");

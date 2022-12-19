@@ -66,7 +66,33 @@ public class PartyChatRoomMember {
         this.partyChatRoom = chatRoom;
     }
 
-    public void upgradeChief(PartyChatRoom partyChatRoom) {
-        this.partyChatRoom = partyChatRoom;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof PartyChatRoomMember)) return false;
+
+        PartyChatRoomMember that = (PartyChatRoomMember) o;
+
+        if (getMemberId() != that.getMemberId()) return false;
+        if (isRemittance() != that.isRemittance()) return false;
+        if (getId() != null ? !getId().equals(that.getId()) : that.getId() != null) return false;
+        if (getEnterTime() != null ? !getEnterTime().equals(that.getEnterTime()) : that.getEnterTime() != null)
+            return false;
+        if (getPartyChatRoom() != null ? !getPartyChatRoom().equals(that.getPartyChatRoom()) : that.getPartyChatRoom() != null)
+            return false;
+        if (getEmail() != null ? !getEmail().equals(that.getEmail()) : that.getEmail() != null) return false;
+        return getBaseEntityMongo() != null ? getBaseEntityMongo().equals(that.getBaseEntityMongo()) : that.getBaseEntityMongo() == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getId() != null ? getId().hashCode() : 0;
+        result = 31 * result + getMemberId();
+        result = 31 * result + (getEnterTime() != null ? getEnterTime().hashCode() : 0);
+        result = 31 * result + (isRemittance() ? 1 : 0);
+        result = 31 * result + (getPartyChatRoom() != null ? getPartyChatRoom().hashCode() : 0);
+        result = 31 * result + (getEmail() != null ? getEmail().hashCode() : 0);
+        result = 31 * result + (getBaseEntityMongo() != null ? getBaseEntityMongo().hashCode() : 0);
+        return result;
     }
 }

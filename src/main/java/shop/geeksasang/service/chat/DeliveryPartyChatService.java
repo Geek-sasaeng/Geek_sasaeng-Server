@@ -224,14 +224,13 @@ public class DeliveryPartyChatService {
         //이미 송금한 사람이 없다고 검사함.방장을 빼고 첫 번째 사람을 가져와서 방장으로 임명해야함.
         //chatRoom.removeParticipant(chief);
 
-        partyChatRoomRepository.deleteParticipant(new ObjectId(chatRoom.getId()),new ObjectId(chief.getId()));
-
         PartyChatRoomMember changeChief = chatRoom.changeChief();
         chief.delete();
 
         partyChatRoomRepository.save(chatRoom);
         partyChatRoomMemberRepository.save(chief);
         partyChatRoomMemberRepository.save(changeChief);
+        //partyChatRoomRepository.deleteParticipant(new ObjectId(chatRoom.getId()),new ObjectId(chief.getId()));
     }
 
     public void removeMember(int memberId, String roomId) {

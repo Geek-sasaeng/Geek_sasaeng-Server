@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import shop.geeksasang.domain.university.Dormitory;
 
-@Getter @Setter
+@Getter
 public class DormitoriesVo {
     @ApiModelProperty(example = "1", value = "기숙사 id" )
     private int dormitoryId;

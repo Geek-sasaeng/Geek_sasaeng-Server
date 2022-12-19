@@ -83,8 +83,8 @@ public class PartyChatRoom extends ChatRoom{
     }
 
     public PartyChatRoomMember changeChief() {
+        participants.remove(0);
         PartyChatRoomMember changeChief = this.participants.get(0);
-        changeChief.upgradeChief(this);
         this.chief = changeChief;
         return changeChief;
     }
