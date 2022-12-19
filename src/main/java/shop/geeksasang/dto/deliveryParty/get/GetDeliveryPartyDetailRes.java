@@ -85,6 +85,9 @@ public class GetDeliveryPartyDetailRes {
     @ApiModelProperty(value = "배달 파티 채팅방 ID", example = "637fa741bba4cf6c34bc13ef")
     private String partyChatRoomId;
 
+    @ApiModelProperty(value = "배달 파티 채팅방 이름", example = "같이 먹어요")
+    private String partyChatRoomTitle;
+
     //빌더
     static public GetDeliveryPartyDetailRes toDto(DeliveryParty deliveryParty, boolean authorStatus, BelongStatus belongStatus, PartyChatRoom partyChatRoom){
 
@@ -110,13 +113,14 @@ public class GetDeliveryPartyDetailRes {
                 .uuid(deliveryParty.getUuid())
                 .belongStatus(belongStatus)
                 .partyChatRoomId(partyChatRoom.getId())
+                .partyChatRoomTitle(partyChatRoom.getTitle())
                 .build();
     }
 
     @Builder
     public GetDeliveryPartyDetailRes(int id, String chief, int chiefId, String chiefProfileImgUrl, String foodCategory, boolean hashTag, String title, String content,
                                      LocalDateTime orderTime, int currentMatching, int maxMatching, MatchingStatus matchingStatus, String updatedAt, Double latitude,
-                                     Double longitude, String storeUrl, boolean authorStatus, int dormitory, String uuid, BelongStatus belongStatus, String partyChatRoomId) {
+                                     Double longitude, String storeUrl, boolean authorStatus, int dormitory, String uuid, BelongStatus belongStatus, String partyChatRoomId, String partyChatRoomTitle) {
         this.id = id;
         this.chief = chief;
         this.chiefId = chiefId;
@@ -138,5 +142,6 @@ public class GetDeliveryPartyDetailRes {
         this.uuid = uuid;
         this.belongStatus = belongStatus;
         this.partyChatRoomId = partyChatRoomId;
+        this.partyChatRoomTitle = partyChatRoomTitle;
     }
 }
