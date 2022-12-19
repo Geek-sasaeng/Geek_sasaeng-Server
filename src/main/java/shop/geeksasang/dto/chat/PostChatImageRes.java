@@ -1,5 +1,6 @@
 package shop.geeksasang.dto.chat;
 
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,11 +14,10 @@ import java.util.List;
 
 @NoArgsConstructor
 @Getter
-public class PostChatRes {
+public class PostChatImageRes {
 
     private String chatId;
 
-    @NotEmpty
     private String content;
 
     @NotEmpty
@@ -42,23 +42,8 @@ public class PostChatRes {
 
     private Boolean isImageMessage;
 
-    public PostChatRes(String chatRoomId, String content, LocalDateTime createdAt, int memberId) {
-        this.chatRoomId = chatRoomId;
-        this.content = content;
-        this.createdAt = createdAt;
-        this.memberId = memberId;
-    }
-
-    public PostChatRes(String email, String chatRoomId, String content, LocalDateTime createdAt, int memberId) {
-        this.email = email;
-        this.chatRoomId = chatRoomId;
-        this.content = content;
-        this.createdAt = createdAt;
-        this.memberId = memberId;
-    }
-
     @Builder
-    public PostChatRes(String chatId, String content, String chatRoomId, Boolean isSystemMessage, int memberId, String email, String profileImgUrl, List<Integer> readMembers, LocalDateTime createdAt, String chatType, int unreadMemberCnt, Boolean isImageMessage) {
+    public PostChatImageRes(String chatId, String content, String chatRoomId, Boolean isSystemMessage, int memberId, String email, String profileImgUrl, List<Integer> readMembers, LocalDateTime createdAt, String chatType, int unreadMemberCnt, Boolean isImageMessage) {
         this.chatId = chatId;
         this.content = content;
         this.chatRoomId = chatRoomId;
@@ -69,12 +54,12 @@ public class PostChatRes {
         this.readMembers = readMembers;
         this.createdAt = createdAt;
         this.chatType = chatType;
-        this.isImageMessage = isImageMessage;
         this.unreadMemberCnt = unreadMemberCnt;
+        this.isImageMessage = isImageMessage;
     }
 
-    public static PostChatRes toDto(Chat chat, String email, String chatType, int unreadMemberCnt){
-        return PostChatRes.builder()
+    public static PostChatImageRes toDto(Chat chat, String email, String chatType, int unreadMemberCnt){
+        return PostChatImageRes.builder()
                 .chatId(chat.getId())
                 .content(chat.getContent())
                 .chatRoomId(chat.getPartyChatRoom().getId())

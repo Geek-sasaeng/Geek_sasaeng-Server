@@ -30,9 +30,10 @@ public class PartyChatRoom extends ChatRoom{
     private String category;
     private Boolean isFinish;
     private Integer maxMatching;
+    private int deliveryPartyId;
 
     public PartyChatRoom(String title, List<Chat> chats, List<PartyChatRoomMember> participants, String accountNumber,
-                         String bank, String category, Boolean isFinish, Integer maxMatching, PartyChatRoomMember chief) {
+                         String bank, String category, Boolean isFinish, Integer maxMatching, PartyChatRoomMember chief, int deliveryPartyId) {
         super();
         this.title = title;
         this.chats = chats;
@@ -43,6 +44,7 @@ public class PartyChatRoom extends ChatRoom{
         this.isFinish = isFinish;
         this.maxMatching = maxMatching;
         this.chief = chief;
+        this.deliveryPartyId = deliveryPartyId;
     }
 
     @Override

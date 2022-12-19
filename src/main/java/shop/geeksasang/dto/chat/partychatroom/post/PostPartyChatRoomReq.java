@@ -36,4 +36,7 @@ public class PostPartyChatRoomReq {
     @ApiModelProperty(example = "4")
     @ApiParam(value = "매칭 최대 인원", required = true)
     private Integer maxMatching;
+
+    @ApiModelProperty(example = "1", value = "배달파티 ID", required = true)
+    private int deliveryPartyId;
 }

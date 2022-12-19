@@ -96,10 +96,12 @@ public enum BaseResponseStatus {
     NOT_EXIST_USER(false,2204,"존재하지 않는 회원 id 입니다."),
     BLANK_KEYWORD(false,2205,"검색어를 입력해주세요"),
     NOT_EXIST_ANNOUNCEMENT(false, 2206, "존재하지 않는 공지사항입니다."),
-    NOT_EXISTS_CHATTING_ROOM(false,2207,"채팅방이 존재하지 않습니다."),
+    NOT_EXISTS_CHAT_ROOM(false,2207,"채팅방이 존재하지 않습니다."),
     NOT_EXISTS_PARTYCHATROOM_MEMBER(false,2208,"채팅방 멤버가 존재하지 않습니다."),
     ALREADY_PARTICIPATE_CHATROOM(false, 2209, "이미 채팅방에 참여하고 있습니다."),
     NOT_EXISTS_CHAT(false,2210,"채팅이 존재하지 않습니다."),
+    EXCEEDED_IMAGE(false,2211,"이미지 갯수를 초과했습니다."),
+
 
 
 
