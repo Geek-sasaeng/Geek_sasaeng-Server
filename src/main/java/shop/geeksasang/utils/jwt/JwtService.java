@@ -1,5 +1,7 @@
 package shop.geeksasang.utils.jwt;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -103,5 +105,43 @@ public class JwtService {
                 .getBody()
                 .getExpiration().before(new Date());
         return !expiration;
+    }
+
+    /*
+    웹소켓 통신용 jwt 검증 및 추출
+     */
+    public JwtInfo getJwtInfoInWebSocket(String jwt){
+
+        // 1.jwt 추출
+        String accessToken=null;
+        if(jwt.toLowerCase().startsWith("Bearer".toLowerCase())){
+            accessToken = jwt.substring("Bearer".length()).trim();
+            if(accessToken == null || accessToken.length() == 0){
+                throw new BaseException(EMPTY_JWT);
+            }
+        }
+        // 2. JWT parsing
+        Claims body;
+        try{
+            body = Jwts.parser()
+                    .setSigningKey(secretKey)
+                    .parseClaimsJws(accessToken)
+                    .getBody();
+        } catch (Exception ignored) {
+            throw new BaseException(INVALID_JWT);
+        }
+
+        //3. JWT 유효기간 확인
+        if(!this.validateToken(accessToken))
+            throw new BaseException(EXPIRED_JWT);
+
+        //LinkedHashMap 타입 jwtInfo parsings
+        System.out.println("body = " + body.get("jwtInfo"));
+        LinkedHashMap jwtInfo = body.get("jwtInfo", LinkedHashMap.class);
+
+        //LinkedHashMap 타입 jwtInfo값을 JwtInfo.class 타입으로 convert
+        ObjectMapper objectMapper = new ObjectMapper();
+        JwtInfo convertJwtInfo = objectMapper.convertValue(jwtInfo,JwtInfo.class);
+        return convertJwtInfo;
     }
 }

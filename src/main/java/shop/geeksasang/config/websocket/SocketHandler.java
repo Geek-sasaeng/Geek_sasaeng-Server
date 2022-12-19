@@ -2,22 +2,36 @@ package shop.geeksasang.config.websocket;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
+import shop.geeksasang.config.exception.BaseException;
+import shop.geeksasang.domain.member.Member;
+import shop.geeksasang.dto.chat.PostChatReq;
 import shop.geeksasang.dto.chat.PostChatRes;
+import shop.geeksasang.dto.login.JwtInfo;
+import shop.geeksasang.repository.member.MemberRepository;
 import shop.geeksasang.service.chat.DeliveryPartyChatService;
+import shop.geeksasang.utils.jwt.JwtService;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+
+import static shop.geeksasang.config.exception.response.BaseResponseStatus.*;
 
 @Component
 @RequiredArgsConstructor
 public class SocketHandler extends TextWebSocketHandler {
 
     private final DeliveryPartyChatService deliveryPartyChatService;
+    private final JwtService jwtService;
+    private final MemberRepository memberRepository;
 
     HashMap<String, WebSocketSession> sessionMap = new HashMap<>(); //웹소켓 세션을 담아둘 맵
 
@@ -30,10 +44,16 @@ public class SocketHandler extends TextWebSocketHandler {
         try {
             // json 형식으로 변환 후 전송
             ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
-            PostChatRes dto = mapper.readValue(msg, PostChatRes.class);
+            PostChatReq dto = mapper.readValue(msg, PostChatReq.class);
 
-            deliveryPartyChatService.createChat(dto.getMemberId(), dto.getEmail(), dto.getChatRoomId(), dto.getContent(), dto.getIsSystemMessage(), dto.getProfileImgUrl(), dto.getChatType(), dto.getChatId(), dto.getIsImageMessage());
+            //LinkedHashMap 타입 jwtInfo값을 JwtInfo.class 타입으로 convert
+            JwtInfo convertJwtInfo = jwtService.getJwtInfoInWebSocket(dto.getJwt());
+            int memberId = convertJwtInfo.getUserId();
+            Member member = memberRepository.findMemberById(memberId)
+                    .orElseThrow(() -> new BaseException(NOT_EXIST_USER));
 
+            System.out.println("멤버 ID" + memberId + "이고 프로필 이미지는" + member.getProfileImgUrl());
+            deliveryPartyChatService.createChat(memberId, dto.getChatRoomId(), dto.getContent(), dto.getIsSystemMessage(), member.getProfileImgUrl(), dto.getChatType(), dto.getChatId(), false);
         } catch (Exception e) {
             System.out.println("웹소켓 메시지 전송 에러 발생");
             e.printStackTrace();
