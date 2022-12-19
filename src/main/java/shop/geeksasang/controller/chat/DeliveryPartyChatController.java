@@ -7,9 +7,16 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import shop.geeksasang.config.response.BaseResponse;
 import shop.geeksasang.domain.chat.Chat;
+
+import shop.geeksasang.dto.SuccessCommonRes;
+import shop.geeksasang.dto.chat.chatchief.DeleteMemberByChiefReq;
+import shop.geeksasang.dto.chat.chatchief.PatchChiefReq;
+import shop.geeksasang.dto.chat.chatmember.PatchMemberReq;
+
 import shop.geeksasang.domain.chat.ChatRoom;
 import shop.geeksasang.dto.chat.PostChatImageReq;
-import shop.geeksasang.dto.chat.chatchief.PostRemoveMemberByChiefReq;
+
+
 import shop.geeksasang.dto.chat.partychatroom.GetPartyChatRoomsRes;
 import shop.geeksasang.dto.chat.PostChatReq;
 import shop.geeksasang.dto.chat.chatmember.PartyChatRoomMemberRes;
@@ -20,6 +27,7 @@ import shop.geeksasang.dto.login.JwtInfo;
 import shop.geeksasang.service.chat.DeliveryPartyChatService;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -107,17 +115,17 @@ public class DeliveryPartyChatController {
     }
 
 
-    @ApiOperation(value = "채팅방 조회", notes = "(jwt 토큰 필요)전체 조회")
-    @ApiResponses({
-            @ApiResponse(code = 1000 ,message ="요청에 성공하셨습니다."),
-            @ApiResponse(code = 2009, message ="존재하지 않는 멤버입니다"),
-            @ApiResponse(code = 4000 ,message ="서버 오류입니다.")
-    })
-    @PostMapping("/get/{partyChatRoomId}")
-    public BaseResponse<List<ChatRoom>> findPartyChatRoom(HttpServletRequest request, @PathVariable("partyChatRoomId") String partyChatRoomId){
-        JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
-        return new BaseResponse(deliveryPartyChatService.findPartyChatRoom(jwtInfo.getUserId(), partyChatRoomId));
-    }
+//    @ApiOperation(value = "채팅방 조회", notes = "(jwt 토큰 필요)전체 조회")
+//    @ApiResponses({
+//            @ApiResponse(code = 1000 ,message ="요청에 성공하셨습니다."),
+//            @ApiResponse(code = 2009, message ="존재하지 않는 멤버입니다"),
+//            @ApiResponse(code = 4000 ,message ="서버 오류입니다.")
+//    })
+//    @PostMapping("/get/{partyChatRoomId}")
+//    public BaseResponse<List<ChatRoom>> findPartyChatRoom(HttpServletRequest request, @PathVariable("partyChatRoomId") String partyChatRoomId){
+//        JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
+//        return new BaseResponse(deliveryPartyChatService.findPartyChatRoom(jwtInfo.getUserId(), partyChatRoomId));
+//    }
 
 
     @ApiOperation(value = "채팅 전체 조회", notes = "(jwt 토큰 필요)전체 조회")
@@ -132,16 +140,47 @@ public class DeliveryPartyChatController {
         return new BaseResponse(deliveryPartyChatService.findPartyChattings(jwtInfo.getUserId(), partyChatRoomId));
     }
 
-    /**
-     * 방장 관련 API 추후 컨트롤러 빼버리는게 좋을 듯
-     *
-     */
+
+    @ApiOperation(value = "방장이 배달 파티 채팅 멤버를 강제퇴장", notes = "(jwt 토큰 필요)전체 조회")
+    @ApiResponses({
+            @ApiResponse(code = 1000 ,message ="요청에 성공하셨습니다."),
+            @ApiResponse(code = 2024 ,message ="배달 파티 채팅방 방장이 존재하지 않습니다."),
+            @ApiResponse(code = 2025 ,message ="배달 파티 채팅방 방장이 아닙니다."),
+            @ApiResponse(code = 2026 ,message ="송금을 완료한 멤버는 방에서 퇴장시킬 수 없습니다."),
+            @ApiResponse(code = 2208 ,message ="채팅방 멤버가 존재하지 않습니다."),
+            @ApiResponse(code = 4000 ,message ="서버 오류입니다.")
+    })
     @DeleteMapping("/members")
-    public BaseResponse<List<Chat>> removeChatRoomMemberByChief(HttpServletRequest request, @RequestBody PostRemoveMemberByChiefReq dto){
+    public BaseResponse<SuccessCommonRes> removeChatRoomMemberByChief(HttpServletRequest request, @Valid @RequestBody DeleteMemberByChiefReq dto){
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
         deliveryPartyChatService.removeMemberByChief(jwtInfo.getUserId(), dto);
-        return new BaseResponse("success");
+        return new BaseResponse(new SuccessCommonRes());
     }
 
+    @ApiOperation(value = "방장 퇴장", notes = "(jwt 토큰 필요)전체 조회")
+    @ApiResponses({
+            @ApiResponse(code = 1000 ,message ="요청에 성공하셨습니다."),
+            @ApiResponse(code = 2024 ,message ="배달 파티 채팅방 방장이 존재하지 않습니다."),
+            @ApiResponse(code = 2208 ,message ="채팅방 멤버가 존재하지 않습니다."),
+            @ApiResponse(code = 4000 ,message ="서버 오류입니다.")
+    })
+    @PatchMapping("/chief")
+    public BaseResponse<SuccessCommonRes> changeChief(HttpServletRequest request, @Valid @RequestBody PatchChiefReq dto){
+        JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
+        deliveryPartyChatService.changeChief(jwtInfo.getUserId(), dto.getRoomId());
+        return new BaseResponse(new SuccessCommonRes());
+    }
 
+    @ApiOperation(value = "배달 파티 채팅 멤버가 스스로 퇴장", notes = "(jwt 토큰 필요)전체 조회")
+    @ApiResponses({
+            @ApiResponse(code = 1000 ,message ="요청에 성공하셨습니다."),
+            @ApiResponse(code = 2008 ,message ="채팅방 멤버가 존재하지 않습니다."),
+            @ApiResponse(code = 4000 ,message ="서버 오류입니다.")
+    })
+    @DeleteMapping("/members/self")
+    public BaseResponse<SuccessCommonRes> removeChatRoomMember(HttpServletRequest request, @Valid @RequestBody PatchMemberReq dto){
+        JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
+        deliveryPartyChatService.removeMember(jwtInfo.getUserId(), dto.getRoomId());
+        return new BaseResponse(new SuccessCommonRes());
+    }
 }

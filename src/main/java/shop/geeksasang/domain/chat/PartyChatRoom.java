@@ -1,6 +1,5 @@
 package shop.geeksasang.domain.chat;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -8,6 +7,7 @@ import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Document
 @Getter
@@ -68,4 +68,26 @@ public class PartyChatRoom extends ChatRoom{
         this.participants.remove(removedMember);
     }
 
+    public boolean isOnlyChief() {
+        return participants.size() == 1;
+    }
+
+    public boolean existAlreadyRemittanceParticipant() {
+        List<PartyChatRoomMember> list = participants
+                .stream()
+                .filter(m -> m.isRemittance())
+                .collect(Collectors.toList());
+        return list.size() > 0;
+    }
+
+    public void deleteChief() {
+        this.chief = null;
+    }
+
+    public PartyChatRoomMember changeChief() {
+        participants.remove(0);
+        PartyChatRoomMember changeChief = this.participants.get(0);
+        this.chief = changeChief;
+        return changeChief;
+    }
 }
