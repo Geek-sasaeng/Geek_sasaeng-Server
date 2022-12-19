@@ -33,9 +33,6 @@ public class SocketHandler extends TextWebSocketHandler {
     private final JwtService jwtService;
     private final MemberRepository memberRepository;
 
-    @Value("${secret.jwt_secret_key}")
-    private String secretKey;
-
     HashMap<String, WebSocketSession> sessionMap = new HashMap<>(); //웹소켓 세션을 담아둘 맵
 
     // 메시지 발송
@@ -49,35 +46,8 @@ public class SocketHandler extends TextWebSocketHandler {
             ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
             PostChatReq dto = mapper.readValue(msg, PostChatReq.class);
 
-            // 1.jwt 추출
-            String accessToken=null;
-            if(dto.getJwt().toLowerCase().startsWith("Bearer".toLowerCase())){
-                accessToken = dto.getJwt().substring("Bearer".length()).trim();
-                if(accessToken == null || accessToken.length() == 0){
-                    throw new BaseException(EMPTY_JWT);
-                }
-            }
-            // 2. JWT parsing
-            Claims body;
-            try{
-                body = Jwts.parser()
-                        .setSigningKey(secretKey)
-                        .parseClaimsJws(accessToken)
-                        .getBody();
-            } catch (Exception ignored) {
-                throw new BaseException(INVALID_JWT);
-            }
-
-            //3. JWT 유효기간 확인
-            if(!jwtService.validateToken(accessToken))
-                throw new BaseException(EXPIRED_JWT);
-
-            //LinkedHashMap 타입 jwtInfo parsings
-            System.out.println("body = " + body.get("jwtInfo"));
-            LinkedHashMap jwtInfo = body.get("jwtInfo", LinkedHashMap.class);
-
             //LinkedHashMap 타입 jwtInfo값을 JwtInfo.class 타입으로 convert
-            JwtInfo convertJwtInfo = mapper.convertValue(jwtInfo,JwtInfo.class);
+            JwtInfo convertJwtInfo = jwtService.getJwtInfoInWebSocket(dto.getJwt());
             int memberId = convertJwtInfo.getUserId();
             Member member = memberRepository.findMemberById(memberId)
                     .orElseThrow(() -> new BaseException(NOT_EXIST_USER));

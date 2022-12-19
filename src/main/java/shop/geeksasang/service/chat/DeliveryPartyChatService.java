@@ -91,7 +91,6 @@ public class DeliveryPartyChatService {
 
         Member member = memberRepository.findMemberById(memberId)
                 .orElseThrow(() -> new BaseException(NOT_EXIST_USER));
-        String email = member.getEmail().getAddress();
 
         PartyChatRoom partyChatRoom = partyChatRoomRepository.findByPartyChatRoomId(new ObjectId(chatRoomId))
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_CHAT_ROOM));
