@@ -8,6 +8,10 @@ import lombok.Setter;
 import shop.geeksasang.config.status.LoginStatus;
 import shop.geeksasang.config.type.MemberLoginType;
 import shop.geeksasang.domain.member.Member;
+import shop.geeksasang.dto.deliveryParty.get.GetRecentOngoingPartiesRes;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -82,8 +86,11 @@ public class GetMemberRes {
     @ApiParam(value = "FCM 토큰값")
     private String fcmToken;
 
+    @ApiModelProperty(value = "최근 진행 파티 정보")
+    List<GetRecentOngoingPartiesRes> parties = new ArrayList<>();
+
     //빌더
-    static public GetMemberRes toDto(Member member){
+    static public GetMemberRes toDto(Member member, List<GetRecentOngoingPartiesRes> parties){
         return GetMemberRes.builder()
                 .id(member.getId())
                 .loginId(member.getLoginId())
@@ -102,12 +109,14 @@ public class GetMemberRes {
                 .perDayReportingCount(member.getPerDayReportingCount())
                 .reportedCount(member.getReportedCount())
                 .fcmToken(member.getFcmToken())
+                .parties(parties)
                 .build();
     }
 
     @Builder
-
-    public GetMemberRes(int id, String loginId, String nickname, int universityId, String universityName, int emailId, String emailAddress, String phoneNumber, String profileImgUrl, String informationAgreeStatus, int dormitoryId, String dormitoryName, LoginStatus loginStatus, MemberLoginType memberLoginType, int perDayReportingCount, int reportedCount, String fcmToken) {
+    public GetMemberRes(int id, String loginId, String nickname, int universityId, String universityName, int emailId, String emailAddress, String phoneNumber, String profileImgUrl,
+                        String informationAgreeStatus, int dormitoryId, String dormitoryName, LoginStatus loginStatus, MemberLoginType memberLoginType,
+                        int perDayReportingCount, int reportedCount, String fcmToken, List<GetRecentOngoingPartiesRes> parties) {
         this.id = id;
         this.loginId = loginId;
         this.nickname = nickname;
@@ -125,5 +134,6 @@ public class GetMemberRes {
         this.perDayReportingCount = perDayReportingCount;
         this.reportedCount = reportedCount;
         this.fcmToken = fcmToken;
+        this.parties = parties;
     }
 }

@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.*;
 
 import shop.geeksasang.config.exception.response.BaseResponseStatus;
 import shop.geeksasang.config.response.BaseResponse;
+import shop.geeksasang.domain.deliveryparty.DeliveryParty;
 import shop.geeksasang.domain.member.Member;
+import shop.geeksasang.dto.deliveryParty.get.GetRecentOngoingPartiesRes;
 import shop.geeksasang.dto.dormitory.PatchDormitoryReq;
 import shop.geeksasang.dto.dormitory.PatchDormitoryRes;
 import shop.geeksasang.dto.login.JwtInfo;
@@ -24,6 +26,8 @@ import shop.geeksasang.utils.jwt.NoIntercept;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/members")
@@ -31,6 +35,7 @@ import java.io.IOException;
 public class MemberController {
 
     private final MemberService memberService;
+
 
     // 회원가입
     @ApiOperation(value = "사용자 회원가입", notes = "사용자의 정보들을 이용해서 회원가입을 진행한다.")

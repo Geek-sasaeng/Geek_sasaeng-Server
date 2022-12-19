@@ -11,9 +11,11 @@ import shop.geeksasang.config.status.ValidStatus;
 import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.domain.auth.Email;
 import shop.geeksasang.domain.auth.PhoneNumber;
+import shop.geeksasang.domain.deliveryparty.DeliveryParty;
 import shop.geeksasang.domain.member.Member;
 import shop.geeksasang.domain.university.Dormitory;
 import shop.geeksasang.domain.university.University;
+import shop.geeksasang.dto.deliveryParty.get.GetRecentOngoingPartiesRes;
 import shop.geeksasang.dto.dormitory.PatchDormitoryReq;
 import shop.geeksasang.dto.dormitory.PatchDormitoryRes;
 import shop.geeksasang.dto.login.JwtInfo;
@@ -23,6 +25,7 @@ import shop.geeksasang.dto.member.patch.*;
 import shop.geeksasang.dto.member.post.*;
 import shop.geeksasang.repository.auth.EmailRepository;
 import shop.geeksasang.repository.auth.PhoneNumberRepository;
+import shop.geeksasang.repository.deliveryparty.query.DeliveryPartyQueryRepository;
 import shop.geeksasang.repository.member.MemberRepository;
 import shop.geeksasang.repository.university.DormitoryRepository;
 import shop.geeksasang.repository.university.UniversityRepository;
@@ -52,6 +55,7 @@ public class MemberService {
     private final EmailRepository emailRepository;
     private final PhoneNumberRepository phoneNumberRepository;
     private final DormitoryRepository dormitoryRepository;
+    private final DeliveryPartyQueryRepository deliveryPartyQueryRepository;
 
     private final SmsService smsService;
 
@@ -285,7 +289,12 @@ public class MemberService {
         Member member = memberRepository.findMemberByIdAndStatus(memberId)
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTICIPANT));
         // 변환
-        return GetMemberRes.toDto(member);
+        List<DeliveryParty> threeRecentDeliveryParty = deliveryPartyQueryRepository.findRecentOngoingDeliveryParty(memberId);
+        List<GetRecentOngoingPartiesRes> partiesRes = threeRecentDeliveryParty.stream()
+                .map(deliveryParty -> GetRecentOngoingPartiesRes.toDto(deliveryParty))
+                .collect(Collectors.toList());
+
+        return GetMemberRes.toDto(member, partiesRes);
     }
 
     //조회 : 회원 정보 조회 (마이페이지)
