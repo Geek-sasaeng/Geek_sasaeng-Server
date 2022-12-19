@@ -87,7 +87,11 @@ public class DeliveryPartyChatService {
     }
 
     @Transactional(readOnly = false)
-    public void createChat(int memberId, String email, String chatRoomId, String content, Boolean isSystemMessage, String profileImgUrl, String chatType, String chatId, Boolean isImageMessage) {
+    public void createChat(int memberId, String chatRoomId, String content, Boolean isSystemMessage, String profileImgUrl, String chatType, String chatId, Boolean isImageMessage) {
+
+        Member member = memberRepository.findMemberById(memberId)
+                .orElseThrow(() -> new BaseException(NOT_EXIST_USER));
+        String email = member.getEmail().getAddress();
 
         PartyChatRoom partyChatRoom = partyChatRoomRepository.findByPartyChatRoomId(new ObjectId(chatRoomId))
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_CHAT_ROOM));
@@ -110,7 +114,7 @@ public class DeliveryPartyChatService {
 
         // json 형식으로 변환 후 RabbitMQ 전송
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
-        PostChatRes postChatRes = PostChatRes.toDto(saveChat, email, chatType, unreadMemberCnt);
+        PostChatRes postChatRes = PostChatRes.toDto(saveChat, chatType, unreadMemberCnt);
         String saveChatJson = null;
         try {
             saveChatJson = mapper.writeValueAsString(postChatRes);
@@ -197,7 +201,7 @@ public class DeliveryPartyChatService {
         mqController.joinChatRoom(member.getId(), partyChatRoom.getId());         // rabbitmq 큐 생성 및 채팅방 exchange와 바인딩
 
         // 입장 시스템 메시지 전송
-        this.createChat(memberId, email, chatRoomId, "입장하였습니다.", true, profileImgUrl, "publish", "none", false);
+        this.createChat(memberId, chatRoomId, "입장하였습니다.", true, profileImgUrl, "publish", "none", false);
 
         PartyChatRoomMemberRes res = PartyChatRoomMemberRes.toDto(partyChatRoomMember, partyChatRoom);
         return res;
