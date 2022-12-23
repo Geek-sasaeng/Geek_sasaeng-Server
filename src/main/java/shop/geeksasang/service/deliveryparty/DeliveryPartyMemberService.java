@@ -120,4 +120,15 @@ public class DeliveryPartyMemberService {
         // dto형태로 병경해서 반환
         return PatchAccountTransferStatusRes.toDto(deliveryPartyMember);
     }
+
+    //수정: 송금 완료 상태 수정2 - DeliveryPartyChatMember에서 사용
+    @Transactional(readOnly = false)
+    public void changeAccountTransferStatus(int partyId, int memberId){
+        //배달파티 멤버 조회
+        DeliveryPartyMember deliveryPartyMember = deliveryPartyMemberRepository.findDeliveryPartyMemberByMemberIdAndDeliveryPartyId(memberId, partyId)
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTICIPANT));
+
+        // 송금 완료상태 수정
+        deliveryPartyMember.changeAccountTransferStatusToY();
+    }
 }

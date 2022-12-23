@@ -6,6 +6,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.mongodb.core.mapping.MongoId;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
+import org.springframework.data.mongodb.repository.Update;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import shop.geeksasang.config.status.BaseStatus;
@@ -27,4 +28,10 @@ public interface PartyChatRoomMemberRepository extends MongoRepository<PartyChat
     //TODO STATUS 추가해야함
     @Query(value = "{ 'memberId' : ?0 }")
     Slice<PartyChatRoomMember> findPartyChatRoomMemberByMemberId(int memberId, Pageable pageable);
+
+    @Query("{'_id': ?0 , 'partyChatRoom': ?1 }")
+    @Update("{ $set : { 'isRemittance': true } }")
+    void changeRemittance(ObjectId memberId, ObjectId roomId);
+
+
 }
