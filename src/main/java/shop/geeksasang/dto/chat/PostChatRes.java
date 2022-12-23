@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import shop.geeksasang.domain.chat.Chat;
+import shop.geeksasang.domain.member.Member;
 
 import javax.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
@@ -27,6 +28,8 @@ public class PostChatRes {
 
     private int memberId;
 
+    private String nickName;
+
     private String profileImgUrl;
 
     private List<Integer> readMembers = new ArrayList<>(); // 읽은 멤버 ID 리스트
@@ -48,12 +51,13 @@ public class PostChatRes {
     }
 
     @Builder
-    public PostChatRes(String chatId, String content, String chatRoomId, Boolean isSystemMessage, int memberId, String profileImgUrl, List<Integer> readMembers, LocalDateTime createdAt, String chatType, int unreadMemberCnt, Boolean isImageMessage) {
+    public PostChatRes(String chatId, String content, String chatRoomId, Boolean isSystemMessage, int memberId, String nickName, String profileImgUrl, List<Integer> readMembers, LocalDateTime createdAt, String chatType, int unreadMemberCnt, Boolean isImageMessage) {
         this.chatId = chatId;
         this.content = content;
         this.chatRoomId = chatRoomId;
         this.isSystemMessage = isSystemMessage;
         this.memberId = memberId;
+        this.nickName = nickName;
         this.profileImgUrl = profileImgUrl;
         this.readMembers = readMembers;
         this.createdAt = createdAt;
@@ -62,13 +66,14 @@ public class PostChatRes {
         this.unreadMemberCnt = unreadMemberCnt;
     }
 
-    public static PostChatRes toDto(Chat chat, String chatType, int unreadMemberCnt){
+    public static PostChatRes toDto(Chat chat, String chatType, int unreadMemberCnt, Member member){
         return PostChatRes.builder()
                 .chatId(chat.getId())
                 .content(chat.getContent())
                 .chatRoomId(chat.getPartyChatRoom().getId())
                 .isSystemMessage(chat.getIsSystemMessage())
                 .memberId(chat.getPartyChatRoomMember().getMemberId())
+                .nickName(member.getNickName())
                 .profileImgUrl(chat.getProfileImgUrl())
                 .readMembers(chat.getReadMembers())
                 .createdAt(chat.getBaseEntityMongo().getCreatedAt())

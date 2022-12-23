@@ -114,7 +114,7 @@ public class DeliveryPartyChatService {
 
         // json 형식으로 변환 후 RabbitMQ 전송
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
-        PostChatRes postChatRes = PostChatRes.toDto(saveChat, chatType, unreadMemberCnt);
+        PostChatRes postChatRes = PostChatRes.toDto(saveChat, chatType, unreadMemberCnt, member);
         String saveChatJson = null;
         try {
             saveChatJson = mapper.writeValueAsString(postChatRes);
