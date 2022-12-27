@@ -11,16 +11,13 @@ import shop.geeksasang.domain.chat.Chat;
 import shop.geeksasang.dto.SuccessCommonRes;
 import shop.geeksasang.dto.chat.chatchief.DeleteMemberByChiefReq;
 import shop.geeksasang.dto.chat.chatchief.PatchChiefReq;
-import shop.geeksasang.dto.chat.chatmember.PatchMemberReq;
+import shop.geeksasang.dto.chat.chatmember.*;
 
-import shop.geeksasang.domain.chat.ChatRoom;
 import shop.geeksasang.dto.chat.PostChatImageReq;
 
 
 import shop.geeksasang.dto.chat.partychatroom.GetPartyChatRoomsRes;
 import shop.geeksasang.dto.chat.PostChatReq;
-import shop.geeksasang.dto.chat.chatmember.PartyChatRoomMemberRes;
-import shop.geeksasang.dto.chat.chatmember.PostPartyChatRoomMemberReq;
 import shop.geeksasang.dto.chat.partychatroom.PartyChatRoomRes;
 import shop.geeksasang.dto.chat.partychatroom.post.PostPartyChatRoomReq;
 import shop.geeksasang.dto.login.JwtInfo;
@@ -105,7 +102,7 @@ public class DeliveryPartyChatController {
     @ApiOperation(value = "채팅방 전체 조회", notes = "(jwt 토큰 필요)전체 조회")
     @ApiResponses({
             @ApiResponse(code = 1000 ,message ="요청에 성공하셨습니다."),
-//            @ApiResponse(code = 2009, message ="존재하지 않는 멤버입니다"),
+//          @ApiResponse(code = 2009, message ="존재하지 않는 멤버입니다"),
             @ApiResponse(code = 4000 ,message ="서버 오류입니다.")
     })
     @GetMapping
@@ -182,5 +179,21 @@ public class DeliveryPartyChatController {
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
         deliveryPartyChatService.removeMember(jwtInfo.getUserId(), dto.getRoomId());
         return new BaseResponse(new SuccessCommonRes());
+    }
+
+    //todo : dto validation
+    @ApiOperation(value = "송금 완료 ", notes = "(jwt 토큰 필요) 채팅방 내에서 송금완료 버튼을 누를 때 사용하는 api")
+    @ApiResponses({
+            @ApiResponse(code = 1000 ,message ="요청에 성공하셨습니다."),
+            @ApiResponse(code = 2008 ,message ="채팅방 멤버가 존재하지 않습니다."),
+            @ApiResponse(code = 2009 ,message ="존재하지 않는 멤버입니다."),
+            @ApiResponse(code = 2005 ,message ="채팅방이 존재하지 않습니다."),
+            @ApiResponse(code = 4000 ,message ="서버 오류입니다.")
+    })
+    @PatchMapping("/members/remittance")
+    public BaseResponse<String> changeRemittance(HttpServletRequest request, @Valid @RequestBody PatchRemittanceReq dto){
+        JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
+        deliveryPartyChatService.changeRemittance(jwtInfo.getUserId(), dto.getRoomId());
+        return new BaseResponse<>("요청에 성공하셨습니다.");
     }
 }

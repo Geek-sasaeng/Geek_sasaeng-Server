@@ -34,6 +34,7 @@ import shop.geeksasang.repository.chat.ChatRepository;
 import shop.geeksasang.repository.chat.ChatRoomRepository;
 import shop.geeksasang.repository.member.MemberRepository;
 import shop.geeksasang.service.common.AwsS3Service;
+import shop.geeksasang.service.deliveryparty.DeliveryPartyMemberService;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -55,6 +56,7 @@ public class DeliveryPartyChatService {
     private final PartyChatRoomMemberRepository partyChatRoomMemberRepository;
     private final MemberRepository memberRepository;
     private final AwsS3Service awsS3Service;
+    private final DeliveryPartyMemberService deliveryPartyMemberService;
 
     private static final String PAGING_STANDARD = "createdAt";
 
@@ -76,10 +78,10 @@ public class DeliveryPartyChatService {
         partyChatRoomMemberRepository.save(chief);
         partyChatRoomRepository.save(chatRoom); //방장 업데이트
         //rabbitMQ 채팅방 생성 요청
-        try{
+        try {
             mqController.createChatRoom(email, chatRoom.getId());
             mqController.joinChatRoom(memberId, chatRoom.getId());
-        }catch (Exception e){
+        } catch (Exception e) {
             System.out.println("mqController에서 채팅방 생성 에러 발생");
         }
 
@@ -104,8 +106,11 @@ public class DeliveryPartyChatService {
 
         // mongoDB 채팅 저장
         Chat chat = null;
-        if(chatType.equals("publish")){ chat = new Chat(content, partyChatRoom, isSystemMessage, partyChatRoomMember, profileImgUrl, readMembers); }
-        else if(chatType.equals("read")){ chat = chatRepository.findByChatId(chatId).orElseThrow(() -> new BaseException(NOT_EXISTS_CHAT)); }
+        if (chatType.equals("publish")) {
+            chat = new Chat(content, partyChatRoom, isSystemMessage, partyChatRoomMember, profileImgUrl, readMembers);
+        } else if (chatType.equals("read")) {
+            chat = chatRepository.findByChatId(chatId).orElseThrow(() -> new BaseException(NOT_EXISTS_CHAT));
+        }
 
         chat.addReadMember(memberId);// 읽은 멤버 추가
         Chat saveChat = chatRepository.save(chat);
@@ -137,21 +142,24 @@ public class DeliveryPartyChatService {
 
         List<Integer> readMembers = new ArrayList<>();
 
-        if(images.size()>5){//Validation: 이미지 갯수 5 제한
+        if (images.size() > 5) {//Validation: 이미지 갯수 5 제한
             throw new BaseException(EXCEEDED_IMAGE);
         }
 
         // - mongo 서버에서 이미지 aws S3에 저장 후
         //- s3 이미지 url을 mongoDB 채팅에 저장
         List<String> imgUrls = null;
-        try{
-            for(MultipartFile image: images){
+        try {
+            for (MultipartFile image : images) {
                 String imgUrl = awsS3Service.upload(image.getInputStream(), image.getOriginalFilename(), image.getSize());
 
                 // mongoDB 채팅 저장
                 Chat chat = null;
-                if(chatType.equals("publish")){ chat = new Chat(imgUrl, partyChatRoom, isSystemMessage, partyChatRoomMember, profileImgUrl, readMembers, isImageMessage); }
-                else if(chatType.equals("read")){ chat = chatRepository.findByChatId(chatId).orElseThrow(() -> new BaseException(NOT_EXISTS_CHAT)); }
+                if (chatType.equals("publish")) {
+                    chat = new Chat(imgUrl, partyChatRoom, isSystemMessage, partyChatRoomMember, profileImgUrl, readMembers, isImageMessage);
+                } else if (chatType.equals("read")) {
+                    chat = chatRepository.findByChatId(chatId).orElseThrow(() -> new BaseException(NOT_EXISTS_CHAT));
+                }
 
                 chat.addReadMember(memberId);// 읽은 멤버 추가
                 Chat saveChat = chatRepository.save(chat);
@@ -176,7 +184,7 @@ public class DeliveryPartyChatService {
     }
 
     @Transactional(readOnly = false)
-    public PartyChatRoomMemberRes joinPartyChatRoom(int memberId, String chatRoomId, LocalDateTime enterTime){
+    public PartyChatRoomMemberRes joinPartyChatRoom(int memberId, String chatRoomId, LocalDateTime enterTime) {
 
         Member member = memberRepository.findMemberById(memberId)
                 .orElseThrow(() -> new BaseException(NOT_EXIST_USER));
@@ -188,7 +196,7 @@ public class DeliveryPartyChatService {
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_CHAT_ROOM));
 
         //Validation 기존의 멤버인지 예외 처리
-        if(partyChatRoom.getParticipants().stream().anyMatch(participant -> participant.getMemberId() == memberId)){
+        if (partyChatRoom.getParticipants().stream().anyMatch(participant -> participant.getMemberId() == memberId)) {
             throw new BaseException(ALREADY_PARTICIPATE_CHATROOM);
         }
 
@@ -208,11 +216,11 @@ public class DeliveryPartyChatService {
     }
 
     @Transactional(readOnly = true)
-    public GetPartyChatRoomsRes findPartyChatRooms(int memberId, int cursor){
+    public GetPartyChatRoomsRes findPartyChatRooms(int memberId, int cursor) {
 
         PageRequest page = PageRequest.of(cursor, 10, Sort.by(Sort.Direction.ASC, PAGING_STANDARD));
         Slice<PartyChatRoomMember> members = partyChatRoomMemberRepository.findPartyChatRoomMemberByMemberId(memberId, page);
-        List<GetPartyChatRoomRes> result= members.stream()
+        List<GetPartyChatRoomRes> result = members.stream()
                 .map(member -> GetPartyChatRoomRes.of(member.getPartyChatRoom()))
                 .collect(Collectors.toList());
 
@@ -220,7 +228,7 @@ public class DeliveryPartyChatService {
     }
 
     @Transactional(readOnly = true)
-    public List<ChatRoom> findPartyChatRoom(int memberId, String partyChatRoomId){
+    public List<ChatRoom> findPartyChatRoom(int memberId, String partyChatRoomId) {
 //        Query query = new Query();
 //        query.addCriteria(Criteria.where("id").is(partyChatRoomId));
 
@@ -231,7 +239,7 @@ public class DeliveryPartyChatService {
     }
 
     @Transactional(readOnly = true)
-    public List<Chat> findPartyChattings(int memberId, String partyChatRoomId){
+    public List<Chat> findPartyChattings(int memberId, String partyChatRoomId) {
         List<Chat> chattingList = chatRepository.findAll();
         return chattingList;
     }
@@ -250,16 +258,16 @@ public class DeliveryPartyChatService {
         PartyChatRoom chatRoom = partyChatRoomRepository.findPartyChatRoomByChiefId(new ObjectId(chief.getId()))
                 .orElseThrow(() -> new BaseException(NOT_EXIST_CHAT_ROOM_CHIEF));
 
-        if(chatRoom.isNotChief(chief)){
+        if (chatRoom.isNotChief(chief)) {
             throw new BaseException(NOT_CHAT_ROOM_CHIEF);
         }
 
-        if(removedMember.alreadyRemit()){
+        if (removedMember.alreadyRemit()) {
             throw new BaseException(CANT_REMOVE_REMIT_MEMBER);
         }
 
         chatRoom.removeParticipant(removedMember);
-        partyChatRoomRepository.deleteParticipant(new ObjectId(chatRoom.getId()),new ObjectId(removedMember.getId()));
+        partyChatRoomRepository.deleteParticipant(new ObjectId(chatRoom.getId()), new ObjectId(removedMember.getId()));
         //partyChatRoomRepository.save(chatRoom);
         partyChatRoomMemberRepository.save(removedMember);
     }
@@ -273,18 +281,18 @@ public class DeliveryPartyChatService {
                 .orElseThrow(() -> new BaseException(NOT_EXIST_CHAT_ROOM_CHIEF));
 
         //송금한 사람이 존재한다면 거절
-        if(chatRoom.existAlreadyRemittanceParticipant()){
+        if (chatRoom.existAlreadyRemittanceParticipant()) {
             throw new RuntimeException("이미 송금한 사람이 있습니다");
         }
 
         //방장만 존재한다면 삭제
-        if(chatRoom.isOnlyChief()){
+        if (chatRoom.isOnlyChief()) {
             //방장 지우고, 채팅방도 삭제
             chief.delete();
             chatRoom.removeParticipant(chief);
             chatRoom.deleteChief();
             partyChatRoomRepository.save(chatRoom);
-            partyChatRoomRepository.deleteParticipant(new ObjectId(chatRoom.getId()),new ObjectId(chief.getId()));
+            partyChatRoomRepository.deleteParticipant(new ObjectId(chatRoom.getId()), new ObjectId(chief.getId()));
             partyChatRoomMemberRepository.save(chief);
             return;
         };
@@ -306,10 +314,30 @@ public class DeliveryPartyChatService {
                 .findByMemberIdAndChatRoomId(memberId, new ObjectId(roomId))
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTYCHATROOM_MEMBER));
 
-        partyChatRoomRepository.deleteParticipant(new ObjectId(roomId),new ObjectId(member.getId()));
+        partyChatRoomRepository.deleteParticipant(new ObjectId(roomId), new ObjectId(member.getId()));
 
         member.delete();
         partyChatRoomMemberRepository.save(member);
     }
+
+    @Transactional(readOnly = false)
+    public void changeRemittance(int memberId, String roomId) {
+
+        //회원 존재 여부 확인
+        PartyChatRoomMember member = partyChatRoomMemberRepository
+                .findByMemberIdAndChatRoomId(memberId, new ObjectId(roomId))
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTYCHATROOM_MEMBER));
+
+        //채팅방 존재 여부 확인
+        PartyChatRoom chatRoom = partyChatRoomRepository.findByPartyChatRoomId(new ObjectId(roomId))
+                .orElseThrow(() -> new BaseException(NOT_EXIST_CHAT_ROOM_CHIEF));
+
+        //mongo 데이터 수정
+        partyChatRoomMemberRepository.changeRemittance(new ObjectId(member.getId()), new ObjectId(roomId));
+
+        //mysql 데이터 수정
+        deliveryPartyMemberService.changeAccountTransferStatus(chatRoom.getDeliveryPartyId(), member.getMemberId());
+    }
+
 }
 // String exchange, String routingKey, Object message
