@@ -35,6 +35,10 @@ public class PostSocialRegisterRes {
     @ApiParam(value = "jwt Token")
     private String jwt;
 
+    @ApiModelProperty(example = "1", value = "사용자 memberId")
+    @ApiParam(required = true)
+    private int memberId;
+
     static public PostSocialRegisterRes toDto(Member member, Email email, PhoneNumber phoneNumber, String jwt) {
         return PostSocialRegisterRes.builder()
                 .loginId(member.getLoginId())
@@ -43,6 +47,7 @@ public class PostSocialRegisterRes {
                 .email(email.getId())
                 .phoneNumber(phoneNumber.getId())
                 .jwt(jwt)
+                .memberId(member.getId())
                 .build();
     }
 }

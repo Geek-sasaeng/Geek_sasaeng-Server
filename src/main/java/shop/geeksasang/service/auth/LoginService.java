@@ -74,6 +74,7 @@ public class LoginService {
                     .dormitoryName(member.getDormitory().getName())
                     .profileImgUrl(member.getProfileImgUrl())
                     .fcmToken(member.getFcmToken())
+                    .memberId(member.getId())
                     .build();
         }
         else{
@@ -83,6 +84,7 @@ public class LoginService {
                     .loginStatus(loginStatus)
                     .profileImgUrl(member.getProfileImgUrl())
                     .fcmToken(member.getFcmToken())
+                    .memberId(member.getId())
                     .build();
         }
     }
@@ -132,6 +134,7 @@ public class LoginService {
                     .dormitoryId(member.getDormitory().getId())
                     .dormitoryName(member.getDormitory().getName())
                     .fcmToken(member.getFcmToken())
+                    .memberId(member.getId())
                     .build();
         }
         else {
@@ -141,6 +144,7 @@ public class LoginService {
                     .loginStatus(loginStatus)
                     .profileImgUrl(member.getProfileImgUrl())
                     .fcmToken(member.getFcmToken())
+                    .memberId(member.getId())
                     .build();
         }
     }

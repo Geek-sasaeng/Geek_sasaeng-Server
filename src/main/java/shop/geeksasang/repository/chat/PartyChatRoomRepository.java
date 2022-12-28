@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import shop.geeksasang.domain.chat.PartyChatRoom;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,4 +28,8 @@ public interface PartyChatRoomRepository extends MongoRepository<PartyChatRoom, 
 
     @Query("{'deliveryPartyId' : :#{#deliveryPartyId}, 'status' : 'ACTIVE'}")
     Optional<PartyChatRoom> findByDeliveryPartyId(@Param("deliveryPartyId") int deliveryPartyId);
+
+    @Query("{ '_id' : ?0 }")
+    @Update("{ $set : { 'isFinish' : true }}")
+    void changeIsFinish(ObjectId partyChatRoomId);
 }

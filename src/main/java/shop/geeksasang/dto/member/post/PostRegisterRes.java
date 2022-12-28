@@ -33,6 +33,10 @@ public class PostRegisterRes {
     @ApiParam(value = "사용자 핸드폰 번호")
     private int phoneNumber;
 
+    @ApiModelProperty(example = "1", value = "사용자 memberId")
+    @ApiParam(required = true)
+    private int memberId;
+
     static public PostRegisterRes toDto(Member member, Email email, PhoneNumber phoneNumber) {
         return PostRegisterRes.builder()
                 .loginId(member.getLoginId())
@@ -40,6 +44,7 @@ public class PostRegisterRes {
                 .universityName(member.getUniversity().getName())
                 .email(email.getId())
                 .phoneNumber(phoneNumber.getId())
+                .memberId(member.getId())
                 .build();
     }
 }
