@@ -38,4 +38,7 @@ public class PostLoginRes {
     @ApiModelProperty(example = "c1aTnbZPaWP0_KZbcSuh_h:APA91bFG4r3Z6-dw88UQFikVxkNApaUeq508RNeYxgmrj7miyGdSIy6YXMLJj3jAmCZERNqSLgLm4gn3fyhnBn2iUsra_EriXMqsOlXkyUf9ugNAKMPiKZGNYbn6gKLhMYWB3xTJoRVk",value = "FCM 토큰값" )
     @NotBlank
     private String fcmToken;
+
+    @ApiModelProperty(example="1", value = "사용자 memberId")
+    private int memberId;
 }
