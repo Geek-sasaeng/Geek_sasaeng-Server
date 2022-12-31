@@ -187,7 +187,7 @@ public class DeliveryPartyChatController {
             @ApiResponse(code = 1000 ,message ="요청에 성공하셨습니다."),
             @ApiResponse(code = 2208 ,message ="채팅방 멤버가 존재하지 않습니다."),
             @ApiResponse(code = 2009 ,message ="존재하지 않는 멤버입니다."),
-            @ApiResponse(code = 2005 ,message ="채팅방이 존재하지 않습니다."),
+            @ApiResponse(code = 2207 ,message ="채팅방이 존재하지 않습니다."),
             @ApiResponse(code = 4000 ,message ="서버 오류입니다.")
     })
     @PatchMapping("/members/remittance")

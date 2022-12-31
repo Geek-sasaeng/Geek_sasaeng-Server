@@ -332,7 +332,7 @@ public class DeliveryPartyChatService {
 
         //채팅방 존재 여부 확인
         PartyChatRoom chatRoom = partyChatRoomRepository.findByPartyChatRoomId(new ObjectId(roomId))
-                .orElseThrow(() -> new BaseException(NOT_EXIST_CHAT_ROOM_CHIEF));
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_CHAT_ROOM));
 
         //mongo 데이터 수정
         partyChatRoomMemberRepository.changeRemittance(new ObjectId(member.getId()), new ObjectId(roomId));
