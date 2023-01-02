@@ -211,7 +211,7 @@ public class DeliveryPartyChatService {
         mqController.joinChatRoom(member.getId(), partyChatRoom.getId());         // rabbitmq 큐 생성 및 채팅방 exchange와 바인딩
 
         // 입장 시스템 메시지 전송
-        this.createChat(memberId, chatRoomId, "입장하였습니다.", true, profileImgUrl, "publish", "none", false);
+        this.createChat(memberId, chatRoomId, member.getNickName()+"님이 입장하였습니다.", true, profileImgUrl, "publish", "none", false);
 
         PartyChatRoomMemberRes res = PartyChatRoomMemberRes.toDto(partyChatRoomMember, partyChatRoom);
         return res;
