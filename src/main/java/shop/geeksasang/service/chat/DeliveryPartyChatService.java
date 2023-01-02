@@ -261,7 +261,11 @@ public class DeliveryPartyChatService {
         //partyChatRoomRepository.save(chatRoom);
         partyChatRoomMemberRepository.save(removedMember);
 
-        //TODO 시스템 메시지를 보내야함. 근데 닉네임을 어케 얻어오지..
+        String nickName = memberRepository.findMemberById(removedMember.getMemberId())
+                .orElseThrow(() -> new BaseException(NOT_EXIST_USER)).getNickName();
+
+        this.createChat(chiefId, dto.getRoomId(), nickName + "파티장의 강제 퇴장 요청으로 인해 " + nickName + "이 퇴장 처리되었습니다"
+                , true, null, "publish", "none", false);
     }
 
     public void changeChief(int chiefId, String roomId) {
