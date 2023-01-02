@@ -16,6 +16,7 @@ import shop.geeksasang.dto.chat.chatmember.*;
 import shop.geeksasang.dto.chat.PostChatImageReq;
 
 
+import shop.geeksasang.dto.chat.chatparty.PatchOrderReq;
 import shop.geeksasang.dto.chat.partychatroom.GetPartyChatRoomsRes;
 import shop.geeksasang.dto.chat.PostChatReq;
 import shop.geeksasang.dto.chat.partychatroom.PartyChatRoomRes;
@@ -181,13 +182,12 @@ public class DeliveryPartyChatController {
         return new BaseResponse(new SuccessCommonRes());
     }
 
-    //todo : dto validation
     @ApiOperation(value = "송금 완료 ", notes = "(jwt 토큰 필요) 채팅방 내에서 송금완료 버튼을 누를 때 사용하는 api")
     @ApiResponses({
             @ApiResponse(code = 1000 ,message ="요청에 성공하셨습니다."),
-            @ApiResponse(code = 2008 ,message ="채팅방 멤버가 존재하지 않습니다."),
+            @ApiResponse(code = 2208 ,message ="채팅방 멤버가 존재하지 않습니다."),
             @ApiResponse(code = 2009 ,message ="존재하지 않는 멤버입니다."),
-            @ApiResponse(code = 2005 ,message ="채팅방이 존재하지 않습니다."),
+            @ApiResponse(code = 2207 ,message ="채팅방이 존재하지 않습니다."),
             @ApiResponse(code = 4000 ,message ="서버 오류입니다.")
     })
     @PatchMapping("/members/remittance")
@@ -196,4 +196,22 @@ public class DeliveryPartyChatController {
         deliveryPartyChatService.changeRemittance(jwtInfo.getUserId(), dto.getRoomId());
         return new BaseResponse<>("요청에 성공하셨습니다.");
     }
+
+    @ApiOperation(value = "주문 완료 ", notes = "(jwt 토큰 필요) 채팅방 내에서 주문 완료 버튼을 누를 때 사용하는 api")
+    @ApiResponses({
+            @ApiResponse(code = 1000 ,message ="요청에 성공하셨습니다."),
+            @ApiResponse(code = 2208 ,message ="채팅방 멤버가 존재하지 않습니다."),
+            @ApiResponse(code = 2009 ,message ="존재하지 않는 멤버입니다."),
+            @ApiResponse(code = 2207 ,message ="채팅방이 존재하지 않습니다."),
+            @ApiResponse(code = 2010 ,message ="존재하지 않는 파티입니다."),
+            @ApiResponse(code = 2210 ,message ="채팅이 존재하지 않습니다."),
+            @ApiResponse(code = 4000 ,message ="서버 오류입니다."),
+    })
+    @PatchMapping("/order")
+    public BaseResponse<String> changeOrderStatus(HttpServletRequest request, @Valid @RequestBody PatchOrderReq dto){
+        JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
+        deliveryPartyChatService.changeOrderStatus(jwtInfo.getUserId(), dto.getRoomId());
+        return new BaseResponse<>("요청에 성공하셨습니다.");
+    }
+
 }

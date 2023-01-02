@@ -6,6 +6,7 @@ import javax.persistence.*;
 
 import shop.geeksasang.config.domain.BaseEntity;
 import shop.geeksasang.config.status.MatchingStatus;
+import shop.geeksasang.config.status.OrderStatus;
 import shop.geeksasang.config.type.OrderTimeCategoryType;
 import shop.geeksasang.config.status.BaseStatus;
 import shop.geeksasang.domain.location.Location;
@@ -79,6 +80,9 @@ public class DeliveryParty extends BaseEntity {
 
     private String uuid;
 
+    @Enumerated(EnumType.STRING)
+    private OrderStatus orderStatus;
+
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(name="latitude",column = @Column(name="latitude")),
@@ -107,6 +111,7 @@ public class DeliveryParty extends BaseEntity {
                 .reportedCount(0)
                 .uuid(createUuid())
                 .deliveryPartyMembers(new ArrayList<>())
+                .orderStatus(OrderStatus.BEFORE_ORDER)
                 .build();
 
         party.setStatus(BaseStatus.ACTIVE);
@@ -223,5 +228,9 @@ public class DeliveryParty extends BaseEntity {
 
     public void removeDeliveryPartyMember(DeliveryPartyMember deliveryPartyMember){
         deliveryPartyMembers.remove(deliveryPartyMember);
+    }
+
+    public void changeOrderStatusToOrderComplete(){
+        this.orderStatus = OrderStatus.ORDER_COMPLETE;
     }
 }
