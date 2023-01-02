@@ -165,11 +165,11 @@ public class DeliveryPartyController {
             @ApiResponse(code =2616 ,message ="파티 매칭 마감을 할 수 없는 유저이거나 이미 마감된 상태입니다."),
             @ApiResponse(code=4000,message = "서버 오류입니다.")
     })
-    @PatchMapping("/delivery-party/{uuid}/matching-status")
-    public BaseResponse<PatchDeliveryPartyMatchingStatusRes> patchDeliveryPartyMatchingStatus(@PathVariable String uuid, HttpServletRequest request) {
+    @PatchMapping("/delivery-party/{partyId}/matching-status")
+    public BaseResponse<PatchDeliveryPartyMatchingStatusRes> patchDeliveryPartyMatchingStatus(@PathVariable Integer partyId, HttpServletRequest request) {
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
 
-        PatchDeliveryPartyMatchingStatusRes response = deliveryPartyService.patchDeliveryPartyMatchingStatus(uuid, jwtInfo.getUserId());
+        PatchDeliveryPartyMatchingStatusRes response = deliveryPartyService.patchDeliveryPartyMatchingStatus(partyId, jwtInfo.getUserId());
         return new BaseResponse<>(response);
     }
 
