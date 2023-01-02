@@ -52,4 +52,7 @@ public class JwtResponse {
     @ApiModelProperty(example = "1기숙사")
     @ApiParam(value = "사용자 기숙사 이름")
     private String dormitoryName;
+
+    @ApiModelProperty(example="1", value = "사용자 memberId")
+    private int memberId;
 }

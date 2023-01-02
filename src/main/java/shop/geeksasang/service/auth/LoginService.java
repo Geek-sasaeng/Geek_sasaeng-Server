@@ -163,6 +163,6 @@ public class LoginService {
     public JwtResponse getJwtResponse(Member member){
         return new JwtResponse(member.getLoginId(), member.getNickName(), member.getProfileImgUrl(),
                 member.getUniversity().getName(), member.getEmail().getAddress(), member.getPhoneNumber().getNumber(), member.getMemberLoginType(),
-                member.getLoginStatus(), member.getDormitory().getId(), member.getDormitory().getName());
+                member.getLoginStatus(), member.getDormitory().getId(), member.getDormitory().getName(), member.getId());
     }
 }
