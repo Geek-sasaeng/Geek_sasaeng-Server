@@ -112,20 +112,6 @@ public class DeliveryPartyChatController {
         return new BaseResponse(deliveryPartyChatService.findPartyChatRooms(jwtInfo.getUserId(), cursor));
     }
 
-
-//    @ApiOperation(value = "채팅방 조회", notes = "(jwt 토큰 필요)전체 조회")
-//    @ApiResponses({
-//            @ApiResponse(code = 1000 ,message ="요청에 성공하셨습니다."),
-//            @ApiResponse(code = 2009, message ="존재하지 않는 멤버입니다"),
-//            @ApiResponse(code = 4000 ,message ="서버 오류입니다.")
-//    })
-//    @PostMapping("/get/{partyChatRoomId}")
-//    public BaseResponse<List<ChatRoom>> findPartyChatRoom(HttpServletRequest request, @PathVariable("partyChatRoomId") String partyChatRoomId){
-//        JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
-//        return new BaseResponse(deliveryPartyChatService.findPartyChatRoom(jwtInfo.getUserId(), partyChatRoomId));
-//    }
-
-
     @ApiOperation(value = "채팅 전체 조회", notes = "(jwt 토큰 필요)전체 조회")
     @ApiResponses({
             @ApiResponse(code = 1000 ,message ="요청에 성공하셨습니다."),

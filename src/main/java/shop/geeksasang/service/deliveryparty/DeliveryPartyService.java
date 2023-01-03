@@ -310,9 +310,9 @@ public class DeliveryPartyService {
 
     // 배달 파티 수동 매칭 마감
     @Transactional(readOnly = false)
-    public PatchDeliveryPartyMatchingStatusRes patchDeliveryPartyMatchingStatus(String uuid, int userId) {
+    public PatchDeliveryPartyMatchingStatusRes patchDeliveryPartyMatchingStatus(Integer partyId, int userId) {
 
-        DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyByUuidAndUserId(uuid, userId).
+        DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyByIdAndUserIdAndMatchingStatus(partyId, userId).
                 orElseThrow(() -> new BaseException(BaseResponseStatus.CAN_NOT_FINISH_DELIVERY_PARTY));
 
         deliveryParty.changeMatchingStatusToFinish();

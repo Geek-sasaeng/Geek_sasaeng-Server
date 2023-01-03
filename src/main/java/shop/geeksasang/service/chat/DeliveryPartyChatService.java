@@ -228,18 +228,6 @@ public class DeliveryPartyChatService {
 
         return new GetPartyChatRoomsRes(result, members.isLast());
     }
-
-    @Transactional(readOnly = true)
-    public List<ChatRoom> findPartyChatRoom(int memberId, String partyChatRoomId) {
-//        Query query = new Query();
-//        query.addCriteria(Criteria.where("id").is(partyChatRoomId));
-
-
-        List<ChatRoom> partyChatRoomList = chatRoomRepository.findAllByPartyChatRoomId(partyChatRoomId);
-
-        return partyChatRoomList;
-    }
-
     @Transactional(readOnly = true)
     public List<Chat> findPartyChattings(int memberId, String partyChatRoomId) {
         List<Chat> chattingList = chatRepository.findAll();
@@ -272,6 +260,12 @@ public class DeliveryPartyChatService {
         partyChatRoomRepository.deleteParticipant(new ObjectId(chatRoom.getId()), new ObjectId(removedMember.getId()));
         //partyChatRoomRepository.save(chatRoom);
         partyChatRoomMemberRepository.save(removedMember);
+
+        String nickName = memberRepository.findMemberById(removedMember.getMemberId())
+                .orElseThrow(() -> new BaseException(NOT_EXIST_USER)).getNickName();
+
+        this.createChat(chiefId, dto.getRoomId(), nickName + "파티장의 강제 퇴장 요청으로 인해 " + nickName + "이 퇴장 처리되었습니다"
+                , true, null, "publish", "none", false);
     }
 
     public void changeChief(int chiefId, String roomId) {
@@ -308,7 +302,11 @@ public class DeliveryPartyChatService {
         partyChatRoomRepository.save(chatRoom);
         partyChatRoomMemberRepository.save(chief);
         partyChatRoomMemberRepository.save(changeChief);
-        //partyChatRoomRepository.deleteParticipant(new ObjectId(chatRoom.getId()),new ObjectId(chief.getId()));
+
+        String nickName = memberRepository.findMemberById(chiefId)
+                .orElseThrow(() -> new BaseException(NOT_EXIST_USER)).getNickName();
+        this.createChat(chiefId, roomId, nickName + "님이 퇴장했습니다.", true, null, "publish", "none", false);
+
     }
 
     public void removeMember(int memberId, String roomId) {
@@ -320,6 +318,12 @@ public class DeliveryPartyChatService {
 
         member.delete();
         partyChatRoomMemberRepository.save(member);
+
+        String nickName = memberRepository.findMemberById(memberId)
+                .orElseThrow(() -> new BaseException(NOT_EXIST_USER)).getNickName();
+
+        this.createChat(memberId, roomId, nickName + "님이 퇴장했습니다.", true, null, "publish", "none", false);
+
     }
 
     @Transactional(readOnly = false)
