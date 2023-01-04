@@ -110,7 +110,6 @@ public class GetDeliveryPartyDetailRes {
                 .storeUrl(deliveryParty.getStoreUrl())
                 .authorStatus(authorStatus)
                 .dormitory(deliveryParty.getDormitory().getId())
-                .uuid(deliveryParty.getUuid())
                 .belongStatus(belongStatus)
                 .partyChatRoomId(partyChatRoom.getId())
                 .partyChatRoomTitle(partyChatRoom.getTitle())
