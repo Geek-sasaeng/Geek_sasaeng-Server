@@ -191,11 +191,15 @@ public class DeliveryPartyChatService {
         Member member = memberRepository.findMemberById(memberId)
                 .orElseThrow(() -> new BaseException(NOT_EXIST_USER));
 
-        String email = member.getEmail().getAddress();
         String profileImgUrl = member.getProfileImgUrl();
 
         PartyChatRoom partyChatRoom = partyChatRoomRepository.findByPartyChatRoomId(new ObjectId(chatRoomId))
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_CHAT_ROOM));
+
+        //이미 마감했는지
+        if(partyChatRoom.getIsFinish()){
+            throw new BaseException(ALREADY_PARTY_FINISH);
+        }
 
         //Validation 기존의 멤버인지 예외 처리
         if (partyChatRoom.getParticipants().stream().anyMatch(participant -> participant.getMemberId() == memberId)) {
