@@ -47,11 +47,11 @@ public class GetPartyChatRoomDetailRes {
         this.chiefId = chiefId;
     }
 
-    //todo : isOrderFinish 추가하기
-    public static GetPartyChatRoomDetailRes toDto(PartyChatRoom partyChatRoom, PartyChatRoomMember partyChatRoomMember,Boolean isChief){
+    public static GetPartyChatRoomDetailRes toDto(PartyChatRoom partyChatRoom, PartyChatRoomMember partyChatRoomMember,Boolean isChief,Boolean isOrderFinish){
         return GetPartyChatRoomDetailRes.builder()
                 .isRemittanceFinish(partyChatRoomMember.isRemittance())
                 .isChief(isChief)
+                .isOrderFinish(isOrderFinish)
                 .accountNumber(partyChatRoom.getAccountNumber())
                 .bank(partyChatRoom.getBank())
                 .enterTime(partyChatRoomMember.getEnterTime())

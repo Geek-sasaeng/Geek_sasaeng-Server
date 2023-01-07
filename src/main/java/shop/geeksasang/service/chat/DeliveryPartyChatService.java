@@ -11,11 +11,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import shop.geeksasang.config.domain.BaseEntityMongo;
 import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.config.status.BaseStatus;
+import shop.geeksasang.config.status.OrderStatus;
 import shop.geeksasang.domain.chat.Chat;
-import shop.geeksasang.domain.chat.ChatRoom;
 import shop.geeksasang.domain.chat.PartyChatRoomMember;
 import shop.geeksasang.domain.chat.PartyChatRoom;
 import shop.geeksasang.domain.member.Member;
@@ -391,7 +390,10 @@ public class DeliveryPartyChatService {
         //요청 보낸 id가 방장인지 확인
         Boolean isChief = partyChatRoom.getChief().getId().equals(member.getId());
 
-        return GetPartyChatRoomDetailRes.toDto(partyChatRoom, member, isChief);
+        //주문 완료 여부 확인
+        Boolean isOrderFinish = partyChatRoom.getOrderStatus().equals(OrderStatus.ORDER_COMPLETE);
+
+        return GetPartyChatRoomDetailRes.toDto(partyChatRoom, member, isChief, isOrderFinish);
     }
 
 }
