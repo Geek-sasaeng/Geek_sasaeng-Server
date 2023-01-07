@@ -22,6 +22,7 @@ import shop.geeksasang.dto.chat.chatchief.DeleteMemberByChiefReq;
 
 import shop.geeksasang.dto.chat.PostChatImageRes;
 
+import shop.geeksasang.dto.chat.partychatroom.GetPartyChatRoomDetailRes;
 import shop.geeksasang.dto.chat.partychatroom.GetPartyChatRoomRes;
 import shop.geeksasang.dto.chat.partychatroom.GetPartyChatRoomsRes;
 import shop.geeksasang.dto.chat.PostChatRes;
@@ -367,6 +368,23 @@ public class DeliveryPartyChatService {
         //주문 완료 시스템 메시지
         this.createChat(memberId, roomId, "주문이 완료되었습니다.", true, member.getProfileImgUrl(), "publish", "none", false);
 
+    }
+
+    @Transactional(readOnly = true)
+    public GetPartyChatRoomDetailRes getPartyChatRoomDetailById(String chatRoomId, int memberId){
+        //채팅방 조회
+        PartyChatRoom partyChatRoom = partyChatRoomRepository.findByPartyChatRoomId(new ObjectId(chatRoomId))
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_CHAT_ROOM));
+
+        //채팅방 참여 회원 조회
+        PartyChatRoomMember member = partyChatRoomMemberRepository
+                .findByMemberIdAndChatRoomId(memberId, new ObjectId(chatRoomId))
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTYCHATROOM_MEMBER));
+
+        //요청 보낸 id가 방장인지 확인
+        Boolean isChief = partyChatRoom.getChief().getId().equals(member.getId());
+
+        return GetPartyChatRoomDetailRes.toDto(partyChatRoom, member, isChief);
     }
 
 }
