@@ -11,7 +11,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import shop.geeksasang.config.domain.BaseEntityMongo;
 import shop.geeksasang.config.exception.BaseException;
+import shop.geeksasang.config.status.BaseStatus;
 import shop.geeksasang.domain.chat.Chat;
 import shop.geeksasang.domain.chat.ChatRoom;
 import shop.geeksasang.domain.chat.PartyChatRoomMember;
@@ -223,6 +225,7 @@ public class DeliveryPartyChatService {
         PageRequest page = PageRequest.of(cursor, 10, Sort.by(Sort.Direction.ASC, PAGING_STANDARD));
         Slice<PartyChatRoomMember> members = partyChatRoomMemberRepository.findPartyChatRoomMemberByMemberId(memberId, page);
         List<GetPartyChatRoomRes> result = members.stream()
+                .filter(member -> member.getPartyChatRoom().getBaseEntityMongo().getStatus() == BaseStatus.ACTIVE)
                 .map(member -> GetPartyChatRoomRes.of(member.getPartyChatRoom()))
                 .collect(Collectors.toList());
 
