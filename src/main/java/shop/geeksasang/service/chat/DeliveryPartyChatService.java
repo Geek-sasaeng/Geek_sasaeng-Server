@@ -368,6 +368,10 @@ public class DeliveryPartyChatService {
         //mysql - OrderStatus 값 바꾸기
         deliveryPartyService.changeOrderStatus(partyChatRoom.getDeliveryPartyId());
 
+        //mongo - OrderStatus 값 바꾸기
+        partyChatRoomRepository.changeOrderStatus(new ObjectId(roomId));
+
+
         //주문 완료 시스템 메시지
         this.createChat(memberId, roomId, "주문이 완료되었습니다.", true, member.getProfileImgUrl(), "publish", "none", false);
 

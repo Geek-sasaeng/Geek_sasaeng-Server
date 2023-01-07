@@ -201,7 +201,6 @@ public class DeliveryPartyChatController {
         return new BaseResponse<>("요청에 성공하셨습니다.");
     }
 
-    //todo: apiresponse 수정 필요
     @ApiOperation(value = "채팅방 상세조회", notes = "(jwt 토큰 필요) 채팅방 상세 조회시 사용하는 api")
     @ApiResponses({
             @ApiResponse(code = 1000 ,message ="요청에 성공하셨습니다."),
