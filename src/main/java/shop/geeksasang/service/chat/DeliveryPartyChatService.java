@@ -111,7 +111,7 @@ public class DeliveryPartyChatService {
         if (chatType.equals("publish")) {
             chat = new Chat(content, partyChatRoom, isSystemMessage, partyChatRoomMember, profileImgUrl, readMembers);
         } else if (chatType.equals("read")) {
-            chat = chatRepository.findByChatId(chatId).orElseThrow(() -> new BaseException(NOT_EXISTS_CHAT));
+            chat = chatRepository.findByChatId(new ObjectId(chatId)).orElseThrow(() -> new BaseException(NOT_EXISTS_CHAT));
         }
 
         chat.addReadMember(memberId);// 읽은 멤버 추가
@@ -160,7 +160,7 @@ public class DeliveryPartyChatService {
                 if (chatType.equals("publish")) {
                     chat = new Chat(imgUrl, partyChatRoom, isSystemMessage, partyChatRoomMember, profileImgUrl, readMembers, isImageMessage);
                 } else if (chatType.equals("read")) {
-                    chat = chatRepository.findByChatId(chatId).orElseThrow(() -> new BaseException(NOT_EXISTS_CHAT));
+                    chat = chatRepository.findByChatId(new ObjectId(chatId)).orElseThrow(() -> new BaseException(NOT_EXISTS_CHAT));
                 }
 
                 chat.addReadMember(memberId);// 읽은 멤버 추가
