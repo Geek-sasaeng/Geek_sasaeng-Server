@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
+import shop.geeksasang.config.status.OrderStatus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +32,7 @@ public class PartyChatRoom extends ChatRoom{
     private Boolean isFinish;
     private Integer maxMatching;
     private int deliveryPartyId;
+    private OrderStatus orderStatus;
 
     public PartyChatRoom(String title, List<Chat> chats, List<PartyChatRoomMember> participants, String accountNumber,
                          String bank, String category, Boolean isFinish, Integer maxMatching, PartyChatRoomMember chief, int deliveryPartyId) {
@@ -45,6 +47,7 @@ public class PartyChatRoom extends ChatRoom{
         this.maxMatching = maxMatching;
         this.chief = chief;
         this.deliveryPartyId = deliveryPartyId;
+        this.orderStatus = OrderStatus.BEFORE_ORDER;
     }
 
     @Override
