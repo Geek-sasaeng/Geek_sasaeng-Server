@@ -95,4 +95,9 @@ public class PartyChatRoomMember {
         result = 31 * result + (getBaseEntityMongo() != null ? getBaseEntityMongo().hashCode() : 0);
         return result;
     }
+
+
+    public LocalDateTime getLastChatAt(){
+        return this.partyChatRoom.getLastChatAt();
+    }
 }

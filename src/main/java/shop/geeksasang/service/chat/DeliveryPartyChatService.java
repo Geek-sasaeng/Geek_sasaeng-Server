@@ -42,6 +42,7 @@ import shop.geeksasang.service.deliveryparty.DeliveryPartyService;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -228,6 +229,7 @@ public class DeliveryPartyChatService {
         Slice<PartyChatRoomMember> members = partyChatRoomMemberRepository.findPartyChatRoomMemberByMemberId(memberId, page);
         List<GetPartyChatRoomRes> result = members.stream()
                 //.filter(member -> member.getPartyChatRoom().getBaseEntityMongo().getStatus() == BaseStatus.ACTIVE)
+                .sorted(Comparator.comparing(PartyChatRoomMember::getLastChatAt).reversed()) // 최신 메시지 순으로 정렬
                 .map(member -> GetPartyChatRoomRes.of(member.getPartyChatRoom()))
                 .collect(Collectors.toList());
 
