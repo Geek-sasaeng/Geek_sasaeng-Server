@@ -1,5 +1,6 @@
 package shop.geeksasang.dto.member.get;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiParam;
 import lombok.Builder;
@@ -89,6 +90,10 @@ public class GetMemberRes {
     @ApiModelProperty(value = "최근 진행 파티 정보")
     List<GetRecentOngoingPartiesRes> parties = new ArrayList<>();
 
+    @ApiModelProperty(example = "2022-07-11 15:30:00", value = "멤버 가입 시각")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+    private String createdAt;
+
     //빌더
     static public GetMemberRes toDto(Member member, List<GetRecentOngoingPartiesRes> parties){
         return GetMemberRes.builder()
@@ -110,13 +115,14 @@ public class GetMemberRes {
                 .reportedCount(member.getReportedCount())
                 .fcmToken(member.getFcmToken())
                 .parties(parties)
+                .createdAt(member.getCreatedAt())
                 .build();
     }
 
     @Builder
     public GetMemberRes(int id, String loginId, String nickname, int universityId, String universityName, int emailId, String emailAddress, String phoneNumber, String profileImgUrl,
                         String informationAgreeStatus, int dormitoryId, String dormitoryName, LoginStatus loginStatus, MemberLoginType memberLoginType,
-                        int perDayReportingCount, int reportedCount, String fcmToken, List<GetRecentOngoingPartiesRes> parties) {
+                        int perDayReportingCount, int reportedCount, String fcmToken, List<GetRecentOngoingPartiesRes> parties, String createdAt) {
         this.id = id;
         this.loginId = loginId;
         this.nickname = nickname;
@@ -135,5 +141,6 @@ public class GetMemberRes {
         this.reportedCount = reportedCount;
         this.fcmToken = fcmToken;
         this.parties = parties;
+        this.createdAt = createdAt;
     }
 }
