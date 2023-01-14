@@ -131,6 +131,8 @@ public class DeliveryPartyChatService {
             e.printStackTrace();
         }
         mqController.sendMessage(saveChatJson, chatRoomId); // rabbitMQ 메시지 publish
+
+
     }
 
 
@@ -231,6 +233,8 @@ public class DeliveryPartyChatService {
 
         return new GetPartyChatRoomsRes(result, members.isLast());
     }
+
+
     @Transactional(readOnly = true)
     public List<Chat> findPartyChattings(int memberId, String partyChatRoomId) {
         List<Chat> chattingList = chatRepository.findAll();
