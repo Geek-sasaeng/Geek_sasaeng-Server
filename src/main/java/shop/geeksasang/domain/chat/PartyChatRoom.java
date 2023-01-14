@@ -6,6 +6,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
 import shop.geeksasang.config.status.OrderStatus;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,9 +35,10 @@ public class PartyChatRoom extends ChatRoom{
     private Integer maxMatching;
     private int deliveryPartyId;
     private OrderStatus orderStatus;
+    private LocalDateTime lastChatAt; // 가장 최근 메시지 시각
 
     public PartyChatRoom(String title, List<Chat> chats, List<PartyChatRoomMember> participants, String accountNumber,
-                         String bank, String category, Boolean isFinish, Integer maxMatching, PartyChatRoomMember chief, int deliveryPartyId) {
+                         String bank, String category, Boolean isFinish, Integer maxMatching, PartyChatRoomMember chief, int deliveryPartyId, LocalDateTime lastChatAt) {
         super();
         this.title = title;
         this.chats = chats;
@@ -48,6 +51,7 @@ public class PartyChatRoom extends ChatRoom{
         this.chief = chief;
         this.deliveryPartyId = deliveryPartyId;
         this.orderStatus = OrderStatus.BEFORE_ORDER;
+        this.lastChatAt = lastChatAt;
     }
 
     @Override
@@ -93,4 +97,7 @@ public class PartyChatRoom extends ChatRoom{
         this.chief = changeChief;
         return changeChief;
     }
+
+    public void changeLastChatAt(LocalDateTime lastChatAt){
+        this.lastChatAt = lastChatAt;}
 }
