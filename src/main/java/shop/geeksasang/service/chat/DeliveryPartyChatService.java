@@ -62,7 +62,7 @@ public class DeliveryPartyChatService {
     private final DeliveryPartyMemberService deliveryPartyMemberService;
     private final DeliveryPartyService deliveryPartyService;
 
-    private static final String PAGING_STANDARD = "createdAt";
+    private static final String PAGING_STANDARD = "lastChatAt";
 
     @Transactional(readOnly = false)
     public PartyChatRoomRes createChatRoom(int memberId, String title, String accountNumber, String bank, String category, Integer maxMatching, int deliveryPartyId){
@@ -73,7 +73,7 @@ public class DeliveryPartyChatService {
         List<Chat> chats = new ArrayList<>();
         List<PartyChatRoomMember> participants = new ArrayList<>();
         PartyChatRoomMember chief = new PartyChatRoomMember(LocalDateTime.now(), false, memberId);
-        PartyChatRoom chatRoom = new PartyChatRoom(title, chats, participants, accountNumber, bank, category, false, maxMatching, chief, deliveryPartyId);
+        PartyChatRoom chatRoom = new PartyChatRoom(title, chats, participants, accountNumber, bank, category, false, maxMatching, chief, deliveryPartyId, LocalDateTime.now());
         chatRoom.addParticipants(chief);
 
         partyChatRoomRepository.save(chatRoom); //초기 생성
@@ -131,6 +131,8 @@ public class DeliveryPartyChatService {
             e.printStackTrace();
         }
         mqController.sendMessage(saveChatJson, chatRoomId); // rabbitMQ 메시지 publish
+
+        partyChatRoomRepository.changeLastChatAt(new ObjectId(partyChatRoom.getId()), LocalDateTime.now()); //TODO: 시간이 맞는지 테스트 해봐야 함
     }
 
 
@@ -231,6 +233,8 @@ public class DeliveryPartyChatService {
 
         return new GetPartyChatRoomsRes(result, members.isLast());
     }
+
+
     @Transactional(readOnly = true)
     public List<Chat> findPartyChattings(int memberId, String partyChatRoomId) {
         List<Chat> chattingList = chatRepository.findAll();
