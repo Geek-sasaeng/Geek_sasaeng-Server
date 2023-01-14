@@ -38,6 +38,6 @@ public interface PartyChatRoomRepository extends MongoRepository<PartyChatRoom, 
     void changeOrderStatus(ObjectId chatRoomId);
 
     @Query("{ '_id' : ?0 }")
-    @Update("{ @set : { 'lastChatAt' : ?1 }}")
+    @Update("{ $set : { 'lastChatAt' : ?1 }}")
     void changeLastChatAt(ObjectId partyChatRoomId, LocalDateTime lastChatAt);
 }
