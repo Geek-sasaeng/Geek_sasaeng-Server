@@ -12,8 +12,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import shop.geeksasang.config.exception.BaseException;
+import shop.geeksasang.config.status.BaseStatus;
+import shop.geeksasang.config.status.OrderStatus;
 import shop.geeksasang.domain.chat.Chat;
-import shop.geeksasang.domain.chat.ChatRoom;
 import shop.geeksasang.domain.chat.PartyChatRoomMember;
 import shop.geeksasang.domain.chat.PartyChatRoom;
 import shop.geeksasang.domain.member.Member;
@@ -22,6 +23,7 @@ import shop.geeksasang.dto.chat.chatchief.DeleteMemberByChiefReq;
 
 import shop.geeksasang.dto.chat.PostChatImageRes;
 
+import shop.geeksasang.dto.chat.partychatroom.GetPartyChatRoomDetailRes;
 import shop.geeksasang.dto.chat.partychatroom.GetPartyChatRoomRes;
 import shop.geeksasang.dto.chat.partychatroom.GetPartyChatRoomsRes;
 import shop.geeksasang.dto.chat.PostChatRes;
@@ -60,7 +62,7 @@ public class DeliveryPartyChatService {
     private final DeliveryPartyMemberService deliveryPartyMemberService;
     private final DeliveryPartyService deliveryPartyService;
 
-    private static final String PAGING_STANDARD = "createdAt";
+    private static final String PAGING_STANDARD = "lastChatAt";
 
     @Transactional(readOnly = false)
     public PartyChatRoomRes createChatRoom(int memberId, String title, String accountNumber, String bank, String category, Integer maxMatching, int deliveryPartyId){
@@ -71,7 +73,7 @@ public class DeliveryPartyChatService {
         List<Chat> chats = new ArrayList<>();
         List<PartyChatRoomMember> participants = new ArrayList<>();
         PartyChatRoomMember chief = new PartyChatRoomMember(LocalDateTime.now(), false, memberId);
-        PartyChatRoom chatRoom = new PartyChatRoom(title, chats, participants, accountNumber, bank, category, false, maxMatching, chief, deliveryPartyId);
+        PartyChatRoom chatRoom = new PartyChatRoom(title, chats, participants, accountNumber, bank, category, false, maxMatching, chief, deliveryPartyId, LocalDateTime.now());
         chatRoom.addParticipants(chief);
 
         partyChatRoomRepository.save(chatRoom); //초기 생성
@@ -111,7 +113,7 @@ public class DeliveryPartyChatService {
         if (chatType.equals("publish")) {
             chat = new Chat(content, partyChatRoom, isSystemMessage, partyChatRoomMember, profileImgUrl, readMembers);
         } else if (chatType.equals("read")) {
-            chat = chatRepository.findByChatId(chatId).orElseThrow(() -> new BaseException(NOT_EXISTS_CHAT));
+            chat = chatRepository.findByChatId(new ObjectId(chatId)).orElseThrow(() -> new BaseException(NOT_EXISTS_CHAT));
         }
 
         chat.addReadMember(memberId);// 읽은 멤버 추가
@@ -129,6 +131,8 @@ public class DeliveryPartyChatService {
             e.printStackTrace();
         }
         mqController.sendMessage(saveChatJson, chatRoomId); // rabbitMQ 메시지 publish
+
+        partyChatRoomRepository.changeLastChatAt(new ObjectId(partyChatRoom.getId()), LocalDateTime.now()); //TODO: 시간이 맞는지 테스트 해봐야 함
     }
 
 
@@ -160,7 +164,7 @@ public class DeliveryPartyChatService {
                 if (chatType.equals("publish")) {
                     chat = new Chat(imgUrl, partyChatRoom, isSystemMessage, partyChatRoomMember, profileImgUrl, readMembers, isImageMessage);
                 } else if (chatType.equals("read")) {
-                    chat = chatRepository.findByChatId(chatId).orElseThrow(() -> new BaseException(NOT_EXISTS_CHAT));
+                    chat = chatRepository.findByChatId(new ObjectId(chatId)).orElseThrow(() -> new BaseException(NOT_EXISTS_CHAT));
                 }
 
                 chat.addReadMember(memberId);// 읽은 멤버 추가
@@ -224,14 +228,17 @@ public class DeliveryPartyChatService {
     @Transactional(readOnly = true)
     public GetPartyChatRoomsRes findPartyChatRooms(int memberId, int cursor) {
 
-        PageRequest page = PageRequest.of(cursor, 10, Sort.by(Sort.Direction.ASC, PAGING_STANDARD));
+        PageRequest page = PageRequest.of(cursor, 10, Sort.by(Sort.Direction.DESC, PAGING_STANDARD));
         Slice<PartyChatRoomMember> members = partyChatRoomMemberRepository.findPartyChatRoomMemberByMemberId(memberId, page);
         List<GetPartyChatRoomRes> result = members.stream()
+                //.filter(member -> member.getPartyChatRoom().getBaseEntityMongo().getStatus() == BaseStatus.ACTIVE)
                 .map(member -> GetPartyChatRoomRes.of(member.getPartyChatRoom()))
                 .collect(Collectors.toList());
 
         return new GetPartyChatRoomsRes(result, members.isLast());
     }
+
+
     @Transactional(readOnly = true)
     public List<Chat> findPartyChattings(int memberId, String partyChatRoomId) {
         List<Chat> chattingList = chatRepository.findAll();
@@ -368,9 +375,33 @@ public class DeliveryPartyChatService {
         //mysql - OrderStatus 값 바꾸기
         deliveryPartyService.changeOrderStatus(partyChatRoom.getDeliveryPartyId());
 
+        //mongo - OrderStatus 값 바꾸기
+        partyChatRoomRepository.changeOrderStatus(new ObjectId(roomId));
+
+
         //주문 완료 시스템 메시지
         this.createChat(memberId, roomId, "주문이 완료되었습니다.", true, member.getProfileImgUrl(), "publish", "none", false);
 
+    }
+
+    @Transactional(readOnly = true)
+    public GetPartyChatRoomDetailRes getPartyChatRoomDetailById(String chatRoomId, int memberId){
+        //채팅방 조회
+        PartyChatRoom partyChatRoom = partyChatRoomRepository.findByPartyChatRoomId(new ObjectId(chatRoomId))
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_CHAT_ROOM));
+
+        //채팅방 참여 회원 조회
+        PartyChatRoomMember member = partyChatRoomMemberRepository
+                .findByMemberIdAndChatRoomId(memberId, new ObjectId(chatRoomId))
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTYCHATROOM_MEMBER));
+
+        //요청 보낸 id가 방장인지 확인
+        Boolean isChief = partyChatRoom.getChief().getId().equals(member.getId());
+
+        //주문 완료 여부 확인
+        Boolean isOrderFinish = partyChatRoom.getOrderStatus().equals(OrderStatus.ORDER_COMPLETE);
+
+        return GetPartyChatRoomDetailRes.toDto(partyChatRoom, member, isChief, isOrderFinish);
     }
 
 }

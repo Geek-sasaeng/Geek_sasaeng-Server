@@ -17,6 +17,7 @@ import shop.geeksasang.dto.chat.PostChatImageReq;
 
 
 import shop.geeksasang.dto.chat.chatparty.PatchOrderReq;
+import shop.geeksasang.dto.chat.partychatroom.GetPartyChatRoomDetailRes;
 import shop.geeksasang.dto.chat.partychatroom.GetPartyChatRoomsRes;
 import shop.geeksasang.dto.chat.PostChatReq;
 import shop.geeksasang.dto.chat.partychatroom.PartyChatRoomRes;
@@ -198,6 +199,20 @@ public class DeliveryPartyChatController {
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
         deliveryPartyChatService.changeOrderStatus(jwtInfo.getUserId(), dto.getRoomId());
         return new BaseResponse<>("요청에 성공하셨습니다.");
+    }
+
+    @ApiOperation(value = "채팅방 상세조회", notes = "(jwt 토큰 필요) 채팅방 상세 조회시 사용하는 api")
+    @ApiResponses({
+            @ApiResponse(code = 1000 ,message ="요청에 성공하셨습니다."),
+            @ApiResponse(code = 2208 ,message ="채팅방 멤버가 존재하지 않습니다."),
+            @ApiResponse(code = 2207 ,message ="채팅방이 존재하지 않습니다."),
+            @ApiResponse(code = 4000 ,message ="서버 오류입니다."),
+    })
+    @GetMapping("/{chatRoomId}")
+    public BaseResponse<GetPartyChatRoomDetailRes> getPartyChatRoomDetailById(@PathVariable("chatRoomId")String chatRoomId, HttpServletRequest request){
+        JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
+        GetPartyChatRoomDetailRes response = deliveryPartyChatService.getPartyChatRoomDetailById(chatRoomId, jwtInfo.getUserId());
+        return new BaseResponse<>(response);
     }
 
 }

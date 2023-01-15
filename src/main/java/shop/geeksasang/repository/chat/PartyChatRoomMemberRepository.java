@@ -26,7 +26,7 @@ public interface PartyChatRoomMemberRepository extends MongoRepository<PartyChat
     Optional<PartyChatRoomMember> findByIdAndChatRoomId(ObjectId memberId, ObjectId  chatRoomId);
 
     //TODO STATUS 추가해야함
-    @Query(value = "{ 'memberId' : ?0 }")
+    @Query(value = "{ 'memberId' : ?0, 'status' : 'ACTIVE'}")
     Slice<PartyChatRoomMember> findPartyChatRoomMemberByMemberId(int memberId, Pageable pageable);
 
     @Query("{'_id': ?0 , 'partyChatRoom': ?1 }")

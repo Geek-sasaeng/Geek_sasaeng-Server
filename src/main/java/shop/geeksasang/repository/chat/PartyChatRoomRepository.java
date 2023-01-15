@@ -32,4 +32,12 @@ public interface PartyChatRoomRepository extends MongoRepository<PartyChatRoom, 
     @Query("{ '_id' : ?0 }")
     @Update("{ $set : { 'isFinish' : true }}")
     void changeIsFinish(ObjectId partyChatRoomId);
+
+    @Query("{ '_id' :  ?0 }")
+    @Update("{ $set : { 'orderStatus' : 'ORDER_COMPLETE' }}")
+    void changeOrderStatus(ObjectId chatRoomId);
+
+    @Query("{ '_id' : ?0 }")
+    @Update("{ $set : { 'lastChatAt' : ?1 }}")
+    void changeLastChatAt(ObjectId partyChatRoomId, LocalDateTime lastChatAt);
 }
