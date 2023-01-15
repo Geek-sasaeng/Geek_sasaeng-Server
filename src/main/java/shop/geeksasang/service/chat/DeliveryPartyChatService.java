@@ -42,6 +42,7 @@ import shop.geeksasang.service.deliveryparty.DeliveryPartyService;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -231,7 +232,8 @@ public class DeliveryPartyChatService {
         PageRequest page = PageRequest.of(cursor, 10, Sort.by(Sort.Direction.DESC, PAGING_STANDARD));
         Slice<PartyChatRoomMember> members = partyChatRoomMemberRepository.findPartyChatRoomMemberByMemberId(memberId, page);
         List<GetPartyChatRoomRes> result = members.stream()
-                //.filter(member -> member.getPartyChatRoom().getBaseEntityMongo().getStatus() == BaseStatus.ACTIVE)
+                //.filter(member -> member.getPartyChatRoom().getBaseEntityMongo().getStatus() == BaseStatus.ACTIVE) // 필터링에서 에러 남
+                .sorted(Comparator.comparing(PartyChatRoomMember::getLastChatAt).reversed()) //TODO: 최신 메시지 순으로 정렬했지만 메소드 정의 위치가 맞는지 테스트 필요
                 .map(member -> GetPartyChatRoomRes.of(member.getPartyChatRoom()))
                 .collect(Collectors.toList());
 
