@@ -35,9 +35,15 @@ public class GetPartyChatRoomDetailRes {
     @ApiModelProperty(example = "88", value = "채팅방 방장 id")
     private int chiefId;
 
+    @ApiModelProperty(example = "34", value = "채팅방 id")
+    private int partyId;
+
+    @ApiModelProperty(example = "true", value = "배달 파티 매칭 완료 여부")
+    private Boolean isMatchingFinish;
 
     @Builder
-    public GetPartyChatRoomDetailRes(Boolean isRemittanceFinish, Boolean isChief, Boolean isOrderFinish, String accountNumber, String bank, LocalDateTime enterTime, int chiefId) {
+    public GetPartyChatRoomDetailRes(Boolean isRemittanceFinish, Boolean isChief, Boolean isOrderFinish, String accountNumber, String bank, LocalDateTime enterTime,
+                                     int chiefId, int partyId, boolean isMatchingFinish) {
         this.isRemittanceFinish = isRemittanceFinish;
         this.isChief = isChief;
         this.isOrderFinish = isOrderFinish;
@@ -45,6 +51,8 @@ public class GetPartyChatRoomDetailRes {
         this.bank = bank;
         this.enterTime = enterTime;
         this.chiefId = chiefId;
+        this.partyId = partyId;
+        this.isMatchingFinish = isMatchingFinish;
     }
 
     public static GetPartyChatRoomDetailRes toDto(PartyChatRoom partyChatRoom, PartyChatRoomMember partyChatRoomMember,Boolean isChief,Boolean isOrderFinish){
@@ -56,6 +64,8 @@ public class GetPartyChatRoomDetailRes {
                 .bank(partyChatRoom.getBank())
                 .enterTime(partyChatRoomMember.getEnterTime())
                 .chiefId(partyChatRoom.getChief().getMemberId())
+                .partyId(partyChatRoom.getDeliveryPartyId())
+                .isMatchingFinish(partyChatRoom.getIsFinish())
                 .build();
     }
 }
