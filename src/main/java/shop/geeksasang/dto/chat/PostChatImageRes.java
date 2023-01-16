@@ -27,7 +27,7 @@ public class PostChatImageRes {
 
     private int memberId;
 
-    private String email;
+    private String nickName;
 
     private String profileImgUrl;
 
@@ -43,13 +43,13 @@ public class PostChatImageRes {
     private Boolean isImageMessage;
 
     @Builder
-    public PostChatImageRes(String chatId, String content, String chatRoomId, Boolean isSystemMessage, int memberId, String email, String profileImgUrl, List<Integer> readMembers, LocalDateTime createdAt, String chatType, int unreadMemberCnt, Boolean isImageMessage) {
+    public PostChatImageRes(String chatId, String content, String chatRoomId, Boolean isSystemMessage, int memberId, String nickName, String profileImgUrl, List<Integer> readMembers, LocalDateTime createdAt, String chatType, int unreadMemberCnt, Boolean isImageMessage) {
         this.chatId = chatId;
         this.content = content;
         this.chatRoomId = chatRoomId;
         this.isSystemMessage = isSystemMessage;
         this.memberId = memberId;
-        this.email = email;
+        this.nickName = nickName;
         this.profileImgUrl = profileImgUrl;
         this.readMembers = readMembers;
         this.createdAt = createdAt;
@@ -58,14 +58,14 @@ public class PostChatImageRes {
         this.isImageMessage = isImageMessage;
     }
 
-    public static PostChatImageRes toDto(Chat chat, String email, String chatType, int unreadMemberCnt){
+    public static PostChatImageRes toDto(Chat chat, String nickName, String chatType, int unreadMemberCnt){
         return PostChatImageRes.builder()
                 .chatId(chat.getId())
                 .content(chat.getContent())
                 .chatRoomId(chat.getPartyChatRoom().getId())
                 .isSystemMessage(chat.getIsSystemMessage())
                 .memberId(chat.getPartyChatRoomMember().getMemberId())
-                .email(email)
+                .nickName(nickName)
                 .profileImgUrl(chat.getProfileImgUrl())
                 .readMembers(chat.getReadMembers())
                 .createdAt(chat.getBaseEntityMongo().getCreatedAt())
