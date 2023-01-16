@@ -138,7 +138,10 @@ public class DeliveryPartyChatService {
 
 
     @Transactional(readOnly = false)
-    public void createChatImage(int memberId, String email, String chatRoomId, String content, Boolean isSystemMessage, String profileImgUrl, String chatType, String chatId, List<MultipartFile> images, Boolean isImageMessage) {
+    public void createChatImage(int memberId, String chatRoomId, String content, Boolean isSystemMessage, String profileImgUrl, String chatType, String chatId, List<MultipartFile> images, Boolean isImageMessage) {
+
+        Member member = memberRepository.findMemberById(memberId)
+                .orElseThrow(() -> new BaseException(NOT_EXIST_USER));
 
         PartyChatRoom partyChatRoom = partyChatRoomRepository.findByPartyChatRoomId(new ObjectId(chatRoomId))
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_CHAT_ROOM));
@@ -175,7 +178,7 @@ public class DeliveryPartyChatService {
 
                 // json 형식으로 변환 후 RabbitMQ 전송
                 ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
-                PostChatImageRes res = PostChatImageRes.toDto(saveChat, email, chatType, unreadMemberCnt);
+                PostChatImageRes res = PostChatImageRes.toDto(saveChat, member.getNickName(), chatType, unreadMemberCnt);
                 String saveChatJson = null;
                 try {
                     saveChatJson = mapper.writeValueAsString(res);
