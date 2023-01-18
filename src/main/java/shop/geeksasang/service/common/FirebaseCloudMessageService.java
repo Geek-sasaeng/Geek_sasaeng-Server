@@ -44,7 +44,7 @@ public class FirebaseCloudMessageService {
 
         List<Member> memberList = chatRoomMembers
                 .stream()
-                .map(chatMember -> memberRepository.findMemberByIdAndStatus(chatMember.getMemberId()).orElseThrow(()-> new BaseException(NOT_EXIST_USER)))
+                .map(chatMember -> memberRepository.findMemberByIdAndStatus(chatMember.getMemberId()).orElseThrow(()-> new BaseException(NOT_EXISTS_PARTICIPANT)))
                 .collect(Collectors.toList());
 
         List<String> tokenList = memberList
