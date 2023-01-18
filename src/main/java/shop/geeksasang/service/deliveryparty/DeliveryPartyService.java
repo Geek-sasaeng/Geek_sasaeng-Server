@@ -341,14 +341,10 @@ public class DeliveryPartyService {
     public GetEndedDeliveryPartiesRes getEndedDeliveryParties(int userId, int cursor){
 
         //요청 보낸 사용자 Member 찾기
-        Member findMember = memberRepository.findMemberByIdAndStatus(userId).
+        memberRepository.findMemberByIdAndStatus(userId).
                 orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTICIPANT));
-
         PageRequest paging = PageRequest.of(cursor, PAGING_SIZE, Sort.by(Sort.Direction.ASC, PAGING_STANDARD));
-
-        GetEndedDeliveryPartiesRes endedDeliveryParties = deliveryPartyQueryRepository.getEndedDeliveryParties(userId, paging);
-
-        return endedDeliveryParties;
+        return deliveryPartyQueryRepository.getEndedDeliveryParties(userId, paging);
     }
 
     @Transactional(readOnly = false)
