@@ -232,10 +232,10 @@ public class DeliveryPartyChatController {
             @ApiResponse(code = 4000 ,message ="서버 오류입니다.")
     })
     @PatchMapping("/delivery-complete")
-    public BaseResponse<String> changeDeliveryComplete(HttpServletRequest request, @Valid @RequestBody PatchOrderReq dto) throws IOException, ExecutionException, FirebaseMessagingException, InterruptedException {
+    public BaseResponse<String> changeDeliveryComplete(HttpServletRequest request, @Valid @RequestBody PatchOrderReq dto) throws IOException, ExecutionException,InterruptedException {
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
         deliveryPartyChatService.changeDeliveryComplete(jwtInfo.getUserId(), dto.getRoomId());
-        firebaseCloudMessageService.sendDeliveryComplicatedMessage2(dto.getRoomId());
+        firebaseCloudMessageService.sendDeliveryComplicatedMessage(dto.getRoomId());
 
         return new BaseResponse<>("요청에 성공하셨습니다.");
     }

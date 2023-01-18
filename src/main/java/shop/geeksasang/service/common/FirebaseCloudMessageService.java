@@ -32,7 +32,7 @@ public class FirebaseCloudMessageService {
     private final PartyChatRoomRepository partyChatRoomRepository;
     private final PartyChatRoomMemberRepository partyChatRoomMemberRepository;
 
-    public void sendDeliveryComplicatedMessage2(String roomId) throws IOException, ExecutionException,InterruptedException {
+    public void sendDeliveryComplicatedMessage(String roomId) throws IOException, ExecutionException,InterruptedException {
 
         PartyChatRoom partyChatRoom = partyChatRoomRepository.findByPartyChatRoomId(new ObjectId(roomId))
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_CHAT_ROOM));
@@ -57,7 +57,7 @@ public class FirebaseCloudMessageService {
         String body = "배달이 완료되었습니다!";
         //String image = "https://geeksasaeng-s3.s3.ap-northeast-2.amazonaws.com/logo-14.png";
 
-        //todo : 예외 처리 후 로직 - fcm 유효 하지 않으면?
+        //todo : fcm 유효하지 않을 때 다음 로직
         for( String token : tokenList ){
             try{
                 sendMessageTo(token,title,body);
