@@ -41,6 +41,7 @@ import shop.geeksasang.service.deliveryparty.DeliveryPartyService;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -60,7 +61,7 @@ public class DeliveryPartyChatService {
     private final DeliveryPartyMemberService deliveryPartyMemberService;
     private final DeliveryPartyService deliveryPartyService;
 
-    private static final String PAGING_STANDARD = "createdAt";
+    private static final String PAGING_STANDARD = "lastChatAt";
 
     @Transactional(readOnly = false)
     public PartyChatRoomRes createChatRoom(int memberId, String title, String accountNumber, String bank, String category, Integer maxMatching, int deliveryPartyId){
@@ -71,7 +72,7 @@ public class DeliveryPartyChatService {
         List<Chat> chats = new ArrayList<>();
         List<PartyChatRoomMember> participants = new ArrayList<>();
         PartyChatRoomMember chief = new PartyChatRoomMember(LocalDateTime.now(), false, memberId);
-        PartyChatRoom chatRoom = new PartyChatRoom(title, chats, participants, accountNumber, bank, category, false, maxMatching, chief, deliveryPartyId);
+        PartyChatRoom chatRoom = new PartyChatRoom(title, chats, participants, accountNumber, bank, category, false, maxMatching, chief, deliveryPartyId, LocalDateTime.now());
         chatRoom.addParticipants(chief);
 
         partyChatRoomRepository.save(chatRoom); //초기 생성
@@ -129,11 +130,16 @@ public class DeliveryPartyChatService {
             e.printStackTrace();
         }
         mqController.sendMessage(saveChatJson, chatRoomId); // rabbitMQ 메시지 publish
+
+        partyChatRoomRepository.changeLastChatAt(new ObjectId(partyChatRoom.getId()), LocalDateTime.now()); //TODO: 시간이 맞는지 테스트 해봐야 함
     }
 
 
     @Transactional(readOnly = false)
-    public void createChatImage(int memberId, String email, String chatRoomId, String content, Boolean isSystemMessage, String profileImgUrl, String chatType, String chatId, List<MultipartFile> images, Boolean isImageMessage) {
+    public void createChatImage(int memberId, String chatRoomId, String content, Boolean isSystemMessage, String profileImgUrl, String chatType, String chatId, List<MultipartFile> images, Boolean isImageMessage) {
+
+        Member member = memberRepository.findMemberById(memberId)
+                .orElseThrow(() -> new BaseException(NOT_EXIST_USER));
 
         PartyChatRoom partyChatRoom = partyChatRoomRepository.findByPartyChatRoomId(new ObjectId(chatRoomId))
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_CHAT_ROOM));
@@ -170,7 +176,7 @@ public class DeliveryPartyChatService {
 
                 // json 형식으로 변환 후 RabbitMQ 전송
                 ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
-                PostChatImageRes res = PostChatImageRes.toDto(saveChat, email, chatType, unreadMemberCnt);
+                PostChatImageRes res = PostChatImageRes.toDto(saveChat, member.getNickName(), chatType, unreadMemberCnt);
                 String saveChatJson = null;
                 try {
                     saveChatJson = mapper.writeValueAsString(res);
@@ -191,11 +197,15 @@ public class DeliveryPartyChatService {
         Member member = memberRepository.findMemberById(memberId)
                 .orElseThrow(() -> new BaseException(NOT_EXIST_USER));
 
-        String email = member.getEmail().getAddress();
         String profileImgUrl = member.getProfileImgUrl();
 
         PartyChatRoom partyChatRoom = partyChatRoomRepository.findByPartyChatRoomId(new ObjectId(chatRoomId))
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_CHAT_ROOM));
+
+        //이미 마감했는지
+        if(partyChatRoom.getIsFinish()){
+            throw new BaseException(ALREADY_PARTY_FINISH);
+        }
 
         //Validation 기존의 멤버인지 예외 처리
         if (partyChatRoom.getParticipants().stream().anyMatch(participant -> participant.getMemberId() == memberId)) {
@@ -220,15 +230,18 @@ public class DeliveryPartyChatService {
     @Transactional(readOnly = true)
     public GetPartyChatRoomsRes findPartyChatRooms(int memberId, int cursor) {
 
-        PageRequest page = PageRequest.of(cursor, 10, Sort.by(Sort.Direction.ASC, PAGING_STANDARD));
+        PageRequest page = PageRequest.of(cursor, 10, Sort.by(Sort.Direction.DESC, PAGING_STANDARD));
         Slice<PartyChatRoomMember> members = partyChatRoomMemberRepository.findPartyChatRoomMemberByMemberId(memberId, page);
         List<GetPartyChatRoomRes> result = members.stream()
-                //.filter(member -> member.getPartyChatRoom().getBaseEntityMongo().getStatus() == BaseStatus.ACTIVE)
+                //.filter(member -> member.getPartyChatRoom().getBaseEntityMongo().getStatus() == BaseStatus.ACTIVE) // 필터링에서 에러 남
+                .sorted(Comparator.comparing(PartyChatRoomMember::getLastChatAt).reversed()) //TODO: 최신 메시지 순으로 정렬했지만 메소드 정의 위치가 맞는지 테스트 필요
                 .map(member -> GetPartyChatRoomRes.of(member.getPartyChatRoom()))
                 .collect(Collectors.toList());
 
         return new GetPartyChatRoomsRes(result, members.isLast());
     }
+
+
     @Transactional(readOnly = true)
     public List<Chat> findPartyChattings(int memberId, String partyChatRoomId) {
         List<Chat> chattingList = chatRepository.findAll();

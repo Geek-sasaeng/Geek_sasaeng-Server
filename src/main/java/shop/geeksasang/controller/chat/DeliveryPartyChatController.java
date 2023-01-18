@@ -68,7 +68,7 @@ public class DeliveryPartyChatController {
             @ApiImplicitParam(name = "content", required = true, dataTypeClass = String.class, example = "이미지 채팅입니다."),
             @ApiImplicitParam(name = "chatRoomId", required = true, dataTypeClass = String.class, example = "638ef5c109c1212827135cf3"),
             @ApiImplicitParam(name = "isSystemMessage", dataTypeClass = Boolean.class, example = "false"),
-            @ApiImplicitParam(name = "email", required = true, dataTypeClass = String.class, example = "thomas@gmail.com"),
+            //@ApiImplicitParam(name = "email", required = true, dataTypeClass = String.class, example = "thomas@gmail.com"),
             @ApiImplicitParam(name = "profileImgUrl", required = true, dataTypeClass = String.class, example = "https://yogit.s3.ap-northeast-2.amazonaws.com/boardimguuid2"),
             @ApiImplicitParam(name = "chatType", required = true, dataTypeClass = String.class, example = "publish 또는 read"),
             @ApiImplicitParam(name = "chatId", required = true, dataTypeClass = String.class, example = "publish일 때는 none / read일 때는 chatId(인덱스)"),
@@ -86,7 +86,7 @@ public class DeliveryPartyChatController {
     @PostMapping("/chatimage")
     public BaseResponse<String> createChatImage(HttpServletRequest request, @ModelAttribute @Validated PostChatImageReq dto){
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
-        deliveryPartyChatService.createChatImage(jwtInfo.getUserId(), dto.getEmail(), dto.getChatRoomId(), dto.getContent(), dto.getIsSystemMessage(), dto.getProfileImgUrl(), dto.getChatType(), dto.getChatId(), dto.getImages(), dto.getIsImageMessage());
+        deliveryPartyChatService.createChatImage(jwtInfo.getUserId(), dto.getChatRoomId(), dto.getContent(), dto.getIsSystemMessage(), dto.getProfileImgUrl(), dto.getChatType(), dto.getChatId(), dto.getImages(), dto.getIsImageMessage());
         return new BaseResponse("채팅 이미지 전송을 성공했습니다.");
     }
 

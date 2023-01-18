@@ -1,6 +1,7 @@
 package shop.geeksasang.service.deliveryparty;
 
 import lombok.RequiredArgsConstructor;
+import org.bson.types.ObjectId;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -312,10 +313,17 @@ public class DeliveryPartyService {
     @Transactional(readOnly = false)
     public PatchDeliveryPartyMatchingStatusRes patchDeliveryPartyMatchingStatus(Integer partyId, int userId) {
 
+        //여기서 방장 인증을 진행함.
         DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyByIdAndUserIdAndMatchingStatus(partyId, userId).
                 orElseThrow(() -> new BaseException(BaseResponseStatus.CAN_NOT_FINISH_DELIVERY_PARTY));
-
         deliveryParty.changeMatchingStatusToFinish();
+
+        //그러므로 여기서 방장 인증을 진행할 필요가 없음.
+        PartyChatRoom partyChatRoom = partyChatRoomRepository.findByDeliveryPartyId(partyId)
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_CHAT_ROOM));
+
+        partyChatRoomRepository.changeIsFinish(new ObjectId(partyChatRoom.getId()));
+
         return PatchDeliveryPartyMatchingStatusRes.builder()
                 .deliveryPartyId(deliveryParty.getId())
                 .matchingStatus(deliveryParty.getMatchingStatus().toString())

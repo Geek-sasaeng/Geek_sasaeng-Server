@@ -20,8 +20,6 @@ public class PostChatImageReq {
 
     private Boolean isSystemMessage;
 
-    private String email;
-
     private String profileImgUrl;
 
     private String chatType;
