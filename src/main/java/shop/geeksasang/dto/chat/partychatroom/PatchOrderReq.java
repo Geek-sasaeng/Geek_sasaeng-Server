@@ -1,4 +1,4 @@
-package shop.geeksasang.dto.chat.chatparty;
+package shop.geeksasang.dto.chat.partychatroom;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;

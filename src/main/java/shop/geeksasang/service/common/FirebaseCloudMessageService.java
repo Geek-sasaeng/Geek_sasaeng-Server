@@ -1,135 +1,93 @@
 package shop.geeksasang.service.common;
-
-
-
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.auth.oauth2.GoogleCredentials;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.FirebaseMessagingException;
+import com.google.firebase.messaging.Message;
+import com.google.firebase.messaging.Notification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import okhttp3.*;
-import org.apache.http.HttpHeaders;
-import org.springframework.core.io.ClassPathResource;
-
-import org.springframework.http.ResponseEntity;
+import org.bson.types.ObjectId;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-
-import org.springframework.util.StringUtils;
 import shop.geeksasang.config.exception.BaseException;
-import shop.geeksasang.domain.deliveryparty.DeliveryParty;
+import shop.geeksasang.config.exception.response.BaseResponseStatus;
+import shop.geeksasang.domain.chat.PartyChatRoom;
+import shop.geeksasang.domain.chat.PartyChatRoomMember;
 import shop.geeksasang.domain.member.Member;
-import shop.geeksasang.dto.firebase.FcmMessage;
-import shop.geeksasang.repository.deliveryparty.DeliveryPartyMemberRepository;
-import shop.geeksasang.repository.deliveryparty.DeliveryPartyRepository;
+import shop.geeksasang.repository.chat.PartyChatRoomMemberRepository;
+import shop.geeksasang.repository.chat.PartyChatRoomRepository;
 import shop.geeksasang.repository.member.MemberRepository;
-
+import shop.geeksasang.utils.fcm.FcmMessage;
 import java.io.IOException;
 import java.util.List;
-
-import static shop.geeksasang.config.exception.response.BaseResponseStatus.DIFFERENT_CHIEF_ID;
-import static shop.geeksasang.config.exception.response.BaseResponseStatus.NOT_EXISTS_PARTY;
+import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
+import static shop.geeksasang.config.exception.response.BaseResponseStatus.*;
 
 @Component
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class FirebaseCloudMessageService {
-
-    private final DeliveryPartyRepository deliveryPartyRepository;
-    private final DeliveryPartyMemberRepository deliveryPartyMemberRepository;
     private final MemberRepository memberRepository;
+    private final PartyChatRoomRepository partyChatRoomRepository;
+    private final PartyChatRoomMemberRepository partyChatRoomMemberRepository;
 
-    private final String API_URL = "https://fcm.googleapis.com/v1/projects/geeksasaeng-473bf/messages:send";
-    private final ObjectMapper objectMapper;
+    public void sendDeliveryComplicatedMessage2(String roomId) throws IOException, ExecutionException,InterruptedException {
 
-    public void sendMessageTo(String targetToken, String title, String body) throws IOException {
-        String message = makeMessage(targetToken, title, body);
+        PartyChatRoom partyChatRoom = partyChatRoomRepository.findByPartyChatRoomId(new ObjectId(roomId))
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_CHAT_ROOM));
 
-        OkHttpClient client = new OkHttpClient();
-        RequestBody requestBody = RequestBody.create(message,
-                MediaType.get("application/json; charset=utf-8"));
-        Request request = new Request.Builder()
-                .url(API_URL)
-                .post(requestBody)
-                .addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + getAccessToken())
-                .addHeader(HttpHeaders.CONTENT_TYPE, "application/json; UTF-8")
+        String chiefId = partyChatRoom.getChief().getId();
+
+        //참여중인 partyChatRoomMember 조회(방장제외)
+        List<PartyChatRoomMember> chatRoomMembers = partyChatRoomMemberRepository.findByChatRoomIdAndIdNotEqual(new ObjectId(roomId),new ObjectId(chiefId));
+
+        List<Member> memberList = chatRoomMembers
+                .stream()
+                .map(chatMember -> memberRepository.findMemberByIdAndStatus(chatMember.getMemberId()).orElseThrow(()-> new BaseException(NOT_EXIST_USER)))
+                .collect(Collectors.toList());
+
+        List<String> tokenList = memberList
+                .stream()
+                .filter(mem -> !mem.getFcmToken().isEmpty())
+                .map(mem -> mem.getFcmToken())
+                .collect(Collectors.toList());
+
+        String title = "배달 완료";
+        String body = "배달이 완료되었습니다!";
+        //String image = "https://geeksasaeng-s3.s3.ap-northeast-2.amazonaws.com/logo-14.png";
+
+        //todo : 예외 처리 후 로직 - fcm 유효 하지 않으면?
+        for( String token : tokenList ){
+            try{
+                sendMessageTo(token,title,body);
+            }
+            catch(FirebaseMessagingException e){
+                log.error("cannot send to memberList push message. error info : {}", e.getMessage());
+                throw new BaseException(BaseResponseStatus.INVALID_FCMTOKEN);
+            }
+        }
+    }
+    public void sendMessageTo(String targetToken, String title, String body) throws FirebaseMessagingException, IOException, InterruptedException, ExecutionException {
+
+        //FirebaseMessaging 사용
+        Message message = makeMessage(targetToken, title, body);
+        String response = FirebaseMessaging.getInstance().send(message);
+        log.info(response);
+
+        //비동기
+        String asyncMessage = FirebaseMessaging.getInstance().sendAsync(message).get();
+        System.out.println(asyncMessage);
+    }
+    private Message makeMessage(String targetToken, String title, String body) {
+        FcmMessage fcmMessage = FcmMessage.builder()
+                .message(Message.builder()
+                        .setToken(targetToken)
+                        .setNotification(new Notification(title, body))
+                        .build())
+                .validateOnly(false)
                 .build();
 
-        Response response = client.newCall(request).execute();
-
-        System.out.println(response.body().string());
-    }
-
-    public void sendDeliveryComplicatedMessage(String uuid, int userId) throws IOException {
-
-        DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyByUuidFinish(uuid).orElseThrow(
-                () -> new BaseException(NOT_EXISTS_PARTY));
-
-        // 방장이 아닌 경우
-        if(deliveryParty.getChief().getId() != userId){
-            throw new BaseException(DIFFERENT_CHIEF_ID);
-        }
-
-        List<Member> members = memberRepository.findMemberFcmTockenById(deliveryParty.getId(), userId);
-        String title = "배달이 완료되었습니다!";
-        String body = "수령장소에서 받아가세요(❁´◡`❁)";
-
-
-        OkHttpClient client = new OkHttpClient();
-        int i = 0;
-        for( Member member : members ){
-            String token = member.getFcmToken();
-
-            if(!StringUtils.hasText(token)){
-                continue;
-            }
-
-            String message = makeMessage(members.get(i).getFcmToken(), title, body);
-
-            RequestBody requestBody = RequestBody.create(message,
-                    MediaType.get("application/json; charset=utf-8"));
-            Request request = new Request.Builder()
-                    .url(API_URL)
-                    .post(requestBody)
-                    .addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + getAccessToken())
-                    .addHeader(HttpHeaders.CONTENT_TYPE, "application/json; UTF-8")
-                    .build();
-
-            Response response = client.newCall(request).execute();
-
-            System.out.println(response.body().string());
-            i++;
-            ResponseEntity.ok().build();
-        }
-    }
-
-    private String makeMessage(String targetToken, String title, String body) throws JsonParseException, JsonProcessingException {
-        FcmMessage fcmMessage = FcmMessage.builder()
-                .message(FcmMessage.Message.builder()
-                        .token(targetToken)
-                        .notification(FcmMessage.Notification.builder()
-                                .title(title)
-                                .body(body)
-                                .image(null)
-                                .build()
-                        ).build()).validateOnly(false).build();
-
-        return objectMapper.writeValueAsString(fcmMessage);
-    }
-
-    private String getAccessToken() throws IOException {
-        String firebaseConfigPath = "firebase/firebase_service_key.json";
-
-        GoogleCredentials googleCredentials = GoogleCredentials
-                .fromStream(new ClassPathResource(firebaseConfigPath).getInputStream())
-                .createScoped(List.of("https://www.googleapis.com/auth/cloud-platform"));
-
-        googleCredentials.refreshIfExpired();
-        return googleCredentials.getAccessToken().getTokenValue();
+        return fcmMessage.getMessage();
     }
 }
-
-
-

@@ -118,7 +118,7 @@ public enum BaseResponseStatus {
     NOT_EXISTS_PARTY_MEMBER(false, 2405, "참여중인 배달파티 정보를 찾을 수 없습니다."),
     NOT_EXISTS_ANNOUNCEMENTS(false, 2406, "공지사항이 없습니다."),
     INVALID_PASSWORD(false,2407,"비밀번호는 최소 8 자로 문자, 숫자 및 특수 문자를 최소 하나씩 포함해서 8-15자리 이내로 입력해주세요."),
-
+    INVALID_FCMTOKEN(false, 2408, "유효하지 않은 fcm 토큰입니다."),
 
 
     /**
