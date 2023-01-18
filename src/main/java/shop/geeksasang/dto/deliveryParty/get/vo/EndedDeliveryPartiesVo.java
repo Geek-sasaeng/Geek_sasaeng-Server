@@ -10,14 +10,15 @@ import shop.geeksasang.domain.deliveryparty.DeliveryParty;
 @Getter
 @Setter
 public class EndedDeliveryPartiesVo {
+
     @ApiModelProperty(example = "1", value = "파티 id")
     private int id;
 
     @ApiModelProperty(example = "피자 먹을 사람~!",value = "배달 파티 제목")
     private String title;
 
-    @ApiModelProperty(example = "4",value = "배달 파티에 참여할 수 있는 총 인원")
-    private int maxMatching;
+    @ApiModelProperty(example = "4",value = "배달 파티에 참여했던 인원")
+    private int matchingCount;
 
     @ApiModelProperty(example = "한식", value = "음식 카테고리")
     private String foodCategory;
@@ -27,10 +28,10 @@ public class EndedDeliveryPartiesVo {
     private String updatedAt;
 
     @Builder
-    public EndedDeliveryPartiesVo(int id, String title, int maxMatching, String foodCategory, String updatedAt){
+    public EndedDeliveryPartiesVo(int id, String title, int matchingCount, String foodCategory, String updatedAt){
         this.id = id;
         this.title = title;
-        this.maxMatching = maxMatching;
+        this.matchingCount = matchingCount;
         this.foodCategory = foodCategory;
         this.updatedAt = updatedAt;
     }
@@ -39,7 +40,7 @@ public class EndedDeliveryPartiesVo {
         return EndedDeliveryPartiesVo.builder()
                 .id(deliveryParty.getId())
                 .title(deliveryParty.getTitle())
-                .maxMatching(deliveryParty.getMaxMatching())
+                .matchingCount(deliveryParty.getCurrentMatching())
                 .foodCategory(deliveryParty.getFoodCategory().getTitle())
                 .updatedAt(deliveryParty.getUpdatedAt())
                 .build();
