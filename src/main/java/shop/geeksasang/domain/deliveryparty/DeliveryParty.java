@@ -233,4 +233,8 @@ public class DeliveryParty extends BaseEntity {
     public void changeOrderStatusToOrderComplete(){
         this.orderStatus = OrderStatus.ORDER_COMPLETE;
     }
+
+    public void changeOrderStatusToDeliveryComplete(){
+        this.orderStatus = OrderStatus.DELIVERY_COMPLETE;
+    }
 }

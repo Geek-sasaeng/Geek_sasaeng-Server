@@ -1,5 +1,6 @@
 package shop.geeksasang.controller.chat;
 
+import com.google.firebase.messaging.FirebaseMessagingException;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -16,7 +17,7 @@ import shop.geeksasang.dto.chat.chatmember.*;
 import shop.geeksasang.dto.chat.PostChatImageReq;
 
 
-import shop.geeksasang.dto.chat.chatparty.PatchOrderReq;
+import shop.geeksasang.dto.chat.partychatroom.PatchOrderReq;
 import shop.geeksasang.dto.chat.partychatroom.GetPartyChatRoomDetailRes;
 import shop.geeksasang.dto.chat.partychatroom.GetPartyChatRoomsRes;
 import shop.geeksasang.dto.chat.PostChatReq;
@@ -24,11 +25,14 @@ import shop.geeksasang.dto.chat.partychatroom.PartyChatRoomRes;
 import shop.geeksasang.dto.chat.partychatroom.post.PostPartyChatRoomReq;
 import shop.geeksasang.dto.login.JwtInfo;
 import shop.geeksasang.service.chat.DeliveryPartyChatService;
+import shop.geeksasang.service.common.FirebaseCloudMessageService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 @RestController
 @RequestMapping("/party-chat-room")
@@ -36,6 +40,7 @@ import java.util.List;
 public class DeliveryPartyChatController {
 
     private final DeliveryPartyChatService deliveryPartyChatService;
+    private final FirebaseCloudMessageService firebaseCloudMessageService;
 
     @ApiOperation(value = "채팅방 생성", notes = "(jwt 토큰 필요)배달 채팅방 생성 요청")
     @ApiResponses({
@@ -214,5 +219,26 @@ public class DeliveryPartyChatController {
         GetPartyChatRoomDetailRes response = deliveryPartyChatService.getPartyChatRoomDetailById(chatRoomId, jwtInfo.getUserId());
         return new BaseResponse<>(response);
     }
+
+    @ApiOperation(value = "배달 완료", notes = "(jwt 토큰 필요) 배달 완료시 fcm 푸시 알림을 보내주는 api")
+    @ApiResponses({
+            @ApiResponse(code = 1000 ,message ="요청에 성공하셨습니다."),
+            @ApiResponse(code = 2208 ,message ="채팅방 멤버가 존재하지 않습니다."),
+            @ApiResponse(code = 2009 ,message ="존재하지 않는 멤버입니다."),
+            @ApiResponse(code = 2207 ,message ="채팅방이 존재하지 않습니다."),
+            @ApiResponse(code = 2010 ,message ="존재하지 않는 파티입니다."),
+            @ApiResponse(code = 2617 ,message ="배달 완료가 불가능한 유저입니다."),
+            @ApiResponse(code = 2408 ,message ="유효하지 않은 fcm 토큰입니다."),
+            @ApiResponse(code = 4000 ,message ="서버 오류입니다.")
+    })
+    @PatchMapping("/delivery-complete")
+    public BaseResponse<String> changeDeliveryComplete(HttpServletRequest request, @Valid @RequestBody PatchOrderReq dto) throws IOException, ExecutionException,InterruptedException {
+        JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
+        deliveryPartyChatService.changeDeliveryComplete(jwtInfo.getUserId(), dto.getRoomId());
+        firebaseCloudMessageService.sendDeliveryComplicatedMessage(dto.getRoomId());
+
+        return new BaseResponse<>("요청에 성공하셨습니다.");
+    }
+
 
 }

@@ -10,6 +10,7 @@ logs
 !.github/workflows/main.yml
 !appspec.yml
 dump.rdb
+firebase_service_key.json
 
 
 

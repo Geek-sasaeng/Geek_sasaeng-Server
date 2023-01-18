@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import shop.geeksasang.config.exception.BaseException;
-import shop.geeksasang.config.status.BaseStatus;
 import shop.geeksasang.config.status.OrderStatus;
 import shop.geeksasang.domain.chat.Chat;
 import shop.geeksasang.domain.chat.PartyChatRoomMember;
@@ -53,7 +52,6 @@ import static shop.geeksasang.config.exception.response.BaseResponseStatus.*;
 @Transactional(readOnly = true)
 public class DeliveryPartyChatService {
 
-    private final ChatRoomRepository chatRoomRepository;
     private final ChatRepository chatRepository;
     private final PartyChatRoomRepository partyChatRoomRepository;
     private final MQController mqController;
@@ -378,10 +376,10 @@ public class DeliveryPartyChatService {
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_CHAT_ROOM));
 
         //mysql - OrderStatus 값 바꾸기
-        deliveryPartyService.changeOrderStatus(partyChatRoom.getDeliveryPartyId());
+        deliveryPartyService.changeOrderStatusToOrderComplete(partyChatRoom.getDeliveryPartyId());
 
         //mongo - OrderStatus 값 바꾸기
-        partyChatRoomRepository.changeOrderStatus(new ObjectId(roomId));
+        partyChatRoomRepository.changeOrderStatusToOrderComplete(new ObjectId(roomId));
 
 
         //주문 완료 시스템 메시지
@@ -407,6 +405,34 @@ public class DeliveryPartyChatService {
         Boolean isOrderFinish = partyChatRoom.getOrderStatus().equals(OrderStatus.ORDER_COMPLETE);
 
         return GetPartyChatRoomDetailRes.toDto(partyChatRoom, member, isChief, isOrderFinish);
+    }
+
+    @Transactional(readOnly = false)
+    public void changeDeliveryComplete(int memberId, String roomId){
+
+        //mongo(채팅방) 회원 존재 여부 확인
+        PartyChatRoomMember chatRoomMember = partyChatRoomMemberRepository
+                .findByMemberIdAndChatRoomId(memberId, new ObjectId(roomId))
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTYCHATROOM_MEMBER));
+
+        //mysql 회원 존재 여부 확인
+        Member member = memberRepository.findMemberById(memberId)
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTICIPANT));
+
+        //채팅방 존재 여부 확인
+        PartyChatRoom partyChatRoom = partyChatRoomRepository.findByPartyChatRoomId(new ObjectId(roomId))
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_CHAT_ROOM));
+
+        //mysql - OrderStatus 값 바꾸기
+        deliveryPartyService.changeOrderStatusToDeliveryComplete(partyChatRoom.getDeliveryPartyId());
+
+        //mongo - OrderStatus 값 바꾸기
+        partyChatRoomRepository.changeOrderStatusToDeliveryComplete(new ObjectId(roomId));
+
+        String chiefId = partyChatRoom.getChief().getId();
+        //방장 여부 확인
+        if(!chiefId.equals(chatRoomMember.getId()))
+            throw new BaseException(DIFFERENT_CHIEF_ID);
     }
 
 }
