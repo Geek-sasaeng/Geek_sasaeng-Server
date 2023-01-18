@@ -32,7 +32,7 @@ public class FirebaseCloudMessageService {
     private final PartyChatRoomRepository partyChatRoomRepository;
     private final PartyChatRoomMemberRepository partyChatRoomMemberRepository;
 
-    public void sendDeliveryComplicatedMessage(String roomId) throws IOException, ExecutionException,InterruptedException {
+    public void sendDeliveryCompleteMessage(String roomId) throws IOException, ExecutionException,InterruptedException {
 
         PartyChatRoom partyChatRoom = partyChatRoomRepository.findByPartyChatRoomId(new ObjectId(roomId))
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_CHAT_ROOM));

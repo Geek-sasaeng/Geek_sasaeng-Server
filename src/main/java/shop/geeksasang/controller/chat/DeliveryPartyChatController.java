@@ -238,7 +238,7 @@ public class DeliveryPartyChatController {
     public BaseResponse<String> changeDeliveryComplete(HttpServletRequest request, @Valid @RequestBody PatchOrderReq dto) throws IOException, ExecutionException,InterruptedException {
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
         deliveryPartyChatService.changeDeliveryComplete(jwtInfo.getUserId(), dto.getRoomId());
-        firebaseCloudMessageService.sendDeliveryComplicatedMessage(dto.getRoomId());
+        firebaseCloudMessageService.sendDeliveryCompleteMessage(dto.getRoomId());
 
         return new BaseResponse<>("요청에 성공하셨습니다.");
     }
