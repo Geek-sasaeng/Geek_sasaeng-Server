@@ -16,6 +16,7 @@ import shop.geeksasang.config.status.OrderStatus;
 import shop.geeksasang.domain.chat.Chat;
 import shop.geeksasang.domain.chat.PartyChatRoomMember;
 import shop.geeksasang.domain.chat.PartyChatRoom;
+import shop.geeksasang.domain.deliveryparty.DeliveryParty;
 import shop.geeksasang.domain.member.Member;
 
 import shop.geeksasang.dto.chat.chatchief.DeleteMemberByChiefReq;
@@ -33,6 +34,7 @@ import shop.geeksasang.repository.chat.PartyChatRoomRepository;
 import shop.geeksasang.rabbitmq.MQController;
 import shop.geeksasang.repository.chat.ChatRepository;
 import shop.geeksasang.repository.chat.ChatRoomRepository;
+import shop.geeksasang.repository.deliveryparty.DeliveryPartyRepository;
 import shop.geeksasang.repository.member.MemberRepository;
 import shop.geeksasang.service.common.AwsS3Service;
 import shop.geeksasang.service.deliveryparty.DeliveryPartyMemberService;
@@ -60,6 +62,7 @@ public class DeliveryPartyChatService {
     private final AwsS3Service awsS3Service;
     private final DeliveryPartyMemberService deliveryPartyMemberService;
     private final DeliveryPartyService deliveryPartyService;
+    private final DeliveryPartyRepository deliveryPartyRepository;
 
     private static final String PAGING_STANDARD = "lastChatAt";
 
@@ -372,15 +375,18 @@ public class DeliveryPartyChatService {
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTICIPANT));
 
         //채팅방 존재 여부 확인
-        PartyChatRoom partyChatRoom = partyChatRoomRepository.findByPartyChatRoomId(new ObjectId(roomId))
-                .orElseThrow(() -> new BaseException(NOT_EXISTS_CHAT_ROOM));
+        PartyChatRoom partyChatRoom = partyChatRoomRepository.findByPartyChatRoomIdAndIsFinish(new ObjectId(roomId))
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_FINISH_CHAT_ROOM));
 
-        //mysql - OrderStatus 값 바꾸기
-        deliveryPartyService.changeOrderStatusToOrderComplete(partyChatRoom.getDeliveryPartyId());
+        //배달파티 조회
+        DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyByIdAndMatchingStatus(partyChatRoom.getDeliveryPartyId())
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_MATCHING_FINISH_PARTY));
+
+        //mysql - 주문 완료 상태 수정
+        deliveryParty.changeOrderStatusToOrderComplete();
 
         //mongo - OrderStatus 값 바꾸기
         partyChatRoomRepository.changeOrderStatusToOrderComplete(new ObjectId(roomId));
-
 
         //주문 완료 시스템 메시지
         this.createChat(memberId, roomId, "주문이 완료되었습니다.", true, member.getProfileImgUrl(), "publish", "none", false);
@@ -420,11 +426,15 @@ public class DeliveryPartyChatService {
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTICIPANT));
 
         //채팅방 존재 여부 확인
-        PartyChatRoom partyChatRoom = partyChatRoomRepository.findByPartyChatRoomId(new ObjectId(roomId))
-                .orElseThrow(() -> new BaseException(NOT_EXISTS_CHAT_ROOM));
+        PartyChatRoom partyChatRoom = partyChatRoomRepository.findByPartyChatRoomIdAndIsFinish(new ObjectId(roomId))
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_FINISH_CHAT_ROOM));
 
-        //mysql - OrderStatus 값 바꾸기
-        deliveryPartyService.changeOrderStatusToDeliveryComplete(partyChatRoom.getDeliveryPartyId());
+        //배달파티 조회
+        DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyByIdAndMatchingStatus(partyChatRoom.getDeliveryPartyId())
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_MATCHING_FINISH_PARTY));
+
+        //mysql - 배달 완료 상태 수정
+        deliveryParty.changeOrderStatusToDeliveryComplete();
 
         //mongo - OrderStatus 값 바꾸기
         partyChatRoomRepository.changeOrderStatusToDeliveryComplete(new ObjectId(roomId));

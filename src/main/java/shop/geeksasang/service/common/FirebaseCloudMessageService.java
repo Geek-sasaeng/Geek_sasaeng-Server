@@ -32,7 +32,7 @@ public class FirebaseCloudMessageService {
     private final PartyChatRoomRepository partyChatRoomRepository;
     private final PartyChatRoomMemberRepository partyChatRoomMemberRepository;
 
-    public void sendDeliveryComplicatedMessage(String roomId) throws IOException, ExecutionException,InterruptedException {
+    public void sendDeliveryCompleteMessage(String roomId) throws IOException, ExecutionException,InterruptedException {
 
         PartyChatRoom partyChatRoom = partyChatRoomRepository.findByPartyChatRoomId(new ObjectId(roomId))
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_CHAT_ROOM));
@@ -44,7 +44,7 @@ public class FirebaseCloudMessageService {
 
         List<Member> memberList = chatRoomMembers
                 .stream()
-                .map(chatMember -> memberRepository.findMemberByIdAndStatus(chatMember.getMemberId()).orElseThrow(()-> new BaseException(NOT_EXIST_USER)))
+                .map(chatMember -> memberRepository.findMemberByIdAndStatus(chatMember.getMemberId()).orElseThrow(()-> new BaseException(NOT_EXISTS_PARTICIPANT)))
                 .collect(Collectors.toList());
 
         List<String> tokenList = memberList

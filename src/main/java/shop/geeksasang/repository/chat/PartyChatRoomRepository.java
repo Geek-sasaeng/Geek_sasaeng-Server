@@ -15,6 +15,8 @@ import java.util.Optional;
 public interface PartyChatRoomRepository extends MongoRepository<PartyChatRoom, String> {
     @Query("{ '_id': ?0, 'status' : 'ACTIVE'}") // 0번째 파라미터 조건
     Optional<PartyChatRoom> findByPartyChatRoomId(ObjectId id);
+    @Query("{ '_id': ?0, 'status' : 'ACTIVE', 'isFinish' : true}") // 0번째 파라미터 조건
+    Optional<PartyChatRoom> findByPartyChatRoomIdAndIsFinish(ObjectId id);
 
     @Query("{ chief: ?0, 'status' : 'ACTIVE'}")
     Optional<PartyChatRoom> findPartyChatRoomByChiefId(ObjectId chiefId);

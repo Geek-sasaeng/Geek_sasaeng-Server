@@ -195,7 +195,9 @@ public class DeliveryPartyChatController {
             @ApiResponse(code = 2208 ,message ="채팅방 멤버가 존재하지 않습니다."),
             @ApiResponse(code = 2009 ,message ="존재하지 않는 멤버입니다."),
             @ApiResponse(code = 2207 ,message ="채팅방이 존재하지 않습니다."),
-            @ApiResponse(code = 2010 ,message ="존재하지 않는 파티입니다."),
+            @ApiResponse(code = 2204 ,message ="존재하지 않는 회원 id 입니다."),
+            @ApiResponse(code = 2409 ,message ="마감된 배달파티를 찾을 수 없습니다."),
+            @ApiResponse(code = 2410 ,message ="마감된 채팅방을 찾을 수 없습니다. "),
             @ApiResponse(code = 2210 ,message ="채팅이 존재하지 않습니다."),
             @ApiResponse(code = 4000 ,message ="서버 오류입니다."),
     })
@@ -225,9 +227,10 @@ public class DeliveryPartyChatController {
             @ApiResponse(code = 1000 ,message ="요청에 성공하셨습니다."),
             @ApiResponse(code = 2208 ,message ="채팅방 멤버가 존재하지 않습니다."),
             @ApiResponse(code = 2009 ,message ="존재하지 않는 멤버입니다."),
-            @ApiResponse(code = 2207 ,message ="채팅방이 존재하지 않습니다."),
-            @ApiResponse(code = 2010 ,message ="존재하지 않는 파티입니다."),
+            @ApiResponse(code = 2409 ,message ="마감된 배달 파티를 찾을 수 없습니다."),
+            @ApiResponse(code = 2410 ,message ="마감된 채팅방을 찾을 수 없습니다."),
             @ApiResponse(code = 2617 ,message ="배달 완료가 불가능한 유저입니다."),
+            @ApiResponse(code = 2207 ,message ="채팅방이 존재하지 않습니다."),
             @ApiResponse(code = 2408 ,message ="유효하지 않은 fcm 토큰입니다."),
             @ApiResponse(code = 4000 ,message ="서버 오류입니다.")
     })
@@ -235,7 +238,7 @@ public class DeliveryPartyChatController {
     public BaseResponse<String> changeDeliveryComplete(HttpServletRequest request, @Valid @RequestBody PatchOrderReq dto) throws IOException, ExecutionException,InterruptedException {
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
         deliveryPartyChatService.changeDeliveryComplete(jwtInfo.getUserId(), dto.getRoomId());
-        firebaseCloudMessageService.sendDeliveryComplicatedMessage(dto.getRoomId());
+        firebaseCloudMessageService.sendDeliveryCompleteMessage(dto.getRoomId());
 
         return new BaseResponse<>("요청에 성공하셨습니다.");
     }
