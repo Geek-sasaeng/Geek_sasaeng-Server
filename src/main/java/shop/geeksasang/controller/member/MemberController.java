@@ -120,7 +120,7 @@ public class MemberController {
     }
 
     // 수정: 멤버 정보 수정하기 (마이페이지)
-    @ApiOperation(value = "수정: 멤버 정보 수정하기", notes = "(jwt 토큰 필요) 멤버 정보(프로필 이미지, 기숙사, 닉네임, 비밀번호, 아이디)를 수정.")
+    @ApiOperation(value = "수정: 멤버 정보 수정하기", notes = "(jwt 토큰 필요) 멤버 정보(프로필 이미지, 기숙사, 닉네임)를 수정.")
     @ApiResponses({
             @ApiResponse(code = 1000 , message = "요청에 성공하셨습니다."),
             @ApiResponse(code = 2005 , message = "입력하신 두 비밀번호가 다릅니다."),
