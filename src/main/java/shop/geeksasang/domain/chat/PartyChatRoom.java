@@ -30,7 +30,7 @@ public class PartyChatRoom extends ChatRoom{
     private String accountNumber;
     private String bank;
     private String category;
-    private Boolean isFinish;
+    private Boolean isFinish; //채팅방 입장 마감 여부
     private Integer maxMatching;
     private int deliveryPartyId;
     private OrderStatus orderStatus;
@@ -99,4 +99,8 @@ public class PartyChatRoom extends ChatRoom{
 
     public void changeLastChatAt(LocalDateTime lastChatAt){
         this.lastChatAt = lastChatAt;}
+
+    public void changeIsFinishToTrue(){
+        this.isFinish = true;
+    }
 }

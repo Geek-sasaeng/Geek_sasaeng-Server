@@ -177,12 +177,10 @@ public class Member extends BaseEntity {
         this.profileImgUrl = profileImgUrl;
     }
 
-    public Member update(PostMemberInfoReq dto, String imgUrl, Dormitory dormitory, String password) {
-        this.loginId = dto.getLoginId();
+    public Member update(PostMemberInfoReq dto, String imgUrl, Dormitory dormitory) {
         this.nickName = dto.getNickname();
         this.dormitory = dormitory;
         this.profileImgUrl = imgUrl;
-        this.password = password;
         return this;
     }
 

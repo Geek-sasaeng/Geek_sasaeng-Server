@@ -22,25 +22,20 @@ public class PostMemberInfoRes {
     @ApiModelProperty(example = "긱사생", value = "사용자 닉네임")
     private  String nickname;
 
-    @ApiModelProperty(example = "nsfasdsdf21", value = "사용자 id")
-    private  String loginId;
-
     public static PostMemberInfoRes toDto(Member updateMember){
         return PostMemberInfoRes.builder()
                 .dormitoryId(updateMember.getDormitory().getId())
                 .dormitoryName(updateMember.getDormitory().getName())
                 .profileImgUrl(updateMember.getProfileImgUrl())
                 .nickname(updateMember.getNickName())
-                .loginId(updateMember.getLoginId())
                 .build();
     }
 
     @Builder
-    public PostMemberInfoRes(int dormitoryId, String dormitoryName, String profileImgUrl, String nickname, String loginId) {
+    public PostMemberInfoRes(int dormitoryId, String dormitoryName, String profileImgUrl, String nickname) {
         this.dormitoryId = dormitoryId;
         this.dormitoryName = dormitoryName;
         this.profileImgUrl = profileImgUrl;
         this.nickname = nickname;
-        this.loginId = loginId;
     }
 }
