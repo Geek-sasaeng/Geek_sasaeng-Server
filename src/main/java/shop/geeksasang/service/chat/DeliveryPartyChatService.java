@@ -215,10 +215,21 @@ public class DeliveryPartyChatService {
             throw new BaseException(ALREADY_PARTICIPATE_CHATROOM);
         }
 
+        //파티의 현재 인원 수와 maxmatching이 같을 경우
+        if(partyChatRoom.getMaxMatching() == partyChatRoom.getParticipants().size()){
+            throw new BaseException(ALREADY_PARTY_FINISH);
+        }
+
         PartyChatRoomMember partyChatRoomMember = new PartyChatRoomMember(memberId, LocalDateTime.now(), false, partyChatRoom, member.getEmail().toString());
         partyChatRoomMemberRepository.save(partyChatRoomMember);
 
         partyChatRoom.addParticipants(partyChatRoomMember);
+
+        // participants의 개수와 maxMatching이 같아지면 isFinish = true;
+        if(partyChatRoom.getMaxMatching() == partyChatRoom.getParticipants().size()){
+            partyChatRoom.changeIsFinishToTrue();
+        }
+
         partyChatRoomRepository.save(partyChatRoom); // MongoDB는 JPA처럼 변경감지가 안되어서 직접 저장해줘야 한다.
 
         mqController.joinChatRoom(member.getId(), partyChatRoom.getId());         // rabbitmq 큐 생성 및 채팅방 exchange와 바인딩
