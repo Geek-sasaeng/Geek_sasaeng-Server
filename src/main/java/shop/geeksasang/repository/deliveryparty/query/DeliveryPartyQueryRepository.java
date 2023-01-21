@@ -122,7 +122,7 @@ public class DeliveryPartyQueryRepository {
                 .where(deliveryParty.chief.id.eq(userId),
                         deliveryParty.status.eq(BaseStatus.ACTIVE),
                         deliveryParty.matchingStatus.eq(MatchingStatus.FINISH),
-                        deliveryParty.orderStatus.eq(OrderStatus.ORDER_COMPLETE))
+                        deliveryParty.orderStatus.eq(OrderStatus.DELIVERY_COMPLETE))
                 .orderBy(deliveryParty.createdAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1) // 페이징을 위해 11개를 가져온다.
