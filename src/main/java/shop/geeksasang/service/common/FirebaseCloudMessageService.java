@@ -61,7 +61,6 @@ public class FirebaseCloudMessageService {
         for( String token : tokenList ){
             try{
                 sendMessageTo(token,title,body);
-                System.out.println(token+"으엑");
             }
             catch(FirebaseMessagingException e){
                 log.error("cannot send to memberList push message. error info : {}", e.getMessage());
