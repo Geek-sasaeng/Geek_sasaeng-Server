@@ -249,7 +249,7 @@ public class DeliveryPartyChatService {
         List<GetPartyChatRoomRes> result = members.stream()
                 //.filter(member -> member.getPartyChatRoom().getBaseEntityMongo().getStatus() == BaseStatus.ACTIVE) // 필터링에서 에러 남
                 .sorted(Comparator.comparing(PartyChatRoomMember::getLastChatAt).reversed()) //TODO: 최신 메시지 순으로 정렬했지만 메소드 정의 위치가 맞는지 테스트 필요
-                .map(member -> GetPartyChatRoomRes.of(member.getPartyChatRoom()))
+                .map(member -> GetPartyChatRoomRes.of(member.getPartyChatRoom(), member))
                 .collect(Collectors.toList());
 
         return new GetPartyChatRoomsRes(result, members.isLast());
