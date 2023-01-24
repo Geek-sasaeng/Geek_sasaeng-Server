@@ -248,7 +248,7 @@ public class MemberService {
     public PostMemberInfoRes updateMember(PostMemberInfoReq dto, int memberId) throws IOException {
 
         Member member = memberRepository.findMemberById(memberId).orElseThrow(() -> new BaseException(NOT_EXIST_USER));
-        String password = member.getPassword(); //비밀번호
+
         String imgUrl = member.getProfileImgUrl(); //프로필 이미지 url
 
         //aws에 업로드
@@ -261,24 +261,8 @@ public class MemberService {
         Dormitory dormitory = dormitoryRepository.findDormitoryById(dto.getDormitoryId())
                 .orElseThrow(() ->  new BaseException(BaseResponseStatus.NOT_EXISTS_DORMITORY));
 
-        //비밀번호 변경 여부 체크
-        if(!dto.getPassword().isEmpty()){
-
-            //비밀번호 정규식 확인
-            if(!validatePassword(dto.getPassword())){
-                throw new BaseException(INVALID_PASSWORD);
-            }
-
-            //비밀번호 변경 & 비밀번호 일치 여부 확인
-            if(!dto.getPassword().equals(dto.getCheckPassword())){
-                throw new BaseException(DIFFRENT_PASSWORDS);
-            }
-            //비밀번호 암호화
-            password = SHA256.encrypt(dto.getPassword());
-        }
-
         //수정
-        Member updateMember = member.update(dto,imgUrl,dormitory,password);
+        Member updateMember = member.update(dto,imgUrl,dormitory);
 
         return PostMemberInfoRes.toDto(updateMember);
     }

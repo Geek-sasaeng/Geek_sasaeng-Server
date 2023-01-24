@@ -16,6 +16,7 @@ import shop.geeksasang.config.status.OrderStatus;
 import shop.geeksasang.domain.chat.Chat;
 import shop.geeksasang.domain.chat.PartyChatRoomMember;
 import shop.geeksasang.domain.chat.PartyChatRoom;
+import shop.geeksasang.domain.deliveryparty.DeliveryParty;
 import shop.geeksasang.domain.member.Member;
 
 import shop.geeksasang.dto.chat.chatchief.DeleteMemberByChiefReq;
@@ -33,6 +34,7 @@ import shop.geeksasang.repository.chat.PartyChatRoomRepository;
 import shop.geeksasang.rabbitmq.MQController;
 import shop.geeksasang.repository.chat.ChatRepository;
 import shop.geeksasang.repository.chat.ChatRoomRepository;
+import shop.geeksasang.repository.deliveryparty.DeliveryPartyRepository;
 import shop.geeksasang.repository.member.MemberRepository;
 import shop.geeksasang.service.common.AwsS3Service;
 import shop.geeksasang.service.deliveryparty.DeliveryPartyMemberService;
@@ -60,6 +62,7 @@ public class DeliveryPartyChatService {
     private final AwsS3Service awsS3Service;
     private final DeliveryPartyMemberService deliveryPartyMemberService;
     private final DeliveryPartyService deliveryPartyService;
+    private final DeliveryPartyRepository deliveryPartyRepository;
 
     private static final String PAGING_STANDARD = "lastChatAt";
 
@@ -212,10 +215,21 @@ public class DeliveryPartyChatService {
             throw new BaseException(ALREADY_PARTICIPATE_CHATROOM);
         }
 
+        //파티의 현재 인원 수와 maxmatching이 같을 경우
+        if(partyChatRoom.getMaxMatching() == partyChatRoom.getParticipants().size()){
+            throw new BaseException(ALREADY_PARTY_FINISH);
+        }
+
         PartyChatRoomMember partyChatRoomMember = new PartyChatRoomMember(memberId, LocalDateTime.now(), false, partyChatRoom, member.getEmail().toString());
         partyChatRoomMemberRepository.save(partyChatRoomMember);
 
         partyChatRoom.addParticipants(partyChatRoomMember);
+
+        // participants의 개수와 maxMatching이 같아지면 isFinish = true;
+        if(partyChatRoom.getMaxMatching() == partyChatRoom.getParticipants().size()){
+            partyChatRoom.changeIsFinishToTrue();
+        }
+
         partyChatRoomRepository.save(partyChatRoom); // MongoDB는 JPA처럼 변경감지가 안되어서 직접 저장해줘야 한다.
 
         mqController.joinChatRoom(member.getId(), partyChatRoom.getId());         // rabbitmq 큐 생성 및 채팅방 exchange와 바인딩
@@ -235,7 +249,7 @@ public class DeliveryPartyChatService {
         List<GetPartyChatRoomRes> result = members.stream()
                 //.filter(member -> member.getPartyChatRoom().getBaseEntityMongo().getStatus() == BaseStatus.ACTIVE) // 필터링에서 에러 남
                 .sorted(Comparator.comparing(PartyChatRoomMember::getLastChatAt).reversed()) //TODO: 최신 메시지 순으로 정렬했지만 메소드 정의 위치가 맞는지 테스트 필요
-                .map(member -> GetPartyChatRoomRes.of(member.getPartyChatRoom()))
+                .map(member -> GetPartyChatRoomRes.of(member.getPartyChatRoom(), member))
                 .collect(Collectors.toList());
 
         return new GetPartyChatRoomsRes(result, members.isLast());
@@ -387,15 +401,18 @@ public class DeliveryPartyChatService {
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTICIPANT));
 
         //채팅방 존재 여부 확인
-        PartyChatRoom partyChatRoom = partyChatRoomRepository.findByPartyChatRoomId(new ObjectId(roomId))
-                .orElseThrow(() -> new BaseException(NOT_EXISTS_CHAT_ROOM));
+        PartyChatRoom partyChatRoom = partyChatRoomRepository.findByPartyChatRoomIdAndIsFinish(new ObjectId(roomId))
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_FINISH_CHAT_ROOM));
 
-        //mysql - OrderStatus 값 바꾸기
-        deliveryPartyService.changeOrderStatusToOrderComplete(partyChatRoom.getDeliveryPartyId());
+        //배달파티 조회
+        DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyByIdAndMatchingStatus(partyChatRoom.getDeliveryPartyId())
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_MATCHING_FINISH_PARTY));
+
+        //mysql - 주문 완료 상태 수정
+        deliveryParty.changeOrderStatusToOrderComplete();
 
         //mongo - OrderStatus 값 바꾸기
         partyChatRoomRepository.changeOrderStatusToOrderComplete(new ObjectId(roomId));
-
 
         //주문 완료 시스템 메시지
         this.createChat(memberId, roomId, "주문이 완료되었습니다.", true, member.getProfileImgUrl(), "publish", "none", false);
@@ -435,11 +452,15 @@ public class DeliveryPartyChatService {
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTICIPANT));
 
         //채팅방 존재 여부 확인
-        PartyChatRoom partyChatRoom = partyChatRoomRepository.findByPartyChatRoomId(new ObjectId(roomId))
-                .orElseThrow(() -> new BaseException(NOT_EXISTS_CHAT_ROOM));
+        PartyChatRoom partyChatRoom = partyChatRoomRepository.findByPartyChatRoomIdAndIsFinish(new ObjectId(roomId))
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_FINISH_CHAT_ROOM));
 
-        //mysql - OrderStatus 값 바꾸기
-        deliveryPartyService.changeOrderStatusToDeliveryComplete(partyChatRoom.getDeliveryPartyId());
+        //배달파티 조회
+        DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyByIdAndMatchingStatus(partyChatRoom.getDeliveryPartyId())
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_MATCHING_FINISH_PARTY));
+
+        //mysql - 배달 완료 상태 수정
+        deliveryParty.changeOrderStatusToDeliveryComplete();
 
         //mongo - OrderStatus 값 바꾸기
         partyChatRoomRepository.changeOrderStatusToDeliveryComplete(new ObjectId(roomId));

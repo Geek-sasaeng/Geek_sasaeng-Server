@@ -347,23 +347,5 @@ public class DeliveryPartyService {
         return deliveryPartyQueryRepository.getEndedDeliveryParties(userId, paging);
     }
 
-    @Transactional(readOnly = false)
-    public void changeOrderStatusToOrderComplete(int partyId){
-        //배달파티 조회
-        DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyById(partyId)
-                .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTY));
 
-        //주문 완료 상태 수정
-        deliveryParty.changeOrderStatusToOrderComplete();
-    }
-
-    @Transactional(readOnly = false)
-    public void changeOrderStatusToDeliveryComplete(int partyId){
-        //배달파티 조회
-        DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyById(partyId)
-                .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTY));
-
-        //주문 완료 상태 수정
-        deliveryParty.changeOrderStatusToDeliveryComplete();
-    }
 }
