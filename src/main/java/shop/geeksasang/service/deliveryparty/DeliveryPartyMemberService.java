@@ -78,8 +78,8 @@ public class DeliveryPartyMemberService {
         Member findMember = memberRepository.findMemberByIdAndStatus(memberId).
                 orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTICIPANT));
 
-        //uuid를 이용해 파티 조회
-        DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyByUuid(dto.getUuid()).
+        //id를 이용해 파티 조회
+        DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyByIdAndStatus(dto.getPartyId()).
                 orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTY));
 
         //파티 멤버 조회

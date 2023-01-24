@@ -13,8 +13,8 @@ import javax.validation.constraints.NotBlank;
 @Data
 public class PatchLeaveMemberReq {
 
-    @ApiModelProperty(example = "ff689bb1-e951-4c9b-b31f-a44552c163a6")
-    @ApiParam(value = "배달파티(채팅방)의 UUID", required = true)
+    @ApiModelProperty(example = "1")
+    @ApiParam(value = "배달파티의 id", required = true)
     @NotBlank
-    private String uuid; //채팅방의 uuid
+    private int partyId; //채팅방의 uuid
 }
