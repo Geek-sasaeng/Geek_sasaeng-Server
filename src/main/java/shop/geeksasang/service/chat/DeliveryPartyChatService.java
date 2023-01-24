@@ -269,8 +269,17 @@ public class DeliveryPartyChatService {
                 .findByMemberIdAndChatRoomId(chiefId, new ObjectId(dto.getRoomId()))
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTYCHATROOM_MEMBER));
 
+
+        dto.getRemovedMemberIdList()
+                .forEach(id -> {
+                    removeMember(chiefId, dto, chief, id);
+                });
+
+    }
+
+    private void removeMember(int chiefId, DeleteMemberByChiefReq dto, PartyChatRoomMember chief, String id) {
         PartyChatRoomMember removedMember = partyChatRoomMemberRepository
-                .findByIdAndChatRoomId(new ObjectId(dto.getRemovedMemberId()), new ObjectId(dto.getRoomId()))
+                .findByIdAndChatRoomId(new ObjectId(id), new ObjectId(dto.getRoomId()))
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTYCHATROOM_MEMBER));
 
         PartyChatRoom chatRoom = partyChatRoomRepository.findPartyChatRoomByChiefId(new ObjectId(chief.getId()))
