@@ -61,6 +61,7 @@ public class FirebaseCloudMessageService {
         for( String token : tokenList ){
             try{
                 sendMessageTo(token,title,body);
+                System.out.println(token+"으엑");
             }
             catch(FirebaseMessagingException e){
                 log.error("cannot send to memberList push message. error info : {}", e.getMessage());
@@ -72,8 +73,8 @@ public class FirebaseCloudMessageService {
 
         //FirebaseMessaging 사용
         Message message = makeMessage(targetToken, title, body);
-        String response = FirebaseMessaging.getInstance().send(message);
-        log.info(response);
+        //String response = FirebaseMessaging.getInstance().send(message);
+        //log.info(response);
 
         //비동기
         String asyncMessage = FirebaseMessaging.getInstance().sendAsync(message).get();
