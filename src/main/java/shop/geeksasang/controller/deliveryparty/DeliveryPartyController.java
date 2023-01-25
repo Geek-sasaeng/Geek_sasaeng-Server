@@ -155,7 +155,7 @@ public class DeliveryPartyController {
     @PatchMapping("/delivery-party/chief")
     public BaseResponse<PatchLeaveChiefRes> chiefLeaveDeliveryParty(@Validated @RequestBody PatchLeaveChiefReq req, HttpServletRequest request) {
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
-        PatchLeaveChiefRes res = deliveryPartyService.chiefLeaveDeliveryParty(req.getUuid(), req.getNickName(),jwtInfo.getUserId());
+        PatchLeaveChiefRes res = deliveryPartyService.chiefLeaveDeliveryParty(req.getPartyId(), req.getNickName(),jwtInfo.getUserId());
         return new BaseResponse<>(res);
     }
 

@@ -1,5 +1,6 @@
 package shop.geeksasang.controller.chat;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
@@ -168,7 +169,7 @@ public class DeliveryPartyChatController {
             @ApiResponse(code = 4000 ,message ="서버 오류입니다.")
     })
     @DeleteMapping("/members/self")
-    public BaseResponse<SuccessCommonRes> removeChatRoomMember(HttpServletRequest request, @Valid @RequestBody PatchMemberReq dto){
+    public BaseResponse<SuccessCommonRes> removeChatRoomMember(HttpServletRequest request, @Valid @RequestBody PatchMemberReq dto) throws JsonProcessingException {
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
         deliveryPartyChatService.removeMember(jwtInfo.getUserId(), dto.getRoomId());
         return new BaseResponse(new SuccessCommonRes());
