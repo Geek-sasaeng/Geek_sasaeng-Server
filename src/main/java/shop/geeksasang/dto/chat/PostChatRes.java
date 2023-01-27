@@ -72,7 +72,7 @@ public class PostChatRes {
                 .content(chat.getContent())
                 .chatRoomId(chat.getPartyChatRoom().getId())
                 .isSystemMessage(chat.getIsSystemMessage())
-                .memberId(chat.getPartyChatRoomMember().getMemberId())
+                .memberId(member.getId())
                 .nickName(member.getNickName())
                 .profileImgUrl(chat.getProfileImgUrl())
                 .readMembers(chat.getReadMembers())
