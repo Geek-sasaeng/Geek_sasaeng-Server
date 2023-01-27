@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,6 +16,6 @@ public class PatchLeaveMemberReq {
 
     @ApiModelProperty(example = "1")
     @ApiParam(value = "배달파티의 id", required = true)
-    @NotBlank
-    private int partyId; //채팅방의 uuid
+    @NotNull
+    private Integer partyId; //채팅방의 uuid
 }
