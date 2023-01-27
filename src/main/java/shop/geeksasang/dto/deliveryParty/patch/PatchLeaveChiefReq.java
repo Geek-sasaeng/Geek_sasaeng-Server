@@ -6,12 +6,13 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
 public class PatchLeaveChiefReq {
 
-    @NotBlank
+    @NotNull
     @ApiModelProperty(example = "1", value = "채팅방 ID 값" )
     private Integer partyId;
 
