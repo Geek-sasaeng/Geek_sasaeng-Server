@@ -64,6 +64,8 @@ public class DeliveryPartyChatService {
     private final DeliveryPartyService deliveryPartyService;
     private final DeliveryPartyRepository deliveryPartyRepository;
 
+    private final ObjectMapper objectMapper;
+
     private static final String PAGING_STANDARD = "lastChatAt";
 
     @Transactional(readOnly = false)
