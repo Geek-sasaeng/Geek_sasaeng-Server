@@ -342,9 +342,10 @@ public class DeliveryPartyChatService {
         partyChatRoomMemberRepository.save(chief);
         partyChatRoomMemberRepository.save(changeChief);
 
-        String nickName = memberRepository.findMemberById(chiefId)
+        String nickName = memberRepository.findMemberById(changeChief.getMemberId())
                 .orElseThrow(() -> new BaseException(NOT_EXIST_USER)).getNickName();
-        this.createChat(chiefId, roomId, nickName + "님이 퇴장했습니다.", true, null, "publish", "none", false);
+        this.createChat(chiefId, roomId, nickName + "방장의 활동 중단에 따라 새로운 방장으로 + " + "'" + nickName + "'"  + "+ 님이 선정되었어요."
+                , true, null, "publish", "none", false);
 
     }
 
