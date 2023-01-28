@@ -141,7 +141,7 @@ public class DeliveryPartyChatController {
             @ApiResponse(code = 2208 ,message ="채팅방 멤버가 존재하지 않습니다."),
             @ApiResponse(code = 4000 ,message ="서버 오류입니다.")
     })
-    @DeleteMapping("/members")
+    @PatchMapping("/members")
     public BaseResponse<SuccessCommonRes> removeChatRoomMemberByChief(HttpServletRequest request, @Valid @RequestBody DeleteMemberByChiefReq dto){
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
         deliveryPartyChatService.removeMemberByChief(jwtInfo.getUserId(), dto);
