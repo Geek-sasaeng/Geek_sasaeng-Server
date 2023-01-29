@@ -349,4 +349,36 @@ public class MemberService {
         }
         return false;
     }
+
+
+    // 애플 유저 가입
+    @Transactional(readOnly = false)
+    public Member createUserApple(CreateUserAppleReq createUserAppleReq){
+
+        if(memberRepository.existsByLoginId(createUserAppleReq.getLoginId())) throw new BaseException(DUPLICATE_USER_LOGIN_ID);
+
+        //User user = userRepository.save(CreateUserAppleReq.toEntityUserApple(createUserAppleReq));
+        Member user = memberRepository.save(CreateUserAppleReq.toEntityUserApple(createUserAppleReq));
+        return user;
+    }
+
+
+    /**
+     * 리프레시 토큰 검증
+     *
+     * refresh_token은 만료되지 않기 때문에 권한이 필요한 요청일 경우
+     * 굳이 매번 애플 ID 서버로부터 refresh_token을 통해 access_token을 발급 받기보다는
+     * 유저의 refresh_token을 따로 DB나 기타 저장소에 저장해두고 캐싱해두고 조회해서 검증하는편이 성능면에서 낫다는 자료를 참고
+     * https://hwannny.tistory.com/71
+     */
+    @Transactional(readOnly = true)
+    public Void validateRefreshToken(int userId, String refreshToken){
+        Member user = memberRepository.findMemberByIdAndStatus(userId).orElseThrow(() -> new BaseException(NOT_EXIST_USER));
+
+        if(user.getAppleRefreshToken() == null) throw new BaseException(INVALID_APPLE_REFRESHTOKEN);
+
+        if(!user.getAppleRefreshToken().equals(refreshToken)) throw new BaseException(INVALID_APPLE_REFRESHTOKEN);
+
+        return null;
+    }
 }

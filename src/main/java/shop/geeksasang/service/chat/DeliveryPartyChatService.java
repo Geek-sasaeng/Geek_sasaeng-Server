@@ -141,10 +141,12 @@ public class DeliveryPartyChatService {
 
 
     @Transactional(readOnly = false)
-    public void createChatImage(int memberId, String chatRoomId, String content, Boolean isSystemMessage, String profileImgUrl, String chatType, String chatId, List<MultipartFile> images, Boolean isImageMessage) {
+    public void createChatImage(int memberId, String chatRoomId, String content, Boolean isSystemMessage, String chatType, String chatId, List<MultipartFile> images, Boolean isImageMessage) {
 
         Member member = memberRepository.findMemberById(memberId)
                 .orElseThrow(() -> new BaseException(NOT_EXIST_USER));
+
+        String profileImgUrl = member.getProfileImgUrl();
 
         PartyChatRoom partyChatRoom = partyChatRoomRepository.findByPartyChatRoomId(new ObjectId(chatRoomId))
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_CHAT_ROOM));
