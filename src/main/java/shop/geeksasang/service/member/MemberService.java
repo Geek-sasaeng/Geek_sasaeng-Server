@@ -9,8 +9,6 @@ import shop.geeksasang.config.exception.response.BaseResponseStatus;
 import shop.geeksasang.config.status.LoginStatus;
 import shop.geeksasang.config.status.ValidStatus;
 import shop.geeksasang.config.exception.BaseException;
-import shop.geeksasang.controller.applelogin.exception.InvalidRefreshTokenException;
-import shop.geeksasang.controller.applelogin.exception.NotFoundRefreshTokenException;
 import shop.geeksasang.domain.auth.Email;
 import shop.geeksasang.domain.auth.PhoneNumber;
 import shop.geeksasang.domain.deliveryparty.DeliveryParty;
