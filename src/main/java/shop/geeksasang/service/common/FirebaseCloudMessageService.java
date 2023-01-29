@@ -72,8 +72,8 @@ public class FirebaseCloudMessageService {
 
         //FirebaseMessaging 사용
         Message message = makeMessage(targetToken, title, body);
-        String response = FirebaseMessaging.getInstance().send(message);
-        log.info(response);
+        //String response = FirebaseMessaging.getInstance().send(message);
+        //log.info(response);
 
         //비동기
         String asyncMessage = FirebaseMessaging.getInstance().sendAsync(message).get();
