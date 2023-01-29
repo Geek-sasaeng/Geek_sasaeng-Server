@@ -154,7 +154,7 @@ public class DeliveryPartyChatController {
             @ApiResponse(code = 4000 ,message ="서버 오류입니다.")
     })
     @PatchMapping("/chief")
-    public BaseResponse<SuccessCommonRes> changeChief(HttpServletRequest request, @Valid @RequestBody PatchChiefReq dto){
+    public BaseResponse<SuccessCommonRes> changeChief(HttpServletRequest request, @Valid @RequestBody PatchChiefReq dto) throws JsonProcessingException {
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
         deliveryPartyChatService.changeChief(jwtInfo.getUserId(), dto.getRoomId());
         return new BaseResponse(new SuccessCommonRes());

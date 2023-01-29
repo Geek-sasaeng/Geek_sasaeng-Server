@@ -309,7 +309,7 @@ public class DeliveryPartyChatService {
                 , true, null, "publish", "none", false);
     }
 
-    public void changeChief(int chiefId, String roomId) {
+    public void changeChief(int chiefId, String roomId) throws JsonProcessingException {
         PartyChatRoomMember chief = partyChatRoomMemberRepository
                 .findByMemberIdAndChatRoomId(chiefId, new ObjectId(roomId))
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTYCHATROOM_MEMBER));
@@ -344,10 +344,23 @@ public class DeliveryPartyChatService {
         partyChatRoomMemberRepository.save(chief);
         partyChatRoomMemberRepository.save(changeChief);
 
-        String nickName = memberRepository.findMemberById(changeChief.getMemberId())
-                .orElseThrow(() -> new BaseException(NOT_EXIST_USER)).getNickName();
-        this.createChat(chiefId, roomId, nickName + "방장의 활동 중단에 따라 새로운 방장으로 + " + "'" + nickName + "'"  + "+ 님이 선정되었어요."
-                , true, null, "publish", "none", false);
+        Member member = memberRepository.findMemberById(changeChief.getMemberId())
+                .orElseThrow(() -> new BaseException(NOT_EXIST_USER));
+        String nickName = member.getNickName();
+
+        //시스템 메시지
+        Chat chat = new Chat(nickName + "방장의 활동 중단에 따라 새로운 방장으로 + " + "'" + nickName + "'"  + "+ 님이 선정되었어요.", chatRoom, true, null, null, new ArrayList<>());
+        chat.addReadMember(changeChief.getMemberId());// 읽은 멤버 추가
+        Chat saveChat = chatRepository.save(chat);
+        int unreadMemberCnt = saveChat.getUnreadMemberCnt();
+
+
+        // json 형식으로 변환 후 RabbitMQ 전송
+        ObjectMapper mapper = objectMapper.registerModule(new JavaTimeModule());
+        PostChatRes postChatRes = PostChatRes.toDto(saveChat, "publish", unreadMemberCnt, member);
+        String saveChatJson = mapper.writeValueAsString(postChatRes);
+        mqController.sendMessage(saveChatJson, roomId); // rabbitMQ 메시지 publish
+        partyChatRoomRepository.changeLastChatAt(new ObjectId(chatRoom.getId()), LocalDateTime.now()); //TODO: 시간이 맞는지 테스트 해봐야 함
 
     }
 
