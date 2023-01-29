@@ -92,6 +92,18 @@ public class Member extends BaseEntity {
 
     private String fcmToken; // 파이어베이스 FCM 토큰
 
+    private String appleRefreshToken;
+
+    // 생성자
+    public Member (String loginId, String appleRefreshToken, String nickName, MemberLoginType memberLoginType){
+        this.loginId = loginId;
+        this.appleRefreshToken = appleRefreshToken;
+        this.nickName = nickName;
+        this.memberLoginType = memberLoginType;
+        this.perDayReportingCount=0;
+        this.reportedCount=0;
+    }
+
     //-// 연관 관계 편의 메서드 //-//
     public void changeStatusToActive(){
         super.setStatus(BaseStatus.ACTIVE);

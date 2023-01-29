@@ -102,6 +102,7 @@ public enum BaseResponseStatus {
     ALREADY_PARTICIPATE_CHATROOM(false, 2209, "이미 채팅방에 참여하고 있습니다."),
     NOT_EXISTS_CHAT(false,2210,"채팅이 존재하지 않습니다."),
     EXCEEDED_IMAGE(false,2211,"이미지 갯수를 초과했습니다."),
+    INVALID_APPLE_REFRESHTOKEN(false, 2212, "올바르지 않은 애플 리프레시 토큰입니다."),
 
 
 
