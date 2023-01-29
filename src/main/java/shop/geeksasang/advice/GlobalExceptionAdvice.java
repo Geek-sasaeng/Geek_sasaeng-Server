@@ -50,6 +50,7 @@ public class GlobalExceptionAdvice {
     @ExceptionHandler(BaseException.class)
     public BaseResponse<BaseResponseStatus> baseException(BaseException e) {
         log.error("Handle CommonException: {}", e.getMessage());
+        e.printStackTrace();
         return new BaseResponse<>(e.getStatus());
     }
 
@@ -64,6 +65,7 @@ public class GlobalExceptionAdvice {
     @ExceptionHandler(Exception.class)
     public BaseResponse<BaseResponseStatus> allHandleException(Exception e) {
         log.error("Handle All Exception: {}", e.getMessage());
+        e.printStackTrace();
         return new BaseResponse<>(BaseResponseStatus.INTERNAL_SERVER_ERROR);
     }
 }
