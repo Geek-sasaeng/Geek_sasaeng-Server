@@ -18,4 +18,7 @@ public class PostDeliveryPartyMemberReq {
     @ApiParam(value = "파티 id", required = true)
     @NotNull
     private int partyId;
+
+
+
 }
