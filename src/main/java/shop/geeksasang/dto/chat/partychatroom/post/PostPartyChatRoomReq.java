@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @NoArgsConstructor
@@ -35,8 +36,10 @@ public class PostPartyChatRoomReq {
 
     @ApiModelProperty(example = "4")
     @ApiParam(value = "매칭 최대 인원", required = true)
+    @NotNull
     private Integer maxMatching;
 
     @ApiModelProperty(example = "1", value = "배달파티 ID", required = true)
-    private int deliveryPartyId;
+    @NotNull
+    private Integer deliveryPartyId;
 }
