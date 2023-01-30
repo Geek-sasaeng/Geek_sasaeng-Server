@@ -1,6 +1,7 @@
 package shop.geeksasang.controller.deliveryparty;
 
 
+import com.sun.net.httpserver.Authenticator;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -11,6 +12,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import shop.geeksasang.config.response.BaseResponse;
+import shop.geeksasang.dto.SuccessCommonRes;
+import shop.geeksasang.dto.deliveryPartyMember.patch.PatchForceOutMembersReq;
 import shop.geeksasang.dto.deliveryPartyMember.patch.PatchLeaveMemberReq;
 import shop.geeksasang.dto.deliveryPartyMember.post.PostDeliveryPartyMemberReq;
 import shop.geeksasang.dto.deliveryPartyMember.post.PostDeliveryPartyMemberRes;
@@ -77,4 +80,24 @@ public class DeliveryPartyMemberController {
         PatchAccountTransferStatusRes res = deliveryPartyMemberService.updateAccountTransferStatus(dto,jwtInfo.getUserId());
         return new BaseResponse<>(res);
     }
+
+
+
+    @ApiOperation(value = "수정: 배달 파티 멤버 강제 퇴장", notes = "방장은 배달파티 멤버들을 강제 퇴장시킬 수 있다.")
+    @ApiResponses({
+            @ApiResponse(code = 1000 ,message ="요청에 성공하셨습니다."),
+            @ApiResponse(code = 2009 ,message ="존재하지 않는 멤버입니다"),
+            @ApiResponse(code = 2020 ,message ="이미 파티에 참여하고 있습니다."),
+            @ApiResponse(code = 2611 ,message ="참여할 수 없는 파티입니다."),
+            @ApiResponse(code = 2615 ,message ="파티 신청 시간이 끝났습니다."),
+            @ApiResponse(code = 2614 ,message ="매칭이 완료된 파티입니다."),
+            @ApiResponse(code = 4000 ,message = "서버 오류입니다.")
+    })
+    @PatchMapping("/delivery-party-members")
+    public BaseResponse<SuccessCommonRes> patchMembersByChief(@RequestBody @Validated PatchForceOutMembersReq dto, HttpServletRequest request){
+        JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
+        deliveryPartyMemberService.forceOutMembersByChief(dto.getPartyId(), dto.getMembersId(), jwtInfo.getUserId());
+        return new BaseResponse<>(new SuccessCommonRes());
+    }
 }
+ㅌ

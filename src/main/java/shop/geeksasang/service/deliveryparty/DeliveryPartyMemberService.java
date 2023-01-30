@@ -18,6 +18,7 @@ import shop.geeksasang.repository.deliveryparty.DeliveryPartyMemberRepository;
 import shop.geeksasang.repository.member.MemberRepository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static shop.geeksasang.config.exception.response.BaseResponseStatus.*;
 
@@ -128,7 +129,24 @@ public class DeliveryPartyMemberService {
         DeliveryPartyMember deliveryPartyMember = deliveryPartyMemberRepository.findDeliveryPartyMemberByMemberIdAndDeliveryPartyId(memberId, partyId)
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTICIPANT));
 
-        // 송금 완료상태 수정
+        // 송금 c완료상태 수정
         deliveryPartyMember.changeAccountTransferStatusToY();
+    }
+
+    @Transactional(readOnly = false)
+    public void forceOutMembersByChief(Integer partyId, List<Integer> membersId, int userId) {
+        DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyByIdAndStatus(partyId)
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTY));
+
+        Member member = memberRepository.findMemberByIdAndStatus(userId)
+                .orElseThrow(() -> new BaseException(NOT_EXIST_USER));
+
+        if(deliveryParty.isNotChief(member)){
+            throw new BaseException(INVALID_DELIVERY_PARTY_CHIEF);
+        }
+
+        membersId.forEach((memberId) -> {
+            this.patchDeliveryPartyMemberStatus(new PatchLeaveMemberReq(deliveryParty.getId()), memberId);
+        });
     }
 }
