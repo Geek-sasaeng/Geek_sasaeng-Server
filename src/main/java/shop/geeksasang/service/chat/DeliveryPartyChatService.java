@@ -229,17 +229,19 @@ public class DeliveryPartyChatService {
 
         partyChatRoom.addParticipants(partyChatRoomMember);
 
-        // participants의 개수와 maxMatching이 같아지면 isFinish = true;
-        if(partyChatRoom.getMaxMatching() == partyChatRoom.getParticipants().size()){
-            partyChatRoom.changeIsFinishToTrue();
-        }
-
-        partyChatRoomRepository.save(partyChatRoom); // MongoDB는 JPA처럼 변경감지가 안되어서 직접 저장해줘야 한다.
-
         mqController.joinChatRoom(member.getId(), partyChatRoom.getId());         // rabbitmq 큐 생성 및 채팅방 exchange와 바인딩
 
         // 입장 시스템 메시지 전송
         this.createChat(memberId, chatRoomId, member.getNickName()+"님이 입장하였습니다.", true, profileImgUrl, "publish", "none", false);
+
+
+        // participants의 개수와 maxMatching이 같아지면 isFinish = true;
+        if(partyChatRoom.getMaxMatching() == partyChatRoom.getParticipants().size()){
+            partyChatRoom.changeIsFinishToTrue();
+            this.createChat(memberId, chatRoomId, "모든 파티원이 입장을 마쳤네요! 메뉴를 정해보세요 :)", true, profileImgUrl, "publish", "none", false);
+        }
+
+        partyChatRoomRepository.save(partyChatRoom); // MongoDB는 JPA처럼 변경감지가 안되어서 직접 저장해줘야 한다.
 
         PartyChatRoomMemberRes res = PartyChatRoomMemberRes.toDto(partyChatRoomMember, partyChatRoom);
         return res;
