@@ -61,7 +61,6 @@ public class DeliveryPartyChatService {
     private final MemberRepository memberRepository;
     private final AwsS3Service awsS3Service;
     private final DeliveryPartyMemberService deliveryPartyMemberService;
-    private final DeliveryPartyService deliveryPartyService;
     private final DeliveryPartyRepository deliveryPartyRepository;
 
     private final ObjectMapper objectMapper;
