@@ -100,4 +100,3 @@ public class DeliveryPartyMemberController {
         return new BaseResponse<>(new SuccessCommonRes());
     }
 }
-ㅌ

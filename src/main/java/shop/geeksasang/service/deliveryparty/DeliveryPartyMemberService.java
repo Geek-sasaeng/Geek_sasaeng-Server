@@ -129,7 +129,7 @@ public class DeliveryPartyMemberService {
         DeliveryPartyMember deliveryPartyMember = deliveryPartyMemberRepository.findDeliveryPartyMemberByMemberIdAndDeliveryPartyId(memberId, partyId)
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTICIPANT));
 
-        // 송금 c완료상태 수정
+        // 송금 완료상태 수정
         deliveryPartyMember.changeAccountTransferStatusToY();
     }
 
