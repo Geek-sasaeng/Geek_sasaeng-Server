@@ -39,6 +39,7 @@ import shop.geeksasang.repository.deliveryparty.DeliveryPartyRepository;
 import shop.geeksasang.repository.deliveryparty.FoodCategoryRepository;
 import shop.geeksasang.repository.member.MemberRepository;
 import shop.geeksasang.repository.university.DormitoryRepository;
+import shop.geeksasang.service.chat.DeliveryPartyChatService;
 import shop.geeksasang.utils.ordertime.OrderTimeUtils;
 
 import java.time.LocalDateTime;
@@ -64,6 +65,7 @@ public class DeliveryPartyService {
     private final DeliveryPartyQueryRepository deliveryPartyQueryRepository;
     private final BlockRepository blockRepository;
     private final PartyChatRoomRepository partyChatRoomRepository;
+    private final DeliveryPartyChatService deliveryPartyChatService;
 
     private static final int PAGING_SIZE = 10;
     private static final String PAGING_STANDARD = "orderTime";
@@ -323,6 +325,8 @@ public class DeliveryPartyService {
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_CHAT_ROOM));
 
         partyChatRoomRepository.changeIsFinish(new ObjectId(partyChatRoom.getId()));
+
+        deliveryPartyChatService.createChat(userId, partyChatRoom.getId(), "모든 파티원이 입장을 마쳤네요! 메뉴를 정해보세요 :)", true, null, "publish", "none", false);
 
         return PatchDeliveryPartyMatchingStatusRes.builder()
                 .deliveryPartyId(deliveryParty.getId())
