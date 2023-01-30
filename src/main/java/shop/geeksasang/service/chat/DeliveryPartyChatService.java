@@ -23,6 +23,7 @@ import shop.geeksasang.dto.chat.chatchief.DeleteMemberByChiefReq;
 
 import shop.geeksasang.dto.chat.PostChatImageRes;
 
+import shop.geeksasang.dto.chat.chatmember.GetPartyChatRoomMembersInfoRes;
 import shop.geeksasang.dto.chat.partychatroom.GetPartyChatRoomDetailRes;
 import shop.geeksasang.dto.chat.partychatroom.GetPartyChatRoomRes;
 import shop.geeksasang.dto.chat.partychatroom.GetPartyChatRoomsRes;
@@ -33,12 +34,10 @@ import shop.geeksasang.repository.chat.PartyChatRoomMemberRepository;
 import shop.geeksasang.repository.chat.PartyChatRoomRepository;
 import shop.geeksasang.rabbitmq.MQController;
 import shop.geeksasang.repository.chat.ChatRepository;
-import shop.geeksasang.repository.chat.ChatRoomRepository;
 import shop.geeksasang.repository.deliveryparty.DeliveryPartyRepository;
 import shop.geeksasang.repository.member.MemberRepository;
 import shop.geeksasang.service.common.AwsS3Service;
 import shop.geeksasang.service.deliveryparty.DeliveryPartyMemberService;
-import shop.geeksasang.service.deliveryparty.DeliveryPartyService;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -499,5 +498,18 @@ public class DeliveryPartyChatService {
             throw new BaseException(DIFFERENT_CHIEF_ID);
     }
 
+    public List<GetPartyChatRoomMembersInfoRes> getCharRoomMembersInfo(Integer partyId, int userId, String partyUUID) {
+        DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyByIdAndStatus(partyId)
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTY));
+        return deliveryParty.getDeliveryPartyMembers()
+                .stream()
+                .map(member -> {
+                    PartyChatRoomMember chatRoomMember = partyChatRoomMemberRepository
+                            .findByMemberIdAndChatRoomId(member.getParticipant().getId(), new ObjectId(partyUUID))
+                            .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTYCHATROOM_MEMBER));
+                    return GetPartyChatRoomMembersInfoRes.from(member, chatRoomMember);
+                })
+                .collect(Collectors.toList());
+    }
 }
 // String exchange, String routingKey, Object message

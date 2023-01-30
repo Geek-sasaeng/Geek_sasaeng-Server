@@ -238,9 +238,20 @@ public class DeliveryPartyChatController {
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
         deliveryPartyChatService.changeDeliveryComplete(jwtInfo.getUserId(), dto.getRoomId());
         firebaseCloudMessageService.sendDeliveryCompleteMessage(dto.getRoomId());
-
         return new BaseResponse<>("요청에 성공하셨습니다.");
     }
 
-
+    @ApiOperation(value = "배달 파티 채팅방 멤버 정보 조회", notes ="배달 파티 채팅방 멤버 정보를 조회할 수 있는 API")
+    @ApiResponses({
+            @ApiResponse(code = 1000 ,message ="요청에 성공하셨습니다."),
+            @ApiResponse(code = 2010 ,message ="존재하지 않는 멤버입니다."),
+            @ApiResponse(code = 2208 ,message ="존재하지 않는 파티입니다."),
+            @ApiResponse(code = 4000 ,message ="서버 오류입니다.")
+    })
+    @GetMapping("/{partyId}/{partyUUID}/members")
+    public BaseResponse<List<GetPartyChatRoomMembersInfoRes>> getDeliveryPartyMembersInfo(HttpServletRequest request, @PathVariable Integer partyId, @PathVariable String partyUUID){
+        JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
+        List<GetPartyChatRoomMembersInfoRes> res = deliveryPartyChatService.getCharRoomMembersInfo(partyId, jwtInfo.getUserId(), partyUUID);
+        return new BaseResponse<>(res);
+    }
 }
