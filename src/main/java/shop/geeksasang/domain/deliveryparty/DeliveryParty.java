@@ -200,6 +200,10 @@ public class DeliveryParty extends BaseEntity {
         return deliveryPartyMember.getParticipant().getId() != chief.getId();
     }
 
+    public boolean isChief(Member member){
+        return this.chief == member;
+    }
+
     public boolean memberIsOnlyChief() {
         return deliveryPartyMembers.size() == 1;
     }
