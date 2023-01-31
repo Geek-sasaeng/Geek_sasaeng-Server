@@ -326,7 +326,7 @@ public class DeliveryPartyService {
 
         partyChatRoomRepository.changeIsFinish(new ObjectId(partyChatRoom.getId()));
 
-        deliveryPartyChatService.createChat(userId, partyChatRoom.getId(), "모든 파티원이 입장을 마쳤네요! 메뉴를 정해보세요 :)", true, null, "publish", "none", false);
+        deliveryPartyChatService.createChat(userId, partyChatRoom.getId(), "매칭이 마감되었어요", true, null, "publish", "none", false);
 
         return PatchDeliveryPartyMatchingStatusRes.builder()
                 .deliveryPartyId(deliveryParty.getId())
