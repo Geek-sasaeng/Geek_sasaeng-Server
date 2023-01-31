@@ -381,4 +381,9 @@ public class MemberService {
 
         return null;
     }
+
+    public GetMemberDormitoryRes getMemberDormitory(int userId) {
+        Member member = memberRepository.findMemberByIdAndStatus(userId).orElseThrow(() -> new BaseException(NOT_EXIST_USER));
+        return GetMemberDormitoryRes.of(member.getDormitory());
+    }
 }
