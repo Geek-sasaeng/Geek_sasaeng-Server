@@ -503,6 +503,7 @@ public class DeliveryPartyChatService {
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTY));
         return deliveryParty.getDeliveryPartyMembers()
                 .stream()
+                .filter(deliveryPartyMember -> deliveryParty.isChief(deliveryPartyMember))
                 .map(member -> {
                     PartyChatRoomMember chatRoomMember = partyChatRoomMemberRepository
                             .findByMemberIdAndChatRoomId(member.getParticipant().getId(), new ObjectId(partyUUID))
