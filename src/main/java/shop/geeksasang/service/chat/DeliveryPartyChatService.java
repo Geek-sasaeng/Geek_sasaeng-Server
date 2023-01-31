@@ -274,7 +274,7 @@ public class DeliveryPartyChatService {
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTYCHATROOM_MEMBER));
 
 
-        dto.getRemovedMemberIdList()
+        dto.getRemovedChatMemberIdList()
                 .forEach(id -> {
                     removeMember(chiefId, dto, chief, id);
                 });
@@ -503,7 +503,7 @@ public class DeliveryPartyChatService {
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTY));
         return deliveryParty.getDeliveryPartyMembers()
                 .stream()
-                .filter(deliveryPartyMember -> deliveryParty.isChief(deliveryPartyMember))
+                .filter(deliveryParty::isChief)
                 .map(member -> {
                     PartyChatRoomMember chatRoomMember = partyChatRoomMemberRepository
                             .findByMemberIdAndChatRoomId(member.getParticipant().getId(), new ObjectId(partyUUID))
