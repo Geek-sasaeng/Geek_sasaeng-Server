@@ -12,7 +12,7 @@ import shop.geeksasang.domain.member.Member;
 public class GetPartyChatRoomMembersInfoRes {
 
     @ApiModelProperty(example = "63d77adea2639d2b72c7e743", value = "멤버 uuid")
-    private String memberUuid;
+    private String chatMemberId;
 
     @ApiModelProperty(example = "22", value = "맴버 id")
     private Integer memberId;
@@ -26,7 +26,7 @@ public class GetPartyChatRoomMembersInfoRes {
     private String userProfileImgUrl;
 
     public GetPartyChatRoomMembersInfoRes(String memberUuid, Integer memberId, String userName, String userProfileImgUrl) {
-        this.memberUuid = memberUuid;
+        this.chatMemberId = memberUuid;
         this.memberId = memberId;
         this.userName = userName;
         this.userProfileImgUrl = userProfileImgUrl;

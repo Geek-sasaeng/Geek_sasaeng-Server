@@ -38,7 +38,6 @@ public class DeliveryPartyIntegrationTest extends IntegrationTest {
 
 
         List<Member> all = memberRepository.findAll();
-        System.out.println("all.size() = " + all.size());
         //when
         PostDeliveryPartyRes result = deliveryPartyService.registerDeliveryParty(dto, member.getId(), dormitoryId);
 

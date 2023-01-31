@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 import shop.geeksasang.domain.deliveryparty.FoodCategory;
@@ -34,8 +35,6 @@ public abstract class IntegrationTest {
 
     @Autowired
     protected UniversityRepository universityRepository;
-
-
 
     @BeforeEach
     void beforeAll(){
