@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 @Getter
@@ -16,7 +17,7 @@ public class DeleteMemberByChiefReq {
     private String roomId;
 
     @ApiParam(value = "퇴장시킬 배달 채팅방 멤버 아이디 배열", required = true, example = "[638dba87ca6fd27d74c17be8, 638dba87ca6fd27d74c17be9]")
-    @NotBlank
+    @NotEmpty
     private List<String> removedChatMemberIdList;
 
     public DeleteMemberByChiefReq(String roomId, List<String> removedMemberIdList) {
