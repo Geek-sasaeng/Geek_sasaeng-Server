@@ -10,6 +10,7 @@ import shop.geeksasang.config.status.BelongStatus;
 import shop.geeksasang.config.status.MatchingStatus;
 import shop.geeksasang.domain.chat.PartyChatRoom;
 import shop.geeksasang.domain.deliveryparty.DeliveryParty;
+import shop.geeksasang.domain.member.Member;
 
 
 import java.time.LocalDateTime;
@@ -88,9 +89,12 @@ public class GetDeliveryPartyDetailRes {
     @ApiModelProperty(value = "배달 파티 채팅방 이름", example = "같이 먹어요")
     private String partyChatRoomTitle;
 
-    //빌더
-    static public GetDeliveryPartyDetailRes toDto(DeliveryParty deliveryParty, boolean authorStatus, BelongStatus belongStatus, PartyChatRoom partyChatRoom){
+    @ApiModelProperty(value = "배달 파티 방장인지", example = "true")
+    private boolean authChief;
 
+    //빌더
+    static public GetDeliveryPartyDetailRes toDto(
+            DeliveryParty deliveryParty, boolean authorStatus, BelongStatus belongStatus, PartyChatRoom partyChatRoom, Member member){
         return GetDeliveryPartyDetailRes.builder()
                 .id(deliveryParty.getId())
                 .chief(deliveryParty.getChief().getNickName())
@@ -113,13 +117,17 @@ public class GetDeliveryPartyDetailRes {
                 .belongStatus(belongStatus)
                 .partyChatRoomId(partyChatRoom.getId())
                 .partyChatRoomTitle(partyChatRoom.getTitle())
+                .isChief(deliveryParty.isChief(member))
                 .build();
     }
 
     @Builder
-    public GetDeliveryPartyDetailRes(int id, String chief, int chiefId, String chiefProfileImgUrl, String foodCategory, boolean hashTag, String title, String content,
-                                     LocalDateTime orderTime, int currentMatching, int maxMatching, MatchingStatus matchingStatus, String updatedAt, Double latitude,
-                                     Double longitude, String storeUrl, boolean authorStatus, int dormitory, String uuid, BelongStatus belongStatus, String partyChatRoomId, String partyChatRoomTitle) {
+    public GetDeliveryPartyDetailRes(
+            int id, String chief, int chiefId, String chiefProfileImgUrl, String foodCategory, boolean hashTag, String title, String content,
+            LocalDateTime orderTime, int currentMatching, int maxMatching, MatchingStatus matchingStatus, String updatedAt, Double latitude,
+            Double longitude, String storeUrl, boolean authorStatus, int dormitory, String uuid, BelongStatus belongStatus, String partyChatRoomId, String partyChatRoomTitle,
+            boolean isChief
+    ) {
         this.id = id;
         this.chief = chief;
         this.chiefId = chiefId;
@@ -142,5 +150,6 @@ public class GetDeliveryPartyDetailRes {
         this.belongStatus = belongStatus;
         this.partyChatRoomId = partyChatRoomId;
         this.partyChatRoomTitle = partyChatRoomTitle;
+        this.authChief = isChief;
     }
 }

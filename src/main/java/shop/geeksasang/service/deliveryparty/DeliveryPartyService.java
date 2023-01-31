@@ -200,7 +200,7 @@ public class DeliveryPartyService {
         PartyChatRoom partyChatRoom = partyChatRoomRepository.findByDeliveryPartyId(partyId)
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_CHAT_ROOM));
 
-        GetDeliveryPartyDetailRes getDeliveryPartyDetailRes = GetDeliveryPartyDetailRes.toDto(deliveryParty, authorStatus, belongStatus, partyChatRoom);
+        GetDeliveryPartyDetailRes getDeliveryPartyDetailRes = GetDeliveryPartyDetailRes.toDto(deliveryParty, authorStatus, belongStatus, partyChatRoom, findMember);
         return getDeliveryPartyDetailRes;
     }
 
