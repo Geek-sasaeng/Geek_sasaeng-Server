@@ -349,7 +349,7 @@ public class DeliveryPartyChatService {
         String nickName = member.getNickName();
 
         //시스템 메시지
-        Chat chat = new Chat(nickName + "방장의 활동 중단에 따라 새로운 방장으로 + " + "'" + nickName + "'"  + "+ 님이 선정되었어요.", chatRoom, true, null, null, new ArrayList<>());
+        Chat chat = new Chat("방장의 활동 중단에 따라 새로운 방장으로 '" + nickName + "'님이 선정되었어요", chatRoom, true, null, null, new ArrayList<>());
         chat.addReadMember(changeChief.getMemberId());// 읽은 멤버 추가
         Chat saveChat = chatRepository.save(chat);
         int unreadMemberCnt = saveChat.getUnreadMemberCnt();

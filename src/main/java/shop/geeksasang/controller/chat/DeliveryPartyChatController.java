@@ -248,10 +248,10 @@ public class DeliveryPartyChatController {
             @ApiResponse(code = 2208 ,message ="존재하지 않는 파티입니다."),
             @ApiResponse(code = 4000 ,message ="서버 오류입니다.")
     })
-    @GetMapping("/{partyId}/{partyUUID}/members")
-    public BaseResponse<List<GetPartyChatRoomMembersInfoRes>> getDeliveryPartyMembersInfo(HttpServletRequest request, @PathVariable Integer partyId, @PathVariable String partyUUID){
+    @GetMapping("/{partyId}/{roomId}/members")
+    public BaseResponse<List<GetPartyChatRoomMembersInfoRes>> getDeliveryPartyMembersInfo(HttpServletRequest request, @PathVariable Integer partyId, @PathVariable String roomId){
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
-        List<GetPartyChatRoomMembersInfoRes> res = deliveryPartyChatService.getCharRoomMembersInfo(partyId, jwtInfo.getUserId(), partyUUID);
+        List<GetPartyChatRoomMembersInfoRes> res = deliveryPartyChatService.getCharRoomMembersInfo(partyId, jwtInfo.getUserId(), roomId);
         return new BaseResponse<>(res);
     }
 }

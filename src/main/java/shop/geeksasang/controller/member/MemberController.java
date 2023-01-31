@@ -238,5 +238,16 @@ public class MemberController {
     }
 
 
-
+    @ApiOperation(value = "조회: 나의 현재 기숙사 조회", notes = "내가 속한 현재 기숙사 정보를 가져온다.")
+    @ApiResponses({
+            @ApiResponse(code = 1000 , message = "요청에 성공하셨습니다."),
+            @ApiResponse(code = 2204 , message = "존재하지 않는 회원 id 입니다."),
+            @ApiResponse(code = 4000 , message = "서버 오류입니다.")
+    })
+    @GetMapping("/dormitory")
+    public BaseResponse<GetMemberDormitoryRes> getDormitory(HttpServletRequest request){
+        JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
+        GetMemberDormitoryRes res = memberService.getMemberDormitory(jwtInfo.getUserId());
+        return new BaseResponse<>(res);
+    }
 }
