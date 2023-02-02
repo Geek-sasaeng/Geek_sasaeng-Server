@@ -43,7 +43,7 @@ public class DeliveryPartyMemberController {
     @PostMapping("/delivery-party-member")
     public BaseResponse<PostDeliveryPartyMemberRes> joinDeliveryPartyMember(@RequestBody PostDeliveryPartyMemberReq dto, HttpServletRequest request){
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
-        PostDeliveryPartyMemberRes postDeliveryPartyMemberRes = deliveryPartyMemberService.joinDeliveryPartyMember(dto, jwtInfo.getUserId());
+        PostDeliveryPartyMemberRes postDeliveryPartyMemberRes = deliveryPartyMemberService.joinDeliveryPartyMember(dto.getPartyId(), jwtInfo.getUserId());
         return new BaseResponse<>(postDeliveryPartyMemberRes);
     }
 
@@ -62,7 +62,7 @@ public class DeliveryPartyMemberController {
     public BaseResponse<String> patchDeliveryPartyMemberStatus(@Validated @RequestBody PatchLeaveMemberReq dto, HttpServletRequest request){
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
 
-        String response = deliveryPartyMemberService.patchDeliveryPartyMemberStatus(dto, jwtInfo.getUserId());
+        String response = deliveryPartyMemberService.patchDeliveryPartyMemberStatus(dto.getPartyId(), jwtInfo.getUserId());
 
         return new BaseResponse<>(response);
     }

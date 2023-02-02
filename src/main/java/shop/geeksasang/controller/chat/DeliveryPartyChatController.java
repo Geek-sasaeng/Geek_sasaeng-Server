@@ -251,7 +251,7 @@ public class DeliveryPartyChatController {
     @GetMapping("/{partyId}/{roomId}/members")
     public BaseResponse<List<GetPartyChatRoomMembersInfoRes>> getDeliveryPartyMembersInfo(HttpServletRequest request, @PathVariable Integer partyId, @PathVariable String roomId){
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
-        List<GetPartyChatRoomMembersInfoRes> res = deliveryPartyChatService.getCharRoomMembersInfo(partyId, jwtInfo.getUserId(), roomId);
+        List<GetPartyChatRoomMembersInfoRes> res = deliveryPartyChatService.getChatRoomMembersInfo(partyId, jwtInfo.getUserId(), roomId);
         return new BaseResponse<>(res);
     }
 }

@@ -46,6 +46,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static shop.geeksasang.config.exception.response.BaseResponseStatus.*;
@@ -111,7 +112,7 @@ public class DeliveryPartyService {
         // 파티 생성 및 저장. 이렇게 의존성이 많이 발생하는데 더 좋은 방법이 있지 않을까?
         DeliveryParty deliveryParty = DeliveryParty.makeParty(dto, orderTimeCategory, dormitory, foodCategory, chief, hashTagList);
 
-        deliveryParty.addPartyMember(new DeliveryPartyMember(chief, deliveryParty));
+        DeliveryPartyMember deliveryPartyMember = new DeliveryPartyMember(chief, deliveryParty);
 
         //배달파티 저장
         deliveryPartyRepository.save(deliveryParty);
@@ -167,16 +168,16 @@ public class DeliveryPartyService {
 
     //배달파티 상세조회:
     public GetDeliveryPartyDetailRes getDeliveryPartyDetailById(int partyId, int memberId){
+        //속해있는지
         BelongStatus belongStatus = BelongStatus.N;
         //사용자 본인 여부
         boolean authorStatus = false;
 
+        boolean activeStatus = false;
+
         //요청 보낸 사용자 Member 찾기
         Member findMember = memberRepository.findById(memberId).
                 orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTICIPANT));
-
-//        DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyByIdBeforeOrderTime(partyId, LocalDateTime.now()).
-//                orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTY));
 
         DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyByIdAndStatus(partyId).
                 orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTY));
@@ -191,17 +192,21 @@ public class DeliveryPartyService {
             authorStatus = true;
         }
 
-        //요청 보낸 사용자가 이미 파티멤버인지 조회
-        //로직: 요청 사용자 id, partyId -> deliveryPartyMember 에서 같은 partyId와 memberId 같은 멤버 조회
-        if(deliveryPartyMemberRepository.findDeliveryPartyMemberByMemberIdAndDeliveryPartyId(memberId, partyId).isPresent()){
+        //요청 보낸 사용자가 이미 파티멤버인지 조회,
+        // 로직: 요청 사용자 id, partyId -> deliveryPartyMember 에서 같은 partyId와 memberId 같은 멤버 조회
+        Optional<DeliveryPartyMember> optionalDeliveryPartyMember = deliveryPartyMemberRepository
+                .findDeliveryPartyMemberByMemberIdAndDeliveryPartyId(memberId, partyId);
+        if(optionalDeliveryPartyMember.isPresent()){
             belongStatus = BelongStatus.Y;
+            DeliveryPartyMember member = optionalDeliveryPartyMember.get();
+            activeStatus = member.isActive();
         }
+
 
         PartyChatRoom partyChatRoom = partyChatRoomRepository.findByDeliveryPartyId(partyId)
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_CHAT_ROOM));
 
-        GetDeliveryPartyDetailRes getDeliveryPartyDetailRes = GetDeliveryPartyDetailRes.toDto(deliveryParty, authorStatus, belongStatus, partyChatRoom, findMember);
-        return getDeliveryPartyDetailRes;
+        return GetDeliveryPartyDetailRes.toDto(deliveryParty, authorStatus, belongStatus, partyChatRoom, findMember, activeStatus);
     }
 
     //배달파티 조회: 검색어로 조회 ,필터 추가
@@ -258,23 +263,15 @@ public class DeliveryPartyService {
 
     //배달파티 삭제
     @Transactional(readOnly = false)
-    public PatchDeliveryPartyStatusRes patchDeliveryPartyStatusById(int partyId, JwtInfo jwtInfo) {
-
-        int userId = jwtInfo.getUserId();
-
-        DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyByPartyId(partyId, userId)
+    public PatchDeliveryPartyStatusRes patchDeliveryPartyStatusById(int partyId, Integer userId) {
+        DeliveryParty deliveryParty = deliveryPartyRepository
+                .findDeliveryPartyByPartyId(partyId, userId)
                 .orElseThrow(() -> new BaseException(CAN_NOT_DELETE_PARTY));
-        deliveryParty.changeStatusToInactive();
-        deliveryPartyRepository.save(deliveryParty);
 
-        // 배달파티 멤버 status도 Inactive로 수정
-        List<DeliveryPartyMember> deliveryPartyMembers = deliveryPartyMemberRepository.findDeliveryPartyMembersByPartyId(partyId);
+        deliveryParty.deleteParty();
 
-        for( DeliveryPartyMember deliveryPartyMember : deliveryPartyMembers ){
-            deliveryPartyMember.changeStatusToInactive();
-        }
-
-        return PatchDeliveryPartyStatusRes.builder()
+        return PatchDeliveryPartyStatusRes
+                .builder()
                 .deliveryPartyId(deliveryParty.getId())
                 .status(deliveryParty.getStatus().toString())
                 .build();
@@ -283,31 +280,25 @@ public class DeliveryPartyService {
     @Transactional(readOnly = false)
     public PatchLeaveChiefRes chiefLeaveDeliveryParty(int partyId, String nickName, int userId) {
 
-        Member attemptedChief = memberRepository.findMemberByIdAndStatus(userId).orElseThrow(() -> new BaseException(NOT_EXIST_USER));
-        DeliveryParty findParty = deliveryPartyRepository.findDeliveryPartyByIdAndStatus(partyId).orElseThrow(() -> new BaseException(NOT_EXISTS_PARTY));
+        Member attemptedChief = memberRepository.findMemberByIdAndStatus(userId)
+                .orElseThrow(() -> new BaseException(NOT_EXIST_USER));
+
+        DeliveryParty findParty = deliveryPartyRepository.findDeliveryPartyByIdAndStatus(partyId)
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTY));
 
         if(findParty.isNotChief(attemptedChief)){
             throw new BaseException(INVALID_DELIVERY_PARTY_CHIEF);
         }
 
-        //방장만 있을 때
         if(findParty.memberIsOnlyChief()){
             findParty.deleteParty();
             return new PatchLeaveChiefRes(DELETE_PARTY);
         }
 
-//        //제일 먼저 참여한 방장 후보의 멤버 아이디를 가져온다.
-//        int secondDeliverPartyMemberId = findParty.getSecondDeliverPartyMemberId();
-
-        //TODO 프론트 요청에 의한 임시 수정. 나중에 무조건 바꿔아함.
         DeliveryPartyMember candidateForChief = deliveryPartyMemberRepository.findByDeliveryPartyMemberByIdAndNickName(partyId, nickName)
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_DELIVERY_PARTY_PARTICIPANT));
 
-//        DeliveryPartyMember candidateForChief = deliveryPartyMemberRepository.findByDeliveryPartyMemberByIdAndStatus(secondDeliverPartyMemberId)
-//                .orElseThrow(() -> new BaseException(NOT_EXISTS_DELIVERY_PARTY_PARTICIPANT));
-
-        findParty.leaveNowChiefAndChangeChief(candidateForChief.getParticipant());
-
+        findParty.leaveNowChiefAndChangeChief(candidateForChief);
         return new PatchLeaveChiefRes(CHANGE_CHIEF);
     }
 
@@ -337,7 +328,7 @@ public class DeliveryPartyService {
     public List<GetRecentOngoingPartiesRes> getRecentOngoingDeliveryParties(int userId) {
         List<DeliveryParty> threeRecentDeliveryParty = deliveryPartyQueryRepository.findRecentOngoingDeliveryParty(userId);
         return threeRecentDeliveryParty.stream()
-                .map(deliveryParty -> GetRecentOngoingPartiesRes.toDto(deliveryParty))
+                .map(GetRecentOngoingPartiesRes::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -350,6 +341,4 @@ public class DeliveryPartyService {
         PageRequest paging = PageRequest.of(cursor, PAGING_SIZE, Sort.by(Sort.Direction.ASC, PAGING_STANDARD));
         return deliveryPartyQueryRepository.getEndedDeliveryParties(userId, paging);
     }
-
-
 }

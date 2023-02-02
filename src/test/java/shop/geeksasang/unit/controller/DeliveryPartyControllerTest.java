@@ -22,7 +22,7 @@ public class DeliveryPartyControllerTest extends ControllerTest {
     @DisplayName("배달 파티 생성 성공 테스트")
     void registerDeliveryParty() throws Exception {
         int dormitoryId = 1;
-        PostDeliveryPartyReq req = PostDeliveryPartyFactory.createReq();
+        PostDeliveryPartyReq req = PostDeliveryPartyFactory.createReq(1);
         PostDeliveryPartyRes res = PostDeliveryPartyFactory.createRes();
 
         String value = mapper.writeValueAsString(req);

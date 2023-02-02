@@ -253,6 +253,12 @@ public class DeliveryPartyChatService {
         List<GetPartyChatRoomRes> result = members.stream()
                 //.filter(member -> member.getPartyChatRoom().getBaseEntityMongo().getStatus() == BaseStatus.ACTIVE) // 필터링에서 에러 남
                 .sorted(Comparator.comparing(PartyChatRoomMember::getLastChatAt).reversed()) //TODO: 최신 메시지 순으로 정렬했지만 메소드 정의 위치가 맞는지 테스트 필요
+//                .sorted(new Comparator<PartyChatRoomMember>() {
+//                    @Override
+//                    public int compare(PartyChatRoomMember o1, PartyChatRoomMember o2) {
+//                        return o2.getLastChatAt().compareTo(o1.getLastChatAt());
+//                    }
+//                })
                 .map(member -> GetPartyChatRoomRes.of(member.getPartyChatRoom(), member))
                 .collect(Collectors.toList());
 
@@ -268,6 +274,7 @@ public class DeliveryPartyChatService {
 
 
     //TODO 몽고 트랜잭션 매니저를 달아야하는데, 트랜잭션 매니저 달면 JPA랑 충돌해서 문제가 일어나는듯
+    @Transactional(readOnly = false)
     public void removeMemberByChief(int chiefId, DeleteMemberByChiefReq dto) {
         PartyChatRoomMember chief = partyChatRoomMemberRepository
                 .findByMemberIdAndChatRoomId(chiefId, new ObjectId(dto.getRoomId()))
@@ -281,7 +288,8 @@ public class DeliveryPartyChatService {
 
     }
 
-    private void removeMember(int chiefId, DeleteMemberByChiefReq dto, PartyChatRoomMember chief, String id) {
+    @Transactional(readOnly = false)
+    public void removeMember(int chiefId, DeleteMemberByChiefReq dto, PartyChatRoomMember chief, String id) {
         PartyChatRoomMember removedMember = partyChatRoomMemberRepository
                 .findByIdAndChatRoomId(new ObjectId(id), new ObjectId(dto.getRoomId()))
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTYCHATROOM_MEMBER));
@@ -498,12 +506,13 @@ public class DeliveryPartyChatService {
             throw new BaseException(DIFFERENT_CHIEF_ID);
     }
 
-    public List<GetPartyChatRoomMembersInfoRes> getCharRoomMembersInfo(Integer partyId, int userId, String partyUUID) {
+    public List<GetPartyChatRoomMembersInfoRes> getChatRoomMembersInfo(Integer partyId, int userId, String partyUUID) {
         DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyByIdAndStatus(partyId)
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTY));
         return deliveryParty.getDeliveryPartyMembers()
                 .stream()
-                .filter(deliveryParty::isChief)
+                .filter(deliveryParty::isNotChief)
+                .filter(deliveryParty::isNotDeleteMember)
                 .map(member -> {
                     PartyChatRoomMember chatRoomMember = partyChatRoomMemberRepository
                             .findByMemberIdAndChatRoomId(member.getParticipant().getId(), new ObjectId(partyUUID))

@@ -5,6 +5,8 @@ import lombok.*;
 import javax.persistence.*;
 
 import shop.geeksasang.config.domain.BaseEntity;
+import shop.geeksasang.config.exception.BaseException;
+import shop.geeksasang.config.exception.response.BaseResponseStatus;
 import shop.geeksasang.config.status.MatchingStatus;
 import shop.geeksasang.config.status.OrderStatus;
 import shop.geeksasang.config.type.OrderTimeCategoryType;
@@ -46,7 +48,7 @@ public class DeliveryParty extends BaseEntity {
     @OneToOne(fetch=FetchType.LAZY)
     private FoodCategory foodCategory;
 
-    @OneToMany(mappedBy = "party", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "party", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DeliveryPartyMember> deliveryPartyMembers = new ArrayList<>();
 
     private String title;
@@ -172,16 +174,12 @@ public class DeliveryParty extends BaseEntity {
 
 
     // 배달파티 삭제
-    public void changeStatusToInactive(){
+    private void changeStatusToInactive(){
         super.setStatus(BaseStatus.INACTIVE);
     }
 
     public void addCurrentMatching(){
         currentMatching++;
-    }
-
-    public void minusMatching(){
-        currentMatching--;
     }
 
     public void changeMatchingStatusToFinish() {
@@ -196,7 +194,7 @@ public class DeliveryParty extends BaseEntity {
         return attemptedChief != chief;
     }
 
-    public boolean isChief(DeliveryPartyMember deliveryPartyMember){
+    public boolean isNotChief(DeliveryPartyMember deliveryPartyMember){
         return deliveryPartyMember.getParticipant().getId() != chief.getId();
     }
 
@@ -208,41 +206,95 @@ public class DeliveryParty extends BaseEntity {
         return deliveryPartyMembers.size() == 1;
     }
 
-    public DeliveryParty deleteParty() {
-        minusMatching();
-        deleteNowChief();
-        changeStatusToInactive();
-        chief = null;
-        return this;
-    }
-
-    public int getSecondDeliverPartyMemberId() {
-        return deliveryPartyMembers.get(1).getId();
-    }
-
-    public DeliveryParty leaveNowChiefAndChangeChief(Member candidateForChief) {
-        minusMatching();
-        deleteNowChief();
-        chief = candidateForChief;
-        return this;
-    }
-
-    //관계를 끊어도 연관관계 처리를 애매하게 해서 데이터가 계속 남아있었다. 확실하게 다 지워버리자.
-    public void deleteNowChief(){
-        DeliveryPartyMember nowChief = deliveryPartyMembers.remove(0);
-        nowChief.changeStatusToInactive();
-        nowChief.leaveDeliveryParty();
-    }
-
-    public void removeDeliveryPartyMember(DeliveryPartyMember deliveryPartyMember){
-        deliveryPartyMembers.remove(deliveryPartyMember);
-    }
-
     public void changeOrderStatusToOrderComplete(){
         this.orderStatus = OrderStatus.ORDER_COMPLETE;
     }
 
     public void changeOrderStatusToDeliveryComplete(){
         this.orderStatus = OrderStatus.DELIVERY_COMPLETE;
+    }
+
+    public boolean isNotDeleteMember(DeliveryPartyMember deliveryPartyMember) {
+        DeliveryPartyMember member = findDeliveryPartyMember(deliveryPartyMember);
+        return member.isActive();
+    }
+
+    public DeliveryParty deleteParty() {
+        minusMatching();
+        deleteNowChiefInParticipants();
+        deleteParticipants();
+        changeStatusToInactive();
+        chief = null;
+        return this;
+    }
+
+    private void deleteParticipants() {
+        for( DeliveryPartyMember deliveryPartyMember : deliveryPartyMembers ){
+            deliveryPartyMember.leaveDeliveryParty();
+        }
+    }
+
+    public DeliveryParty leaveNowChiefAndChangeChief(DeliveryPartyMember candidateForChief) {
+        minusMatching();
+        deleteNowChiefInParticipants();
+        chief = candidateForChief.getParticipant();
+        return this;
+    }
+
+    //관계를 끊어도 연관관계 처리를 애매하게 해서 데이터가 계속 남아있었다. 확실하게 다 지워버리자.
+    private void deleteNowChiefInParticipants(){
+        DeliveryPartyMember removedChief = findDeliveryPartyInChief();
+        removedChief.leaveDeliveryParty();
+    }
+
+    public void removeDeliveryPartyMember(DeliveryPartyMember deliveryPartyMember){
+        //deliveryPartyMembers.remove(deliveryPartyMember); //이걸 상태를 바꿔야함. 하드딜리트가 아닌 소프트 딜리트로
+        partyMemberStatusChangeToInActive(deliveryPartyMember);
+        minusMatching();
+
+        // 현재인원 == (최대인원-1) 이면 MatchingStatus를 FINISH -> ONGOING으로 수정
+        if(currentMatching == maxMatching -1){
+            changeMatchingStatusToOngoing();
+        }
+
+        //참여 인원이 0명이면 파티 삭제
+        if(currentMatching <= 0){
+            changeStatusToInactive();
+        }
+        for (DeliveryPartyMember partyMember : deliveryPartyMembers) {
+            System.out.println("partyMember = " + partyMember.toString());
+        }
+    }
+
+    private void partyMemberStatusChangeToInActive(DeliveryPartyMember deliveryPartyMember) {
+        DeliveryPartyMember removeMember = findDeliveryPartyMember(deliveryPartyMember);
+        removeMember.leaveDeliveryParty();
+    }
+
+    private DeliveryPartyMember findDeliveryPartyMember(DeliveryPartyMember deliveryPartyMember) {
+        return deliveryPartyMembers
+                .stream()
+                .filter(member -> member == deliveryPartyMember)
+                .findFirst()
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTICIPANT));
+    }
+
+    private DeliveryPartyMember findDeliveryPartyInChief() {
+        return deliveryPartyMembers
+                .stream()
+                .filter(member -> member.getParticipant() == chief)
+                .findFirst()
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTICIPANT));
+    }
+
+
+    private void minusMatching(){
+        currentMatching--;
+    }
+
+    private DeliveryPartyMember findFirstActiveDeliveryPartyMember(){
+        return deliveryPartyMembers.stream()
+                .findFirst()
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTICIPANT));
     }
 }

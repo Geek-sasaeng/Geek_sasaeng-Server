@@ -8,7 +8,7 @@ import java.time.format.DateTimeFormatter;
 
 public class PostDeliveryPartyFactory {
 
-    public static PostDeliveryPartyReq createReq(){
+    public static PostDeliveryPartyReq createReq(int foodCategoryId){
         return PostDeliveryPartyReq.builder()
                 .title("party")
                 .content("content")
@@ -17,9 +17,9 @@ public class PostDeliveryPartyFactory {
                 .storeUrl("url")
                 .latitude(1.11)
                 .longitude(1.22)
-                .hashTag(true)
+                .hashTag(false)
                 .bank("TOSS")
-                .foodCategory(1)
+                .foodCategory(foodCategoryId)
                 .accountNumber("111-111-111111")
                 .chatRoomName("chatRoomName")
                 .build();
@@ -34,7 +34,7 @@ public class PostDeliveryPartyFactory {
                 .storeUrl("url")
                 .latitude(1.11)
                 .longitude(1.22)
-                .hashTag(true)
+                .hashTag(false)
                 .build();
     }
 }
