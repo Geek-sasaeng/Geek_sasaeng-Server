@@ -92,9 +92,13 @@ public class GetDeliveryPartyDetailRes {
     @ApiModelProperty(value = "배달 파티 방장인지", example = "true")
     private boolean authChief;
 
+    @ApiModelProperty(value = "이미 방을 나간 것인지 확인. 나간적이 있으면 false, 안나갔다면 true", example = "true")
+    private boolean activeStatus;
+
     //빌더
     static public GetDeliveryPartyDetailRes toDto(
-            DeliveryParty deliveryParty, boolean authorStatus, BelongStatus belongStatus, PartyChatRoom partyChatRoom, Member member){
+            DeliveryParty deliveryParty, boolean authorStatus, BelongStatus belongStatus, PartyChatRoom partyChatRoom, Member member, boolean activeStatus
+    ){
         return GetDeliveryPartyDetailRes.builder()
                 .id(deliveryParty.getId())
                 .chief(deliveryParty.getChief().getNickName())
@@ -118,6 +122,7 @@ public class GetDeliveryPartyDetailRes {
                 .partyChatRoomId(partyChatRoom.getId())
                 .partyChatRoomTitle(partyChatRoom.getTitle())
                 .isChief(deliveryParty.isChief(member))
+                .activeStatus(activeStatus)
                 .build();
     }
 
@@ -126,7 +131,7 @@ public class GetDeliveryPartyDetailRes {
             int id, String chief, int chiefId, String chiefProfileImgUrl, String foodCategory, boolean hashTag, String title, String content,
             LocalDateTime orderTime, int currentMatching, int maxMatching, MatchingStatus matchingStatus, String updatedAt, Double latitude,
             Double longitude, String storeUrl, boolean authorStatus, int dormitory, String uuid, BelongStatus belongStatus, String partyChatRoomId, String partyChatRoomTitle,
-            boolean isChief
+            boolean isChief, boolean activeStatus
     ) {
         this.id = id;
         this.chief = chief;
@@ -151,5 +156,6 @@ public class GetDeliveryPartyDetailRes {
         this.partyChatRoomId = partyChatRoomId;
         this.partyChatRoomTitle = partyChatRoomTitle;
         this.authChief = isChief;
+        this.activeStatus = activeStatus;
     }
 }

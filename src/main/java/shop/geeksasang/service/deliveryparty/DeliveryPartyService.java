@@ -46,6 +46,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static shop.geeksasang.config.exception.response.BaseResponseStatus.*;
@@ -167,16 +168,16 @@ public class DeliveryPartyService {
 
     //배달파티 상세조회:
     public GetDeliveryPartyDetailRes getDeliveryPartyDetailById(int partyId, int memberId){
+        //속해있는지
         BelongStatus belongStatus = BelongStatus.N;
         //사용자 본인 여부
         boolean authorStatus = false;
 
+        boolean activeStatus = false;
+
         //요청 보낸 사용자 Member 찾기
         Member findMember = memberRepository.findById(memberId).
                 orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTICIPANT));
-
-//        DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyByIdBeforeOrderTime(partyId, LocalDateTime.now()).
-//                orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTY));
 
         DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyByIdAndStatus(partyId).
                 orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTY));
@@ -191,17 +192,21 @@ public class DeliveryPartyService {
             authorStatus = true;
         }
 
-        //요청 보낸 사용자가 이미 파티멤버인지 조회
-        //로직: 요청 사용자 id, partyId -> deliveryPartyMember 에서 같은 partyId와 memberId 같은 멤버 조회
-        if(deliveryPartyMemberRepository.findDeliveryPartyMemberByMemberIdAndDeliveryPartyId(memberId, partyId).isPresent()){
+        //요청 보낸 사용자가 이미 파티멤버인지 조회,
+        // 로직: 요청 사용자 id, partyId -> deliveryPartyMember 에서 같은 partyId와 memberId 같은 멤버 조회
+        Optional<DeliveryPartyMember> optionalDeliveryPartyMember = deliveryPartyMemberRepository
+                .findDeliveryPartyMemberByMemberIdAndDeliveryPartyId(memberId, partyId);
+        if(optionalDeliveryPartyMember.isPresent()){
             belongStatus = BelongStatus.Y;
+            DeliveryPartyMember member = optionalDeliveryPartyMember.get();
+            activeStatus = member.isActive();
         }
+
 
         PartyChatRoom partyChatRoom = partyChatRoomRepository.findByDeliveryPartyId(partyId)
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_CHAT_ROOM));
 
-        GetDeliveryPartyDetailRes getDeliveryPartyDetailRes = GetDeliveryPartyDetailRes.toDto(deliveryParty, authorStatus, belongStatus, partyChatRoom, findMember);
-        return getDeliveryPartyDetailRes;
+        return GetDeliveryPartyDetailRes.toDto(deliveryParty, authorStatus, belongStatus, partyChatRoom, findMember, activeStatus);
     }
 
     //배달파티 조회: 검색어로 조회 ,필터 추가
@@ -336,6 +341,4 @@ public class DeliveryPartyService {
         PageRequest paging = PageRequest.of(cursor, PAGING_SIZE, Sort.by(Sort.Direction.ASC, PAGING_STANDARD));
         return deliveryPartyQueryRepository.getEndedDeliveryParties(userId, paging);
     }
-
-
 }
