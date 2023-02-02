@@ -195,7 +195,7 @@ public class DeliveryPartyService {
         //요청 보낸 사용자가 이미 파티멤버인지 조회,
         // 로직: 요청 사용자 id, partyId -> deliveryPartyMember 에서 같은 partyId와 memberId 같은 멤버 조회
         Optional<DeliveryPartyMember> optionalDeliveryPartyMember = deliveryPartyMemberRepository
-                .findDeliveryPartyMemberByMemberIdAndDeliveryPartyId(memberId, partyId);
+                .findDeliveryPartyMemberByMemberIdAndDeliveryPartyIdNotUseStatus(memberId, partyId);
         if(optionalDeliveryPartyMember.isPresent()){
             belongStatus = BelongStatus.Y;
             DeliveryPartyMember member = optionalDeliveryPartyMember.get();

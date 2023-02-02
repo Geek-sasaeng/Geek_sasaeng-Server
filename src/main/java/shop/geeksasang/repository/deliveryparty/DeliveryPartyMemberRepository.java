@@ -12,8 +12,8 @@ import java.util.Optional;
 @Repository
 public interface DeliveryPartyMemberRepository extends JpaRepository<DeliveryPartyMember, Integer> {
 
-    @Query("select dpm from DeliveryPartyMember dpm where dpm.status = 'ACTIVE' and dpm.party.id = :deliveryPartyId")
-    List<DeliveryPartyMember> findDeliveryPartyMembersByPartyId(int deliveryPartyId);
+    @Query("select dpm from DeliveryPartyMember dpm where dpm.participant.id = :memberId and dpm.party.id = :partyId and dpm.participant.status ='ACTIVE'")
+    Optional<DeliveryPartyMember> findDeliveryPartyMemberByMemberIdAndDeliveryPartyIdNotUseStatus(int memberId, int partyId);
 
     @Query("select dpm from DeliveryPartyMember dpm where dpm.status = 'ACTIVE' and dpm.participant.id = :memberId and dpm.party.id = :partyId and dpm.participant.status ='ACTIVE'")
     Optional<DeliveryPartyMember> findDeliveryPartyMemberByMemberIdAndDeliveryPartyId(int memberId, int partyId);
