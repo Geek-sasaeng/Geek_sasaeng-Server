@@ -174,7 +174,7 @@ public class DeliveryParty extends BaseEntity {
 
 
     // 배달파티 삭제
-    public void changeStatusToInactive(){
+    private void changeStatusToInactive(){
         super.setStatus(BaseStatus.INACTIVE);
     }
 
@@ -206,29 +206,45 @@ public class DeliveryParty extends BaseEntity {
         return deliveryPartyMembers.size() == 1;
     }
 
+    public void changeOrderStatusToOrderComplete(){
+        this.orderStatus = OrderStatus.ORDER_COMPLETE;
+    }
+
+    public void changeOrderStatusToDeliveryComplete(){
+        this.orderStatus = OrderStatus.DELIVERY_COMPLETE;
+    }
+
+    public boolean isNotDeleteMember(DeliveryPartyMember deliveryPartyMember) {
+        DeliveryPartyMember member = findDeliveryPartyMember(deliveryPartyMember);
+        return member.isActive();
+    }
+
     public DeliveryParty deleteParty() {
         minusMatching();
-        deleteNowChief();
+        deleteNowChiefInParticipants();
+        deleteParticipants();
         changeStatusToInactive();
         chief = null;
         return this;
     }
 
-    public DeliveryParty leaveNowChiefAndChangeChief(Member candidateForChief) {
+    private void deleteParticipants() {
+        for( DeliveryPartyMember deliveryPartyMember : deliveryPartyMembers ){
+            deliveryPartyMember.leaveDeliveryParty();
+        }
+    }
+
+    public DeliveryParty leaveNowChiefAndChangeChief(DeliveryPartyMember candidateForChief) {
         minusMatching();
-        deleteNowChief();
-        chief = candidateForChief;
+        deleteNowChiefInParticipants();
+        chief = candidateForChief.getParticipant();
         return this;
     }
 
     //관계를 끊어도 연관관계 처리를 애매하게 해서 데이터가 계속 남아있었다. 확실하게 다 지워버리자.
-    private void deleteNowChief(){
-        //partyMemberStatusChangeToInActive();
-
-        DeliveryPartyMember remove = deliveryPartyMembers.remove(0);
-
-        DeliveryPartyMember nowChief = remove;
-        nowChief.leaveDeliveryParty();
+    private void deleteNowChiefInParticipants(){
+        DeliveryPartyMember removedChief = findDeliveryPartyInChief();
+        removedChief.leaveDeliveryParty();
     }
 
     public void removeDeliveryPartyMember(DeliveryPartyMember deliveryPartyMember){
@@ -263,21 +279,22 @@ public class DeliveryParty extends BaseEntity {
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTICIPANT));
     }
 
+    private DeliveryPartyMember findDeliveryPartyInChief() {
+        return deliveryPartyMembers
+                .stream()
+                .filter(member -> member.getParticipant() == chief)
+                .findFirst()
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTICIPANT));
+    }
+
+
     private void minusMatching(){
         currentMatching--;
     }
 
-    public boolean isNotDeleteMember(DeliveryPartyMember deliveryPartyMember) {
-        DeliveryPartyMember member = findDeliveryPartyMember(deliveryPartyMember);
-        return member.isActive();
+    private DeliveryPartyMember findFirstActiveDeliveryPartyMember(){
+        return deliveryPartyMembers.stream()
+                .findFirst()
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTICIPANT));
     }
-
-    public void changeOrderStatusToOrderComplete(){
-        this.orderStatus = OrderStatus.ORDER_COMPLETE;
-    }
-
-    public void changeOrderStatusToDeliveryComplete(){
-        this.orderStatus = OrderStatus.DELIVERY_COMPLETE;
-    }
-
 }

@@ -65,7 +65,7 @@ public class DeliveryPartyServiceTest {
     @DisplayName("배달 파티 생성 성공 테스트")
     void successCreateDeliveryPartyTest(){
         //given
-        PostDeliveryPartyReq dto = PostDeliveryPartyFactory.createReq();
+        PostDeliveryPartyReq dto = PostDeliveryPartyFactory.createReq(1);
         int chiefId = 1;
         int dormitoryId = 1;
 
