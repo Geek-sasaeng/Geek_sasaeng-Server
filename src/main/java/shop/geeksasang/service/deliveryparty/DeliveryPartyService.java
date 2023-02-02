@@ -111,7 +111,7 @@ public class DeliveryPartyService {
         // 파티 생성 및 저장. 이렇게 의존성이 많이 발생하는데 더 좋은 방법이 있지 않을까?
         DeliveryParty deliveryParty = DeliveryParty.makeParty(dto, orderTimeCategory, dormitory, foodCategory, chief, hashTagList);
 
-        deliveryParty.addPartyMember(new DeliveryPartyMember(chief, deliveryParty));
+        DeliveryPartyMember deliveryPartyMember = new DeliveryPartyMember(chief, deliveryParty);
 
         //배달파티 저장
         deliveryPartyRepository.save(deliveryParty);
@@ -271,7 +271,7 @@ public class DeliveryPartyService {
         List<DeliveryPartyMember> deliveryPartyMembers = deliveryPartyMemberRepository.findDeliveryPartyMembersByPartyId(partyId);
 
         for( DeliveryPartyMember deliveryPartyMember : deliveryPartyMembers ){
-            deliveryPartyMember.changeStatusToInactive();
+            deliveryPartyMember.leaveDeliveryParty();
         }
 
         return PatchDeliveryPartyStatusRes.builder()
@@ -337,7 +337,7 @@ public class DeliveryPartyService {
     public List<GetRecentOngoingPartiesRes> getRecentOngoingDeliveryParties(int userId) {
         List<DeliveryParty> threeRecentDeliveryParty = deliveryPartyQueryRepository.findRecentOngoingDeliveryParty(userId);
         return threeRecentDeliveryParty.stream()
-                .map(deliveryParty -> GetRecentOngoingPartiesRes.toDto(deliveryParty))
+                .map(GetRecentOngoingPartiesRes::toDto)
                 .collect(Collectors.toList());
     }
 

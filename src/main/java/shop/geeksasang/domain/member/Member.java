@@ -203,8 +203,9 @@ public class Member extends BaseEntity {
         super.setStatus(BaseStatus.ACTIVE);
     }
 
-    public Member(String nickName) {
+    public Member(String nickName, Email email) {
         this.nickName = nickName;
+        this.email = email;
         super.setStatus(BaseStatus.ACTIVE);
     }
 
@@ -214,5 +215,34 @@ public class Member extends BaseEntity {
 
     public void updatePassword(String newPassword) {
         this.password = newPassword;
+    }
+
+
+    @Override
+    public String toString() {
+        return "Member{" +
+                "id=" + id +
+                ", loginId='" + loginId + '\'' +
+                ", nickName='" + nickName + '\'' +
+                ", password='" + password + '\'' +
+                ", university=" + university +
+                ", phoneNumber=" + phoneNumber +
+                ", email=" + email +
+                ", profileImgUrl='" + profileImgUrl + '\'' +
+                ", jwtToken='" + jwtToken + '\'' +
+                ", informationAgreeStatus='" + informationAgreeStatus + '\'' +
+                ", loginStatus=" + loginStatus +
+                ", memberLoginType=" + memberLoginType +
+                ", reportingMembers=" + reportingMembers +
+                ", reportedMembers=" + reportedMembers +
+                ", memberReportRecords=" + memberReportRecords +
+                ", deliverPartyReportRecords=" + deliverPartyReportRecords +
+                ", perDayReportingCount=" + perDayReportingCount +
+                ", reportedCount=" + reportedCount +
+                ", blocks=" + blocks +
+                ", dormitory=" + dormitory +
+                ", fcmToken='" + fcmToken + '\'' +
+                ", appleRefreshToken='" + appleRefreshToken + '\'' +
+                '}';
     }
 }

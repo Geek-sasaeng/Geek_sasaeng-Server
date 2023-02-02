@@ -6,6 +6,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.annotation.Commit;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 import shop.geeksasang.domain.deliveryparty.FoodCategory;
@@ -36,10 +37,13 @@ public abstract class IntegrationTest {
     @Autowired
     protected UniversityRepository universityRepository;
 
+
+
+
     @BeforeEach
     void beforeAll(){
         University ex = universityRepository.save(new University("예시대학교", "ex", "example"));
-        foodCategoryRepository.save(new FoodCategory(1, "한식"));
+        FoodCategory 한식 = foodCategoryRepository.save(new FoodCategory(1, "한식"));
         dormitoryRepository.save(new Dormitory(1, ex, "예시 1기숙사", new Location(1.22, 1.33)));
         hashTagRepository.save(new HashTag(1, "나눠먹기"));
     }
