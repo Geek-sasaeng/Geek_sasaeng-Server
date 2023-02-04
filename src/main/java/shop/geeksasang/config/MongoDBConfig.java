@@ -7,6 +7,7 @@ import org.springframework.data.mongodb.MongoDatabaseFactory;
 import org.springframework.data.mongodb.MongoTransactionManager;
 import org.springframework.data.mongodb.config.AbstractMongoClientConfiguration;
 import org.springframework.data.mongodb.config.EnableMongoAuditing;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.convert.DbRefResolver;
 import org.springframework.data.mongodb.core.convert.DefaultDbRefResolver;
 import org.springframework.data.mongodb.core.convert.DefaultMongoTypeMapper;
@@ -30,5 +31,10 @@ public class MongoDBConfig{
         MappingMongoConverter converter = new MappingMongoConverter(dbRefResolver, mongoMappingContext);
         converter.setTypeMapper(new DefaultMongoTypeMapper(null));
         return converter;
+    }
+
+    @Bean
+    public MongoTemplate mongoTemplate(MongoDatabaseFactory mongoDatabaseFactory) {
+        return new MongoTemplate(mongoDatabaseFactory);
     }
 }

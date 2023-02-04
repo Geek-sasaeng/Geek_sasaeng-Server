@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 
 
 @Document //@Document는객체를 몽고DB에 영속화시킴 = SpringDataJpa의 @Entity와 같은 역할
-@ToString
 @Getter
 @NoArgsConstructor
 public class PartyChatRoomMember {
@@ -99,5 +98,14 @@ public class PartyChatRoomMember {
 
     public LocalDateTime getLastChatAt(){
         return this.partyChatRoom.getLastChatAt();
+    }
+
+    @Override
+    public String toString() {
+        return "PartyChatRoomMember{" +
+                "id='" + id + '\'' +
+                ", memberId=" + memberId +
+                ", email='" + email + '\'' +
+                '}';
     }
 }

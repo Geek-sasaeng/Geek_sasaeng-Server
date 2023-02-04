@@ -19,17 +19,19 @@ public class GetPartyChatRoomRes {
     @ApiModelProperty(example = "데빈의 채팅방", value = "채팅방 정보 리스트")
     private String roomTitle;
 
-    @ApiModelProperty(example = "2023-01-03 11:00:12", value = "채팅방 최초 입장시간")
+    @ApiModelProperty(example = "2023-01-03 11:00:12", value = "마지막 채팅을 보낸 시간")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
-    private LocalDateTime enterTime;
+    private LocalDateTime lastChatTime;
 
-    public GetPartyChatRoomRes(String roomId, String roomTitle, LocalDateTime enterTime) {
+    public GetPartyChatRoomRes(String roomId, String roomTitle, LocalDateTime lastChatTime) {
         this.roomId = roomId;
         this.roomTitle = roomTitle;
-        this.enterTime = enterTime;
+        this.lastChatTime = lastChatTime;
     }
 
-    public static GetPartyChatRoomRes of(PartyChatRoom partyChatRoom, PartyChatRoomMember partyChatRoomMember){
-        return new GetPartyChatRoomRes(partyChatRoom.getId(), partyChatRoom.getTitle(), partyChatRoomMember.getEnterTime());
+    public static GetPartyChatRoomRes of(PartyChatRoom partyChatRoom){
+        return new GetPartyChatRoomRes(
+                partyChatRoom.getId(), partyChatRoom.getTitle(), partyChatRoom.getLastChatAt()
+        );
     }
 }

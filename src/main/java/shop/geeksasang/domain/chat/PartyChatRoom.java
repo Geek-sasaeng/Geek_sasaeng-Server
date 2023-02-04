@@ -53,12 +53,22 @@ public class PartyChatRoom extends ChatRoom{
         this.lastChatAt = lastChatAt;
     }
 
+
     @Override
     public String toString() {
-        return "DeliveryPartyChatRoom{" +
-                "id='" + id + '\'' +
-                ", baseEntityMongo=" + baseEntityMongo +
-                ", title='" + title + '\'' +
+        return "PartyChatRoom{" +
+                "title='" + title + '\'' +
+                ", chats=" + chats +
+                ", chief=" + chief +
+                ", participants=" + participants +
+                ", accountNumber='" + accountNumber + '\'' +
+                ", bank='" + bank + '\'' +
+                ", category='" + category + '\'' +
+                ", isFinish=" + isFinish +
+                ", maxMatching=" + maxMatching +
+                ", deliveryPartyId=" + deliveryPartyId +
+                ", orderStatus=" + orderStatus +
+                ", lastChatAt=" + lastChatAt +
                 '}';
     }
 

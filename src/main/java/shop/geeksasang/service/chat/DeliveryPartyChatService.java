@@ -8,6 +8,7 @@ import org.bson.types.ObjectId;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -61,10 +62,11 @@ public class DeliveryPartyChatService {
     private final AwsS3Service awsS3Service;
     private final DeliveryPartyMemberService deliveryPartyMemberService;
     private final DeliveryPartyRepository deliveryPartyRepository;
+    private final MongoTemplate mongoTemplate;
 
     private final ObjectMapper objectMapper;
 
-    private static final String PAGING_STANDARD = "enterTime";
+    private static final String PAGING_STANDARD = "lastChatAt";
 
     @Transactional(readOnly = false)
     public PartyChatRoomRes createChatRoom(int memberId, String title, String accountNumber, String bank, String category, Integer maxMatching, int deliveryPartyId){
@@ -249,13 +251,18 @@ public class DeliveryPartyChatService {
     public GetPartyChatRoomsRes findPartyChatRooms(int memberId, int cursor) {
 
         PageRequest page = PageRequest.of(cursor, 10, Sort.by(Sort.Direction.DESC, PAGING_STANDARD));
-        Slice<PartyChatRoomMember> members = partyChatRoomMemberRepository.findPartyChatRoomMemberByMemberId(memberId, page);
-        List<GetPartyChatRoomRes> result = members
-                .stream()
-                .map(member -> GetPartyChatRoomRes.of(member.getPartyChatRoom(), member))
+        Slice<PartyChatRoom> chatRooms = partyChatRoomRepository.findByParticipantsIn(memberId, page);
+        List<GetPartyChatRoomRes> result = chatRooms.stream()
+                .map(GetPartyChatRoomRes::of)
                 .collect(Collectors.toList());
 
-        return new GetPartyChatRoomsRes(result, members.isLast());
+       Slice<PartyChatRoomMember> members = partyChatRoomMemberRepository.findPartyChatRoomMemberByMemberId(memberId, page);
+//        List<GetPartyChatRoomRes> result = members
+//                .stream()
+//                .map(member -> GetPartyChatRoomRes.of(member.getPartyChatRoom(), member))
+//                .collect(Collectors.toList());
+
+        return new GetPartyChatRoomsRes(result, chatRooms.isLast());
     }
 
 
