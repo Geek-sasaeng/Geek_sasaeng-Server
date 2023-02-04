@@ -16,7 +16,7 @@ import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 
 @Configuration
 @EnableMongoAuditing
-public class MongoDBConfig{
+public class MongoDBConfig {
 
 
     @Autowired
@@ -31,10 +31,5 @@ public class MongoDBConfig{
         MappingMongoConverter converter = new MappingMongoConverter(dbRefResolver, mongoMappingContext);
         converter.setTypeMapper(new DefaultMongoTypeMapper(null));
         return converter;
-    }
-
-    @Bean
-    public MongoTemplate mongoTemplate(MongoDatabaseFactory mongoDatabaseFactory) {
-        return new MongoTemplate(mongoDatabaseFactory);
     }
 }

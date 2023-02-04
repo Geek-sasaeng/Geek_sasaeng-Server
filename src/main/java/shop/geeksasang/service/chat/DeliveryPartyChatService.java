@@ -62,7 +62,6 @@ public class DeliveryPartyChatService {
     private final AwsS3Service awsS3Service;
     private final DeliveryPartyMemberService deliveryPartyMemberService;
     private final DeliveryPartyRepository deliveryPartyRepository;
-    private final MongoTemplate mongoTemplate;
 
     private final ObjectMapper objectMapper;
 
@@ -255,12 +254,6 @@ public class DeliveryPartyChatService {
         List<GetPartyChatRoomRes> result = chatRooms.stream()
                 .map(GetPartyChatRoomRes::of)
                 .collect(Collectors.toList());
-
-       Slice<PartyChatRoomMember> members = partyChatRoomMemberRepository.findPartyChatRoomMemberByMemberId(memberId, page);
-//        List<GetPartyChatRoomRes> result = members
-//                .stream()
-//                .map(member -> GetPartyChatRoomRes.of(member.getPartyChatRoom(), member))
-//                .collect(Collectors.toList());
 
         return new GetPartyChatRoomsRes(result, chatRooms.isLast());
     }
