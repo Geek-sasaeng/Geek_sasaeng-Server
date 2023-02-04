@@ -1,6 +1,9 @@
 package shop.geeksasang.repository.chat;
 
 import org.bson.types.ObjectId;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.mongodb.repository.Update;
@@ -46,4 +49,19 @@ public interface PartyChatRoomRepository extends MongoRepository<PartyChatRoom, 
     @Query("{ '_id' : ?0 }")
     @Update("{ $set : { 'lastChatAt' : ?1 }}")
     void changeLastChatAt(ObjectId partyChatRoomId, LocalDateTime lastChatAt);
+
+    @Aggregation(pipeline ={
+            "{ $unwind : '$participants' } ",
+            "{ $lookup: { from : 'partyChatRoomMember', localField: 'participants', foreignField: '_id' , as : 'member' }} ",
+            "{ $match : { $and: [ { 'member.memberId' : { $eq : ?0 }} , { 'member.status' : { $eq : 'ACTIVE' }} ]}}"
+    })
+    Slice<PartyChatRoom> findByParticipantsIn(int memberId, Pageable pageable);
+
+
+//    @Aggregation(pipeline ={
+//            "{ $unwind : '$participants' } ",
+//            "{ $lookup: { from : 'partyChatRoomMember', localField: 'participants', foreignField: '_id' , as : 'member' }} ",
+//            "{ $match : { $and: [ { 'member.memberId' : { $eq : ?0 }} , { 'member.status' : { $eq : 'ACTIVE' }} ]}}"
+//    })
+//    List<PartyChatRoom> findByParticipantsIn(int memberId);
 }
