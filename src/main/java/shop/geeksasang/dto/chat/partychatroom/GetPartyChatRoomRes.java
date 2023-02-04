@@ -23,9 +23,9 @@ public class GetPartyChatRoomRes {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime enterTime;
 
-    public GetPartyChatRoomRes(String roomId, String title, LocalDateTime enterTime) {
+    public GetPartyChatRoomRes(String roomId, String roomTitle, LocalDateTime enterTime) {
         this.roomId = roomId;
-        this.roomTitle = title;
+        this.roomTitle = roomTitle;
         this.enterTime = enterTime;
     }
 

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import shop.geeksasang.domain.chat.PartyChatRoom;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -45,5 +46,4 @@ public interface PartyChatRoomRepository extends MongoRepository<PartyChatRoom, 
     @Query("{ '_id' : ?0 }")
     @Update("{ $set : { 'lastChatAt' : ?1 }}")
     void changeLastChatAt(ObjectId partyChatRoomId, LocalDateTime lastChatAt);
-
 }

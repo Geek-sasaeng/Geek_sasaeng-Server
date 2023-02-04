@@ -65,7 +65,7 @@ public class GlobalExceptionAdvice {
     @ExceptionHandler(Exception.class)
     public BaseResponse<BaseResponseStatus> allHandleException(Exception e) {
         log.error("Handle All Exception: {}", e.getMessage());
-        //e.printStackTrace();
+        e.printStackTrace();
         return new BaseResponse<>(BaseResponseStatus.INTERNAL_SERVER_ERROR);
     }
 }
