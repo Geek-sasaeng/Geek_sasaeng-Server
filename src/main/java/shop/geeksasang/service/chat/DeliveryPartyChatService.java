@@ -252,7 +252,7 @@ public class DeliveryPartyChatService {
         PageRequest page = PageRequest.of(cursor, 10, Sort.by(Sort.Direction.DESC, PAGING_STANDARD));
         Slice<PartyChatRoom> chatRooms = partyChatRoomRepository.findByParticipantsIn(memberId, page);
         List<GetPartyChatRoomRes> result = chatRooms.stream()
-                .map(GetPartyChatRoomRes::of)
+                .map(partyChatRoom -> GetPartyChatRoomRes.from(partyChatRoom, memberId))
                 .collect(Collectors.toList());
 
         return new GetPartyChatRoomsRes(result, chatRooms.isLast());

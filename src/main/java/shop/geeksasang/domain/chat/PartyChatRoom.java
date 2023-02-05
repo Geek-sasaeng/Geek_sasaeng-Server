@@ -1,10 +1,16 @@
 package shop.geeksasang.domain.chat;
 
+import antlr.BaseAST;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
+import shop.geeksasang.config.exception.BaseException;
+import shop.geeksasang.config.exception.response.BaseResponseStatus;
+import shop.geeksasang.config.response.BaseResponse;
+import shop.geeksasang.config.status.BaseStatus;
 import shop.geeksasang.config.status.OrderStatus;
+import shop.geeksasang.domain.deliveryparty.DeliveryPartyMember;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -112,5 +118,12 @@ public class PartyChatRoom extends ChatRoom{
 
     public void changeIsFinishToTrue(){
         this.isFinish = true;
+    }
+
+    public PartyChatRoomMember findMember(int memberId) {
+        return participants.stream()
+                .filter(partyChatRoomMember -> partyChatRoomMember.getMemberId() == memberId)
+                .findFirst()
+                .orElseThrow(()-> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTYCHATROOM_MEMBER));
     }
 }
