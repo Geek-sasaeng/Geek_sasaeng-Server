@@ -23,15 +23,21 @@ public class GetPartyChatRoomRes {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime lastChatTime;
 
-    public GetPartyChatRoomRes(String roomId, String roomTitle, LocalDateTime lastChatTime) {
+    @ApiModelProperty(example = "2023-01-03 11:00:12", value = "채팅방 최초 입장시간")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+    private LocalDateTime enterTime;
+
+
+    public GetPartyChatRoomRes(String roomId, String roomTitle, LocalDateTime lastChatTime, LocalDateTime enterTime) {
         this.roomId = roomId;
         this.roomTitle = roomTitle;
         this.lastChatTime = lastChatTime;
+        this.enterTime = enterTime;
     }
 
-    public static GetPartyChatRoomRes of(PartyChatRoom partyChatRoom){
+    public static GetPartyChatRoomRes from(PartyChatRoom partyChatRoom, int memberId) {
         return new GetPartyChatRoomRes(
-                partyChatRoom.getId(), partyChatRoom.getTitle(), partyChatRoom.getLastChatAt()
+                partyChatRoom.getId(), partyChatRoom.getTitle(), partyChatRoom.getLastChatAt(), partyChatRoom.findMember(memberId).getEnterTime()
         );
     }
 }
