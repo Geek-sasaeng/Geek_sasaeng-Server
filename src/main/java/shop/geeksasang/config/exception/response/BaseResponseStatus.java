@@ -84,6 +84,8 @@ public enum BaseResponseStatus {
     NOT_CHAT_ROOM_CHIEF(false,2025,"배달 파티 채팅방 방장이 아닙니다."),
     CANT_REMOVE_REMIT_MEMBER(false,2026,"송금을 완료한 멤버는 방에서 퇴장시킬 수 없습니다."),
     ALREADY_PARTY_FINISH(false, 2027 , "이미 마감한 파티입니다."),
+    EMPTY_DELIVERY_PARTY(false, 2028 , "빈 배달파티입니다."),
+
 
 
 

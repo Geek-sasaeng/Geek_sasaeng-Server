@@ -15,7 +15,4 @@ public class PatchLeaveChiefReq {
     @NotNull
     @ApiModelProperty(example = "1", value = "채팅방 ID 값" )
     private Integer partyId;
-
-    @ApiModelProperty(example = "neoneo", value = "유저 닉네임" )
-    private String nickName;
 }

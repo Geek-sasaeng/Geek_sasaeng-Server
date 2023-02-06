@@ -278,7 +278,7 @@ public class DeliveryPartyService {
     }
 
     @Transactional(readOnly = false)
-    public PatchLeaveChiefRes chiefLeaveDeliveryParty(int partyId, String nickName, int userId) {
+    public PatchLeaveChiefRes chiefLeaveDeliveryParty(int partyId, int userId) {
 
         Member attemptedChief = memberRepository.findMemberByIdAndStatus(userId)
                 .orElseThrow(() -> new BaseException(NOT_EXIST_USER));
@@ -295,10 +295,7 @@ public class DeliveryPartyService {
             return new PatchLeaveChiefRes(DELETE_PARTY);
         }
 
-        DeliveryPartyMember candidateForChief = deliveryPartyMemberRepository.findByDeliveryPartyMemberByIdAndNickName(partyId, nickName)
-                .orElseThrow(() -> new BaseException(NOT_EXISTS_DELIVERY_PARTY_PARTICIPANT));
-
-        findParty.leaveNowChiefAndChangeChief(candidateForChief);
+        findParty.leaveNowChiefAndChangeChief();
         return new PatchLeaveChiefRes(CHANGE_CHIEF);
     }
 

@@ -42,7 +42,7 @@ public class DeliveryParty extends BaseEntity {
     @JoinColumn(name="dormitory_id")
     private Dormitory dormitory;
 
-    @OneToMany(mappedBy ="deliveryParty", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy ="deliveryParty", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DeliveryPartyHashTag> deliveryPartyHashTags = new ArrayList<>();
 
     @OneToOne(fetch=FetchType.LAZY)
@@ -234,11 +234,19 @@ public class DeliveryParty extends BaseEntity {
         }
     }
 
-    public DeliveryParty leaveNowChiefAndChangeChief(DeliveryPartyMember candidateForChief) {
+    public DeliveryParty leaveNowChiefAndChangeChief() {
         minusMatching();
         deleteNowChiefInParticipants();
-        chief = candidateForChief.getParticipant();
+        DeliveryPartyMember candidateChief = findCandidateChief();
+        chief = candidateChief.getParticipant();
         return this;
+    }
+
+    private DeliveryPartyMember findCandidateChief() {
+        return deliveryPartyMembers.stream()
+                .filter(DeliveryPartyMember::isActive)
+                .findFirst()
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.EMPTY_DELIVERY_PARTY));
     }
 
     //관계를 끊어도 연관관계 처리를 애매하게 해서 데이터가 계속 남아있었다. 확실하게 다 지워버리자.
