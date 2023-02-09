@@ -12,6 +12,7 @@ import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.domain.auth.Email;
 import shop.geeksasang.domain.auth.PhoneNumber;
 import shop.geeksasang.domain.deliveryparty.DeliveryParty;
+import shop.geeksasang.domain.member.Grade;
 import shop.geeksasang.domain.member.Member;
 import shop.geeksasang.domain.university.Dormitory;
 import shop.geeksasang.domain.university.University;
@@ -26,6 +27,7 @@ import shop.geeksasang.dto.member.post.*;
 import shop.geeksasang.repository.auth.EmailRepository;
 import shop.geeksasang.repository.auth.PhoneNumberRepository;
 import shop.geeksasang.repository.deliveryparty.query.DeliveryPartyQueryRepository;
+import shop.geeksasang.repository.member.GradeRepository;
 import shop.geeksasang.repository.member.MemberRepository;
 import shop.geeksasang.repository.university.DormitoryRepository;
 import shop.geeksasang.repository.university.UniversityRepository;
@@ -56,6 +58,7 @@ public class MemberService {
     private final PhoneNumberRepository phoneNumberRepository;
     private final DormitoryRepository dormitoryRepository;
     private final DeliveryPartyQueryRepository deliveryPartyQueryRepository;
+    private final GradeRepository gradeRepository;
 
     private final SmsService smsService;
 
@@ -103,6 +106,11 @@ public class MemberService {
         member.changeStatusToActive();
         member.changeLoginStatusToNever(); // 로그인 안해본 상태 디폴트 저장
         member.changeProfileImgUrl("https://geeksasaeng-s3.s3.ap-northeast-2.amazonaws.com/5bc8d80a-580d-455a-a414-d0d2f9af2c9f-newProfileImg.png");// S3기본 프로필 이미지 저장
+        Grade grade = gradeRepository
+                .findById(1)
+                .orElseThrow(()-> new BaseException(NOT_EXISTS_GRADE));
+        member.changeGrade(grade);
+
         memberRepository.save(member);
         PostRegisterRes postRegisterRes = PostRegisterRes.toDto(member, email, phoneNumber);
         return postRegisterRes;
