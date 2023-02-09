@@ -115,6 +115,7 @@ public class DeliveryPartyChatService {
         Chat chat = null;
         if (chatType.equals("publish")) {
             chat = new Chat(content, partyChatRoom, isSystemMessage, partyChatRoomMember, profileImgUrl, readMembers);
+            partyChatRoomRepository.changeLastChatAt(new ObjectId(partyChatRoom.getId()), LocalDateTime.now());
         } else if (chatType.equals("read")) {
             chat = chatRepository.findByChatId(new ObjectId(chatId)).orElseThrow(() -> new BaseException(NOT_EXISTS_CHAT));
         }
@@ -134,8 +135,6 @@ public class DeliveryPartyChatService {
             e.printStackTrace();
         }
         mqController.sendMessage(saveChatJson, chatRoomId); // rabbitMQ 메시지 publish
-
-        partyChatRoomRepository.changeLastChatAt(new ObjectId(partyChatRoom.getId()), LocalDateTime.now()); //TODO: 시간이 맞는지 테스트 해봐야 함
     }
 
 

@@ -59,7 +59,7 @@ public class DeliveryPartyMemberController {
     }
     )
     @PatchMapping("/delivery-party/member")
-    public BaseResponse<String> patchDeliveryPartyMemberStatus(@Validated @RequestBody PatchLeaveMemberReq dto, HttpServletRequest request){
+    public BaseResponse<String> patchDeliveryPartyMemberStatus(@RequestBody @Validated  PatchLeaveMemberReq dto, HttpServletRequest request){
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
 
         String response = deliveryPartyMemberService.patchDeliveryPartyMemberStatus(dto.getPartyId(), jwtInfo.getUserId());
