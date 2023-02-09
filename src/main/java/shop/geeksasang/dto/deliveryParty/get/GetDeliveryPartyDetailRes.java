@@ -30,6 +30,9 @@ public class GetDeliveryPartyDetailRes {
     @ApiParam(value = "파티장 memberId")
     private int chiefId;
 
+    @ApiModelProperty(example = "신입생",value = "파티장 회원 등급")
+    private String chiefGrade;
+
     @ApiModelProperty(example = "http://geeksasaeng.shop/s3/neo.jpg", value = "파티장 프로필 이미지 url")
     private String chiefProfileImgUrl;
 
@@ -95,6 +98,7 @@ public class GetDeliveryPartyDetailRes {
     @ApiModelProperty(value = "이미 방을 나간 것인지 확인. 나간적이 있으면 false, 안나갔다면 true", example = "true")
     private boolean activeStatus;
 
+
     //빌더
     static public GetDeliveryPartyDetailRes toDto(
             DeliveryParty deliveryParty, boolean authorStatus, BelongStatus belongStatus, PartyChatRoom partyChatRoom, Member member, boolean activeStatus
@@ -123,6 +127,7 @@ public class GetDeliveryPartyDetailRes {
                 .partyChatRoomTitle(partyChatRoom.getTitle())
                 .isChief(deliveryParty.isChief(member))
                 .activeStatus(activeStatus)
+                .chiefGrade(deliveryParty.getChief().getGrade().getName())
                 .build();
     }
 
@@ -131,7 +136,7 @@ public class GetDeliveryPartyDetailRes {
             int id, String chief, int chiefId, String chiefProfileImgUrl, String foodCategory, boolean hashTag, String title, String content,
             LocalDateTime orderTime, int currentMatching, int maxMatching, MatchingStatus matchingStatus, String updatedAt, Double latitude,
             Double longitude, String storeUrl, boolean authorStatus, int dormitory, String uuid, BelongStatus belongStatus, String partyChatRoomId, String partyChatRoomTitle,
-            boolean isChief, boolean activeStatus
+            boolean isChief, boolean activeStatus, String chiefGrade
     ) {
         this.id = id;
         this.chief = chief;
@@ -157,5 +162,6 @@ public class GetDeliveryPartyDetailRes {
         this.partyChatRoomTitle = partyChatRoomTitle;
         this.authChief = isChief;
         this.activeStatus = activeStatus;
+        this.chiefGrade = chiefGrade;
     }
 }
