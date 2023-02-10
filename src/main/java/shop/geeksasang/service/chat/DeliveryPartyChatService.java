@@ -230,7 +230,7 @@ public class DeliveryPartyChatService {
         mqController.joinChatRoom(member.getId(), partyChatRoom.getId());         // rabbitmq 큐 생성 및 채팅방 exchange와 바인딩
 
         // 입장 시스템 메시지 전송
-        this.createChat(memberId, chatRoomId, member.getNickName()+"님이 입장하였습니다.", true, profileImgUrl, "publish", "none", false);
+        this.createChat(memberId, chatRoomId, member.getNickName()+"님이 입장했어요", true, profileImgUrl, "publish", "none", false);
 
 
         // participants의 개수와 maxMatching이 같아지면 isFinish = true;
@@ -382,7 +382,7 @@ public class DeliveryPartyChatService {
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_CHAT_ROOM));
 
         //시스템 메시지
-        Chat chat = new Chat(member.getNickName() + "님이 퇴장했습니다.", partyChatRoom, true, null, null, new ArrayList<>());
+        Chat chat = new Chat(member.getNickName() + "님이 퇴장했어요", partyChatRoom, true, null, null, new ArrayList<>());
         chat.addReadMember(memberId);// 읽은 멤버 추가
         Chat saveChat = chatRepository.save(chat);
         int unreadMemberCnt = saveChat.getUnreadMemberCnt(); // 안읽은 멤버 수 계산
@@ -442,7 +442,7 @@ public class DeliveryPartyChatService {
         partyChatRoomRepository.changeOrderStatusToOrderComplete(new ObjectId(roomId));
 
         //주문 완료 시스템 메시지
-        this.createChat(memberId, roomId, "주문이 완료되었습니다.", true, member.getProfileImgUrl(), "publish", "none", false);
+        this.createChat(memberId, roomId, "주문이 완료되었어요", true, member.getProfileImgUrl(), "publish", "none", false);
 
     }
 
