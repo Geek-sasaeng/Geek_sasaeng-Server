@@ -24,6 +24,7 @@ import shop.geeksasang.dto.chat.chatchief.DeleteMemberByChiefReq;
 
 import shop.geeksasang.dto.chat.PostChatImageRes;
 
+import shop.geeksasang.dto.chat.chatmember.GetPartyChatRoomMemberProfileRes;
 import shop.geeksasang.dto.chat.chatmember.GetPartyChatRoomMembersInfoRes;
 import shop.geeksasang.dto.chat.partychatroom.GetPartyChatRoomDetailRes;
 import shop.geeksasang.dto.chat.partychatroom.GetPartyChatRoomRes;
@@ -36,6 +37,7 @@ import shop.geeksasang.repository.chat.PartyChatRoomRepository;
 import shop.geeksasang.rabbitmq.MQController;
 import shop.geeksasang.repository.chat.ChatRepository;
 import shop.geeksasang.repository.deliveryparty.DeliveryPartyRepository;
+import shop.geeksasang.repository.member.GradeRepository;
 import shop.geeksasang.repository.member.MemberRepository;
 import shop.geeksasang.service.common.AwsS3Service;
 import shop.geeksasang.service.deliveryparty.DeliveryPartyMemberService;
@@ -62,6 +64,7 @@ public class DeliveryPartyChatService {
     private final AwsS3Service awsS3Service;
     private final DeliveryPartyMemberService deliveryPartyMemberService;
     private final DeliveryPartyRepository deliveryPartyRepository;
+    private final GradeRepository gradeRepository;
 
     private final ObjectMapper objectMapper;
 
@@ -512,6 +515,28 @@ public class DeliveryPartyChatService {
                     return GetPartyChatRoomMembersInfoRes.from(member, chatRoomMember);
                 })
                 .collect(Collectors.toList());
+    }
+    public GetPartyChatRoomMemberProfileRes getChatRoomMemberProfile(String chatRoomId, int memberId){
+        //채팅방 조회
+        PartyChatRoom partyChatRoom = partyChatRoomRepository.findByPartyChatRoomId(new ObjectId(chatRoomId))
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_CHAT_ROOM));
+
+        //채팅방 멤버 조회
+        PartyChatRoomMember chatRoomMember = partyChatRoomMemberRepository
+                .findByMemberIdAndChatRoomId(memberId, new ObjectId(chatRoomId))
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTYCHATROOM_MEMBER));
+
+        Boolean isChief = partyChatRoom.getChief().getId().equals(chatRoomMember.getId());
+
+        Member member = memberRepository.findMemberById(memberId)
+                .orElseThrow(() -> new BaseException(NOT_EXIST_USER));
+
+        //grade 조회
+        String grade = gradeRepository.findById(member.getGrade().getId())
+                .orElseThrow(()-> new BaseException(NOT_EXISTS_GRADE)).getName();
+
+        GetPartyChatRoomMemberProfileRes res = new GetPartyChatRoomMemberProfileRes(member.getNickName(),grade,isChief);
+        return res;
     }
 }
 // String exchange, String routingKey, Object message

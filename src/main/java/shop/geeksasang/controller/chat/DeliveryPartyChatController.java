@@ -254,4 +254,20 @@ public class DeliveryPartyChatController {
         List<GetPartyChatRoomMembersInfoRes> res = deliveryPartyChatService.getChatRoomMembersInfo(partyId, jwtInfo.getUserId(), roomId);
         return new BaseResponse<>(res);
     }
+
+    @ApiOperation(value = "채팅방 내 멤버 프로필 조회",notes = "채팅방 내 멤버 프로필 클릭 시 정보(등급,방장 여부) 조회할 수 있는 api")
+    @ApiResponses({
+            @ApiResponse(code = 1000 ,message ="요청에 성공하셨습니다."),
+            @ApiResponse(code = 4000 ,message ="서버 오류입니다."),
+            @ApiResponse(code = 2207 ,message ="채팅방이 존재하지 않습니다."),
+            @ApiResponse(code = 2208 ,message ="채팅방 멤버가 존재하지 않습니다."),
+            @ApiResponse(code = 2411 ,message ="등급 데이터가 존재하지 않습니다."),
+            @ApiResponse(code = 2204 ,message ="존재하지 않는 회원 id 입니다.")
+    })
+    @GetMapping("/{chatRoomId}/member-profile")
+    public BaseResponse<GetPartyChatRoomMemberProfileRes> getChatRoomMemberProfile(HttpServletRequest request, @PathVariable String chatRoomId){
+        JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
+        GetPartyChatRoomMemberProfileRes response = deliveryPartyChatService.getChatRoomMemberProfile(chatRoomId,jwtInfo.getUserId());
+        return new BaseResponse<>(response);
+    }
 }
