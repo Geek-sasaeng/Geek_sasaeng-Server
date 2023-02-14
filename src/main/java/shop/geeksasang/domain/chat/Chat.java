@@ -77,6 +77,9 @@ public class Chat implements Serializable {
     }
 
     public int getUnreadMemberCnt(){
+        if(this.partyChatRoom.getParticipants().size() - this.readMembers.size() < 0){
+            return 0;
+        }
         return this.partyChatRoom.getParticipants().size() - this.readMembers.size();
     }
 }
