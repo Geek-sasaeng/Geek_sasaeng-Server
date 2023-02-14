@@ -94,6 +94,10 @@ public class Member extends BaseEntity {
 
     private String appleRefreshToken;
 
+    @OneToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name = "grade_id")
+    private Grade grade; //회원등급
+
     // 생성자
     public Member (String loginId, String appleRefreshToken, String nickName, MemberLoginType memberLoginType){
         this.loginId = loginId;
@@ -133,6 +137,8 @@ public class Member extends BaseEntity {
     public void changeLoginStatusToNotNever(){
         this.loginStatus = LoginStatus.NOTNEVER;
     }
+
+    public void changeGrade(Grade grade){this.grade = grade;}
 
     public boolean containReportedMemberRecord(Member reportedMember) {
         for (MemberReportRecord memberReportRecord : memberReportRecords) {

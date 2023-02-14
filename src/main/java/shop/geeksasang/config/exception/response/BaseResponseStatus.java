@@ -125,6 +125,7 @@ public enum BaseResponseStatus {
     INVALID_FCMTOKEN(false, 2408, "유효하지 않은 fcm 토큰입니다."),
     NOT_EXISTS_MATCHING_FINISH_PARTY(false,2409,"마감된 배달파티를 찾을 수 없습니다."),
     NOT_EXISTS_FINISH_CHAT_ROOM(false,2410,"마감된 채팅방을 찾을 수 없습니다."),
+    NOT_EXISTS_GRADE(false,2411, "등급 데이터가 존재하지 않습니다."),
 
 
     /**
