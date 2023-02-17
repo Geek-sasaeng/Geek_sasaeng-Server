@@ -33,12 +33,10 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class AppleServiceImpl implements AppleService {
+public class AppleServiceImpl {
 
     private final AppleUtils appleUtils;
-    //TODO:private final UserService userService;
     private final MemberService memberService;
-    //TODO:private final UserRepository userRepository;
     private final MemberRepository memberRepository;
 
     @Value("${APPLE.AUD}")
@@ -47,7 +45,6 @@ public class AppleServiceImpl implements AppleService {
     /**
      * 유효한 id_token인 경우 client_secret 생성
      */
-    @Override
     public String getAppleClientSecret(String id_token) throws NoSuchAlgorithmException {
 
         if (appleUtils.verifyIdentityToken(id_token)) {
@@ -60,7 +57,6 @@ public class AppleServiceImpl implements AppleService {
     /**
      * code 또는 refresh_token가 유효한지 Apple Server에 검증 요청
      */
-    @Override
     @Transactional
     public TokenResponse requestCodeValidations(ServicesResponse serviceResponse, String refresh_token) throws NoSuchAlgorithmException {
 
@@ -70,7 +66,6 @@ public class AppleServiceImpl implements AppleService {
         String client_secret = getAppleClientSecret(serviceResponse.getId_token());
 
         JSONObject user = new JSONObject(serviceResponse.getUser());
-        //User saveduser = null;
         Member saveduser = null;
 
         // 이메일 추출
@@ -121,7 +116,6 @@ public class AppleServiceImpl implements AppleService {
     /**
      * Apple login page 호출을 위한 Meta 정보 가져오기
      */
-    @Override
     public Map<String, String> getLoginMetaInfo() {
         return appleUtils.getMetaInfo();
     }
@@ -129,7 +123,6 @@ public class AppleServiceImpl implements AppleService {
     /**
      * id_token에서 payload 데이터 가져오기
      */
-    @Override
     public String getPayload(String id_token) {
         return appleUtils.decodeFromIdToken(id_token).toString();
     }

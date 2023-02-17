@@ -1,34 +1,36 @@
 package shop.geeksasang.controller.applelogin.controller;
 
 import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import shop.geeksasang.config.response.BaseResponse;
 import shop.geeksasang.controller.applelogin.model.*;
-import shop.geeksasang.controller.applelogin.service.AppleService;
+import shop.geeksasang.controller.applelogin.service.AppleServiceImpl;
+import shop.geeksasang.utils.jwt.NoIntercept;
 
 import java.security.NoSuchAlgorithmException;
 
+@RequiredArgsConstructor
 @Controller
 public class AppleController {
 
     private Logger logger = LoggerFactory.getLogger(AppleController.class);
 
-    @Autowired
-    AppleService appleService;
+    private final AppleServiceImpl appleService;
 
     /**
      * Apple 회원가입
      * privateKey 로 사용자 개인 정보와 refreshToken 발급받기
      * @return
      */
+
+    @NoIntercept
     @ApiOperation(value = "회원가입")
-    @PostMapping(value = "/sign-up/apple")
+    @PostMapping(value = "/apple-login")
     @ResponseBody
     public BaseResponse<TokenResponse> signUpApple(@RequestBody ServicesResponse servicesResponse) throws NoSuchAlgorithmException {
 
