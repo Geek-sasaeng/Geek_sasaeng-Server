@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import shop.geeksasang.config.type.MemberLoginType;
+import shop.geeksasang.domain.member.Grade;
 import shop.geeksasang.domain.member.Member;
 
 @NoArgsConstructor
@@ -18,8 +19,13 @@ public class CreateUserAppleReq {
     //UserType userType;
     MemberLoginType memberLoginType;
 
-    public static Member toEntityUserApple(CreateUserAppleReq createUserAppleReq){
-        Member user = new Member(createUserAppleReq.loginId, createUserAppleReq.refreshToken, createUserAppleReq.name, createUserAppleReq.memberLoginType);
-        return user;
+    public static Member toEntityUserApple(CreateUserAppleReq createUserAppleReq, Grade grade){
+        return new Member(
+                createUserAppleReq.loginId,
+                createUserAppleReq.refreshToken,
+                createUserAppleReq.name,
+                createUserAppleReq.memberLoginType,
+                grade
+        );
     }
 }

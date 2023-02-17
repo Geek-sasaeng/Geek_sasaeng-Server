@@ -13,6 +13,8 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.ReadOnlyJWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 
+import kotlin.RequiresOptIn;
+import lombok.RequiredArgsConstructor;
 import net.minidev.json.JSONObject;
 import org.bouncycastle.util.io.pem.PemObject;
 import org.bouncycastle.util.io.pem.PemReader;
@@ -21,6 +23,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.messaging.support.ErrorMessage;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestBody;
 import shop.geeksasang.controller.applelogin.model.Key;
 import shop.geeksasang.controller.applelogin.model.Keys;
 import shop.geeksasang.controller.applelogin.model.TokenResponse;
@@ -40,37 +43,35 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
+@RequiredArgsConstructor
 public class AppleUtils {
 
     @Value("${APPLE.PUBLICKEY.URL}")
-    private String APPLE_PUBLIC_KEYS_URL;
+    private final String APPLE_PUBLIC_KEYS_URL;
 
     @Value("${APPLE.ISS}")
-    private String ISS;
+    private final String ISS;
 
     @Value("${APPLE.AUD}")
-    private String AUD;
+    private final String AUD;
 
     @Value("${APPLE.TEAM.ID}")
-    private String TEAM_ID;
+    private final String TEAM_ID;
 
     @Value("${APPLE.KEY.ID}")
-    private String KEY_ID;
+    private final String KEY_ID;
 
     @Value("${APPLE.KEY.PATH}")
-    private String KEY_PATH;
+    private final String KEY_PATH;
 
     @Value("${APPLE.AUTH.TOKEN.URL}")
-    private String AUTH_TOKEN_URL;
+    private final String AUTH_TOKEN_URL;
 
     @Value("${APPLE.WEBSITE.URL}")
-    private String APPLE_WEBSITE_URL;
+    private final String APPLE_WEBSITE_URL;
 
     private final ObjectMapper objectMapper;
 
-    public AppleUtils(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
-    }
 
     /**
      * User가 Sign in with Apple 요청(https://appleid.apple.com/auth/authorize)으로 전달받은 id_token을 이용한 최초 검증
