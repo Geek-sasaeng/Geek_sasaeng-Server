@@ -3,14 +3,15 @@ package shop.geeksasang.controller.applelogin.model;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Setter
 @NoArgsConstructor
+@ToString
 public class UserObject {
 
     private Name name;
     private String email;
-
 
     public UserObject(Name name, String email) {
         this.name = name;

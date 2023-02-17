@@ -66,7 +66,6 @@ public class AppleServiceImpl {
 
         System.out.println("serviceResponse = " + serviceResponse.toString());
         UserObject user = serviceResponse.getUser();
-        //User saveduser = null;
         Member saveduser = null;
 
         // 이메일 추출
