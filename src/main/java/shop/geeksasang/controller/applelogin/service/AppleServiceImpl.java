@@ -65,7 +65,7 @@ public class AppleServiceImpl {
         String client_secret = getAppleClientSecret(serviceResponse.getId_token());
 
         System.out.println("serviceResponse = " + serviceResponse.toString());
-        UserObject user = serviceResponse.getUser().get(0);
+        UserObject user = serviceResponse.getUser();
         //User saveduser = null;
         Member saveduser = null;
 
