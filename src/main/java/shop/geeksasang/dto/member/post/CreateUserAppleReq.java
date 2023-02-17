@@ -20,13 +20,12 @@ public class CreateUserAppleReq {
     MemberLoginType memberLoginType;
 
     public static Member toEntityUserApple(CreateUserAppleReq createUserAppleReq, Grade grade){
-        Member user = new Member(
+        return new Member(
                 createUserAppleReq.loginId,
                 createUserAppleReq.refreshToken,
                 createUserAppleReq.name,
                 createUserAppleReq.memberLoginType,
                 grade
         );
-        return user;
     }
 }

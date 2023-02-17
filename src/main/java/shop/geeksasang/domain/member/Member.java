@@ -107,6 +107,8 @@ public class Member extends BaseEntity {
         this.perDayReportingCount=0;
         this.reportedCount=0;
         super.setStatus(BaseStatus.ACTIVE);
+        this.grade = grade;
+        this.loginStatus = LoginStatus.NEVER;
         this.profileImgUrl = "https://geeksasaeng-s3.s3.ap-northeast-2.amazonaws.com/5bc8d80a-580d-455a-a414-d0d2f9af2c9f-newProfileImg.png";
     }
 
@@ -252,5 +254,9 @@ public class Member extends BaseEntity {
                 ", fcmToken='" + fcmToken + '\'' +
                 ", appleRefreshToken='" + appleRefreshToken + '\'' +
                 '}';
+    }
+
+    public void notNeberLoginStatus() {
+        this.loginStatus = LoginStatus.NOTNEVER;
     }
 }

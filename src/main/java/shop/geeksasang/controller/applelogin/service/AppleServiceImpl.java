@@ -17,13 +17,17 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.config.exception.response.BaseResponseStatus;
+import shop.geeksasang.config.status.LoginStatus;
 import shop.geeksasang.config.type.MemberLoginType;
 import shop.geeksasang.controller.applelogin.model.*;
 import shop.geeksasang.controller.applelogin.util.AppleUtils;
 import shop.geeksasang.domain.member.Member;
+import shop.geeksasang.dto.login.JwtInfo;
+import shop.geeksasang.dto.login.post.PostLoginRes;
 import shop.geeksasang.dto.member.post.CreateUserAppleReq;
 import shop.geeksasang.repository.member.MemberRepository;
 import shop.geeksasang.service.member.MemberService;
+import shop.geeksasang.utils.jwt.JwtService;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
@@ -37,6 +41,7 @@ public class AppleServiceImpl {
     private final AppleUtils appleUtils;
     private final MemberService memberService;
     private final MemberRepository memberRepository;
+    private final JwtService jwtService;
     private final ObjectMapper objectMapper;
 
     @Value("${APPLE.AUD}")
@@ -64,13 +69,39 @@ public class AppleServiceImpl {
         return tokenResponse;
     }
 
-    public TokenResponse login(String idToken, String refreshToken) throws NoSuchAlgorithmException {
+    public PostLoginRes login(String idToken, String refreshToken) throws NoSuchAlgorithmException {
         String clientSecret = getAppleClientSecret(idToken);
         TokenResponse tokenResponse = appleUtils.validateAnExistingRefreshToken(clientSecret, refreshToken);
-        Member findUser = memberRepository.findByAppleRefreshToken(refreshToken)
+        Member member= memberRepository.findByAppleRefreshToken(refreshToken)
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXIST_USER));
-        tokenResponse.setUserId(findUser.getId());
-        return tokenResponse;
+        tokenResponse.setUserId(member.getId());
+
+        JwtInfo vo = JwtInfo.builder()
+                .userId(member.getId())
+                .universityId(0)
+                .build();
+
+        String jwt = jwtService.createJwt(vo);
+        if(member.getLoginStatus() == LoginStatus.NEVER){
+            return PostLoginRes.builder()
+                    .jwt(jwt)
+                    .nickName(member.getNickName())
+                    .loginStatus(member.getLoginStatus())
+                    .dormitoryId(member.getDormitory().getId())
+                    .dormitoryName(member.getDormitory().getName())
+                    .profileImgUrl(member.getProfileImgUrl())
+                    .fcmToken(member.getFcmToken())
+                    .memberId(member.getId())
+                    .build();
+        }
+        return PostLoginRes.builder()
+                .jwt(jwt)
+                .nickName(member.getNickName())
+                .loginStatus(member.getLoginStatus())
+                .profileImgUrl(member.getProfileImgUrl())
+                .fcmToken(member.getFcmToken())
+                .memberId(member.getId())
+                .build();
     }
 
     /**

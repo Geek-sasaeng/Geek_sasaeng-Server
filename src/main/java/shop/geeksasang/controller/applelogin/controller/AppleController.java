@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import shop.geeksasang.config.response.BaseResponse;
 import shop.geeksasang.controller.applelogin.model.*;
 import shop.geeksasang.controller.applelogin.service.AppleServiceImpl;
+import shop.geeksasang.dto.login.post.PostLoginRes;
 import shop.geeksasang.utils.jwt.NoIntercept;
 
 import javax.servlet.http.HttpServletRequest;
@@ -59,7 +60,7 @@ public class AppleController {
     @ApiOperation(value = "로그인")
     @PostMapping(value = "/log-in/apple")
     @ResponseBody
-    public BaseResponse<TokenResponse> logInApple(@RequestBody AppleLoginReq appleLoginReq) throws NoSuchAlgorithmException {
+    public BaseResponse<PostLoginRes> logInApple(@RequestBody AppleLoginReq appleLoginReq) throws NoSuchAlgorithmException {
 
         if (appleLoginReq == null) { // TODO 예외처리
             System.out.println("요청 값이 없습니다.");
