@@ -1,6 +1,7 @@
 package shop.geeksasang.controller.applelogin.service;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,10 +17,7 @@ import org.springframework.web.client.RestTemplate;
 import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.config.exception.response.BaseResponseStatus;
 import shop.geeksasang.config.type.MemberLoginType;
-import shop.geeksasang.controller.applelogin.model.Account;
-import shop.geeksasang.controller.applelogin.model.DeleteUserReq;
-import shop.geeksasang.controller.applelogin.model.ServicesResponse;
-import shop.geeksasang.controller.applelogin.model.TokenResponse;
+import shop.geeksasang.controller.applelogin.model.*;
 import shop.geeksasang.controller.applelogin.util.AppleUtils;
 import shop.geeksasang.domain.member.Member;
 import shop.geeksasang.dto.member.post.CreateUserAppleReq;
@@ -38,6 +36,7 @@ public class AppleServiceImpl {
     private final AppleUtils appleUtils;
     private final MemberService memberService;
     private final MemberRepository memberRepository;
+    private final ObjectMapper objectMapper;
 
     @Value("${APPLE.AUD}")
     String client_id;
@@ -65,17 +64,17 @@ public class AppleServiceImpl {
         String code = serviceResponse.getCode();
         String client_secret = getAppleClientSecret(serviceResponse.getId_token());
 
-        JSONObject user = new JSONObject(serviceResponse.getUser());
+        System.out.println("serviceResponse = " + serviceResponse.toString());
+        UserObject user = serviceResponse.getUser().get(0);
         //User saveduser = null;
         Member saveduser = null;
 
         // 이메일 추출
-        String email = user.getAsString("email");
+        String email = user.getEmail();
 
         // 이름 추출
-        Map<String, String> name = (Map<String, String>) user.get("name");
-        String lastName = name.get("lastName");
-        String firstName = name.get("firstName");
+        String lastName = user.getLastName();
+        String firstName = user.getFirstName();
         String fullName = lastName + firstName;
 
         // 만약 처음 인증하는 유저여서  refresh 토큰 없으면 client_secret, authorization_code로 검증
