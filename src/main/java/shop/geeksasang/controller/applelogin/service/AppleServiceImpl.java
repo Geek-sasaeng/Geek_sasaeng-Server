@@ -46,8 +46,7 @@ public class AppleServiceImpl {
      * code 또는 refresh_token가 유효한지 Apple Server에 검증 요청
      */
     @Transactional
-    public TokenResponse requestCodeValidations(ServicesResponse serviceResponse) throws NoSuchAlgorithmException {
-
+    public TokenResponse signUp(ServicesResponse serviceResponse) throws NoSuchAlgorithmException {
 
         String code = serviceResponse.getCode();
         String client_secret = getAppleClientSecret(serviceResponse.getId_token());
@@ -58,7 +57,6 @@ public class AppleServiceImpl {
         String name = user.getLastName() + user.getFirstName();
         TokenResponse tokenResponse = appleUtils.validateAuthorizationGrantCode(client_secret, code);
 
-        // 유저 생성
         CreateUserAppleReq createUserAppleReq = new CreateUserAppleReq(email, tokenResponse.getRefresh_token(), name, MemberLoginType.APPLE_USER);
         Member member = memberService.createUserApple(createUserAppleReq);
         tokenResponse.setUserId(member.getId());

@@ -46,7 +46,7 @@ public class AppleController {
         servicesResponse.setUser(objectMapper.readValue(user,UserObject.class));
         servicesResponse.setState(state);
 
-        TokenResponse tokenResponse = appleService.requestCodeValidations(servicesResponse);
+        TokenResponse tokenResponse = appleService.signUp(servicesResponse);
         return new BaseResponse<>(tokenResponse);
     }
 

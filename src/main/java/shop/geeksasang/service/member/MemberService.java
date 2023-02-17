@@ -366,11 +366,10 @@ public class MemberService {
     // 애플 유저 가입
     @Transactional(readOnly = false)
     public Member createUserApple(CreateUserAppleReq createUserAppleReq){
-
         if(memberRepository.existsByLoginId(createUserAppleReq.getLoginId())) throw new BaseException(DUPLICATE_USER_LOGIN_ID);
-
-        //User user = userRepository.save(CreateUserAppleReq.toEntityUserApple(createUserAppleReq));
-        Member user = memberRepository.save(CreateUserAppleReq.toEntityUserApple(createUserAppleReq));
+        Grade grade = gradeRepository.findById(1)
+                .orElseThrow(()-> new BaseException(NOT_EXISTS_GRADE));
+        Member user = memberRepository.save(CreateUserAppleReq.toEntityUserApple(createUserAppleReq, grade));
         return user;
     }
 
