@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 public class AppleLoginReq {
 
     @NotEmpty
-    private String id_token; // identity_token
+    private String idToken; // identity_token
 
     @NotEmpty
     private String refreshToken; // 로그인 처리를 위한 token
