@@ -1,6 +1,7 @@
 package shop.geeksasang.controller.applelogin.service;
 
 
+import antlr.Token;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import net.minidev.json.JSONObject;
@@ -42,73 +43,35 @@ public class AppleServiceImpl {
     String client_id;
 
     /**
-     * 유효한 id_token인 경우 client_secret 생성
-     */
-    public String getAppleClientSecret(String id_token) throws NoSuchAlgorithmException {
-
-        if (appleUtils.verifyIdentityToken(id_token)) {
-            return appleUtils.createClientSecret();
-        }
-
-        return null;
-    }
-
-    /**
      * code 또는 refresh_token가 유효한지 Apple Server에 검증 요청
      */
     @Transactional
-    public TokenResponse requestCodeValidations(ServicesResponse serviceResponse, String refresh_token) throws NoSuchAlgorithmException {
+    public TokenResponse requestCodeValidations(ServicesResponse serviceResponse) throws NoSuchAlgorithmException {
 
-        TokenResponse tokenResponse = new TokenResponse();
 
         String code = serviceResponse.getCode();
         String client_secret = getAppleClientSecret(serviceResponse.getId_token());
 
-        System.out.println("serviceResponse = " + serviceResponse.toString());
-        UserObject user = serviceResponse.getUser();
-        Member saveduser = null;
-
-        // 이메일 추출
-        String email = user.getEmail();
-
-        // 이름 추출
-        String lastName = user.getLastName();
-        String firstName = user.getFirstName();
-        String fullName = lastName + firstName;
-
         // 만약 처음 인증하는 유저여서  refresh 토큰 없으면 client_secret, authorization_code로 검증
-        if (client_secret != null && code != null && refresh_token == null) {
-            tokenResponse = appleUtils.validateAuthorizationGrantCode(client_secret, code);
+        UserObject user = serviceResponse.getUser();
+        String email = user.getEmail();
+        String name = user.getLastName() + user.getFirstName();
+        TokenResponse tokenResponse = appleUtils.validateAuthorizationGrantCode(client_secret, code);
 
-            // 유저 생성
-            CreateUserAppleReq createUserAppleReq = new CreateUserAppleReq(email, tokenResponse.getRefresh_token(),fullName, MemberLoginType.APPLE_USER);
-            //TODO:saveduser = userService.createUserApple(createUserAppleReq);
-            saveduser = memberService.createUserApple(createUserAppleReq);
-        }
-        // 이미 refresh 토큰 있는 유저면 client_secret, refresh_token로 검증
-        else if (client_secret != null && code == null && refresh_token != null) {
-            tokenResponse = appleUtils.validateAnExistingRefreshToken(client_secret, refresh_token);
-        }
+        // 유저 생성
+        CreateUserAppleReq createUserAppleReq = new CreateUserAppleReq(email, tokenResponse.getRefresh_token(), name, MemberLoginType.APPLE_USER);
+        Member member = memberService.createUserApple(createUserAppleReq);
+        tokenResponse.setUserId(member.getId());
 
-        //TODO:tokenResponse.setAccount(new Account(serviceResponse.getState(), code, tokenResponse.getId_token(), user, serviceResponse.getIdentifier(), serviceResponse.getHasRequirementInfo()));
-        //TODO:tokenResponse.setUserType(MemberLoginType.APPLE_USER.toString());
-        //TODO:tokenResponse.setUserStatus(UserStatus.LOGIN);
+        return tokenResponse;
+    }
 
-        // userId 설정
-        if(refresh_token == null){
-            tokenResponse.setUserId(saveduser.getId());
-            //TODO:saveduser.changeUserStatus(UserStatus.LOGIN);
-        }
-        else{
-            //TODO:User findUser = userRepository.findByAppleRefreshToken(refresh_token)
-                    //.orElseThrow(() -> new NotFoundUserException());
-            Member findUser = memberRepository.findByAppleRefreshToken(refresh_token)
-                    .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXIST_USER));
-            tokenResponse.setUserId(findUser.getId());
-            //TODO:tokenResponse.setUserName(findUser.getName());
-            //TODO:findUser.changeUserStatus(UserStatus.LOGIN);
-        }
-
+    public TokenResponse login(String idToken, String refreshToken) throws NoSuchAlgorithmException {
+        String clientSecret = getAppleClientSecret(idToken);
+        TokenResponse tokenResponse = appleUtils.validateAnExistingRefreshToken(clientSecret, refreshToken);
+        Member findUser = memberRepository.findByAppleRefreshToken(refreshToken)
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXIST_USER));
+        tokenResponse.setUserId(findUser.getId());
         return tokenResponse;
     }
 
@@ -124,6 +87,18 @@ public class AppleServiceImpl {
      */
     public String getPayload(String id_token) {
         return appleUtils.decodeFromIdToken(id_token).toString();
+    }
+
+    /**
+     * 유효한 id_token인 경우 client_secret 생성
+     */
+    private String getAppleClientSecret(String id_token) throws NoSuchAlgorithmException {
+
+        if (appleUtils.verifyIdentityToken(id_token)) {
+            return appleUtils.createClientSecret();
+        }
+
+        return null;
     }
 
 //    /**
