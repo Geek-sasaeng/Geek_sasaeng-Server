@@ -1,5 +1,7 @@
 package shop.geeksasang.controller.applelogin.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -22,6 +24,7 @@ public class AppleController {
     private Logger logger = LoggerFactory.getLogger(AppleController.class);
 
     private final AppleServiceImpl appleService;
+    private final ObjectMapper objectMapper;
 
     /**
      * Apple 회원가입
@@ -35,13 +38,12 @@ public class AppleController {
     @ResponseBody
     public BaseResponse<TokenResponse> signUpApple(
             String state, String code, String user, @RequestParam("id_token") String idToken
-    ) throws NoSuchAlgorithmException {
+    ) throws NoSuchAlgorithmException, JsonProcessingException {
 
         ServicesResponse servicesResponse = new ServicesResponse();
         servicesResponse.setCode(code);
         servicesResponse.setId_token(idToken);
-        System.out.println("user = " + user);
-        servicesResponse.setUser(null);
+        servicesResponse.setUser(objectMapper.readValue(user,UserObject.class));
         servicesResponse.setState(state);
 
         TokenResponse tokenResponse = appleService.requestCodeValidations(servicesResponse, null);
