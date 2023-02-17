@@ -12,6 +12,7 @@ import shop.geeksasang.controller.applelogin.model.*;
 import shop.geeksasang.controller.applelogin.service.AppleServiceImpl;
 import shop.geeksasang.utils.jwt.NoIntercept;
 
+import javax.servlet.http.HttpServletRequest;
 import java.security.NoSuchAlgorithmException;
 
 @RequiredArgsConstructor
@@ -33,13 +34,14 @@ public class AppleController {
     @PostMapping(value = "/apple-login")
     @ResponseBody
     public BaseResponse<TokenResponse> signUpApple(
-            String state, String code, UserObject user, @RequestParam("id_token") String idToken
+            String state, String code, String user, @RequestParam("id_token") String idToken,
     ) throws NoSuchAlgorithmException {
 
         ServicesResponse servicesResponse = new ServicesResponse();
         servicesResponse.setCode(code);
         servicesResponse.setId_token(idToken);
-        servicesResponse.setUser(user);
+        System.out.println("user = " + user);
+        servicesResponse.setUser(null);
         servicesResponse.setState(state);
 
         TokenResponse tokenResponse = appleService.requestCodeValidations(servicesResponse, null);
