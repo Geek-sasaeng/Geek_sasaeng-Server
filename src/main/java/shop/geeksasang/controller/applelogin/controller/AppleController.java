@@ -66,8 +66,8 @@ public class AppleController {
             System.out.println("요청 값이 없습니다.");
             return null;
         }
-        TokenResponse tokenResponse = appleService.login(appleLoginReq.getIdToken(), appleLoginReq.getRefreshToken());
-        return new BaseResponse<>(tokenResponse);
+        PostLoginRes res = appleService.login(appleLoginReq.getIdToken(), appleLoginReq.getRefreshToken());
+        return new BaseResponse<>(res);
     }
 
     /**
