@@ -32,7 +32,7 @@ public class AppleController {
     @ApiOperation(value = "회원가입")
     @PostMapping(value = "/apple-login")
     @ResponseBody
-    public BaseResponse<TokenResponse> signUpApple(@RequestBody ServicesResponse servicesResponse) throws NoSuchAlgorithmException {
+    public BaseResponse<TokenResponse> signUpApple(ServicesResponse servicesResponse) throws NoSuchAlgorithmException {
 
         if (servicesResponse == null) { // TODO 예외처리
             System.out.println("요청 값이 없습니다.");
