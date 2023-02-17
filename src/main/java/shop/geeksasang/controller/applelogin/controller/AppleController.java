@@ -46,7 +46,7 @@ public class AppleController {
         servicesResponse.setUser(objectMapper.readValue(user,UserObject.class));
         servicesResponse.setState(state);
 
-        TokenResponse tokenResponse = appleService.requestCodeValidations(servicesResponse, null);
+        TokenResponse tokenResponse = appleService.requestCodeValidations(servicesResponse);
         return new BaseResponse<>(tokenResponse);
     }
 
@@ -64,7 +64,7 @@ public class AppleController {
             System.out.println("요청 값이 없습니다.");
             return null;
         }
-        TokenResponse tokenResponse = appleService.requestCodeValidations(appleLoginReq.getServicesResponse(), appleLoginReq.getRefreshToken());
+        TokenResponse tokenResponse = appleService.login(appleLoginReq.getId_token(), appleLoginReq.getRefreshToken());
         return new BaseResponse<>(tokenResponse);
     }
 

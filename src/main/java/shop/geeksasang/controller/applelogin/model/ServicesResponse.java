@@ -4,8 +4,6 @@ package shop.geeksasang.controller.applelogin.model;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @NoArgsConstructor
 public class ServicesResponse {
