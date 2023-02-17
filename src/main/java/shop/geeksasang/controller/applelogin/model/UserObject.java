@@ -2,7 +2,9 @@ package shop.geeksasang.controller.applelogin.model;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Setter
 @NoArgsConstructor
 public class UserObject {
 
@@ -16,6 +18,7 @@ public class UserObject {
     }
 
     @NoArgsConstructor
+    @Setter
     @Getter
     static class Name{
         private String firstName;
