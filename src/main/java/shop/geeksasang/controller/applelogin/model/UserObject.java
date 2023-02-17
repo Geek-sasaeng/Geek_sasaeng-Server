@@ -17,18 +17,6 @@ public class UserObject {
         this.email = email;
     }
 
-    @NoArgsConstructor
-    @Setter
-    @Getter
-    static class Name{
-        private String firstName;
-        private String lastName;
-
-        public Name(String firstName, String lastName) {
-            this.firstName = firstName;
-            this.lastName = lastName;
-        }
-    }
 
     public Name getName() {
         return name;
@@ -39,11 +27,11 @@ public class UserObject {
     }
 
     public String getLastName(){
-        return getLastName();
+        return name.getLastName();
     }
 
     public String getFirstName(){
-        return getFirstName();
+        return name.getFirstName();
     }
 }
 
