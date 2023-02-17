@@ -55,6 +55,7 @@ public class AppleController {
      *
      * @return
      */
+    @NoIntercept
     @ApiOperation(value = "로그인")
     @PostMapping(value = "/log-in/apple")
     @ResponseBody
@@ -64,7 +65,7 @@ public class AppleController {
             System.out.println("요청 값이 없습니다.");
             return null;
         }
-        TokenResponse tokenResponse = appleService.login(appleLoginReq.getId_token(), appleLoginReq.getRefreshToken());
+        TokenResponse tokenResponse = appleService.login(appleLoginReq.getIdToken(), appleLoginReq.getRefreshToken());
         return new BaseResponse<>(tokenResponse);
     }
 
