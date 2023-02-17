@@ -43,34 +43,32 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-@RequiredArgsConstructor
 public class AppleUtils {
 
     @Value("${APPLE.PUBLICKEY.URL}")
-    private final String APPLE_PUBLIC_KEYS_URL;
+    private String APPLE_PUBLIC_KEYS_URL;
 
     @Value("${APPLE.ISS}")
-    private final String ISS;
+    private String ISS;
 
     @Value("${APPLE.AUD}")
-    private final String AUD;
+    private String AUD;
 
     @Value("${APPLE.TEAM.ID}")
-    private final String TEAM_ID;
+    private String TEAM_ID;
 
     @Value("${APPLE.KEY.ID}")
-    private final String KEY_ID;
+    private String KEY_ID;
 
     @Value("${APPLE.KEY.PATH}")
-    private final String KEY_PATH;
+    private String KEY_PATH;
 
     @Value("${APPLE.AUTH.TOKEN.URL}")
-    private final String AUTH_TOKEN_URL;
+    private String AUTH_TOKEN_URL;
 
     @Value("${APPLE.WEBSITE.URL}")
-    private final String APPLE_WEBSITE_URL;
+    private String APPLE_WEBSITE_URL;
 
-    private final ObjectMapper objectMapper;
 
 
     /**
