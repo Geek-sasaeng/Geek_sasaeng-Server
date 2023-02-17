@@ -60,7 +60,6 @@ public class AppleServiceImpl {
     public TokenResponse requestCodeValidations(ServicesResponse serviceResponse, String refresh_token) throws NoSuchAlgorithmException {
 
         TokenResponse tokenResponse = new TokenResponse();
-        System.out.println("serviceResponse = " + serviceResponse.toString());
         String code = serviceResponse.getCode();
         String client_secret = getAppleClientSecret(serviceResponse.getId_token());
 
