@@ -48,3 +48,4 @@ out/
 #추가
 AuthKey_QLHFNT37VK.p8
 application.properties
+**.p8

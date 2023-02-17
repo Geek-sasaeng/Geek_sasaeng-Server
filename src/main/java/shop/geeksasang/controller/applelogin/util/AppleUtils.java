@@ -3,6 +3,7 @@ package shop.geeksasang.controller.applelogin.util;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.api.Http;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.ECDSASigner;
 import com.nimbusds.jose.crypto.RSASSAVerifier;
@@ -15,8 +16,10 @@ import com.nimbusds.jwt.SignedJWT;
 import net.minidev.json.JSONObject;
 import org.bouncycastle.util.io.pem.PemObject;
 import org.bouncycastle.util.io.pem.PemReader;
+import org.bson.json.JsonObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.messaging.support.ErrorMessage;
 import org.springframework.stereotype.Component;
 import shop.geeksasang.controller.applelogin.model.Key;
 import shop.geeksasang.controller.applelogin.model.Keys;
@@ -62,6 +65,12 @@ public class AppleUtils {
 
     @Value("${APPLE.WEBSITE.URL}")
     private String APPLE_WEBSITE_URL;
+
+    private final ObjectMapper objectMapper;
+
+    public AppleUtils(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
 
     /**
      * User가 Sign in with Apple 요청(https://appleid.apple.com/auth/authorize)으로 전달받은 id_token을 이용한 최초 검증
@@ -218,6 +227,35 @@ public class AppleUtils {
         return getTokenResponse(tokenRequest);
     }
 
+
+    public JSONObject createAuthToken(String code) throws JsonProcessingException {
+        String clientSecret = createClientSecret();
+        Map<String, String> tokenRequest = new HashMap<>();
+        tokenRequest.put("client_id", AUD);
+        tokenRequest.put("client_secret", clientSecret);
+        tokenRequest.put("code", code);
+        tokenRequest.put("grant_type", "authorization_code");
+        String apiResponse = HttpClientUtils.doPost(APPLE_PUBLIC_KEYS_URL, tokenRequest);
+        JSONObject tokenResponse = objectMapper.readValue(apiResponse, JSONObject.class);
+        if (tokenResponse.get("error") == null ) {
+
+            JSONObject payload = decodeFromIdToken(tokenResponse.getAsString("id_token"));
+            //  회원 고유 식별자
+            String appleUniqueNo = payload.getAsString("sub");
+            return tokenResponse;
+            /**
+
+             TO DO : 리턴받은 appleUniqueNo 해당하는 회원정보 조회 후 로그인 처리 후 메인으로 이동
+
+             */
+
+
+            // 애플 정보조회 실패
+        } else {
+            throw new RuntimeException("애플 정보조회에 실패했습니다.");
+        }
+    }
+
     /**
      * 유효한 refresh_token 인지 Apple Server에 확인 요청
      * Apple Document URL ‣ https://developer.apple.com/documentation/sign_in_with_apple/generate_and_validate_tokens
@@ -301,4 +339,7 @@ public class AppleUtils {
         return null;
     }
 
+    public String getApplePublicAuthUrl(){
+        return ISS + "/auth/authorize?client_id=" + AUD + "&redirect_uri=" + APPLE_WEBSITE_URL + "&response_type=code id_token&scope=name email&response_mode=form_post";
+    }
 }

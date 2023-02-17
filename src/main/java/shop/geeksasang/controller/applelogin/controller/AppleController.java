@@ -1,42 +1,52 @@
 package shop.geeksasang.controller.applelogin.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import shop.geeksasang.config.response.BaseResponse;
 import shop.geeksasang.controller.applelogin.model.*;
-import shop.geeksasang.controller.applelogin.service.AppleService;
+import shop.geeksasang.controller.applelogin.service.AppleServiceImpl;
+import shop.geeksasang.utils.jwt.NoIntercept;
 
+import javax.servlet.http.HttpServletRequest;
 import java.security.NoSuchAlgorithmException;
 
+@RequiredArgsConstructor
 @Controller
 public class AppleController {
 
     private Logger logger = LoggerFactory.getLogger(AppleController.class);
 
-    @Autowired
-    AppleService appleService;
+    private final AppleServiceImpl appleService;
+    private final ObjectMapper objectMapper;
 
     /**
      * Apple 회원가입
      * privateKey 로 사용자 개인 정보와 refreshToken 발급받기
      * @return
      */
-    @ApiOperation(value = "회원가입")
-    @PostMapping(value = "/sign-up/apple")
-    @ResponseBody
-    public BaseResponse<TokenResponse> signUpApple(@RequestBody ServicesResponse servicesResponse) throws NoSuchAlgorithmException {
 
-        if (servicesResponse == null) { // TODO 예외처리
-            System.out.println("요청 값이 없습니다.");
-            return null;
-        }
-        TokenResponse tokenResponse = appleService.requestCodeValidations(servicesResponse, null);
+    @NoIntercept
+    @ApiOperation(value = "회원가입")
+    @PostMapping(value = "/apple-login")
+    @ResponseBody
+    public BaseResponse<TokenResponse> signUpApple(
+            String state, String code, String user, @RequestParam("id_token") String idToken
+    ) throws NoSuchAlgorithmException, JsonProcessingException {
+
+        ServicesResponse servicesResponse = new ServicesResponse();
+        servicesResponse.setCode(code);
+        servicesResponse.setId_token(idToken);
+        servicesResponse.setUser(objectMapper.readValue(user,UserObject.class));
+        servicesResponse.setState(state);
+
+        TokenResponse tokenResponse = appleService.requestCodeValidations(servicesResponse);
         return new BaseResponse<>(tokenResponse);
     }
 
@@ -45,6 +55,7 @@ public class AppleController {
      *
      * @return
      */
+    @NoIntercept
     @ApiOperation(value = "로그인")
     @PostMapping(value = "/log-in/apple")
     @ResponseBody
@@ -54,7 +65,7 @@ public class AppleController {
             System.out.println("요청 값이 없습니다.");
             return null;
         }
-        TokenResponse tokenResponse = appleService.requestCodeValidations(appleLoginReq.getServicesResponse(), appleLoginReq.getRefreshToken());
+        TokenResponse tokenResponse = appleService.login(appleLoginReq.getIdToken(), appleLoginReq.getRefreshToken());
         return new BaseResponse<>(tokenResponse);
     }
 
