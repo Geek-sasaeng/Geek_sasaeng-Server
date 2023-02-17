@@ -516,7 +516,7 @@ public class DeliveryPartyChatService {
                 })
                 .collect(Collectors.toList());
     }
-    public GetPartyChatRoomMemberProfileRes getChatRoomMemberProfile(String chatRoomId, int memberId){
+    public GetPartyChatRoomMemberProfileRes getChatRoomMemberProfile(String chatRoomId, int userId,int memberId){
         //채팅방 조회
         PartyChatRoom partyChatRoom = partyChatRoomRepository.findByPartyChatRoomId(new ObjectId(chatRoomId))
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_CHAT_ROOM));

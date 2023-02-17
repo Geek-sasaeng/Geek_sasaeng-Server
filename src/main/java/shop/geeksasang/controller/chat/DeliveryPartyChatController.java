@@ -264,10 +264,10 @@ public class DeliveryPartyChatController {
             @ApiResponse(code = 2411 ,message ="등급 데이터가 존재하지 않습니다."),
             @ApiResponse(code = 2204 ,message ="존재하지 않는 회원 id 입니다.")
     })
-    @GetMapping("/{chatRoomId}/member-profile")
-    public BaseResponse<GetPartyChatRoomMemberProfileRes> getChatRoomMemberProfile(HttpServletRequest request, @PathVariable String chatRoomId){
+    @GetMapping("/{chatRoomId}/{memberId}/member-profile")
+    public BaseResponse<GetPartyChatRoomMemberProfileRes> getChatRoomMemberProfile(HttpServletRequest request, @PathVariable String chatRoomId, @PathVariable Integer memberId){
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
-        GetPartyChatRoomMemberProfileRes response = deliveryPartyChatService.getChatRoomMemberProfile(chatRoomId,jwtInfo.getUserId());
+        GetPartyChatRoomMemberProfileRes response = deliveryPartyChatService.getChatRoomMemberProfile(chatRoomId,jwtInfo.getUserId(),memberId);
         return new BaseResponse<>(response);
     }
 }
