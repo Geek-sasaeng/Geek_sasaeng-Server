@@ -34,7 +34,7 @@ public class AppleController {
     @PostMapping(value = "/apple-login")
     @ResponseBody
     public BaseResponse<TokenResponse> signUpApple(
-            String state, String code, String user, @RequestParam("id_token") String idToken,
+            String state, String code, String user, @RequestParam("id_token") String idToken
     ) throws NoSuchAlgorithmException {
 
         ServicesResponse servicesResponse = new ServicesResponse();
