@@ -231,6 +231,7 @@ public class DeliveryPartyChatController {
             @ApiResponse(code = 2617 ,message ="배달 완료가 불가능한 유저입니다."),
             @ApiResponse(code = 2207 ,message ="채팅방이 존재하지 않습니다."),
             @ApiResponse(code = 2408 ,message ="유효하지 않은 fcm 토큰입니다."),
+            @ApiResponse(code = 2411 ,message ="등급 데이터가 존재하지 않습니다."),
             @ApiResponse(code = 4000 ,message ="서버 오류입니다.")
     })
     @PatchMapping("/delivery-complete")
