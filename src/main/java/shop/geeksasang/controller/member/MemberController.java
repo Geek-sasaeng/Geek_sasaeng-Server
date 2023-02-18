@@ -113,11 +113,11 @@ public class MemberController {
             @ApiResponse(code = 2011 ,message = "비밀번호가 틀립니다."),
             @ApiResponse(code = 4000, message = "서버 오류입니다.")
     })
-    @PatchMapping("/account-delete/{id}")
-    public BaseResponse<String> updateMemberStatus(@PathVariable("id") int id, @RequestBody @Valid PatchMemberStatusReq dto) {
-        memberService.updateMemberStatus(id, dto);
-        String response = "회원 탈퇴가 성공하였습니다.";
-        return new BaseResponse<>(response);
+    @PatchMapping("/account-delete")
+    public BaseResponse<String> updateMemberStatus(HttpServletRequest request) {
+        JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
+        memberService.updateMemberStatus(jwtInfo.getUserId());
+        return new BaseResponse<>("회원 탈퇴가 성공하였습니다.");
     }
 
     // 수정: 멤버 정보 수정하기 (마이페이지)

@@ -260,17 +260,14 @@ public class DeliveryParty extends BaseEntity {
         partyMemberStatusChangeToInActive(deliveryPartyMember);
         minusMatching();
 
-        // 현재인원 == (최대인원-1) 이면 MatchingStatus를 FINISH -> ONGOING으로 수정
-        if(currentMatching == maxMatching -1){
-            changeMatchingStatusToOngoing();
-        }
-
         //참여 인원이 0명이면 파티 삭제
         if(currentMatching <= 0){
             changeStatusToInactive();
         }
-        for (DeliveryPartyMember partyMember : deliveryPartyMembers) {
-            System.out.println("partyMember = " + partyMember.toString());
+
+        // 현재인원 == (최대인원-1) 이면 MatchingStatus를 FINISH -> ONGOING으로 수정
+        if(currentMatching < maxMatching){
+            changeMatchingStatusToOngoing();
         }
     }
 
