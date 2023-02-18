@@ -16,11 +16,5 @@ public class TokenResponse {
     private String id_token;
     private String refresh_token;
     private String token_type;
-
-    //추가적인 응답 필드
-    //private String userType; // ex)apple
-    //private Account account;
     private int userId;
-    //private String userName;
-    //TODO:private UserStatus userStatus;
 }

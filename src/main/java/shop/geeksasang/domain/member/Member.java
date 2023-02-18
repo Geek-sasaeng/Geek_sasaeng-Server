@@ -99,13 +99,17 @@ public class Member extends BaseEntity {
     private Grade grade; //회원등급
 
     // 생성자
-    public Member (String loginId, String appleRefreshToken, String nickName, MemberLoginType memberLoginType){
+    public Member (String loginId, String appleRefreshToken, String nickName, MemberLoginType memberLoginType, Grade grade){
         this.loginId = loginId;
         this.appleRefreshToken = appleRefreshToken;
         this.nickName = nickName;
         this.memberLoginType = memberLoginType;
         this.perDayReportingCount=0;
         this.reportedCount=0;
+        super.setStatus(BaseStatus.ACTIVE);
+        this.grade = grade;
+        this.loginStatus = LoginStatus.NEVER;
+        this.profileImgUrl = "https://geeksasaeng-s3.s3.ap-northeast-2.amazonaws.com/5bc8d80a-580d-455a-a414-d0d2f9af2c9f-newProfileImg.png";
     }
 
     //-// 연관 관계 편의 메서드 //-//
@@ -250,5 +254,9 @@ public class Member extends BaseEntity {
                 ", fcmToken='" + fcmToken + '\'' +
                 ", appleRefreshToken='" + appleRefreshToken + '\'' +
                 '}';
+    }
+
+    public void notNeberLoginStatus() {
+        this.loginStatus = LoginStatus.NOTNEVER;
     }
 }

@@ -210,32 +210,10 @@ public class MemberService {
 
     // 회원 탈퇴하기
     @Transactional(readOnly = false)
-    public Member updateMemberStatus(int id, PatchMemberStatusReq dto) {
-        Optional<Member> memberEntity = memberRepository.findMemberById(id);
-        // 해당 유저 X
-        if (memberRepository.findMemberById(id).isEmpty()) {
-            throw new BaseException(NOT_EXISTS_PARTICIPANT);
-        }
-        // 이미 탈퇴한 회원
-        if (memberEntity.get().getStatus().toString().equals("INACTIVE")) {
-            throw new BaseException(ALREADY_INACTIVE_USER);
-        }
-        // 입력한 두 비밀번호가 다를 때
-        if (!dto.getCheckPassword().equals(dto.getPassword())) {
-            throw new BaseException(DIFFRENT_PASSWORDS);
-        }
-        // 입력한 비밀번호가 틀렸을 때
-        String password = SHA256.encrypt(dto.getPassword());
-        if (!memberEntity.get().getPassword().equals(password)) {
-            throw new BaseException(NOT_EXISTS_PASSWORD);
-        }
-
-        Member member = memberRepository.findMemberById(id)
+    public void updateMemberStatus(int id) {
+        Member member = memberRepository.findMemberByIdAndStatus(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저는 존재하지 않습니다. id=" + id));
-
         member.changeStatusToInactive();
-        memberRepository.save(member);
-        return member;
     }
 
     // 수정: FCM토큰 수정
@@ -368,11 +346,10 @@ public class MemberService {
     // 애플 유저 가입
     @Transactional(readOnly = false)
     public Member createUserApple(CreateUserAppleReq createUserAppleReq){
-
         if(memberRepository.existsByLoginId(createUserAppleReq.getLoginId())) throw new BaseException(DUPLICATE_USER_LOGIN_ID);
-
-        //User user = userRepository.save(CreateUserAppleReq.toEntityUserApple(createUserAppleReq));
-        Member user = memberRepository.save(CreateUserAppleReq.toEntityUserApple(createUserAppleReq));
+        Grade grade = gradeRepository.findById(1)
+                .orElseThrow(()-> new BaseException(NOT_EXISTS_GRADE));
+        Member user = memberRepository.save(CreateUserAppleReq.toEntityUserApple(createUserAppleReq, grade));
         return user;
     }
 
