@@ -91,9 +91,9 @@ public class MemberController {
     // 중복 확인: 닉네임
     @ApiOperation(value = "중복 확인: 닉네임", notes = "사용자의 닉네임을 이용해서 중복확인을 한다.")
     @ApiResponses({
-            @ApiResponse(code = 1202 , message = "사용 가능한 닉네임입니다."),
-            @ApiResponse(code = 2600 , message = "중복된 닉네임입니다."),
-            @ApiResponse(code = 4000 , message = "서버 오류입니다.")
+            @ApiResponse(code = 1202 , message = "사용 가능한 닉네임입니다"),
+            @ApiResponse(code = 2600 , message = "중복된 닉네임입니다"),
+            @ApiResponse(code = 4000 , message = "서버 오류입니다")
     })
     @PostMapping("/nickname-duplicated")
     @NoIntercept // jwt 검사 제외
