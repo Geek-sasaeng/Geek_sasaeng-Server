@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
@@ -41,11 +42,11 @@ import shop.geeksasang.repository.member.GradeRepository;
 import shop.geeksasang.repository.member.MemberRepository;
 import shop.geeksasang.service.common.AwsS3Service;
 import shop.geeksasang.service.deliveryparty.DeliveryPartyMemberService;
+import shop.geeksasang.utils.event.DeliveryCompletedEvent;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -69,6 +70,9 @@ public class DeliveryPartyChatService {
     private final ObjectMapper objectMapper;
 
     private static final String PAGING_STANDARD = "lastChatAt";
+
+    private final ApplicationEventPublisher applicationEventPublisher;
+
 
     @Transactional(readOnly = false)
     public PartyChatRoomRes createChatRoom(int memberId, String title, String accountNumber, String bank, String category, Integer maxMatching, int deliveryPartyId){
@@ -494,6 +498,9 @@ public class DeliveryPartyChatService {
 
         //mongo - OrderStatus 값 바꾸기
         partyChatRoomRepository.changeOrderStatusToDeliveryComplete(new ObjectId(roomId));
+
+        //이벤트 처리(배달완료 된 배달파티 파악해서 회원 등급 조정)
+        applicationEventPublisher.publishEvent(new DeliveryCompletedEvent(memberId));
 
         String chiefId = partyChatRoom.getChief().getId();
         //방장 여부 확인
