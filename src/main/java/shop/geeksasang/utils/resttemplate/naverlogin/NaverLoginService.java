@@ -37,8 +37,9 @@ public class NaverLoginService {
                 throw new BaseException(NAVER_LOGIN_ERROR);
             }
         }
-        if (phoneNumber == null || loginId == null)
+        if (phoneNumber == null || loginId == null){
             throw new BaseException(NAVER_LOGIN_ERROR);
+        }
         return data;
     }
 }
