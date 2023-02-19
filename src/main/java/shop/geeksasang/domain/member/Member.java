@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicUpdate;
 import shop.geeksasang.config.domain.*;
 import shop.geeksasang.config.status.LoginStatus;
 import shop.geeksasang.config.status.BaseStatus;
@@ -26,7 +27,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-//@DynamicUpdate //변경된 것만 바꿔준다.
+@DynamicUpdate //변경된 것만 바꿔준다.
 @Entity
 @Getter
 public class Member extends BaseEntity {
