@@ -52,6 +52,6 @@ public class EmailController {
     @PostMapping("/check")
     public BaseResponse<PostEmailCertificationRes> checkEmailValid(@RequestBody @Valid PostEmailCertificationReq req) {
         PostEmailCertificationRes postEmailRes = emailService.checkEmailCertification(req);
-        return new BaseResponse<PostEmailCertificationRes>(postEmailRes);
+        return new BaseResponse<>(postEmailRes);
     }
 }

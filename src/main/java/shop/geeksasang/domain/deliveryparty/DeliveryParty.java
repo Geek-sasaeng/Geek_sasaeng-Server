@@ -140,6 +140,11 @@ public class DeliveryParty extends BaseEntity {
         this.setStatus(BaseStatus.ACTIVE);
 
         dormitory.addParty(this);
+
+        if(hashTagList.isEmpty()){
+            deliveryPartyHashTags.clear();
+        }
+
         for (HashTag hashTag : hashTagList) {
             DeliveryPartyHashTag deliveryPartyHashTag = new DeliveryPartyHashTag(this, hashTag);
             hashTag.addDeliveryPartyHashTag(deliveryPartyHashTag);
