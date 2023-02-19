@@ -16,6 +16,7 @@ import shop.geeksasang.domain.location.Location;
 import shop.geeksasang.domain.university.Dormitory;
 import shop.geeksasang.domain.university.University;
 import shop.geeksasang.repository.auth.EmailRepository;
+import shop.geeksasang.repository.member.GradeRepository;
 import shop.geeksasang.repository.member.MemberRepository;
 import shop.geeksasang.repository.university.DormitoryRepository;
 import shop.geeksasang.repository.deliveryparty.FoodCategoryRepository;
@@ -56,4 +57,7 @@ public abstract class IntegrationTest {
 
     @Autowired
     protected EmailRepository emailRepository;
+
+    @Autowired
+    protected GradeRepository gradeRepository;
 }

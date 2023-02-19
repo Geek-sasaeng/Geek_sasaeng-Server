@@ -213,10 +213,11 @@ public class Member extends BaseEntity {
         super.setStatus(BaseStatus.ACTIVE);
     }
 
-    public Member(String nickName, Email email) {
+    public Member(String nickName, Email email, Grade grade) {
         this.nickName = nickName;
         this.email = email;
         super.setStatus(BaseStatus.ACTIVE);
+        this.grade = grade;
     }
 
     public void updateDormitory(Dormitory dormitory) {

@@ -113,9 +113,6 @@ public class PartyChatRoom extends ChatRoom{
         return changeChief;
     }
 
-    public void changeLastChatAt(LocalDateTime lastChatAt){
-        this.lastChatAt = lastChatAt;}
-
     public void changeIsFinishToTrue(){
         this.isFinish = true;
     }
