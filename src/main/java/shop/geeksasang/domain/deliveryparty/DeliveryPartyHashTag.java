@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import shop.geeksasang.config.domain.BaseEntity;
+import shop.geeksasang.config.status.BaseStatus;
 
 import javax.persistence.*;
 
@@ -31,5 +32,6 @@ public class DeliveryPartyHashTag extends BaseEntity {
     public DeliveryPartyHashTag(DeliveryParty deliveryParty, HashTag hashTag){
         this.deliveryParty=deliveryParty;
         this.hashTag=hashTag;
+        super.setStatus(BaseStatus.ACTIVE);
     }
 }
