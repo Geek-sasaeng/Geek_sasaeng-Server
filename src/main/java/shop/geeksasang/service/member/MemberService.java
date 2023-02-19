@@ -405,8 +405,8 @@ public class MemberService {
         //1. 배달완료 한 배달파티 게시글 세기
         int count = deliveryPartyMemberRepository.findByMemberIdAndParties(memberId).size();
 
-        Grade returningGrade = gradeRepository.findById(3).orElseThrow(()-> new BaseException(NOT_EXISTS_GRADE)); //복학생
-        Grade graduateGrade = gradeRepository.findById(2).orElseThrow(()-> new BaseException(NOT_EXISTS_GRADE)); //졸업생
+        Grade returningGrade = gradeRepository.findById(2).orElseThrow(()-> new BaseException(NOT_EXISTS_GRADE)); //복학생
+        Grade graduateGrade = gradeRepository.findById(3).orElseThrow(()-> new BaseException(NOT_EXISTS_GRADE)); //졸업생
 
         //2. 횟수 비교 후 등급 수정
         if(count >= graduateGrade.getStandard()){ //졸업생(20)
