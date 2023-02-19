@@ -270,7 +270,26 @@ public class MemberService {
                 .map(deliveryParty -> GetRecentOngoingPartiesRes.toDto(deliveryParty))
                 .collect(Collectors.toList());
 
-        return GetMemberRes.toDto(member, partiesRes);
+        Grade returningGrade = gradeRepository.findById(2).orElseThrow(()-> new BaseException(NOT_EXISTS_GRADE)); //복학생
+        Grade graduateGrade = gradeRepository.findById(3).orElseThrow(()-> new BaseException(NOT_EXISTS_GRADE)); //졸업생
+        String nextGradeAndRemainCredits="";
+
+        //배달완료 한 배달파티 게시글 세기
+        int count = deliveryPartyMemberRepository.findByMemberIdAndParties(memberId).size();
+        Grade currentGrade = member.getGrade();
+
+        if(currentGrade.getId()==1){ //신입
+            nextGradeAndRemainCredits = "복학까지 "+(returningGrade.getStandard() - count)+"학점 남았어요";
+        }
+        if(currentGrade.getId()==2){//복학
+            nextGradeAndRemainCredits = "졸업까지 "+(graduateGrade.getStandard() - count)+"학점 남았어요";
+        }
+        if(currentGrade.getId()==3){ //졸업생
+            //todo : 기획 관련 답변 오면 수정해야 함.
+            nextGradeAndRemainCredits = "졸업까지 0학점 남았어요";
+        }
+
+        return GetMemberRes.toDto(member, partiesRes,nextGradeAndRemainCredits);
     }
 
     //조회 : 회원 정보 조회 (마이페이지)
