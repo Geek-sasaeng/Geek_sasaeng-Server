@@ -38,6 +38,13 @@ public class Email extends BaseEntity {
         this.emailValidStatus = ValidStatus.SUCCESS;
     }
 
+
+    public Email(String address) {
+        this.address = address;
+        this.setStatus(BaseStatus.ACTIVE);
+        this.emailValidStatus = ValidStatus.SUCCESS;
+    }
+
     //테스트용
     public Email(String address, ValidStatus validStatus){
         this.address = address;
