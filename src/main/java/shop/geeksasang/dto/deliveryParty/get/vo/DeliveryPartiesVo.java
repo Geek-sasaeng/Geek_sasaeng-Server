@@ -75,5 +75,4 @@ public class DeliveryPartiesVo {
         }
         return true;
     }
-
 }

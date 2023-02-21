@@ -63,7 +63,7 @@ public class DeliveryPartyQueryRepository {
         }
 
         List<DeliveryPartiesVo> deliveryPartiesVoList = DeliveryPartyList.stream()
-                .map(deliveryParty -> DeliveryPartiesVo.toDto(deliveryParty))
+                .map(DeliveryPartiesVo::toDto)
                 .collect(Collectors.toList());
 
         return new GetDeliveryPartiesRes(isFinalPage, deliveryPartiesVoList);
