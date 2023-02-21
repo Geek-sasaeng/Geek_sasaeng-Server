@@ -33,9 +33,8 @@ public class EmailController {
             ,@ApiResponse(code = 2803, message = "유효하지 않은 인증번호 입니다.")
             ,@ApiResponse(code = 2804, message = "이메일 인증은 하루 최대 10번입니다.")
             ,@ApiResponse(code = 2805, message = "잠시 후에 다시 시도해주세요.")
-            @ApiResponse(code = 4000 ,message ="서버 오류입니다.")
-    }
-    )
+            ,@ApiResponse(code = 4000 ,message ="서버 오류입니다.")
+    })
     @NoIntercept
     @PostMapping
     public BaseResponse<String> sendAuthEmail(@RequestBody @Valid PostEmailReq req) {
