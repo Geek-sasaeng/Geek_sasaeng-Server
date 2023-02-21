@@ -46,11 +46,11 @@ public class Member extends BaseEntity {
     @JoinColumn(name="university_id")
     private University university;
 
-    @OneToOne(fetch=FetchType.LAZY)
+    @OneToOne(fetch=FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name="phoneNumber_id", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private PhoneNumber phoneNumber;
 
-    @OneToOne(fetch=FetchType.LAZY)
+    @OneToOne(fetch=FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name="email_id", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private Email email;
 
@@ -131,6 +131,8 @@ public class Member extends BaseEntity {
     // 회원 탈퇴
     public void changeStatusToInactive(){
         super.setStatus(BaseStatus.INACTIVE);
+        email.delete();
+        phoneNumber.delete();
     }
 
     // 로그인 안해본 디폴트 저장

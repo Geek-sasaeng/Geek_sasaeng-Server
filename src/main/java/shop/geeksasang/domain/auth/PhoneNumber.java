@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import shop.geeksasang.config.domain.BaseEntity;
+import shop.geeksasang.config.status.BaseStatus;
 import shop.geeksasang.config.status.ValidStatus;
 import shop.geeksasang.domain.member.Member;
 
@@ -42,4 +43,8 @@ public class PhoneNumber extends BaseEntity {
         this.number = number;
         this.phoneValidStatus = phoneValidStatus;
     };
+
+    public void delete() {
+        setStatus(BaseStatus.INACTIVE);
+    }
 }

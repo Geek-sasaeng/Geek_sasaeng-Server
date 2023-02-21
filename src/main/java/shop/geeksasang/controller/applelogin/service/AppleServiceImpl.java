@@ -1,10 +1,8 @@
 package shop.geeksasang.controller.applelogin.service;
 
 
-import antlr.Token;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
@@ -19,6 +17,7 @@ import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.config.exception.response.BaseResponseStatus;
 import shop.geeksasang.config.status.LoginStatus;
 import shop.geeksasang.config.type.MemberLoginType;
+import shop.geeksasang.controller.applelogin.controller.AppleSignUpReq;
 import shop.geeksasang.controller.applelogin.model.*;
 import shop.geeksasang.controller.applelogin.util.AppleUtils;
 import shop.geeksasang.domain.member.Member;
@@ -51,13 +50,11 @@ public class AppleServiceImpl {
      * code 또는 refresh_token가 유효한지 Apple Server에 검증 요청
      */
     @Transactional
-    public TokenResponse signUp(ServicesResponse serviceResponse) throws NoSuchAlgorithmException {
+    public TokenResponse signUp(String idToken, String code, UserObject user) throws NoSuchAlgorithmException {
 
-        String code = serviceResponse.getCode();
-        String client_secret = getAppleClientSecret(serviceResponse.getId_token());
+        String client_secret = getAppleClientSecret(idToken);
 
         // 만약 처음 인증하는 유저여서  refresh 토큰 없으면 client_secret, authorization_code로 검증
-        UserObject user = serviceResponse.getUser();
         String email = user.getEmail();
         String name = user.getLastName() + user.getFirstName();
         TokenResponse tokenResponse = appleUtils.validateAuthorizationGrantCode(client_secret, code);
