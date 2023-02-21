@@ -138,7 +138,7 @@ public class MemberService {
             throw new BaseException(INVALID_INFORMATIONAGREE_STATUS);
         }
 
-        emailEntity = emailRepository.findEmailByAddress(email).orElseThrow(() -> new BaseException(NOT_MATCH_EMAIL));
+        emailEntity = emailRepository.findEmailByAddressAndACTIVE(email).orElseThrow(() -> new BaseException(NOT_MATCH_EMAIL));
         int emailId = emailEntity.getId();
 
         // 검증: 이메일 인증 여부

@@ -96,10 +96,7 @@ public class SmsService {
         userSmsApi(recipientPhoneNumber, randomNumber);
 
         smsRedisRepository.createSmsCertification(recipientPhoneNumber, randomNumber);
-
-
         smsVerificationCount.increaseSmsVerificationCount();
-
     }
 
     @Async
@@ -192,7 +189,7 @@ public class SmsService {
         }
         smsRedisRepository.removeSmsCertification(phoneNumber);
         // 인증된 핸드폰 번호 등록
-        PhoneNumber phoneNumberEntity = PhoneNumber.builder().number(phoneNumber).phoneValidStatus(ValidStatus.SUCCESS).build();
+        PhoneNumber phoneNumberEntity = new PhoneNumber(phoneNumber);
         phoneNumberRepository.save(phoneNumberEntity);
         return new PostVerifySmsRes(phoneNumberEntity.getId());
     }

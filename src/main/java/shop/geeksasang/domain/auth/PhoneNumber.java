@@ -38,6 +38,12 @@ public class PhoneNumber extends BaseEntity {
         this.phoneValidStatus = ValidStatus.SUCCESS;
     }
 
+    public PhoneNumber(String number) {
+        this.number = number;
+        this.phoneValidStatus = ValidStatus.SUCCESS;
+        setStatus(BaseStatus.ACTIVE);
+    }
+
     //테스트용
     public PhoneNumber(String number,ValidStatus phoneValidStatus){
         this.number = number;

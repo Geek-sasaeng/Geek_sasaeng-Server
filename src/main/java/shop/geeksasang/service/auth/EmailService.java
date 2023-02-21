@@ -62,8 +62,8 @@ public class EmailService {
             throw new BaseException(BaseResponseStatus.NOT_MATCH_EMAIL);
         }
         // 이미 존재하는 이메일인지 검증
-        if(emailRepository.findEmailByAddress(email).isPresent()){
-            Email emailEntity = emailRepository.findEmailByAddress(email).get();
+        if(emailRepository.findEmailByAddressAndACTIVE(email).isPresent()){
+            Email emailEntity = emailRepository.findEmailByAddressAndACTIVE(email).get();
             // Member랑 연결 안됐으면 해당 Entity 지우기
             if(emailEntity.getMember() == null){
                 emailRepository.delete(emailEntity);
@@ -101,7 +101,7 @@ public class EmailService {
         boolean check = redisUtil.checkNumber(address, key);
         if(check){
             // 이메일 테이블에 이메일 주소 및 인증 성공 저장
-            Email email = Email.builder().address(address).emailValidStatus(ValidStatus.SUCCESS).build();
+            Email email = new Email(address);
             emailRepository.save(email);
             PostEmailCertificationRes postEmailRes = new PostEmailCertificationRes(email.getId());
             return postEmailRes;

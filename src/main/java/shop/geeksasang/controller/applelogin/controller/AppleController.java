@@ -37,7 +37,7 @@ public class AppleController {
     @ApiOperation(value = "회원가입")
     @PostMapping(value = "/apple-login")
     @ResponseBody
-    public BaseResponse<TokenResponse> signUpApple(@RequestBody AppleSignUpReq req) throws NoSuchAlgorithmException, JsonProcessingException {
+    public BaseResponse<TokenResponse> signUpApple(@RequestBody AppleSignUpReq req) throws NoSuchAlgorithmException{
         TokenResponse tokenResponse = appleService.signUp(req.getIdToken(), req.getCode(), req.getUser());
         return new BaseResponse<>(tokenResponse);
     }
