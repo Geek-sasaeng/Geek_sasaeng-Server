@@ -79,7 +79,6 @@ public class DeliveryPartyIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    @Transactional
     @DisplayName("배달파티 성공 테스트")
     void createDeliveryParty(){
         //given
@@ -95,7 +94,6 @@ public class DeliveryPartyIntegrationTest extends IntegrationTest {
     
     
     @Test
-    @Transactional
     @DisplayName("배달 파티 멤버 나가기")
     void deleteDeliveryPartyMember() throws JsonProcessingException {
 
@@ -123,7 +121,6 @@ public class DeliveryPartyIntegrationTest extends IntegrationTest {
 
 
     @Test
-    @Transactional
     @DisplayName("방장 교체 나가기")
     void changeChief() throws JsonProcessingException {
 
@@ -156,7 +153,6 @@ public class DeliveryPartyIntegrationTest extends IntegrationTest {
 
 
     @Test
-    @Transactional
     @DisplayName("멤버 나가고 교체후 상태가 잘 변하는 지 점검")
     void deliveryPartyFullTest() throws JsonProcessingException {
 
