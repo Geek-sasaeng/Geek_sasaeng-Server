@@ -77,13 +77,8 @@ public class DeliveryPartyService {
     public PostDeliveryPartyRes registerDeliveryParty(PostDeliveryPartyReq dto, int chiefId, int dormitoryId){
 
         //파티장 조회
-       Member chief = memberRepository.findById(chiefId)
+       Member chief = memberRepository.findMemberByIdAndStatus(chiefId)
                 .orElseThrow(()-> new BaseException(NOT_EXISTS_PARTICIPANT));
-
-       //비활성화 유저(INACTIVE) 확인
-       if(chief.getStatus().equals(BaseStatus.INACTIVE)){
-           throw new BaseException(INACTIVE_STATUS);
-       }
 
        //신고 3번이상으로 누적된 회원은 파티를 생성할 수 없음
         if(chief.getStatus().equals(BaseStatus.REPORTED)){

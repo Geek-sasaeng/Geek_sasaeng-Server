@@ -153,7 +153,7 @@ public class LoginService {
     // 유효성 검증되면 jwtResponse 반환
     public JwtResponse autoLogin(JwtInfo jwtInfo){
         int userIdx = jwtInfo.getUserId();
-        Member member = memberRepository.findById(userIdx).orElseThrow(
+        Member member = memberRepository.findMemberByIdAndStatus(userIdx).orElseThrow(
                 () -> new BaseException(NOT_EXIST_USER));
         JwtResponse jwtResponse = getJwtResponse(member);
         return jwtResponse;

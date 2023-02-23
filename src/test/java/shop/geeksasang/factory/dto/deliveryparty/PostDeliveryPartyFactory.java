@@ -30,7 +30,7 @@ public class PostDeliveryPartyFactory {
                 .title("party")
                 .content("content")
                 .orderTime(LocalDateTime.parse("2024-12-30 20:29:30", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))) //이렇게 하지 않으면 오류가 계속 발생.
-                .maxMatching(2)
+                .maxMatching(3)
                 .storeUrl("url")
                 .latitude(1.11)
                 .longitude(1.22)
