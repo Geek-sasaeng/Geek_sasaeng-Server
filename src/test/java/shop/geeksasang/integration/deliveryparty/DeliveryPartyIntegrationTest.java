@@ -50,11 +50,13 @@ public class DeliveryPartyIntegrationTest extends IntegrationTest {
     Email email1;
     Email email2;
     Email email3;
+    Email email4;
 
 
     Member member;
     Member member2;
     Member member3;
+    Member member4;
 
     @BeforeEach
     void beforeAll(){
@@ -67,11 +69,13 @@ public class DeliveryPartyIntegrationTest extends IntegrationTest {
         email1 = emailRepository.save(new Email("@gmail.com", ValidStatus.SUCCESS));
         email2 = emailRepository.save(new Email("321@gmail.com", ValidStatus.SUCCESS));
         email3 = emailRepository.save(new Email("4321@gmail.com", ValidStatus.SUCCESS));
+        email4 = emailRepository.save(new Email("1234321@gmail.com", ValidStatus.SUCCESS));
 
 
         member = memberRepository.save(new Member("debin", email1, grade));
         member2 = memberRepository.save(new Member("neo", email2, grade));
         member3 = memberRepository.save(new Member("mini", email3, grade));
+        member4 = memberRepository.save(new Member("thomas", email4, grade));
     }
 
     @Test
@@ -153,17 +157,20 @@ public class DeliveryPartyIntegrationTest extends IntegrationTest {
 
     @Test
     @Transactional
-    @DisplayName("방장d")
+    @DisplayName("멤버 나가고 교체후 상태가 잘 변하는 지 점검")
     void deliveryPartyFullTest() throws JsonProcessingException {
 
         //given
         PostDeliveryPartyReq dto = PostDeliveryPartyFactory.createReqV2(foodCategory.getId());
 
         PostDeliveryPartyRes deliveryParty = deliveryPartyService.registerDeliveryParty(dto, member.getId(), dormitory.getId());
-        deliveryPartyMemberService.joinDeliveryPartyMember(deliveryParty.getId(), member2.getId());
-
         PartyChatRoomRes chatRoom = deliveryPartyChatService.createChatRoom(member.getId(), "test", "111", "toss", "ex", 3, deliveryParty.getId());
+
+        deliveryPartyMemberService.joinDeliveryPartyMember(deliveryParty.getId(), member2.getId());
         deliveryPartyChatService.joinPartyChatRoom(member2.getId(), chatRoom.getPartyChatRoomId(), LocalDateTime.now());
+
+        deliveryPartyMemberService.joinDeliveryPartyMember(deliveryParty.getId(), member4.getId());
+        deliveryPartyChatService.joinPartyChatRoom(member4.getId(), chatRoom.getPartyChatRoomId(), LocalDateTime.now());
 
         //when
         deliveryPartyMemberService.patchDeliveryPartyMemberStatus(deliveryParty.getId(), member2.getId());
@@ -176,7 +183,7 @@ public class DeliveryPartyIntegrationTest extends IntegrationTest {
         GetDeliveryPartyDetailRes result = deliveryPartyService.getDeliveryPartyDetailById(deliveryParty.getId(), member.getId());
 
         //then
-        assertThat(result.getCurrentMatching()).isEqualTo(2);
+        assertThat(result.getCurrentMatching()).isEqualTo(3);
         assertThat(result.getMatchingStatus()).isSameAs(MatchingStatus.FINISH);
     }
 }
