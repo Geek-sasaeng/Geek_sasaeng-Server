@@ -15,6 +15,8 @@ import shop.geeksasang.dto.s3.PostImageRes;
 import shop.geeksasang.service.common.AwsS3Service;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RestController
@@ -28,8 +30,8 @@ public class AwsS3Controller {
             @ApiResponse(code = 4000 , message =  "서버 오류입니다.")
     })
     @PostMapping("/upload")
-    public BaseResponse<PostImageRes> uploadFile(@RequestParam MultipartFile images) throws IOException {
-        String imageUrl = awsS3Service.upload(images.getInputStream(), images.getOriginalFilename(), images.getSize());
-        return new BaseResponse<>(new PostImageRes(imageUrl));
+    public BaseResponse<PostImageRes> uploadFile(@RequestParam List<MultipartFile> images) throws IOException {
+        List<String> urls = awsS3Service.uploadFiles(images);
+        return new BaseResponse<>(new PostImageRes(urls));
     }
 }
