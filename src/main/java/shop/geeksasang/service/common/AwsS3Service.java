@@ -22,15 +22,18 @@ public class AwsS3Service {
 
     private final AmazonS3Client s3Client;
 
-    public List<String> uploadFiles(List<MultipartFile> images) throws IOException {
+
+
+
+        public List<String> uploadFiles(List<MultipartFile> images) throws IOException {
         List<String> result= new ArrayList<>();
         for (MultipartFile image : images) {
-            result.add(uploadFile(image.getInputStream(), image.getOriginalFilename(), image.getSize()));
+            result.add(upload(image.getInputStream(), image.getOriginalFilename(), image.getSize()));
         }
         return result;
     }
 
-    private String uploadFile(InputStream inputStream, String originFileName, Long fileSize) {
+    public String upload(InputStream inputStream, String originFileName, Long fileSize) {
         String s3FileName = UUID.randomUUID() + "-" + originFileName;
 
         ObjectMetadata objMeta = new ObjectMetadata();
