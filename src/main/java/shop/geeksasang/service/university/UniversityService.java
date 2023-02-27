@@ -9,6 +9,8 @@ import shop.geeksasang.repository.university.UniversityRepository;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static shop.geeksasang.config.TransactionManagerConfig.JPA_TRANSACTION_MANAGER;
+
 @Transactional
 @Service
 @RequiredArgsConstructor
@@ -17,10 +19,10 @@ public class UniversityService {
     private final UniversityRepository universityRepository;
 
     // 대학교 조회: 전체 목록
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = true, transactionManager = JPA_TRANSACTION_MANAGER)
     public List<GetUniversitiesRes> getAllUniversity(){
         return universityRepository.findAll().stream()
-                .map(university -> GetUniversitiesRes.of(university))
+                .map(GetUniversitiesRes::of)
                 .collect(Collectors.toList());
 
     }

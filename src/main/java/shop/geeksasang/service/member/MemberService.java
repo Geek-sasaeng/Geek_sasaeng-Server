@@ -47,9 +47,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static shop.geeksasang.config.TransactionManagerConfig.JPA_TRANSACTION_MANAGER;
 import static shop.geeksasang.config.exception.response.BaseResponseStatus.*;
 
-@Transactional(readOnly = true)
 @Service
 @RequiredArgsConstructor
 public class MemberService {
@@ -70,7 +70,7 @@ public class MemberService {
     private final AwsS3Service awsS3Service;
 
     // 회원 가입하기
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, transactionManager = JPA_TRANSACTION_MANAGER)
     public PostRegisterRes registerMember(PostRegisterReq dto) {
         if (!dto.getCheckPassword().equals(dto.getPassword())) {
             throw new BaseException(DIFFRENT_PASSWORDS);
@@ -119,7 +119,7 @@ public class MemberService {
     }
 
     // 소셜 회원가입 하기
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, transactionManager = JPA_TRANSACTION_MANAGER)
     public PostSocialRegisterRes registerSocialMember(PostSocialRegisterReq dto) {
         Email emailEntity;
         // 네이버 사용자 토큰 받아오기
@@ -185,7 +185,7 @@ public class MemberService {
     }
 
     // 수정: 회원정보 동의 수정
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, transactionManager = JPA_TRANSACTION_MANAGER)
     public Member updateInformationAgreeStatus(int id, PatchInformationAgreeStatusReq dto) {
 
         //멤버 아이디로 조회
@@ -199,7 +199,7 @@ public class MemberService {
     }
 
     // 중복 확인: 닉네임
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, transactionManager = JPA_TRANSACTION_MANAGER)
     public void checkNickNameDuplicated(GetNickNameDuplicatedReq dto) {
 
         //멤버 닉네임으로 조회되면 중복 처리
@@ -209,7 +209,7 @@ public class MemberService {
     }
 
     // 회원 탈퇴하기
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, transactionManager = JPA_TRANSACTION_MANAGER)
     public void updateMemberStatus(int id) {
         Member member = memberRepository.findMemberByIdAndStatus(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저는 존재하지 않습니다. id=" + id));
@@ -217,7 +217,7 @@ public class MemberService {
     }
 
     // 수정: FCM토큰 수정
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, transactionManager = JPA_TRANSACTION_MANAGER)
     public PatchFcmTokenRes updateFcmToken(PatchFcmTokenReq dto, int memberId){
         Member member = memberRepository.findMemberByIdAndStatus(memberId)
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTICIPANT));
@@ -227,7 +227,7 @@ public class MemberService {
     }
 
     // 로그인 아이디 중복 확인하기
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, transactionManager = JPA_TRANSACTION_MANAGER)
     public void checkId(GetCheckIdReq dto) {
         // 아이디가 조회될때
         if (!memberRepository.findMemberByLoginId(dto.getLoginId()).isEmpty()) {
@@ -236,7 +236,7 @@ public class MemberService {
     }
 
     //수정 : 회원 정보 수정 (마이페이지)
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, transactionManager = JPA_TRANSACTION_MANAGER)
     public PostMemberInfoRes updateMember(PostMemberInfoReq dto, int memberId) throws IOException {
 
         Member member = memberRepository.findMemberById(memberId).orElseThrow(() -> new BaseException(NOT_EXIST_USER));
@@ -259,7 +259,7 @@ public class MemberService {
         return PostMemberInfoRes.toDto(updateMember);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, transactionManager = JPA_TRANSACTION_MANAGER)
     public GetMemberRes getMember(int memberId){
         // 조회
         Member member = memberRepository.findMemberByIdAndStatus(memberId)
@@ -293,7 +293,7 @@ public class MemberService {
     }
 
     //조회 : 회원 정보 조회 (마이페이지)
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, transactionManager = JPA_TRANSACTION_MANAGER)
     public GetMemberInfoRes getMemberInfo(int memberId){
         Member member = memberRepository.findMemberById(memberId).orElseThrow(() -> new BaseException(NOT_EXIST_USER));
 
@@ -308,7 +308,7 @@ public class MemberService {
 
 
     //체크: 사용자의 입력된 비밀번호 일치확인
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, transactionManager = JPA_TRANSACTION_MANAGER)
     public void checkCurrentPassword(GetCheckCurrentPasswordReq dto, int memberId) {
         Member member = memberRepository.findMemberByIdAndStatus(memberId)
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTICIPANT));
@@ -321,7 +321,7 @@ public class MemberService {
     }
 
     // 수정: 기숙사 수정하기
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, transactionManager = JPA_TRANSACTION_MANAGER)
     public PatchDormitoryRes updateDormitory(PatchDormitoryReq dto, JwtInfo jwtInfo) {
         int memberId = jwtInfo.getUserId();
 
@@ -341,7 +341,7 @@ public class MemberService {
     }
 
     //비밀번호 바꾸기
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, transactionManager = JPA_TRANSACTION_MANAGER)
     public void changePassword(PatchPasswordReq dto, int memberId) {
         Member member = memberRepository.findMemberByIdAndStatus(memberId).orElseThrow(() -> new BaseException(NOT_EXIST_USER));
 
@@ -363,7 +363,7 @@ public class MemberService {
 
 
     // 애플 유저 가입
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, transactionManager = JPA_TRANSACTION_MANAGER)
     public Member createUserApple(CreateUserAppleReq createUserAppleReq){
         if(memberRepository.existsByLoginId(createUserAppleReq.getLoginId())) throw new BaseException(DUPLICATE_USER_LOGIN_ID);
         Grade grade = gradeRepository.findById(1)
@@ -381,7 +381,7 @@ public class MemberService {
      * 유저의 refresh_token을 따로 DB나 기타 저장소에 저장해두고 캐싱해두고 조회해서 검증하는편이 성능면에서 낫다는 자료를 참고
      * https://hwannny.tistory.com/71
      */
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, transactionManager = JPA_TRANSACTION_MANAGER)
     public Void validateRefreshToken(int userId, String refreshToken){
         Member user = memberRepository.findMemberByIdAndStatus(userId).orElseThrow(() -> new BaseException(NOT_EXIST_USER));
 
@@ -398,7 +398,7 @@ public class MemberService {
     }
 
 
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, transactionManager = JPA_TRANSACTION_MANAGER)
     public void updateMemberGrade(int memberId){
         Member member = memberRepository.findMemberByIdAndStatus(memberId).orElseThrow(() -> new BaseException(NOT_EXIST_USER));
 

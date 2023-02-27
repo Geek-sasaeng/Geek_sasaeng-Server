@@ -12,7 +12,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.web.multipart.MultipartFile;
+import shop.geeksasang.config.TransactionManagerConfig;
 import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.config.status.OrderStatus;
 import shop.geeksasang.domain.chat.Chat;
@@ -50,11 +52,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static shop.geeksasang.config.TransactionManagerConfig.*;
 import static shop.geeksasang.config.exception.response.BaseResponseStatus.*;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class DeliveryPartyChatService {
 
     private final ChatRepository chatRepository;
@@ -73,10 +75,8 @@ public class DeliveryPartyChatService {
 
     private final ApplicationEventPublisher applicationEventPublisher;
 
-
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, transactionManager = MONGO_TRANSACTION_MANAGER)
     public PartyChatRoomRes createChatRoom(int memberId, String title, String accountNumber, String bank, String category, Integer maxMatching, int deliveryPartyId){
-
         Member member = memberRepository.findMemberById(memberId)
                 .orElseThrow(() -> new BaseException(NOT_EXIST_USER));
         String email = member.getEmail().getAddress();
@@ -103,7 +103,7 @@ public class DeliveryPartyChatService {
         return res;
     }
 
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, transactionManager = MONGO_TRANSACTION_MANAGER)
     public void createChat(int memberId, String chatRoomId, String content, Boolean isSystemMessage, String profileImgUrl, String chatType, String chatId, Boolean isImageMessage) {
 
         Member member = memberRepository.findMemberById(memberId)
@@ -145,7 +145,7 @@ public class DeliveryPartyChatService {
     }
 
 
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, transactionManager = MONGO_TRANSACTION_MANAGER)
     public void createChatImage(int memberId, String chatRoomId, String content, Boolean isSystemMessage, String chatType, String chatId, List<MultipartFile> images, Boolean isImageMessage) {
 
         Member member = memberRepository.findMemberById(memberId)
@@ -203,7 +203,7 @@ public class DeliveryPartyChatService {
         }
     }
 
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, transactionManager = MONGO_TRANSACTION_MANAGER)
     public PartyChatRoomMemberRes joinPartyChatRoom(int memberId, String chatRoomId, LocalDateTime enterTime) {
 
         Member member = memberRepository.findMemberById(memberId)
@@ -252,7 +252,7 @@ public class DeliveryPartyChatService {
         return res;
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, transactionManager = MONGO_TRANSACTION_MANAGER)
     public GetPartyChatRoomsRes findPartyChatRooms(int memberId, int cursor) {
 
         PageRequest page = PageRequest.of(cursor, 10, Sort.by(Sort.Direction.DESC, PAGING_STANDARD));
@@ -265,7 +265,7 @@ public class DeliveryPartyChatService {
     }
 
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, transactionManager = MONGO_TRANSACTION_MANAGER)
     public List<Chat> findPartyChattings(int memberId, String partyChatRoomId) {
         List<Chat> chattingList = chatRepository.findAll();
         return chattingList;
@@ -273,7 +273,7 @@ public class DeliveryPartyChatService {
 
 
     //TODO 몽고 트랜잭션 매니저를 달아야하는데, 트랜잭션 매니저 달면 JPA랑 충돌해서 문제가 일어나는듯
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, transactionManager = MONGO_TRANSACTION_MANAGER)
     public void removeMemberByChief(int chiefId, DeleteMemberByChiefReq dto) {
         PartyChatRoomMember chief = partyChatRoomMemberRepository
                 .findByMemberIdAndChatRoomId(chiefId, new ObjectId(dto.getRoomId()))
@@ -284,10 +284,9 @@ public class DeliveryPartyChatService {
                 .forEach(id -> {
                     removeMember(chiefId, dto, chief, id);
                 });
-
     }
 
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, transactionManager = MONGO_TRANSACTION_MANAGER)
     public void removeMember(int chiefId, DeleteMemberByChiefReq dto, PartyChatRoomMember chief, String id) {
         PartyChatRoomMember removedMember = partyChatRoomMemberRepository
                 .findByIdAndChatRoomId(new ObjectId(id), new ObjectId(dto.getRoomId()))
@@ -316,6 +315,7 @@ public class DeliveryPartyChatService {
                 , true, null, "publish", "none", false);
     }
 
+    @Transactional(readOnly = false, transactionManager = MONGO_TRANSACTION_MANAGER)
     public void changeChief(int chiefId, String roomId) throws JsonProcessingException {
         PartyChatRoomMember chief = partyChatRoomMemberRepository
                 .findByMemberIdAndChatRoomId(chiefId, new ObjectId(roomId))
@@ -371,6 +371,7 @@ public class DeliveryPartyChatService {
 
     }
 
+    @Transactional(readOnly = false, transactionManager = MONGO_TRANSACTION_MANAGER)
     public void removeMember(int memberId, String roomId) throws JsonProcessingException {
         PartyChatRoomMember chatRoomMember = partyChatRoomMemberRepository
                 .findByMemberIdAndChatRoomId(memberId, new ObjectId(roomId))
@@ -403,7 +404,7 @@ public class DeliveryPartyChatService {
 
     }
 
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, transactionManager = MONGO_TRANSACTION_MANAGER)
     public void changeRemittance(int memberId, String roomId) {
 
         //회원 존재 여부 확인
@@ -422,7 +423,7 @@ public class DeliveryPartyChatService {
         deliveryPartyMemberService.changeAccountTransferStatus(chatRoom.getDeliveryPartyId(), member.getMemberId());
     }
 
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, transactionManager = MONGO_TRANSACTION_MANAGER)
     public void changeOrderStatus(int memberId, String roomId) {
 
         //mongo(채팅방) 회원 존재 여부 확인
@@ -453,7 +454,7 @@ public class DeliveryPartyChatService {
 
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, transactionManager = MONGO_TRANSACTION_MANAGER)
     public GetPartyChatRoomDetailRes getPartyChatRoomDetailById(String chatRoomId, int memberId){
         //채팅방 조회
         PartyChatRoom partyChatRoom = partyChatRoomRepository.findByPartyChatRoomId(new ObjectId(chatRoomId))
@@ -473,7 +474,7 @@ public class DeliveryPartyChatService {
         return GetPartyChatRoomDetailRes.toDto(partyChatRoom, member, isChief, isOrderFinish);
     }
 
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, transactionManager = MONGO_TRANSACTION_MANAGER)
     public void changeDeliveryComplete(int memberId, String roomId){
 
         //mongo(채팅방) 회원 존재 여부 확인
@@ -508,6 +509,7 @@ public class DeliveryPartyChatService {
             throw new BaseException(DIFFERENT_CHIEF_ID);
     }
 
+    @Transactional(readOnly = true, transactionManager = MONGO_TRANSACTION_MANAGER)
     public List<GetPartyChatRoomMembersInfoRes> getChatRoomMembersInfo(Integer partyId, int userId, String partyUUID) {
         DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyByIdAndStatus(partyId)
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTY));
@@ -523,6 +525,8 @@ public class DeliveryPartyChatService {
                 })
                 .collect(Collectors.toList());
     }
+
+    @Transactional(readOnly = true, transactionManager = MONGO_TRANSACTION_MANAGER)
     public GetPartyChatRoomMemberProfileRes getChatRoomMemberProfile(String chatRoomId, int userId,int memberId){
         //채팅방 조회
         PartyChatRoom partyChatRoom = partyChatRoomRepository.findByPartyChatRoomId(new ObjectId(chatRoomId))

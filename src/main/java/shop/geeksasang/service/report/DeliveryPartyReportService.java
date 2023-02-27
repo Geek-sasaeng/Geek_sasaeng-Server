@@ -16,11 +16,11 @@ import shop.geeksasang.repository.deliveryparty.DeliveryPartyRepository;
 import shop.geeksasang.repository.member.MemberRepository;
 import shop.geeksasang.repository.report.ReportCategoryRepository;
 
+import static shop.geeksasang.config.TransactionManagerConfig.JPA_TRANSACTION_MANAGER;
 import static shop.geeksasang.config.exception.response.BaseResponseStatus.*;
 
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class DeliveryPartyReportService {
 
@@ -29,7 +29,7 @@ public class DeliveryPartyReportService {
     private final ReportCategoryRepository reportCategoryRepository;
     private final DeliveryPartyReportRepository deliveryPartyReportRepository;
 
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, transactionManager = JPA_TRANSACTION_MANAGER)
     public void registerDeliveryPartyReport(PostDeliveryPartyReportRegisterReq dto, JwtInfo jwtInfo){
         //멤버를 가져온다.
         int memberId = jwtInfo.getUserId();
