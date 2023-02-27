@@ -16,6 +16,7 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 import org.springframework.web.multipart.MultipartFile;
 import shop.geeksasang.config.TransactionManagerConfig;
 import shop.geeksasang.config.exception.BaseException;
+import shop.geeksasang.config.exception.response.BaseResponseStatus;
 import shop.geeksasang.config.status.OrderStatus;
 import shop.geeksasang.domain.chat.Chat;
 import shop.geeksasang.domain.chat.PartyChatRoomMember;
@@ -35,6 +36,7 @@ import shop.geeksasang.dto.chat.partychatroom.GetPartyChatRoomsRes;
 import shop.geeksasang.dto.chat.PostChatRes;
 import shop.geeksasang.dto.chat.chatmember.PartyChatRoomMemberRes;
 import shop.geeksasang.dto.chat.partychatroom.PartyChatRoomRes;
+import shop.geeksasang.dto.deliveryParty.patch.PatchDeliveryPartyMatchingStatusRes;
 import shop.geeksasang.repository.chat.PartyChatRoomMemberRepository;
 import shop.geeksasang.repository.chat.PartyChatRoomRepository;
 import shop.geeksasang.rabbitmq.MQController;
@@ -61,15 +63,18 @@ import static shop.geeksasang.config.exception.response.BaseResponseStatus.*;
 public class DeliveryPartyChatService {
 
     private final ChatRepository chatRepository;
-    private final PartyChatRoomRepository partyChatRoomRepository;
-    private final MQController mqController;
     private final PartyChatRoomMemberRepository partyChatRoomMemberRepository;
+    private final PartyChatRoomRepository partyChatRoomRepository;
+
     private final MemberRepository memberRepository;
-    private final AwsS3Service awsS3Service;
-    private final DeliveryPartyMemberService deliveryPartyMemberService;
     private final DeliveryPartyRepository deliveryPartyRepository;
     private final GradeRepository gradeRepository;
+
+    private final DeliveryPartyMemberService deliveryPartyMemberService;
     private final DeliveryPartyService deliveryPartyService;
+
+    private final AwsS3Service awsS3Service;
+    private final MQController mqController;
 
     private final ObjectMapper objectMapper;
 
@@ -93,6 +98,7 @@ public class DeliveryPartyChatService {
         chief.enterRoom(chatRoom);
         partyChatRoomMemberRepository.save(chief);
         partyChatRoomRepository.save(chatRoom); //방장 업데이트
+
         //rabbitMQ 채팅방 생성 요청
         try {
             mqController.createChatRoom(email, chatRoom.getId());
@@ -357,6 +363,9 @@ public class DeliveryPartyChatService {
                 .orElseThrow(() -> new BaseException(NOT_EXIST_USER));
         String nickName = member.getNickName();
 
+
+
+
         //시스템 메시지
         Chat chat = new Chat("방장의 활동 중단에 따라 새로운 방장으로 '" + nickName + "'님이 선정되었어요", chatRoom, true, null, null, new ArrayList<>());
         chat.addReadMember(changeChief.getMemberId());// 읽은 멤버 추가
@@ -540,6 +549,18 @@ public class DeliveryPartyChatService {
                 .orElseThrow(()-> new BaseException(NOT_EXISTS_GRADE)).getName();
 
         GetPartyChatRoomMemberProfileRes res = new GetPartyChatRoomMemberProfileRes(member.getNickName(),grade,isChief);
+        return res;
+    }
+
+    //수동 매칭 마감
+    @Transactional(readOnly = false, transactionManager = MONGO_TRANSACTION_MANAGER)
+    public PatchDeliveryPartyMatchingStatusRes changeMatchingStatus(Integer partyId, int userId) {
+        PatchDeliveryPartyMatchingStatusRes res = deliveryPartyService.changeMatchingStatus(partyId, userId);
+
+        PartyChatRoom partyChatRoom = partyChatRoomRepository.findByDeliveryPartyId(partyId)
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_CHAT_ROOM));
+        partyChatRoomRepository.changeIsFinish(new ObjectId(partyChatRoom.getId()));
+        createChat(userId, partyChatRoom.getId(), "매칭이 마감되었어요", true, null, "publish", "none", false);
         return res;
     }
 }

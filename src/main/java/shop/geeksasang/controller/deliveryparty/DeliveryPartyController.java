@@ -159,20 +159,6 @@ public class DeliveryPartyController {
         return new BaseResponse<>(res);
     }
 
-    @ApiOperation(value = "마감 : 배달파티 수동 매칭 마감", notes = "매칭 마감시킬 배달 파티의 아이디를 받아 배달 파티 매칭 status를 FINISH로 바꿀 수 있다.")
-    @ApiResponses({
-            @ApiResponse(code =1000 ,message ="요청에 성공하였습니다."),
-            @ApiResponse(code =2616 ,message ="파티 매칭 마감을 할 수 없는 유저이거나 이미 마감된 상태입니다."),
-            @ApiResponse(code=4000,message = "서버 오류입니다.")
-    })
-    @PatchMapping("/delivery-party/{partyId}/matching-status")
-    public BaseResponse<PatchDeliveryPartyMatchingStatusRes> patchDeliveryPartyMatchingStatus(@PathVariable Integer partyId, HttpServletRequest request) {
-        JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
-
-        PatchDeliveryPartyMatchingStatusRes response = deliveryPartyService.patchDeliveryPartyMatchingStatus(partyId, jwtInfo.getUserId());
-        return new BaseResponse<>(response);
-    }
-
 
     @ApiOperation(value = "제일 최근에 들어간 진행중인 배달파티 리스트 ", notes = "가장 최근에 참여한 진행 중인 배달 파티들을 가져온다.")
     @ApiResponses({

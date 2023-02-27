@@ -1,15 +1,13 @@
 package shop.geeksasang.service.deliveryparty;
 
 import lombok.RequiredArgsConstructor;
-import org.bson.types.ObjectId;
+
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.util.StringUtils;
 
-import shop.geeksasang.config.TransactionManagerConfig;
 import shop.geeksasang.config.status.BaseStatus;
 import shop.geeksasang.config.status.BelongStatus;
 import shop.geeksasang.config.status.MatchingStatus;
@@ -67,8 +65,8 @@ public class DeliveryPartyService {
     private final HashTagRepository hashTagRepository;
     private final DeliveryPartyQueryRepository deliveryPartyQueryRepository;
     private final BlockRepository blockRepository;
+
     private final PartyChatRoomRepository partyChatRoomRepository;
-    private final DeliveryPartyChatService deliveryPartyChatService;
 
     private static final int PAGING_SIZE = 10;
     private static final String PAGING_STANDARD = "orderTime";
@@ -300,29 +298,6 @@ public class DeliveryPartyService {
         return new PatchLeaveChiefRes(CHANGE_CHIEF);
     }
 
-    // 배달 파티 수동 매칭 마감
-    @Transactional(readOnly = false, transactionManager = JPA_TRANSACTION_MANAGER)
-    public PatchDeliveryPartyMatchingStatusRes patchDeliveryPartyMatchingStatus(Integer partyId, int userId) {
-
-        //여기서 방장 인증을 진행함.
-        DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyByIdAndUserIdAndMatchingStatus(partyId, userId).
-                orElseThrow(() -> new BaseException(BaseResponseStatus.CAN_NOT_FINISH_DELIVERY_PARTY));
-        deliveryParty.changeMatchingStatusToFinish();
-
-        //그러므로 여기서 방장 인증을 진행할 필요가 없음.
-        PartyChatRoom partyChatRoom = partyChatRoomRepository.findByDeliveryPartyId(partyId)
-                .orElseThrow(() -> new BaseException(NOT_EXISTS_CHAT_ROOM));
-
-        partyChatRoomRepository.changeIsFinish(new ObjectId(partyChatRoom.getId()));
-
-        deliveryPartyChatService.createChat(userId, partyChatRoom.getId(), "매칭이 마감되었어요", true, null, "publish", "none", false);
-
-        return PatchDeliveryPartyMatchingStatusRes.builder()
-                .deliveryPartyId(deliveryParty.getId())
-                .matchingStatus(deliveryParty.getMatchingStatus().toString())
-                .build();
-    }
-
     @Transactional(readOnly = true, transactionManager = JPA_TRANSACTION_MANAGER)
     public List<GetRecentOngoingPartiesRes> getRecentOngoingDeliveryParties(int userId) {
         List<DeliveryParty> threeRecentDeliveryParty = deliveryPartyQueryRepository.findRecentOngoingDeliveryParty(userId);
@@ -354,6 +329,17 @@ public class DeliveryPartyService {
         DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyByIdAndMatchingStatus(deliveryPartyId)
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_MATCHING_FINISH_PARTY));
         deliveryParty.changeOrderStatusToOrderComplete();
+    }
 
+    @Transactional(readOnly = false, transactionManager = JPA_TRANSACTION_MANAGER)
+    public PatchDeliveryPartyMatchingStatusRes changeMatchingStatus(Integer partyId, int userId) {
+        DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyByIdAndUserIdAndMatchingStatus(partyId, userId).
+                orElseThrow(() -> new BaseException(BaseResponseStatus.CAN_NOT_FINISH_DELIVERY_PARTY));
+        deliveryParty.changeMatchingStatusToFinish();
+
+        return PatchDeliveryPartyMatchingStatusRes.builder()
+                .deliveryPartyId(deliveryParty.getId())
+                .matchingStatus(deliveryParty.getMatchingStatus().toString())
+                .build();
     }
 }
