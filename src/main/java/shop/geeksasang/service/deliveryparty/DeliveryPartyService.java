@@ -341,4 +341,19 @@ public class DeliveryPartyService {
         PageRequest paging = PageRequest.of(cursor, PAGING_SIZE, Sort.by(Sort.Direction.ASC, PAGING_STANDARD));
         return deliveryPartyQueryRepository.getEndedDeliveryParties(userId, paging);
     }
+
+    @Transactional(readOnly = false, transactionManager = JPA_TRANSACTION_MANAGER)
+    public void changeOrderStatusToDeliveryComplete(int deliveryPartyId) {
+        DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyByIdAndMatchingStatus(deliveryPartyId)
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_MATCHING_FINISH_PARTY));
+        deliveryParty.changeOrderStatusToDeliveryComplete();
+    }
+
+    @Transactional(readOnly = false, transactionManager = JPA_TRANSACTION_MANAGER)
+    public void changeOrderStatusToOrderComplete(int deliveryPartyId) {
+        DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyByIdAndMatchingStatus(deliveryPartyId)
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_MATCHING_FINISH_PARTY));
+        deliveryParty.changeOrderStatusToOrderComplete();
+
+    }
 }
