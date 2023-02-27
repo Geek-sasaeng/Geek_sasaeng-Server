@@ -42,6 +42,7 @@ import shop.geeksasang.repository.auth.PhoneNumberRepository;
 import shop.geeksasang.repository.auth.infrastructure.SmsRedisRepository;
 import shop.geeksasang.repository.auth.VerificationCountRepository;
 
+import static shop.geeksasang.config.TransactionManagerConfig.JPA_TRANSACTION_MANAGER;
 import static shop.geeksasang.config.exception.response.BaseResponseStatus.*;
 
 @Service
@@ -64,7 +65,7 @@ public class SmsService {
     private final SmsRedisRepository smsRedisRepository;
     private final VerificationCountRepository smsVerificationCountRepository;
 
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, transactionManager = JPA_TRANSACTION_MANAGER)
     public void sendSms(String recipientPhoneNumber, String uuid) throws URISyntaxException, JsonProcessingException {
 
         String randomNumber = makeRandomNumber();
@@ -182,7 +183,7 @@ public class SmsService {
 
 
     // 인증 후 핸드폰 번호 등록
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, transactionManager = JPA_TRANSACTION_MANAGER)
     public PostVerifySmsRes verifySms(String verifyRandomNumber, String phoneNumber) {
         if(!isVerify(verifyRandomNumber, phoneNumber)){
             throw new BaseException(INVALID_SMS_VERIFY_NUMBER);
@@ -199,7 +200,7 @@ public class SmsService {
     }
 
     // 소셜 로그인 시 DB에 핸드폰 번호 저장
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, transactionManager = JPA_TRANSACTION_MANAGER)
     public PhoneNumber savePhoneNumber(String phoneNumber){
         if(phoneNumberRepository.findPhoneNumberByNumber(phoneNumber).isPresent())
             throw new BaseException(DUPLICATE_USER_PHONENUMBER);

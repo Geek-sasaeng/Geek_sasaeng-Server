@@ -12,8 +12,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.web.multipart.MultipartFile;
+import shop.geeksasang.config.TransactionManagerConfig;
 import shop.geeksasang.config.exception.BaseException;
+import shop.geeksasang.config.exception.response.BaseResponseStatus;
 import shop.geeksasang.config.status.OrderStatus;
 import shop.geeksasang.domain.chat.Chat;
 import shop.geeksasang.domain.chat.PartyChatRoomMember;
@@ -33,6 +36,7 @@ import shop.geeksasang.dto.chat.partychatroom.GetPartyChatRoomsRes;
 import shop.geeksasang.dto.chat.PostChatRes;
 import shop.geeksasang.dto.chat.chatmember.PartyChatRoomMemberRes;
 import shop.geeksasang.dto.chat.partychatroom.PartyChatRoomRes;
+import shop.geeksasang.dto.deliveryParty.patch.PatchDeliveryPartyMatchingStatusRes;
 import shop.geeksasang.repository.chat.PartyChatRoomMemberRepository;
 import shop.geeksasang.repository.chat.PartyChatRoomRepository;
 import shop.geeksasang.rabbitmq.MQController;
@@ -42,6 +46,7 @@ import shop.geeksasang.repository.member.GradeRepository;
 import shop.geeksasang.repository.member.MemberRepository;
 import shop.geeksasang.service.common.AwsS3Service;
 import shop.geeksasang.service.deliveryparty.DeliveryPartyMemberService;
+import shop.geeksasang.service.deliveryparty.DeliveryPartyService;
 import shop.geeksasang.utils.event.DeliveryCompletedEvent;
 
 import java.io.IOException;
@@ -50,22 +55,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static shop.geeksasang.config.TransactionManagerConfig.*;
 import static shop.geeksasang.config.exception.response.BaseResponseStatus.*;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class DeliveryPartyChatService {
 
     private final ChatRepository chatRepository;
-    private final PartyChatRoomRepository partyChatRoomRepository;
-    private final MQController mqController;
     private final PartyChatRoomMemberRepository partyChatRoomMemberRepository;
+    private final PartyChatRoomRepository partyChatRoomRepository;
+
     private final MemberRepository memberRepository;
-    private final AwsS3Service awsS3Service;
-    private final DeliveryPartyMemberService deliveryPartyMemberService;
     private final DeliveryPartyRepository deliveryPartyRepository;
     private final GradeRepository gradeRepository;
+
+    private final DeliveryPartyMemberService deliveryPartyMemberService;
+    private final DeliveryPartyService deliveryPartyService;
+
+    private final AwsS3Service awsS3Service;
+    private final MQController mqController;
 
     private final ObjectMapper objectMapper;
 
@@ -73,10 +82,8 @@ public class DeliveryPartyChatService {
 
     private final ApplicationEventPublisher applicationEventPublisher;
 
-
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, transactionManager = MONGO_TRANSACTION_MANAGER)
     public PartyChatRoomRes createChatRoom(int memberId, String title, String accountNumber, String bank, String category, Integer maxMatching, int deliveryPartyId){
-
         Member member = memberRepository.findMemberById(memberId)
                 .orElseThrow(() -> new BaseException(NOT_EXIST_USER));
         String email = member.getEmail().getAddress();
@@ -91,6 +98,7 @@ public class DeliveryPartyChatService {
         chief.enterRoom(chatRoom);
         partyChatRoomMemberRepository.save(chief);
         partyChatRoomRepository.save(chatRoom); //방장 업데이트
+
         //rabbitMQ 채팅방 생성 요청
         try {
             mqController.createChatRoom(email, chatRoom.getId());
@@ -103,7 +111,7 @@ public class DeliveryPartyChatService {
         return res;
     }
 
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, transactionManager = MONGO_TRANSACTION_MANAGER)
     public void createChat(int memberId, String chatRoomId, String content, Boolean isSystemMessage, String profileImgUrl, String chatType, String chatId, Boolean isImageMessage) {
 
         Member member = memberRepository.findMemberById(memberId)
@@ -145,7 +153,7 @@ public class DeliveryPartyChatService {
     }
 
 
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, transactionManager = MONGO_TRANSACTION_MANAGER)
     public void createChatImage(int memberId, String chatRoomId, String content, Boolean isSystemMessage, String chatType, String chatId, List<MultipartFile> images, Boolean isImageMessage) {
 
         Member member = memberRepository.findMemberById(memberId)
@@ -203,7 +211,7 @@ public class DeliveryPartyChatService {
         }
     }
 
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, transactionManager = MONGO_TRANSACTION_MANAGER)
     public PartyChatRoomMemberRes joinPartyChatRoom(int memberId, String chatRoomId, LocalDateTime enterTime) {
 
         Member member = memberRepository.findMemberById(memberId)
@@ -252,7 +260,7 @@ public class DeliveryPartyChatService {
         return res;
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, transactionManager = MONGO_TRANSACTION_MANAGER)
     public GetPartyChatRoomsRes findPartyChatRooms(int memberId, int cursor) {
 
         PageRequest page = PageRequest.of(cursor, 10, Sort.by(Sort.Direction.DESC, PAGING_STANDARD));
@@ -265,7 +273,7 @@ public class DeliveryPartyChatService {
     }
 
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, transactionManager = MONGO_TRANSACTION_MANAGER)
     public List<Chat> findPartyChattings(int memberId, String partyChatRoomId) {
         List<Chat> chattingList = chatRepository.findAll();
         return chattingList;
@@ -273,7 +281,7 @@ public class DeliveryPartyChatService {
 
 
     //TODO 몽고 트랜잭션 매니저를 달아야하는데, 트랜잭션 매니저 달면 JPA랑 충돌해서 문제가 일어나는듯
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, transactionManager = MONGO_TRANSACTION_MANAGER)
     public void removeMemberByChief(int chiefId, DeleteMemberByChiefReq dto) {
         PartyChatRoomMember chief = partyChatRoomMemberRepository
                 .findByMemberIdAndChatRoomId(chiefId, new ObjectId(dto.getRoomId()))
@@ -284,10 +292,9 @@ public class DeliveryPartyChatService {
                 .forEach(id -> {
                     removeMember(chiefId, dto, chief, id);
                 });
-
     }
 
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, transactionManager = MONGO_TRANSACTION_MANAGER)
     public void removeMember(int chiefId, DeleteMemberByChiefReq dto, PartyChatRoomMember chief, String id) {
         PartyChatRoomMember removedMember = partyChatRoomMemberRepository
                 .findByIdAndChatRoomId(new ObjectId(id), new ObjectId(dto.getRoomId()))
@@ -312,10 +319,11 @@ public class DeliveryPartyChatService {
         String nickName = memberRepository.findMemberById(removedMember.getMemberId())
                 .orElseThrow(() -> new BaseException(NOT_EXIST_USER)).getNickName();
 
-        this.createChat(chiefId, dto.getRoomId(), "파티장의 강제 퇴장 요청으로 인해 " + nickName + "이 퇴장 처리되었습니다"
+        this.createChat(chiefId, dto.getRoomId(), "파티장의 강제 퇴장 요청으로 인해 '" + nickName + "'이 퇴장 처리되었습니다"
                 , true, null, "publish", "none", false);
     }
 
+    @Transactional(readOnly = false, transactionManager = MONGO_TRANSACTION_MANAGER)
     public void changeChief(int chiefId, String roomId) throws JsonProcessingException {
         PartyChatRoomMember chief = partyChatRoomMemberRepository
                 .findByMemberIdAndChatRoomId(chiefId, new ObjectId(roomId))
@@ -355,6 +363,9 @@ public class DeliveryPartyChatService {
                 .orElseThrow(() -> new BaseException(NOT_EXIST_USER));
         String nickName = member.getNickName();
 
+
+
+
         //시스템 메시지
         Chat chat = new Chat("방장의 활동 중단에 따라 새로운 방장으로 '" + nickName + "'님이 선정되었어요", chatRoom, true, null, null, new ArrayList<>());
         chat.addReadMember(changeChief.getMemberId());// 읽은 멤버 추가
@@ -371,6 +382,7 @@ public class DeliveryPartyChatService {
 
     }
 
+    @Transactional(readOnly = false, transactionManager = MONGO_TRANSACTION_MANAGER)
     public void removeMember(int memberId, String roomId) throws JsonProcessingException {
         PartyChatRoomMember chatRoomMember = partyChatRoomMemberRepository
                 .findByMemberIdAndChatRoomId(memberId, new ObjectId(roomId))
@@ -400,10 +412,9 @@ public class DeliveryPartyChatService {
         String saveChatJson = mapper.writeValueAsString(postChatRes);
         mqController.sendMessage(saveChatJson, roomId); // rabbitMQ 메시지 publish
         partyChatRoomRepository.changeLastChatAt(new ObjectId(partyChatRoom.getId()), LocalDateTime.now()); //TODO: 시간이 맞는지 테스트 해봐야 함
-
     }
 
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, transactionManager = MONGO_TRANSACTION_MANAGER)
     public void changeRemittance(int memberId, String roomId) {
 
         //회원 존재 여부 확인
@@ -422,7 +433,7 @@ public class DeliveryPartyChatService {
         deliveryPartyMemberService.changeAccountTransferStatus(chatRoom.getDeliveryPartyId(), member.getMemberId());
     }
 
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, transactionManager = MONGO_TRANSACTION_MANAGER)
     public void changeOrderStatus(int memberId, String roomId) {
 
         //mongo(채팅방) 회원 존재 여부 확인
@@ -438,12 +449,8 @@ public class DeliveryPartyChatService {
         PartyChatRoom partyChatRoom = partyChatRoomRepository.findByPartyChatRoomIdAndIsFinish(new ObjectId(roomId))
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_FINISH_CHAT_ROOM));
 
-        //배달파티 조회
-        DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyByIdAndMatchingStatus(partyChatRoom.getDeliveryPartyId())
-                .orElseThrow(() -> new BaseException(NOT_EXISTS_MATCHING_FINISH_PARTY));
-
         //mysql - 주문 완료 상태 수정
-        deliveryParty.changeOrderStatusToOrderComplete();
+        deliveryPartyService.changeOrderStatusToOrderComplete(partyChatRoom.getDeliveryPartyId());
 
         //mongo - OrderStatus 값 바꾸기
         partyChatRoomRepository.changeOrderStatusToOrderComplete(new ObjectId(roomId));
@@ -453,7 +460,7 @@ public class DeliveryPartyChatService {
 
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, transactionManager = MONGO_TRANSACTION_MANAGER)
     public GetPartyChatRoomDetailRes getPartyChatRoomDetailById(String chatRoomId, int memberId){
         //채팅방 조회
         PartyChatRoom partyChatRoom = partyChatRoomRepository.findByPartyChatRoomId(new ObjectId(chatRoomId))
@@ -473,7 +480,7 @@ public class DeliveryPartyChatService {
         return GetPartyChatRoomDetailRes.toDto(partyChatRoom, member, isChief, isOrderFinish);
     }
 
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, transactionManager = MONGO_TRANSACTION_MANAGER)
     public void changeDeliveryComplete(int memberId, String roomId){
 
         //mongo(채팅방) 회원 존재 여부 확인
@@ -482,19 +489,15 @@ public class DeliveryPartyChatService {
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTYCHATROOM_MEMBER));
 
         //mysql 회원 존재 여부 확인
-        Member member = memberRepository.findMemberById(memberId)
+        memberRepository.findMemberById(memberId)
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTICIPANT));
 
         //채팅방 존재 여부 확인
         PartyChatRoom partyChatRoom = partyChatRoomRepository.findByPartyChatRoomIdAndIsFinish(new ObjectId(roomId))
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_FINISH_CHAT_ROOM));
 
-        //배달파티 조회
-        DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyByIdAndMatchingStatus(partyChatRoom.getDeliveryPartyId())
-                .orElseThrow(() -> new BaseException(NOT_EXISTS_MATCHING_FINISH_PARTY));
-
         //mysql - 배달 완료 상태 수정
-        deliveryParty.changeOrderStatusToDeliveryComplete();
+        deliveryPartyService.changeOrderStatusToDeliveryComplete(partyChatRoom.getDeliveryPartyId());
 
         //mongo - OrderStatus 값 바꾸기
         partyChatRoomRepository.changeOrderStatusToDeliveryComplete(new ObjectId(roomId));
@@ -508,6 +511,7 @@ public class DeliveryPartyChatService {
             throw new BaseException(DIFFERENT_CHIEF_ID);
     }
 
+    @Transactional(readOnly = true, transactionManager = MONGO_TRANSACTION_MANAGER)
     public List<GetPartyChatRoomMembersInfoRes> getChatRoomMembersInfo(Integer partyId, int userId, String partyUUID) {
         DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyByIdAndStatus(partyId)
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTY));
@@ -523,6 +527,8 @@ public class DeliveryPartyChatService {
                 })
                 .collect(Collectors.toList());
     }
+
+    @Transactional(readOnly = true, transactionManager = MONGO_TRANSACTION_MANAGER)
     public GetPartyChatRoomMemberProfileRes getChatRoomMemberProfile(String chatRoomId, int userId,int memberId){
         //채팅방 조회
         PartyChatRoom partyChatRoom = partyChatRoomRepository.findByPartyChatRoomId(new ObjectId(chatRoomId))
@@ -543,6 +549,18 @@ public class DeliveryPartyChatService {
                 .orElseThrow(()-> new BaseException(NOT_EXISTS_GRADE)).getName();
 
         GetPartyChatRoomMemberProfileRes res = new GetPartyChatRoomMemberProfileRes(member.getNickName(),grade,isChief);
+        return res;
+    }
+
+    //수동 매칭 마감
+    @Transactional(readOnly = false, transactionManager = MONGO_TRANSACTION_MANAGER)
+    public PatchDeliveryPartyMatchingStatusRes changeMatchingStatus(Integer partyId, int userId) {
+        PatchDeliveryPartyMatchingStatusRes res = deliveryPartyService.changeMatchingStatus(partyId, userId);
+
+        PartyChatRoom partyChatRoom = partyChatRoomRepository.findByDeliveryPartyId(partyId)
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_CHAT_ROOM));
+        partyChatRoomRepository.changeIsFinish(new ObjectId(partyChatRoom.getId()));
+        createChat(userId, partyChatRoom.getId(), "매칭이 마감되었어요", true, null, "publish", "none", false);
         return res;
     }
 }

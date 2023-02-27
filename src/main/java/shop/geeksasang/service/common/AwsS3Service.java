@@ -22,10 +22,7 @@ public class AwsS3Service {
 
     private final AmazonS3Client s3Client;
 
-
-
-
-        public List<String> uploadFiles(List<MultipartFile> images) throws IOException {
+    public List<String> uploadFiles(List<MultipartFile> images) throws IOException {
         List<String> result= new ArrayList<>();
         for (MultipartFile image : images) {
             result.add(upload(image.getInputStream(), image.getOriginalFilename(), image.getSize()));

@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
+import static shop.geeksasang.config.TransactionManagerConfig.JPA_TRANSACTION_MANAGER;
 import static shop.geeksasang.config.exception.response.BaseResponseStatus.*;
 
 @Slf4j
@@ -46,7 +47,7 @@ public class EmailService {
     private final RedisUtil redisUtil;
 
     // 인증번호 이메일 전송
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, transactionManager = JPA_TRANSACTION_MANAGER)
     public void sendEmail(PostEmailReq request) {
         // 대학교 이메일 주소 검증
         String universityName = request.getUniversity();
@@ -94,7 +95,7 @@ public class EmailService {
     }
 
     // 인증번호가 일치하는지 체크
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, transactionManager = JPA_TRANSACTION_MANAGER)
     public PostEmailCertificationRes checkEmailCertification(PostEmailCertificationReq request) {
         String address = request.getEmail();
         String key = request.getKey();

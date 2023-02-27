@@ -20,9 +20,9 @@ import shop.geeksasang.repository.member.MemberRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static shop.geeksasang.config.TransactionManagerConfig.JPA_TRANSACTION_MANAGER;
 import static shop.geeksasang.config.exception.response.BaseResponseStatus.*;
 
-@Transactional(readOnly = true)
 @Service
 @RequiredArgsConstructor
 public class DeliveryPartyMemberService {
@@ -31,7 +31,7 @@ public class DeliveryPartyMemberService {
     private final DeliveryPartyRepository deliveryPartyRepository;
 
     // 파티 들어가기 - 멤버 생성
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, transactionManager = JPA_TRANSACTION_MANAGER)
     public PostDeliveryPartyMemberRes joinDeliveryPartyMember(Integer partyId, int userId){
 
         //엔티티 조회
@@ -72,7 +72,7 @@ public class DeliveryPartyMemberService {
     }
 
     //파티(채팅방) 나오기 - 방장x
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, transactionManager = JPA_TRANSACTION_MANAGER)
     public String patchDeliveryPartyMemberStatus(Integer partyId, int memberId){
         //요청 보낸 사용자 Member
         Member findMember = memberRepository.findMemberByIdAndStatus(memberId).
@@ -93,7 +93,7 @@ public class DeliveryPartyMemberService {
 
 
     // 수정: 송금 완료상태 수정
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, transactionManager = JPA_TRANSACTION_MANAGER)
     public PatchAccountTransferStatusRes updateAccountTransferStatus(PatchAccountTransferStatusReq dto, int memberId){
         // 멤버 조회
         DeliveryPartyMember deliveryPartyMember = deliveryPartyMemberRepository.findDeliveryPartyMemberByMemberIdAndDeliveryPartyId(memberId, dto.getPartyId())
@@ -105,7 +105,7 @@ public class DeliveryPartyMemberService {
     }
 
     //수정: 송금 완료 상태 수정2 - DeliveryPartyChatMember에서 사용
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, transactionManager = JPA_TRANSACTION_MANAGER)
     public void changeAccountTransferStatus(int partyId, int memberId){
         //배달파티 멤버 조회
         DeliveryPartyMember deliveryPartyMember = deliveryPartyMemberRepository.findDeliveryPartyMemberByMemberIdAndDeliveryPartyId(memberId, partyId)
@@ -115,7 +115,7 @@ public class DeliveryPartyMemberService {
         deliveryPartyMember.changeAccountTransferStatusToY();
     }
 
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, transactionManager = JPA_TRANSACTION_MANAGER)
     public void forceOutMembersByChief(Integer partyId, List<Integer> membersId, int userId) {
         DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyByIdAndStatus(partyId)
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTY));

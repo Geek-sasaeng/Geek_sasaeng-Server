@@ -13,10 +13,10 @@ import shop.geeksasang.repository.report.MemberReportRepository;
 import shop.geeksasang.repository.member.MemberRepository;
 import shop.geeksasang.repository.report.ReportCategoryRepository;
 
+import static shop.geeksasang.config.TransactionManagerConfig.JPA_TRANSACTION_MANAGER;
 import static shop.geeksasang.config.exception.response.BaseResponseStatus.*;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class MemberReportService {
 
@@ -24,7 +24,7 @@ public class MemberReportService {
     private final ReportCategoryRepository reportCategoryRepository;
     private final MemberRepository memberRepository;
 
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, transactionManager = JPA_TRANSACTION_MANAGER)
     public void registerMemberReport(PostMemberReportRegisterReq dto, JwtInfo jwtInfo){
         //멤버를 가져온다.
         int memberId = jwtInfo.getUserId();

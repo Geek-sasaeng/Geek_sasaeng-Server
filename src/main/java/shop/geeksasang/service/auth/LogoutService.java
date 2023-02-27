@@ -9,6 +9,8 @@ import shop.geeksasang.config.exception.response.BaseResponseStatus;
 import shop.geeksasang.domain.member.Member;
 import shop.geeksasang.repository.member.MemberRepository;
 
+import static shop.geeksasang.config.TransactionManagerConfig.JPA_TRANSACTION_MANAGER;
+
 @Transactional
 @Service
 @RequiredArgsConstructor
@@ -16,6 +18,7 @@ import shop.geeksasang.repository.member.MemberRepository;
 public class LogoutService {
     private final MemberRepository memberRepository;
 
+    @Transactional(readOnly = false, transactionManager = JPA_TRANSACTION_MANAGER)
     public void logout(int userId){
         Member member = memberRepository.findMemberByIdAndStatus(userId)
                 .orElseThrow(()->new BaseException(BaseResponseStatus.NOT_EXISTS_PARTICIPANT));

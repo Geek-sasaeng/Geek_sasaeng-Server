@@ -24,6 +24,7 @@ import shop.geeksasang.dto.chat.partychatroom.GetPartyChatRoomsRes;
 import shop.geeksasang.dto.chat.PostChatReq;
 import shop.geeksasang.dto.chat.partychatroom.PartyChatRoomRes;
 import shop.geeksasang.dto.chat.partychatroom.post.PostPartyChatRoomReq;
+import shop.geeksasang.dto.deliveryParty.patch.PatchDeliveryPartyMatchingStatusRes;
 import shop.geeksasang.dto.login.JwtInfo;
 import shop.geeksasang.service.chat.DeliveryPartyChatService;
 import shop.geeksasang.service.common.FirebaseCloudMessageService;
@@ -270,5 +271,20 @@ public class DeliveryPartyChatController {
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
         GetPartyChatRoomMemberProfileRes response = deliveryPartyChatService.getChatRoomMemberProfile(chatRoomId,jwtInfo.getUserId(),memberId);
         return new BaseResponse<>(response);
+    }
+
+
+    @ApiOperation(value = "마감 : 배달파티 수동 매칭 마감", notes = "매칭 마감시킬 배달 파티의 아이디를 받아 배달 파티 매칭 status를 FINISH로 바꿀 수 있다.")
+    @ApiResponses({
+            @ApiResponse(code = 1000 ,message = "요청에 성공하였습니다."),
+            @ApiResponse(code = 2207 ,message = "채팅방이 존재하지 않습니다."),
+            @ApiResponse(code = 2616 ,message = "파티 매칭 마감을 할 수 없는 유저이거나 이미 마감된 상태입니다."),
+            @ApiResponse(code = 4000 ,message = "서버 오류입니다.")
+    })
+    @PatchMapping("/matching-status")
+    public BaseResponse<PatchDeliveryPartyMatchingStatusRes> patchMatchingStatus(@RequestParam Integer partyId, HttpServletRequest request) {
+        JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
+        PatchDeliveryPartyMatchingStatusRes res = deliveryPartyChatService.changeMatchingStatus(partyId, jwtInfo.getUserId());
+        return new BaseResponse<>(res);
     }
 }
