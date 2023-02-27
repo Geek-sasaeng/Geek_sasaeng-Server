@@ -308,7 +308,7 @@ public class DeliveryPartyChatService {
         String nickName = memberRepository.findMemberById(removedMember.getMemberId())
                 .orElseThrow(() -> new BaseException(NOT_EXIST_USER)).getNickName();
 
-        this.createChat(chiefId, dto.getRoomId(), "파티장의 강제 퇴장 요청으로 인해 " + nickName + "이 퇴장 처리되었습니다"
+        this.createChat(chiefId, dto.getRoomId(), "파티장의 강제 퇴장 요청으로 인해 '" + nickName + "'이 퇴장 처리되었습니다"
                 , true, null, "publish", "none", false);
     }
 
