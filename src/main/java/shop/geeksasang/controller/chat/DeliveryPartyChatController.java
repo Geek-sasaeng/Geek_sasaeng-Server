@@ -277,6 +277,7 @@ public class DeliveryPartyChatController {
     @ApiOperation(value = "마감 : 배달파티 수동 매칭 마감", notes = "매칭 마감시킬 배달 파티의 아이디를 받아 배달 파티 매칭 status를 FINISH로 바꿀 수 있다.")
     @ApiResponses({
             @ApiResponse(code = 1000 ,message = "요청에 성공하였습니다."),
+            @ApiResponse(code = 2207 ,message = "채팅방이 존재하지 않습니다."),
             @ApiResponse(code = 2616 ,message = "파티 매칭 마감을 할 수 없는 유저이거나 이미 마감된 상태입니다."),
             @ApiResponse(code = 4000 ,message = "서버 오류입니다.")
     })
