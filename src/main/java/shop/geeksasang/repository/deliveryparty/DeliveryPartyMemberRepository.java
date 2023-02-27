@@ -23,4 +23,7 @@ public interface DeliveryPartyMemberRepository extends JpaRepository<DeliveryPar
 
     @Query("select dpm from DeliveryPartyMember dpm where dpm.party.id= :id and dpm.participant.nickName = :nickName and dpm.status = 'ACTIVE'")
     Optional<DeliveryPartyMember> findByDeliveryPartyMemberByIdAndNickName(int id, String nickName);
+
+    @Query("select dpm from DeliveryPartyMember dpm join fetch dpm.party where dpm.participant.id = :memberId and dpm.party.status = 'ACTIVE' and dpm.status = 'ACTIVE' and dpm.party.orderStatus = 'DELIVERY_COMPLETE' ")
+    List<DeliveryPartyMember> findByMemberIdAndParties(int memberId);
 }
