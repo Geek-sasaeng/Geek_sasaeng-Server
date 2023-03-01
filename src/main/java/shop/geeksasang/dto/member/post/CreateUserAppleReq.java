@@ -19,7 +19,7 @@ public class CreateUserAppleReq {
     MemberLoginType memberLoginType;
 
     public CreateUserAppleReq(String refreshToken, MemberLoginType memberLoginType) {
-        this.loginId = String.valueOf(UUID.randomUUID());
+        this.loginId = String.valueOf(UUID.randomUUID()).substring(0, 20);
         this.refreshToken = refreshToken;
         this.name = null;
         this.memberLoginType = memberLoginType;
