@@ -32,9 +32,11 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
 import java.util.Map;
 
+import static shop.geeksasang.config.TransactionManagerConfig.JPA_TRANSACTION_MANAGER;
+import static shop.geeksasang.config.TransactionManagerConfig.MONGO_TRANSACTION_MANAGER;
+
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class AppleServiceImpl {
 
     private final AppleUtils appleUtils;
@@ -49,23 +51,22 @@ public class AppleServiceImpl {
     /**
      * code 또는 refresh_token가 유효한지 Apple Server에 검증 요청
      */
-    @Transactional
-    public TokenResponse signUp(String idToken, String code, UserObject user) throws NoSuchAlgorithmException {
+    public TokenResponse signUp(String idToken, String code) throws NoSuchAlgorithmException {
 
         String client_secret = getAppleClientSecret(idToken);
 
         // 만약 처음 인증하는 유저여서  refresh 토큰 없으면 client_secret, authorization_code로 검증
-        String email = user.getEmail();
-        String name = user.getLastName() + user.getFirstName();
+
         TokenResponse tokenResponse = appleUtils.validateAuthorizationGrantCode(client_secret, code);
 
-        CreateUserAppleReq createUserAppleReq = new CreateUserAppleReq(email, tokenResponse.getRefresh_token(), name, MemberLoginType.APPLE_USER);
+        CreateUserAppleReq createUserAppleReq = new CreateUserAppleReq(tokenResponse.getRefresh_token(), MemberLoginType.APPLE_USER);
         Member member = memberService.createUserApple(createUserAppleReq);
         tokenResponse.setUserId(member.getId());
-
         return tokenResponse;
     }
 
+
+    @Transactional(readOnly = false, transactionManager = JPA_TRANSACTION_MANAGER)
     public PostLoginRes login(String idToken, String refreshToken) throws NoSuchAlgorithmException {
         String clientSecret = getAppleClientSecret(idToken);
         TokenResponse tokenResponse = appleUtils.validateAnExistingRefreshToken(clientSecret, refreshToken);
@@ -146,6 +147,8 @@ public class AppleServiceImpl {
 //        return null;
 //    }
 
+
+    @Transactional(readOnly = false, transactionManager = JPA_TRANSACTION_MANAGER)
     public void deleteUser(DeleteUserReq deleteUserReq) {
         RestTemplate restTemplate = new RestTemplateBuilder().build();
         String revokeUrl = "https://appleid.apple.com/auth/revoke";

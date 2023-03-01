@@ -25,7 +25,6 @@ public class AppleController {
     private Logger logger = LoggerFactory.getLogger(AppleController.class);
 
     private final AppleServiceImpl appleService;
-    private final ObjectMapper objectMapper;
 
     /**
      * Apple 회원가입
@@ -38,7 +37,7 @@ public class AppleController {
     @PostMapping(value = "/apple-login")
     @ResponseBody
     public BaseResponse<TokenResponse> signUpApple(@RequestBody AppleSignUpReq req) throws NoSuchAlgorithmException{
-        TokenResponse tokenResponse = appleService.signUp(req.getIdToken(), req.getCode(), req.getUser());
+        TokenResponse tokenResponse = appleService.signUp(req.getIdToken(), req.getCode());
         return new BaseResponse<>(tokenResponse);
     }
 
