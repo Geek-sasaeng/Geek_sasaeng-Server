@@ -10,11 +10,9 @@ public class AppleSignUpReq {
 
     private String code;
     private String idToken;
-    private UserObject user;
 
-    public AppleSignUpReq(String code, String idToken, UserObject user) {
+    public AppleSignUpReq(String code, String idToken) {
         this.code = code;
         this.idToken = idToken;
-        this.user = user;
     }
 }
