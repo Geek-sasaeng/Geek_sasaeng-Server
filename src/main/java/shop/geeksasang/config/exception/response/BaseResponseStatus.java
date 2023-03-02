@@ -86,7 +86,7 @@ public enum BaseResponseStatus {
     ALREADY_PARTY_FINISH(false, 2027 , "이미 마감한 파티입니다."),
     EMPTY_DELIVERY_PARTY(false, 2028 , "빈 배달파티입니다."),
     FILE_SIZE_LIMIT_EXCEED(false, 2029 , "파일 사이즈가 너무 큽니다."),
-    MAX_UPLOAD_SIZE_LIMIT_EXCEED(false, 2029 , "최대 업로드 크기를 초과했습니다."),
+    MAX_UPLOAD_SIZE_LIMIT_EXCEED(false, 2030 , "최대 업로드 크기를 초과했습니다."),
 
 
 

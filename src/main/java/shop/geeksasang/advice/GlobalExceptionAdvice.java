@@ -87,3 +87,5 @@ public class GlobalExceptionAdvice {
         return new BaseResponse<>(INTERNAL_SERVER_ERROR);
     }
 }
+
+//https://velog.io/@park2348190/Spring%EC%9D%98-MaxUploadSizeExceededException
