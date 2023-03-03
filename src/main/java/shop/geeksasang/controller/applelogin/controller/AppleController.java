@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +19,10 @@ import shop.geeksasang.utils.jwt.NoIntercept;
 import javax.servlet.http.HttpServletRequest;
 import java.security.NoSuchAlgorithmException;
 
+@Slf4j
 @RequiredArgsConstructor
 @Controller
 public class AppleController {
-
-    private Logger logger = LoggerFactory.getLogger(AppleController.class);
 
     private final AppleServiceImpl appleService;
 
@@ -37,7 +37,7 @@ public class AppleController {
     @PostMapping(value = "/apple-login")
     @ResponseBody
     public BaseResponse<TokenResponse> signUpApple(@RequestBody AppleSignUpReq req) throws NoSuchAlgorithmException{
-        TokenResponse tokenResponse = appleService.signUp(req.getIdToken(), req.getCode());
+        TokenResponse tokenResponse = appleService.signUp(req);
         return new BaseResponse<>(tokenResponse);
     }
 
@@ -101,7 +101,7 @@ public class AppleController {
     @ResponseBody
     public void appsToEndpoint(@RequestBody AppsResponse appsResponse) {
         System.out.println("애플 계정 탈퇴했습니다.");
-        logger.debug("[/path/to/endpoint] RequestBody ‣ " + appsResponse.getPayload());
+        log.debug("[/path/to/endpoint] RequestBody ‣ " + appsResponse.getPayload());
     }
 
 }

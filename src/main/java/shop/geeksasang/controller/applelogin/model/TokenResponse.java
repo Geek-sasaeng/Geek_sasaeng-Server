@@ -17,4 +17,13 @@ public class TokenResponse {
     private String refresh_token;
     private String token_type;
     private int userId;
+    private String jwt;
+
+    public TokenResponse(String access_token, String id_token, String refresh_token, int userId, String jwt) {
+        this.access_token = access_token;
+        this.id_token = id_token;
+        this.refresh_token = refresh_token;
+        this.userId = userId;
+        this.jwt = jwt;
+    }
 }
