@@ -14,16 +14,15 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import shop.geeksasang.config.exception.BaseException;
-import shop.geeksasang.config.exception.response.BaseResponseStatus;
 import shop.geeksasang.config.status.LoginStatus;
 import shop.geeksasang.config.type.MemberLoginType;
-import shop.geeksasang.controller.applelogin.controller.AppleSignUpReq;
 import shop.geeksasang.controller.applelogin.model.*;
 import shop.geeksasang.controller.applelogin.util.AppleUtils;
 import shop.geeksasang.domain.member.Member;
 import shop.geeksasang.dto.login.JwtInfo;
 import shop.geeksasang.dto.login.post.PostLoginRes;
 import shop.geeksasang.dto.member.post.CreateUserAppleReq;
+import shop.geeksasang.dto.member.post.PostSocialRegisterRes;
 import shop.geeksasang.repository.member.MemberRepository;
 import shop.geeksasang.service.member.MemberService;
 import shop.geeksasang.utils.jwt.JwtService;
@@ -33,7 +32,7 @@ import java.util.Collections;
 import java.util.Map;
 
 import static shop.geeksasang.config.TransactionManagerConfig.JPA_TRANSACTION_MANAGER;
-import static shop.geeksasang.config.TransactionManagerConfig.MONGO_TRANSACTION_MANAGER;
+import static shop.geeksasang.config.exception.response.BaseResponseStatus.*;
 
 @Service
 @RequiredArgsConstructor
@@ -51,19 +50,18 @@ public class AppleServiceImpl {
     /**
      * code 또는 refresh_token가 유효한지 Apple Server에 검증 요청
      */
-    public TokenResponse signUp(String idToken, String code) throws NoSuchAlgorithmException {
+    public TokenResponse signUp(AppleSignUpReq req) throws NoSuchAlgorithmException {
 
-        String client_secret = getAppleClientSecret(idToken);
+        String client_secret = getAppleClientSecret(req.getIdToken());
 
         // 만약 처음 인증하는 유저여서  refresh 토큰 없으면 client_secret, authorization_code로 검증
-
-        TokenResponse tokenResponse = appleUtils.validateAuthorizationGrantCode(client_secret, code);
-
-        CreateUserAppleReq createUserAppleReq = new CreateUserAppleReq(tokenResponse.getRefresh_token(), MemberLoginType.APPLE_USER);
-        Member member = memberService.createUserApple(createUserAppleReq);
-        tokenResponse.setUserId(member.getId());
+        TokenResponse tokenResponse = appleUtils.validateAuthorizationGrantCode(client_secret, req.getCode());
+        String jwt = memberService.registerAppleMember(req, tokenResponse.getRefresh_token());
+        tokenResponse.setJwt(jwt);
         return tokenResponse;
     }
+
+
 
 
     @Transactional(readOnly = false, transactionManager = JPA_TRANSACTION_MANAGER)
@@ -71,7 +69,7 @@ public class AppleServiceImpl {
         String clientSecret = getAppleClientSecret(idToken);
         TokenResponse tokenResponse = appleUtils.validateAnExistingRefreshToken(clientSecret, refreshToken);
         Member member= memberRepository.findByAppleRefreshToken(refreshToken)
-                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXIST_USER));
+                .orElseThrow(() -> new BaseException(NOT_EXIST_USER));
         tokenResponse.setUserId(member.getId());
 
         JwtInfo vo = JwtInfo.builder()
@@ -169,7 +167,7 @@ public class AppleServiceImpl {
         //TODO:userService.validateRefreshToken(deleteUserReq.getUserId(), deleteUserReq.getRefreshToken());
         memberService.validateRefreshToken(deleteUserReq.getUserId(), deleteUserReq.getRefreshToken());
         //TODO:User user = userRepository.findByUserId(deleteUserReq.getUserId()).orElseThrow(() -> new NotFoundUserException());
-        Member user = memberRepository.findMemberByIdAndStatus(deleteUserReq.getUserId()).orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXIST_USER));
+        Member user = memberRepository.findMemberByIdAndStatus(deleteUserReq.getUserId()).orElseThrow(() -> new BaseException(NOT_EXIST_USER));
         //TODO:user.deleteUser(); // 유저 개인정보 null 만드는 메서드
 
     }

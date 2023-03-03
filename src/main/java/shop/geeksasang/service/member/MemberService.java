@@ -9,6 +9,7 @@ import shop.geeksasang.config.exception.response.BaseResponseStatus;
 import shop.geeksasang.config.status.LoginStatus;
 import shop.geeksasang.config.status.ValidStatus;
 import shop.geeksasang.config.exception.BaseException;
+import shop.geeksasang.controller.applelogin.model.AppleSignUpReq;
 import shop.geeksasang.domain.auth.Email;
 import shop.geeksasang.domain.auth.PhoneNumber;
 import shop.geeksasang.domain.deliveryparty.DeliveryParty;
@@ -121,7 +122,6 @@ public class MemberService {
     // 소셜 회원가입 하기
     @Transactional(readOnly = false, transactionManager = JPA_TRANSACTION_MANAGER)
     public PostSocialRegisterRes registerSocialMember(PostSocialRegisterReq dto) {
-        Email emailEntity;
         // 네이버 사용자 토큰 받아오기
         NaverLoginData naverLoginData = naverLoginRequest.getToken(dto.getAccessToken());
         String naverId = naverLoginData.getId();
@@ -140,7 +140,7 @@ public class MemberService {
             throw new BaseException(INVALID_INFORMATIONAGREE_STATUS);
         }
 
-        emailEntity = emailRepository.findEmailByAddressAndACTIVE(email).orElseThrow(() -> new BaseException(NOT_MATCH_EMAIL));
+        Email emailEntity = emailRepository.findEmailByAddressAndACTIVE(email).orElseThrow(() -> new BaseException(NOT_MATCH_EMAIL));
         int emailId = emailEntity.getId();
 
         // 검증: 이메일 인증 여부
@@ -361,18 +361,6 @@ public class MemberService {
         return false;
     }
 
-
-    // 애플 유저 가입
-    @Transactional(readOnly = false, transactionManager = JPA_TRANSACTION_MANAGER)
-    public Member createUserApple(CreateUserAppleReq createUserAppleReq){
-        if(memberRepository.existsByLoginId(createUserAppleReq.getLoginId())) throw new BaseException(DUPLICATE_USER_LOGIN_ID);
-        Grade grade = gradeRepository.findById(1)
-                .orElseThrow(()-> new BaseException(NOT_EXISTS_GRADE));
-        Member user = memberRepository.save(CreateUserAppleReq.toEntityUserApple(createUserAppleReq, grade));
-        return user;
-    }
-
-
     /**
      * 리프레시 토큰 검증
      *
@@ -416,5 +404,58 @@ public class MemberService {
             member.changeGrade(returningGrade);
         }
 
+    }
+
+
+    @Transactional(readOnly = false, transactionManager = JPA_TRANSACTION_MANAGER)
+    public String registerAppleMember(AppleSignUpReq dto, String refreshToken) {
+
+        if(memberRepository.existsByLoginId(dto.getNickname())) throw new BaseException(DUPLICATE_USER_NICKNAME);
+
+        // 검증: 동의여부가 Y 가 아닌 경우
+        if (!dto.getInformationAgreeStatus().equals("Y")) {
+            throw new BaseException(INVALID_INFORMATIONAGREE_STATUS);
+        }
+
+        Email email = emailRepository.findEmailByAddressAndACTIVE(dto.getEmail()).orElseThrow(() -> new BaseException(NOT_MATCH_EMAIL));
+
+        // 검증: 이메일 인증 여부
+        if (!memberRepository.findMemberByEmailId(email.getId()).isEmpty()) {
+            throw new BaseException(ALREADY_VALID_EMAIL);
+        }
+
+        if (!email.getEmailValidStatus().equals(ValidStatus.SUCCESS)) throw new BaseException(INVALID_EMAIL_MEMBER);
+
+        // 검증: 핸드폰 번호가 등록이 안되어있는지
+        if (phoneNumberRepository.findPhoneNumberByNumber(dto.getPhoneNumber()).isPresent()) {
+            throw new BaseException(DUPLICATE_USER_PHONENUMBER);
+        }
+
+        // 핸드폰 번호 DB에 저장
+        PhoneNumber phoneNumberEntity = smsService.savePhoneNumber(dto.getPhoneNumber());
+
+        Member member = dto.toEntity(email, phoneNumberEntity, dto.getNickname(), refreshToken);
+        University university = universityRepository
+                .findUniversityByName(dto.getUniversityName())
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_UNIVERSITY));
+        member.connectUniversity(university);
+        member.changeStatusToActive();
+        member.changeLoginStatusToNever(); // 로그인 안해본 상태 디폴트 저장
+        member.changeProfileImgUrl("https://geeksasaeng-s3.s3.ap-northeast-2.amazonaws.com/5bc8d80a-580d-455a-a414-d0d2f9af2c9f-newProfileImg.png");// S3기본 프로필 이미지 저장
+
+
+        Grade grade = gradeRepository
+                .findById(1)
+                .orElseThrow(()-> new BaseException(NOT_EXISTS_GRADE));
+        member.changeGrade(grade);
+        memberRepository.save(member);
+
+        // jwt 발급
+        JwtInfo vo = JwtInfo.builder()
+                .userId(member.getId())
+                .universityId(member.getUniversity().getId())
+                .build();
+
+        return jwtService.createJwt(vo);
     }
 }
