@@ -36,9 +36,6 @@ public class AppleSignUpReq {
     @ApiParam(value = "사용자 학교 이메일", required = true)
     private String email;
 
-    @ApiModelProperty(example = "eyJ0eXBlIjoiand0IiwiYWxnIjoiSFMyNTYifQ.eyJqd3RJbmZvIjp7InVuaXZlcnNpdHlJZCI6MSwidXNlcklkIjoxN30sImlhdCI6MTY1NzQ1MTU1NiwiZXhwIjoxNjU4MzQwNTg5fQ.0H1fUvms49VVcH9gkKD5P3PVP8X73mfX_r8Y14qH598")
-    private String accessToken;
-
     @ApiModelProperty(example = "Y")
     @ApiParam(value = "사용자 회원 정보 동의 여부", required = true)
     @NotBlank(message = "회원정보동의는 Y 를 입력해야 합니다.") //Null, 빈 문자열, 스페이스만 있는 문자열 불가

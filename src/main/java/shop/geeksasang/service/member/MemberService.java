@@ -9,6 +9,7 @@ import shop.geeksasang.config.exception.response.BaseResponseStatus;
 import shop.geeksasang.config.status.LoginStatus;
 import shop.geeksasang.config.status.ValidStatus;
 import shop.geeksasang.config.exception.BaseException;
+import shop.geeksasang.controller.applelogin.controller.TempDto;
 import shop.geeksasang.controller.applelogin.model.AppleSignUpReq;
 import shop.geeksasang.domain.auth.Email;
 import shop.geeksasang.domain.auth.PhoneNumber;
@@ -408,7 +409,7 @@ public class MemberService {
 
 
     @Transactional(readOnly = false, transactionManager = JPA_TRANSACTION_MANAGER)
-    public String registerAppleMember(AppleSignUpReq dto, String refreshToken) {
+    public TempDto registerAppleMember(AppleSignUpReq dto, String refreshToken) {
 
         if(memberRepository.existsByLoginId(dto.getNickname())) throw new BaseException(DUPLICATE_USER_NICKNAME);
 
@@ -456,6 +457,6 @@ public class MemberService {
                 .universityId(member.getUniversity().getId())
                 .build();
 
-        return jwtService.createJwt(vo);
+        return new TempDto(jwtService.createJwt(vo), member.getNickName());
     }
 }

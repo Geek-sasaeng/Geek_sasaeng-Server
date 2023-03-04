@@ -16,6 +16,7 @@ import org.springframework.web.client.RestTemplate;
 import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.config.status.LoginStatus;
 import shop.geeksasang.config.type.MemberLoginType;
+import shop.geeksasang.controller.applelogin.controller.TempDto;
 import shop.geeksasang.controller.applelogin.model.*;
 import shop.geeksasang.controller.applelogin.util.AppleUtils;
 import shop.geeksasang.domain.member.Member;
@@ -56,11 +57,11 @@ public class AppleServiceImpl {
 
         // 만약 처음 인증하는 유저여서  refresh 토큰 없으면 client_secret, authorization_code로 검증
         TokenResponse tokenResponse = appleUtils.validateAuthorizationGrantCode(client_secret, req.getCode());
-        String jwt = memberService.registerAppleMember(req, tokenResponse.getRefresh_token());
-        tokenResponse.setJwt(jwt);
+        TempDto tempDto = memberService.registerAppleMember(req, tokenResponse.getRefresh_token());
+        tokenResponse.setJwt(tempDto.getJwt());
+        tokenResponse.setNickName(tempDto.getNickName());
         return tokenResponse;
     }
-
 
 
 
