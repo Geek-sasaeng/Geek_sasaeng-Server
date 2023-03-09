@@ -53,6 +53,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static shop.geeksasang.config.TransactionManagerConfig.*;
@@ -524,10 +525,10 @@ public class DeliveryPartyChatService {
                 .filter(deliveryParty::isNotChief)
                 .filter(deliveryParty::isNotDeleteMember)
                 .map(member -> {
-
-                    PartyChatRoomMember chatRoomMember = partyChatRoomMemberRepository
-                            .findByMemberIdAndChatRoomId(member.getParticipant().getId(), new ObjectId(partyUUID))
-                            .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTYCHATROOM_MEMBER));
+                    Optional<PartyChatRoomMember> opt =
+                            partyChatRoomMemberRepository.findByMemberIdAndChatRoomId(member.getParticipant().getId(), new ObjectId(partyUUID));
+                    if(opt.isEmpty()) return new GetPartyChatRoomMembersInfoRes();
+                    PartyChatRoomMember chatRoomMember = opt.get();
                     return GetPartyChatRoomMembersInfoRes.from(member, chatRoomMember);
                 })
                 .collect(Collectors.toList());
