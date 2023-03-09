@@ -46,6 +46,14 @@ public class DeliveryPartiesVo {
     @ApiParam(value = "음식 카테고리")
     private String foodCategory;
 
+    @ApiModelProperty(example = "제 1 기숙사")
+    @ApiParam(value = "기숙사 이름")
+    private String dormitoryName;
+
+    @ApiModelProperty(example = "2")
+    @ApiParam(value = "기숙사 id")
+    private Integer dormitoryId;
+
     //빌더
     static public DeliveryPartiesVo toDto(DeliveryParty deliveryParty){
         return DeliveryPartiesVo.builder()
@@ -56,6 +64,8 @@ public class DeliveryPartiesVo {
                 .currentMatching(deliveryParty.getCurrentMatching())
                 .maxMatching(deliveryParty.getMaxMatching())
                 .hasHashTag(presentHashTag(deliveryParty.getDeliveryPartyHashTags()))
+                .dormitoryId(deliveryParty.getDormitory().getId())
+                .dormitoryName(deliveryParty.getDormitory().getName())
                 .build();
     }
 
@@ -65,5 +75,4 @@ public class DeliveryPartiesVo {
         }
         return true;
     }
-
 }

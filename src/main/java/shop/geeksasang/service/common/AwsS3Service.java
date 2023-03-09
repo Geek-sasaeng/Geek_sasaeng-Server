@@ -5,8 +5,12 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -17,6 +21,14 @@ public class AwsS3Service {
     private String bucket;
 
     private final AmazonS3Client s3Client;
+
+    public List<String> uploadFiles(List<MultipartFile> images) throws IOException {
+        List<String> result= new ArrayList<>();
+        for (MultipartFile image : images) {
+            result.add(upload(image.getInputStream(), image.getOriginalFilename(), image.getSize()));
+        }
+        return result;
+    }
 
     public String upload(InputStream inputStream, String originFileName, Long fileSize) {
         String s3FileName = UUID.randomUUID() + "-" + originFileName;

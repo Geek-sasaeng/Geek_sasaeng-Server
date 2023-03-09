@@ -11,6 +11,7 @@ import shop.geeksasang.repository.university.DormitoryRepository;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static shop.geeksasang.config.TransactionManagerConfig.JPA_TRANSACTION_MANAGER;
 import static shop.geeksasang.config.exception.response.BaseResponseStatus.NOT_EXISTS_DORMITORY;
 
 
@@ -21,6 +22,7 @@ public class DormitoryService {
 
     private final DormitoryRepository dormitoryRepository;
 
+    @Transactional(readOnly = true, transactionManager = JPA_TRANSACTION_MANAGER)
     public List<GetDormitoriesRes> getDormitories(int university_id){
 
         List<Dormitory> dormitories = dormitoryRepository.findDormitoryByUniversityId(university_id);

@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import shop.geeksasang.domain.chat.Chat;
+import shop.geeksasang.domain.member.Member;
 
 import javax.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
@@ -27,7 +28,7 @@ public class PostChatRes {
 
     private int memberId;
 
-    private String email;
+    private String nickName;
 
     private String profileImgUrl;
 
@@ -49,22 +50,14 @@ public class PostChatRes {
         this.memberId = memberId;
     }
 
-    public PostChatRes(String email, String chatRoomId, String content, LocalDateTime createdAt, int memberId) {
-        this.email = email;
-        this.chatRoomId = chatRoomId;
-        this.content = content;
-        this.createdAt = createdAt;
-        this.memberId = memberId;
-    }
-
     @Builder
-    public PostChatRes(String chatId, String content, String chatRoomId, Boolean isSystemMessage, int memberId, String email, String profileImgUrl, List<Integer> readMembers, LocalDateTime createdAt, String chatType, int unreadMemberCnt, Boolean isImageMessage) {
+    public PostChatRes(String chatId, String content, String chatRoomId, Boolean isSystemMessage, int memberId, String nickName, String profileImgUrl, List<Integer> readMembers, LocalDateTime createdAt, String chatType, int unreadMemberCnt, Boolean isImageMessage) {
         this.chatId = chatId;
         this.content = content;
         this.chatRoomId = chatRoomId;
         this.isSystemMessage = isSystemMessage;
         this.memberId = memberId;
-        this.email = email;
+        this.nickName = nickName;
         this.profileImgUrl = profileImgUrl;
         this.readMembers = readMembers;
         this.createdAt = createdAt;
@@ -73,14 +66,14 @@ public class PostChatRes {
         this.unreadMemberCnt = unreadMemberCnt;
     }
 
-    public static PostChatRes toDto(Chat chat, String email, String chatType, int unreadMemberCnt){
+    public static PostChatRes toDto(Chat chat, String chatType, int unreadMemberCnt, Member member){
         return PostChatRes.builder()
                 .chatId(chat.getId())
                 .content(chat.getContent())
                 .chatRoomId(chat.getPartyChatRoom().getId())
                 .isSystemMessage(chat.getIsSystemMessage())
-                .memberId(chat.getPartyChatRoomMember().getMemberId())
-                .email(email)
+                .memberId(member.getId())
+                .nickName(member.getNickName())
                 .profileImgUrl(chat.getProfileImgUrl())
                 .readMembers(chat.getReadMembers())
                 .createdAt(chat.getBaseEntityMongo().getCreatedAt())

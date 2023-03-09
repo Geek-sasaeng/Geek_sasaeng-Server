@@ -3,6 +3,7 @@ package shop.geeksasang.service.announcement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import shop.geeksasang.config.TransactionManagerConfig;
 import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.config.exception.response.BaseResponseStatus;
 import shop.geeksasang.domain.announcement.Announcement;
@@ -17,7 +18,8 @@ import shop.geeksasang.repository.member.MemberRepository;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Transactional(readOnly = true)
+import static shop.geeksasang.config.TransactionManagerConfig.*;
+
 @Service
 @RequiredArgsConstructor
 public class AnnouncementService {
@@ -25,6 +27,7 @@ public class AnnouncementService {
     private final MemberRepository memberRepository;
 
     //공지사항 전체 조회
+    @Transactional(readOnly = true, transactionManager = JPA_TRANSACTION_MANAGER)
     public List<GetAnnouncementRes> getAnnouncements(JwtInfo jwtInfo){
 
         int chiefId = jwtInfo.getUserId();
@@ -47,6 +50,7 @@ public class AnnouncementService {
     }
 
     //조회: 공지사항 상세조회
+    @Transactional(readOnly = true, transactionManager = JPA_TRANSACTION_MANAGER)
     public GetAnnouncementDetailRes getAnnouncementDetail(GetAnnouncementDetailReq dto, int memberId){
 
         // 요청 보낸 멤버 조회 및 검증

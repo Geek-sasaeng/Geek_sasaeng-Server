@@ -16,6 +16,7 @@ import java.util.List;
 @Getter
 @Entity
 public class DeliveryPartyMember extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="delivery_party_member_id")
@@ -47,12 +48,11 @@ public class DeliveryPartyMember extends BaseEntity {
     }
 
     public void leaveDeliveryParty(){
-        party = null;
         changeStatusToInactive();
     }
 
     // 배달파티 멤버 삭제
-    public void changeStatusToInactive(){
+    private void changeStatusToInactive(){
         super.setStatus(BaseStatus.INACTIVE);
     }
 
@@ -62,5 +62,22 @@ public class DeliveryPartyMember extends BaseEntity {
 
     public void changeAccountTransferStatusToN(){
         this.acccountTransferStatus = AccountTransferStatus.N;
+    }
+
+    public boolean isActive(){
+        if(getStatus() == BaseStatus.ACTIVE) return true;
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return "DeliveryPartyMember{" +
+                "id=" + id +
+                ", participant=" + participant +
+                ", party=" + party +
+                ", menuList=" + menuList +
+                ", acccountTransferStatus=" + acccountTransferStatus +
+                ", status " + super.getStatus() +
+                '}';
     }
 }

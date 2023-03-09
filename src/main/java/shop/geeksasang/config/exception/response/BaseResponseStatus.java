@@ -25,7 +25,7 @@ public enum BaseResponseStatus {
      * code : 1200~1399
      */
     VALID_PHONEVALIDKEY(true,1201,"폰 인증번호가 일치합니다."),
-    VALID_NICKNAME(true,1202,"사용 가능한 닉네임입니다."),
+    VALID_NICKNAME(true,1202,"사용 가능한 닉네임입니다"),
     VALID_PASSWORD(true,1203,"비밀번호가 일치합니다."),
 
 
@@ -39,7 +39,7 @@ public enum BaseResponseStatus {
      * 제로
      * code : 1600~1799
      */
-    VALID_ID(true, 1601, "사용가능한 아이디입니다"),
+    VALID_ID(true, 1601, "사용 가능한 아이디입니다"),
 
     /**
      * 네오
@@ -83,6 +83,13 @@ public enum BaseResponseStatus {
     NOT_EXIST_CHAT_ROOM_CHIEF(false,2024,"배달 파티 채팅방 방장이 존재하지 않습니다."),
     NOT_CHAT_ROOM_CHIEF(false,2025,"배달 파티 채팅방 방장이 아닙니다."),
     CANT_REMOVE_REMIT_MEMBER(false,2026,"송금을 완료한 멤버는 방에서 퇴장시킬 수 없습니다."),
+    ALREADY_PARTY_FINISH(false, 2027 , "이미 마감한 파티입니다."),
+    EMPTY_DELIVERY_PARTY(false, 2028 , "빈 배달파티입니다."),
+    FILE_SIZE_LIMIT_EXCEED(false, 2029 , "파일 사이즈가 너무 큽니다."),
+    MAX_UPLOAD_SIZE_LIMIT_EXCEED(false, 2030 , "최대 업로드 크기를 초과했습니다."),
+
+
+
 
 
 
@@ -101,6 +108,7 @@ public enum BaseResponseStatus {
     ALREADY_PARTICIPATE_CHATROOM(false, 2209, "이미 채팅방에 참여하고 있습니다."),
     NOT_EXISTS_CHAT(false,2210,"채팅이 존재하지 않습니다."),
     EXCEEDED_IMAGE(false,2211,"이미지 갯수를 초과했습니다."),
+    INVALID_APPLE_REFRESHTOKEN(false, 2212, "올바르지 않은 애플 리프레시 토큰입니다."),
 
 
 
@@ -118,17 +126,20 @@ public enum BaseResponseStatus {
     NOT_EXISTS_PARTY_MEMBER(false, 2405, "참여중인 배달파티 정보를 찾을 수 없습니다."),
     NOT_EXISTS_ANNOUNCEMENTS(false, 2406, "공지사항이 없습니다."),
     INVALID_PASSWORD(false,2407,"비밀번호는 최소 8 자로 문자, 숫자 및 특수 문자를 최소 하나씩 포함해서 8-15자리 이내로 입력해주세요."),
-
+    INVALID_FCMTOKEN(false, 2408, "유효하지 않은 fcm 토큰입니다."),
+    NOT_EXISTS_MATCHING_FINISH_PARTY(false,2409,"마감된 배달파티를 찾을 수 없습니다."),
+    NOT_EXISTS_FINISH_CHAT_ROOM(false,2410,"마감된 채팅방을 찾을 수 없습니다."),
+    NOT_EXISTS_GRADE(false,2411, "등급 데이터가 존재하지 않습니다."),
 
 
     /**
      * 제로
      * code : 2600~2799
      */
-    DUPLICATE_USER_NICKNAME(false, 2600, "중복된 닉네임입니다."),
+    DUPLICATE_USER_NICKNAME(false, 2600, "중복된 닉네임입니다"),
     ALREADY_INACTIVE_USER(false, 2601, "이미 탈퇴한 회원입니다."),
     SAME_PASSWORDS(false, 2602, "기존 비밀번호와 동일합니다."),
-    EXISTS_LOGIN_ID(false, 2603, "중복된 아이디입니다."),
+    EXISTS_LOGIN_ID(false, 2603, "중복된 아이디입니다"),
     NOT_SPECIFIED_VALUE(false, 2604, "지정된 값이 아닙니다."),
     NOT_EXISTS_UNIVERSITY_ID(false, 2605, "존재하지 않는 학교입니다."),
     NOT_EXISTS_DORMITORY(false, 2606, "기숙사가 존재하지 않습니다."),

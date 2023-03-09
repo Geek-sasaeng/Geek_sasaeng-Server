@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.*;
 
 import shop.geeksasang.config.exception.response.BaseResponseStatus;
 import shop.geeksasang.config.response.BaseResponse;
+import shop.geeksasang.domain.deliveryparty.DeliveryParty;
 import shop.geeksasang.domain.member.Member;
+import shop.geeksasang.dto.deliveryParty.get.GetRecentOngoingPartiesRes;
 import shop.geeksasang.dto.dormitory.PatchDormitoryReq;
 import shop.geeksasang.dto.dormitory.PatchDormitoryRes;
 import shop.geeksasang.dto.login.JwtInfo;
@@ -24,6 +26,8 @@ import shop.geeksasang.utils.jwt.NoIntercept;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/members")
@@ -41,6 +45,7 @@ public class MemberController {
             @ApiResponse(code = 2007 , message = "중복되는 유저 이메일입니다"),
             @ApiResponse(code = 2201 , message = "회원 정보동의 status가 Y가 아닙니다."),
             @ApiResponse(code = 2008 , message = "존재하지 않는 학교 이름입니다"),
+            @ApiResponse(code = 2411 , message = "등급 데이터가 존재하지 않습니다."),
             @ApiResponse(code = 4000 , message =  "서버 오류입니다.")
     })
     @PostMapping
@@ -57,6 +62,7 @@ public class MemberController {
             @ApiResponse(code =2007 ,message = "중복되는 유저 이메일입니다"),
             @ApiResponse(code =2201 ,message = "회원 정보동의 status가 Y가 아닙니다."),
             @ApiResponse(code =2008 ,message = "존재하지 않는 학교 이름입니다"),
+            @ApiResponse(code = 2411 , message = "등급 데이터가 존재하지 않습니다."),
             @ApiResponse(code =4000, message = "서버 오류입니다.")
     })
     @NoIntercept
@@ -85,9 +91,9 @@ public class MemberController {
     // 중복 확인: 닉네임
     @ApiOperation(value = "중복 확인: 닉네임", notes = "사용자의 닉네임을 이용해서 중복확인을 한다.")
     @ApiResponses({
-            @ApiResponse(code = 1202 , message = "사용 가능한 닉네임입니다."),
-            @ApiResponse(code = 2600 , message = "중복된 닉네임입니다."),
-            @ApiResponse(code = 4000 , message = "서버 오류입니다.")
+            @ApiResponse(code = 1202 , message = "사용 가능한 닉네임입니다"),
+            @ApiResponse(code = 2600 , message = "중복된 닉네임입니다"),
+            @ApiResponse(code = 4000 , message = "서버 오류입니다")
     })
     @PostMapping("/nickname-duplicated")
     @NoIntercept // jwt 검사 제외
@@ -107,15 +113,15 @@ public class MemberController {
             @ApiResponse(code = 2011 ,message = "비밀번호가 틀립니다."),
             @ApiResponse(code = 4000, message = "서버 오류입니다.")
     })
-    @PatchMapping("/account-delete/{id}")
-    public BaseResponse<String> updateMemberStatus(@PathVariable("id") int id, @RequestBody @Valid PatchMemberStatusReq dto) {
-        memberService.updateMemberStatus(id, dto);
-        String response = "회원 탈퇴가 성공하였습니다.";
-        return new BaseResponse<>(response);
+    @PatchMapping("/account-delete")
+    public BaseResponse<String> updateMemberStatus(HttpServletRequest request) {
+        JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
+        memberService.updateMemberStatus(jwtInfo.getUserId());
+        return new BaseResponse<>("회원 탈퇴가 성공하였습니다.");
     }
 
     // 수정: 멤버 정보 수정하기 (마이페이지)
-    @ApiOperation(value = "수정: 멤버 정보 수정하기", notes = "(jwt 토큰 필요) 멤버 정보(프로필 이미지, 기숙사, 닉네임, 비밀번호, 아이디)를 수정.")
+    @ApiOperation(value = "수정: 멤버 정보 수정하기", notes = "(jwt 토큰 필요) 멤버 정보(프로필 이미지, 기숙사, 닉네임)를 수정.")
     @ApiResponses({
             @ApiResponse(code = 1000 , message = "요청에 성공하셨습니다."),
             @ApiResponse(code = 2005 , message = "입력하신 두 비밀번호가 다릅니다."),
@@ -131,7 +137,7 @@ public class MemberController {
         return new BaseResponse<>(res);
     }
 
-    // 조회 : 멤버 정보 조회 (마이페이지)
+    // 조회 : 멤버 정보 수정을 위한 조회 (마이페이지)
     @ApiOperation(value = "조회: 멤버 정보 수정을 위한 조회", notes = "(jwt 토큰 필요) 수정을 위한 멤버 정보(프로필 이미지, 아이디, 기숙사, 닉네임)를 조회.")
     @ApiResponses({
             @ApiResponse(code = 1000 , message = "요청에 성공하셨습니다."),
@@ -175,6 +181,7 @@ public class MemberController {
     @ApiOperation(value = "조회: 사용자의 정보 조회", notes = "사용자의 인덱스 id 입력받아 정보 조회")
     @ApiResponses({
             @ApiResponse(code =2009 ,message ="존재하지 않는 멤버입니다"),
+            @ApiResponse(code = 2411 ,message ="등급 데이터가 존재하지 않습니다."),
             @ApiResponse(code=4000,message = "서버 오류입니다.")
     })
     @GetMapping()
@@ -233,5 +240,16 @@ public class MemberController {
     }
 
 
-
+    @ApiOperation(value = "조회: 나의 현재 기숙사 조회", notes = "내가 속한 현재 기숙사 정보를 가져온다.")
+    @ApiResponses({
+            @ApiResponse(code = 1000 , message = "요청에 성공하셨습니다."),
+            @ApiResponse(code = 2204 , message = "존재하지 않는 회원 id 입니다."),
+            @ApiResponse(code = 4000 , message = "서버 오류입니다.")
+    })
+    @GetMapping("/dormitory")
+    public BaseResponse<GetMemberDormitoryRes> getDormitory(HttpServletRequest request){
+        JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
+        GetMemberDormitoryRes res = memberService.getMemberDormitory(jwtInfo.getUserId());
+        return new BaseResponse<>(res);
+    }
 }

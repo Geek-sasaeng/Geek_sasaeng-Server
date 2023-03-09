@@ -1,6 +1,7 @@
 package shop.geeksasang.domain.chat;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -16,6 +17,7 @@ import java.util.List;
 @Document //@Document는객체를 몽고DB에 영속화시킴 = SpringDataJpa의 @Entity와 같은 역할
 @ToString
 @Getter
+@NoArgsConstructor
 public class Chat implements Serializable {
 
     @Id
@@ -75,6 +77,9 @@ public class Chat implements Serializable {
     }
 
     public int getUnreadMemberCnt(){
+        if(this.partyChatRoom.getParticipants().size() - this.readMembers.size() < 0){
+            return 0;
+        }
         return this.partyChatRoom.getParticipants().size() - this.readMembers.size();
     }
 }

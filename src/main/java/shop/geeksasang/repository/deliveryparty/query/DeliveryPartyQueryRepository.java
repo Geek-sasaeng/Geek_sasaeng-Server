@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import shop.geeksasang.config.status.BaseStatus;
 import shop.geeksasang.config.status.MatchingStatus;
+import shop.geeksasang.config.status.OrderStatus;
 import shop.geeksasang.config.type.OrderTimeCategoryType;
 import shop.geeksasang.domain.deliveryparty.DeliveryParty;
 import shop.geeksasang.domain.member.Member;
@@ -26,8 +27,7 @@ import static shop.geeksasang.domain.deliveryparty.QDeliveryPartyMember.*;
 
 
 @Repository
-public class
-DeliveryPartyQueryRepository {
+public class DeliveryPartyQueryRepository {
 
     private final JPAQueryFactory query;
 
@@ -63,7 +63,7 @@ DeliveryPartyQueryRepository {
         }
 
         List<DeliveryPartiesVo> deliveryPartiesVoList = DeliveryPartyList.stream()
-                .map(deliveryParty -> DeliveryPartiesVo.toDto(deliveryParty))
+                .map(DeliveryPartiesVo::toDto)
                 .collect(Collectors.toList());
 
         return new GetDeliveryPartiesRes(isFinalPage, deliveryPartiesVoList);
@@ -95,7 +95,7 @@ DeliveryPartyQueryRepository {
         }
 
         List<DeliveryPartiesVo> deliveryPartiesVoList = DeliveryPartyList.stream()
-                .map(deliveryParty -> DeliveryPartiesVo.toDto(deliveryParty))
+                .map(DeliveryPartiesVo::toDto)
                 .collect(Collectors.toList());
 
         return new GetDeliveryPartiesRes(isFinalPage, deliveryPartiesVoList);
@@ -117,13 +117,13 @@ DeliveryPartyQueryRepository {
     //사용자가 진행했던(현재 비활성화)활동들 조회
     public GetEndedDeliveryPartiesRes getEndedDeliveryParties(int userId, Pageable pageable){
 
-        List<DeliveryParty> deliveryParties = query.select(deliveryPartyMember.party)
-                .from(deliveryPartyMember)
-                .where(deliveryPartyMember.participant.id.eq(userId),
-                        deliveryPartyMember.status.eq(BaseStatus.ACTIVE),
-                        deliveryPartyMember.party.status.eq(BaseStatus.INACTIVE)
-                                .or(deliveryPartyMember.party.matchingStatus.eq(MatchingStatus.FINISH)))
-                .orderBy(deliveryPartyMember.createdAt.desc())
+        List<DeliveryParty> deliveryParties = query.select(deliveryParty)
+                .from(deliveryParty)
+                .where(deliveryParty.chief.id.eq(userId),
+                        deliveryParty.status.eq(BaseStatus.ACTIVE),
+                        deliveryParty.matchingStatus.eq(MatchingStatus.FINISH),
+                        deliveryParty.orderStatus.eq(OrderStatus.DELIVERY_COMPLETE))
+                .orderBy(deliveryParty.createdAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1) // 페이징을 위해 11개를 가져온다.
                 .fetch();
@@ -137,7 +137,7 @@ DeliveryPartyQueryRepository {
 
         List<EndedDeliveryPartiesVo> endedDeliveryPartiesVoList =
                 deliveryParties.stream()
-                .map(deliveryParty -> EndedDeliveryPartiesVo.toDto(deliveryParty))
+                .map(EndedDeliveryPartiesVo::toDto)
                 .collect(Collectors.toList());
 
         return new GetEndedDeliveryPartiesRes(isFinalPage, endedDeliveryPartiesVoList);

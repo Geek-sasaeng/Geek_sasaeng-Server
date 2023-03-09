@@ -138,7 +138,7 @@ public class DeliveryPartyController {
     public BaseResponse<PatchDeliveryPartyStatusRes> patchDeliveryPartyStatusById(@PathVariable("partyId") int partyId, HttpServletRequest request){
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
 
-        PatchDeliveryPartyStatusRes response = deliveryPartyService.patchDeliveryPartyStatusById(partyId, jwtInfo);
+        PatchDeliveryPartyStatusRes response = deliveryPartyService.patchDeliveryPartyStatusById(partyId, jwtInfo.getUserId());
         return new BaseResponse<>(response);
     }
 
@@ -155,22 +155,8 @@ public class DeliveryPartyController {
     @PatchMapping("/delivery-party/chief")
     public BaseResponse<PatchLeaveChiefRes> chiefLeaveDeliveryParty(@Validated @RequestBody PatchLeaveChiefReq req, HttpServletRequest request) {
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
-        PatchLeaveChiefRes res = deliveryPartyService.chiefLeaveDeliveryParty(req.getUuid(), req.getNickName(),jwtInfo.getUserId());
+        PatchLeaveChiefRes res = deliveryPartyService.chiefLeaveDeliveryParty(req.getPartyId(), jwtInfo.getUserId());
         return new BaseResponse<>(res);
-    }
-
-    @ApiOperation(value = "마감 : 배달파티 수동 매칭 마감", notes = "매칭 마감시킬 배달 파티의 아이디를 받아 배달 파티 매칭 status를 FINISH로 바꿀 수 있다.")
-    @ApiResponses({
-            @ApiResponse(code =1000 ,message ="요청에 성공하였습니다."),
-            @ApiResponse(code =2616 ,message ="파티 매칭 마감을 할 수 없는 유저이거나 이미 마감된 상태입니다."),
-            @ApiResponse(code=4000,message = "서버 오류입니다.")
-    })
-    @PatchMapping("/delivery-party/{uuid}/matching-status")
-    public BaseResponse<PatchDeliveryPartyMatchingStatusRes> patchDeliveryPartyMatchingStatus(@PathVariable String uuid, HttpServletRequest request) {
-        JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
-
-        PatchDeliveryPartyMatchingStatusRes response = deliveryPartyService.patchDeliveryPartyMatchingStatus(uuid, jwtInfo.getUserId());
-        return new BaseResponse<>(response);
     }
 
 

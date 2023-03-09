@@ -18,15 +18,13 @@ public class PostChatReq {
 
     private int memberId;
 
-    private String email;
-
     private String profileImgUrl;
 
     private String chatType;
 
     private String chatId;
 
-    private Boolean isImageMessage;
+    private String jwt;
 
     public PostChatReq(String chatRoomId, String content) {
         this.chatRoomId = chatRoomId;

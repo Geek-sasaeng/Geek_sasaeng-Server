@@ -6,14 +6,13 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
 public class PatchLeaveChiefReq {
-    @NotBlank
-    @ApiModelProperty(example = "2f48f241-9d64-4d16-bf56-70b9d4e0e79a", value = "채팅방 UUID 값" )
-    private String uuid;
 
-    @ApiModelProperty(example = "neoneo", value = "유저 닉네임" )
-    private String nickName;
+    @NotNull
+    @ApiModelProperty(example = "1", value = "채팅방 ID 값" )
+    private Integer partyId;
 }

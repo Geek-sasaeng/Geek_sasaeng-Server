@@ -1,6 +1,7 @@
 package shop.geeksasang.service.deliveryparty;
 
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -38,18 +39,20 @@ import shop.geeksasang.repository.deliveryparty.DeliveryPartyRepository;
 import shop.geeksasang.repository.deliveryparty.FoodCategoryRepository;
 import shop.geeksasang.repository.member.MemberRepository;
 import shop.geeksasang.repository.university.DormitoryRepository;
+import shop.geeksasang.service.chat.DeliveryPartyChatService;
 import shop.geeksasang.utils.ordertime.OrderTimeUtils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static shop.geeksasang.config.TransactionManagerConfig.*;
 import static shop.geeksasang.config.exception.response.BaseResponseStatus.*;
 
 
-@Transactional(readOnly = true)
 @Service
 @RequiredArgsConstructor
 public class DeliveryPartyService {
@@ -62,6 +65,7 @@ public class DeliveryPartyService {
     private final HashTagRepository hashTagRepository;
     private final DeliveryPartyQueryRepository deliveryPartyQueryRepository;
     private final BlockRepository blockRepository;
+
     private final PartyChatRoomRepository partyChatRoomRepository;
 
     private static final int PAGING_SIZE = 10;
@@ -69,17 +73,12 @@ public class DeliveryPartyService {
     private static final String DELETE_PARTY = "파티를 삭제했습니다.";
     private static final String CHANGE_CHIEF = "기존 방장을 삭제하고 새로운 방장으로 교체했습니다.";
 
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, transactionManager = JPA_TRANSACTION_MANAGER)
     public PostDeliveryPartyRes registerDeliveryParty(PostDeliveryPartyReq dto, int chiefId, int dormitoryId){
 
         //파티장 조회
-       Member chief = memberRepository.findById(chiefId)
+       Member chief = memberRepository.findMemberByIdAndStatus(chiefId)
                 .orElseThrow(()-> new BaseException(NOT_EXISTS_PARTICIPANT));
-
-       //비활성화 유저(INACTIVE) 확인
-       if(chief.getStatus().equals(BaseStatus.INACTIVE)){
-           throw new BaseException(INACTIVE_STATUS);
-       }
 
        //신고 3번이상으로 누적된 회원은 파티를 생성할 수 없음
         if(chief.getStatus().equals(BaseStatus.REPORTED)){
@@ -108,7 +107,7 @@ public class DeliveryPartyService {
         // 파티 생성 및 저장. 이렇게 의존성이 많이 발생하는데 더 좋은 방법이 있지 않을까?
         DeliveryParty deliveryParty = DeliveryParty.makeParty(dto, orderTimeCategory, dormitory, foodCategory, chief, hashTagList);
 
-        deliveryParty.addPartyMember(new DeliveryPartyMember(chief, deliveryParty));
+        DeliveryPartyMember deliveryPartyMember = new DeliveryPartyMember(chief, deliveryParty);
 
         //배달파티 저장
         deliveryPartyRepository.save(deliveryParty);
@@ -116,7 +115,7 @@ public class DeliveryPartyService {
         return PostDeliveryPartyRes.toDto(deliveryParty); //어차피 영속성이 관리하니 id가 들어가므로 생성한걸 보내줘도 된다. 테스트하기 편하므로 이게 더 좋은 코드
     }
 
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, transactionManager = JPA_TRANSACTION_MANAGER)
     public PutDeliveryPartyRes updateDeliveryParty(PutDeliveryPartyReq dto, JwtInfo jwtInfo, int dormitoryId, int partyId){
         int chiefId = jwtInfo.getUserId();
 
@@ -163,17 +162,18 @@ public class DeliveryPartyService {
     }
 
     //배달파티 상세조회:
+    @Transactional(readOnly = true, transactionManager = JPA_TRANSACTION_MANAGER)
     public GetDeliveryPartyDetailRes getDeliveryPartyDetailById(int partyId, int memberId){
+        //속해있는지
         BelongStatus belongStatus = BelongStatus.N;
         //사용자 본인 여부
         boolean authorStatus = false;
 
+        boolean activeStatus = false;
+
         //요청 보낸 사용자 Member 찾기
         Member findMember = memberRepository.findById(memberId).
                 orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTICIPANT));
-
-//        DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyByIdBeforeOrderTime(partyId, LocalDateTime.now()).
-//                orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTY));
 
         DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyByIdAndStatus(partyId).
                 orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTY));
@@ -188,20 +188,25 @@ public class DeliveryPartyService {
             authorStatus = true;
         }
 
-        //요청 보낸 사용자가 이미 파티멤버인지 조회
-        //로직: 요청 사용자 id, partyId -> deliveryPartyMember 에서 같은 partyId와 memberId 같은 멤버 조회
-        if(deliveryPartyMemberRepository.findDeliveryPartyMemberByMemberIdAndDeliveryPartyId(memberId, partyId).isPresent()){
+        //요청 보낸 사용자가 이미 파티멤버인지 조회,
+        // 로직: 요청 사용자 id, partyId -> deliveryPartyMember 에서 같은 partyId와 memberId 같은 멤버 조회
+        Optional<DeliveryPartyMember> optionalDeliveryPartyMember = deliveryPartyMemberRepository
+                .findDeliveryPartyMemberByMemberIdAndDeliveryPartyIdNotUseStatus(memberId, partyId);
+        if(optionalDeliveryPartyMember.isPresent()){
             belongStatus = BelongStatus.Y;
+            DeliveryPartyMember member = optionalDeliveryPartyMember.get();
+            activeStatus = member.isActive();
         }
+
 
         PartyChatRoom partyChatRoom = partyChatRoomRepository.findByDeliveryPartyId(partyId)
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_CHAT_ROOM));
 
-        GetDeliveryPartyDetailRes getDeliveryPartyDetailRes = GetDeliveryPartyDetailRes.toDto(deliveryParty, authorStatus, belongStatus, partyChatRoom);
-        return getDeliveryPartyDetailRes;
+        return GetDeliveryPartyDetailRes.toDto(deliveryParty, authorStatus, belongStatus, partyChatRoom, findMember, activeStatus);
     }
 
     //배달파티 조회: 검색어로 조회 ,필터 추가
+    @Transactional(readOnly = true, transactionManager = JPA_TRANSACTION_MANAGER)
     public GetDeliveryPartiesRes getDeliveryPartiesByKeyword2(int dormitoryId, int cursor, String orderTimeCategory, Integer maxMatching, String keyword, int memberId) {
         // validation: 검색어 빈값
         if(keyword == null || keyword.isBlank()){
@@ -225,6 +230,7 @@ public class DeliveryPartyService {
 
 
     //배달파티 검색 통합 버전
+    @Transactional(readOnly = true, transactionManager = JPA_TRANSACTION_MANAGER)
     public GetDeliveryPartiesRes getDeliveryParties(int dormitoryId, int cursor, String orderTimeCategory, Integer maxMatching, int memberId) {
 
         OrderTimeCategoryType orderTimeCategoryType = null;
@@ -243,6 +249,7 @@ public class DeliveryPartyService {
     }
 
     //기숙사 별 default 위도, 경도
+    @Transactional(readOnly = true, transactionManager = JPA_TRANSACTION_MANAGER)
     public GetDeliveryPartyDefaultLocationRes getDeliveryPartyDefaultLocation(int dormitoryId){
         Dormitory dormitory = dormitoryRepository.findById(dormitoryId).orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_DORMITORY));
 
@@ -254,92 +261,85 @@ public class DeliveryPartyService {
     }
 
     //배달파티 삭제
-    @Transactional(readOnly = false)
-    public PatchDeliveryPartyStatusRes patchDeliveryPartyStatusById(int partyId, JwtInfo jwtInfo) {
-
-        int userId = jwtInfo.getUserId();
-
-        DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyByPartyId(partyId, userId)
+    @Transactional(readOnly = false, transactionManager = JPA_TRANSACTION_MANAGER)
+    public PatchDeliveryPartyStatusRes patchDeliveryPartyStatusById(int partyId, Integer userId) {
+        DeliveryParty deliveryParty = deliveryPartyRepository
+                .findDeliveryPartyByPartyId(partyId, userId)
                 .orElseThrow(() -> new BaseException(CAN_NOT_DELETE_PARTY));
-        deliveryParty.changeStatusToInactive();
-        deliveryPartyRepository.save(deliveryParty);
 
-        // 배달파티 멤버 status도 Inactive로 수정
-        List<DeliveryPartyMember> deliveryPartyMembers = deliveryPartyMemberRepository.findDeliveryPartyMembersByPartyId(partyId);
+        deliveryParty.deleteParty();
 
-        for( DeliveryPartyMember deliveryPartyMember : deliveryPartyMembers ){
-            deliveryPartyMember.changeStatusToInactive();
-        }
-
-        return PatchDeliveryPartyStatusRes.builder()
+        return PatchDeliveryPartyStatusRes
+                .builder()
                 .deliveryPartyId(deliveryParty.getId())
                 .status(deliveryParty.getStatus().toString())
                 .build();
     }
 
-    @Transactional(readOnly = false)
-    public PatchLeaveChiefRes chiefLeaveDeliveryParty(String uuid, String nickName, int userId) {
+    @Transactional(readOnly = false, transactionManager = JPA_TRANSACTION_MANAGER)
+    public PatchLeaveChiefRes chiefLeaveDeliveryParty(int partyId, int userId) {
 
-        Member attemptedChief = memberRepository.findMemberByIdAndStatus(userId).orElseThrow(() -> new BaseException(NOT_EXIST_USER));
-        DeliveryParty findParty = deliveryPartyRepository.findDeliveryPartyByUuid(uuid).orElseThrow(() -> new BaseException(NOT_EXISTS_PARTY));
+        Member attemptedChief = memberRepository.findMemberByIdAndStatus(userId)
+                .orElseThrow(() -> new BaseException(NOT_EXIST_USER));
+
+        DeliveryParty findParty = deliveryPartyRepository.findDeliveryPartyByIdAndStatus(partyId)
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTY));
 
         if(findParty.isNotChief(attemptedChief)){
             throw new BaseException(INVALID_DELIVERY_PARTY_CHIEF);
         }
 
-        //방장만 있을 때
         if(findParty.memberIsOnlyChief()){
             findParty.deleteParty();
             return new PatchLeaveChiefRes(DELETE_PARTY);
         }
 
-//        //제일 먼저 참여한 방장 후보의 멤버 아이디를 가져온다.
-//        int secondDeliverPartyMemberId = findParty.getSecondDeliverPartyMemberId();
-
-        //TODO 프론트 요청에 의한 임시 수정. 나중에 무조건 바꿔아함.
-        DeliveryPartyMember candidateForChief = deliveryPartyMemberRepository.tempFindByDeliveryPartyMemberByUuidAndNickName(uuid, nickName)
-                .orElseThrow(() -> new BaseException(NOT_EXISTS_DELIVERY_PARTY_PARTICIPANT));
-
-//        DeliveryPartyMember candidateForChief = deliveryPartyMemberRepository.findByDeliveryPartyMemberByIdAndStatus(secondDeliverPartyMemberId)
-//                .orElseThrow(() -> new BaseException(NOT_EXISTS_DELIVERY_PARTY_PARTICIPANT));
-
-        findParty.leaveNowChiefAndChangeChief(candidateForChief.getParticipant());
-
+        findParty.leaveNowChiefAndChangeChief();
         return new PatchLeaveChiefRes(CHANGE_CHIEF);
     }
 
-    // 배달 파티 수동 매칭 마감
-    @Transactional(readOnly = false)
-    public PatchDeliveryPartyMatchingStatusRes patchDeliveryPartyMatchingStatus(String uuid, int userId) {
-
-        DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyByUuidAndUserId(uuid, userId).
-                orElseThrow(() -> new BaseException(BaseResponseStatus.CAN_NOT_FINISH_DELIVERY_PARTY));
-
-        deliveryParty.changeMatchingStatusToFinish();
-        return PatchDeliveryPartyMatchingStatusRes.builder()
-                .deliveryPartyId(deliveryParty.getId())
-                .matchingStatus(deliveryParty.getMatchingStatus().toString())
-                .build();
-    }
-
+    @Transactional(readOnly = true, transactionManager = JPA_TRANSACTION_MANAGER)
     public List<GetRecentOngoingPartiesRes> getRecentOngoingDeliveryParties(int userId) {
         List<DeliveryParty> threeRecentDeliveryParty = deliveryPartyQueryRepository.findRecentOngoingDeliveryParty(userId);
         return threeRecentDeliveryParty.stream()
-                .map(deliveryParty -> GetRecentOngoingPartiesRes.toDto(deliveryParty))
+                .map(GetRecentOngoingPartiesRes::toDto)
                 .collect(Collectors.toList());
     }
 
     //진행했던(현재 비활성) 배달 파티 조회
+    @Transactional(readOnly = true, transactionManager = JPA_TRANSACTION_MANAGER)
     public GetEndedDeliveryPartiesRes getEndedDeliveryParties(int userId, int cursor){
 
         //요청 보낸 사용자 Member 찾기
-        Member findMember = memberRepository.findMemberByIdAndStatus(userId).
+        memberRepository.findMemberByIdAndStatus(userId).
                 orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTICIPANT));
-
         PageRequest paging = PageRequest.of(cursor, PAGING_SIZE, Sort.by(Sort.Direction.ASC, PAGING_STANDARD));
+        return deliveryPartyQueryRepository.getEndedDeliveryParties(userId, paging);
+    }
 
-        GetEndedDeliveryPartiesRes endedDeliveryParties = deliveryPartyQueryRepository.getEndedDeliveryParties(userId, paging);
+    @Transactional(readOnly = false, transactionManager = JPA_TRANSACTION_MANAGER)
+    public void changeOrderStatusToDeliveryComplete(int deliveryPartyId) {
+        DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyByIdAndMatchingStatus(deliveryPartyId)
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_MATCHING_FINISH_PARTY));
+        deliveryParty.changeOrderStatusToDeliveryComplete();
+    }
 
-        return endedDeliveryParties;
+    @Transactional(readOnly = false, transactionManager = JPA_TRANSACTION_MANAGER)
+    public void changeOrderStatusToOrderComplete(int deliveryPartyId) {
+        DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyByIdAndMatchingStatus(deliveryPartyId)
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_MATCHING_FINISH_PARTY));
+        deliveryParty.changeOrderStatusToOrderComplete();
+    }
+
+    @Transactional(readOnly = false, transactionManager = JPA_TRANSACTION_MANAGER)
+    public PatchDeliveryPartyMatchingStatusRes changeMatchingStatus(Integer partyId, int userId) {
+        DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyByIdAndUserIdAndMatchingStatus(partyId, userId).
+                orElseThrow(() -> new BaseException(BaseResponseStatus.CAN_NOT_FINISH_DELIVERY_PARTY));
+        deliveryParty.changeMatchingStatusToFinish();
+
+        return PatchDeliveryPartyMatchingStatusRes.builder()
+                .deliveryPartyId(deliveryParty.getId())
+                .matchingStatus(deliveryParty.getMatchingStatus().toString())
+                .build();
     }
 }

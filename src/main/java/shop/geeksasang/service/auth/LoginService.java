@@ -21,6 +21,7 @@ import shop.geeksasang.utils.jwt.JwtService;
 import shop.geeksasang.utils.resttemplate.naverlogin.NaverLoginData;
 import shop.geeksasang.utils.resttemplate.naverlogin.NaverLoginService;
 
+import static shop.geeksasang.config.TransactionManagerConfig.JPA_TRANSACTION_MANAGER;
 import static shop.geeksasang.config.exception.response.BaseResponseStatus.*;
 
 @Transactional
@@ -32,6 +33,7 @@ public class LoginService {
     private final NaverLoginService naverLoginRequest;
     private final JwtService jwtService;
 
+    @Transactional(readOnly = false, transactionManager = JPA_TRANSACTION_MANAGER)
     public PostLoginRes login(PostLoginReq dto){
 
         //로그인 id 조회
@@ -74,6 +76,7 @@ public class LoginService {
                     .dormitoryName(member.getDormitory().getName())
                     .profileImgUrl(member.getProfileImgUrl())
                     .fcmToken(member.getFcmToken())
+                    .memberId(member.getId())
                     .build();
         }
         else{
@@ -83,12 +86,14 @@ public class LoginService {
                     .loginStatus(loginStatus)
                     .profileImgUrl(member.getProfileImgUrl())
                     .fcmToken(member.getFcmToken())
+                    .memberId(member.getId())
                     .build();
         }
     }
 
     // 네이버 로그인
     // 토큰 받아서 DB에 userId 있을 시 로그인, 없을 시 회원가입 화면으로 이동
+    @Transactional(readOnly = false, transactionManager = JPA_TRANSACTION_MANAGER)
     public PostLoginRes naverLogin(PostSocialLoginReq dto){
         NaverLoginData data = naverLoginRequest.getToken(dto.getAccessToken());
         String loginId = data.getEmail();
@@ -132,6 +137,7 @@ public class LoginService {
                     .dormitoryId(member.getDormitory().getId())
                     .dormitoryName(member.getDormitory().getName())
                     .fcmToken(member.getFcmToken())
+                    .memberId(member.getId())
                     .build();
         }
         else {
@@ -141,24 +147,26 @@ public class LoginService {
                     .loginStatus(loginStatus)
                     .profileImgUrl(member.getProfileImgUrl())
                     .fcmToken(member.getFcmToken())
+                    .memberId(member.getId())
                     .build();
         }
     }
 
     // JWT 유효성 확인
     // 유효성 검증되면 jwtResponse 반환
+    @Transactional(readOnly = true, transactionManager = JPA_TRANSACTION_MANAGER)
     public JwtResponse autoLogin(JwtInfo jwtInfo){
         int userIdx = jwtInfo.getUserId();
-        Member member = memberRepository.findById(userIdx).orElseThrow(
+        Member member = memberRepository.findMemberByIdAndStatus(userIdx).orElseThrow(
                 () -> new BaseException(NOT_EXIST_USER));
         JwtResponse jwtResponse = getJwtResponse(member);
         return jwtResponse;
     }
 
     // member로 jwtResponse 가져오기
-    public JwtResponse getJwtResponse(Member member){
+    private JwtResponse getJwtResponse(Member member){
         return new JwtResponse(member.getLoginId(), member.getNickName(), member.getProfileImgUrl(),
                 member.getUniversity().getName(), member.getEmail().getAddress(), member.getPhoneNumber().getNumber(), member.getMemberLoginType(),
-                member.getLoginStatus(), member.getDormitory().getId(), member.getDormitory().getName());
+                member.getLoginStatus(), member.getDormitory().getId(), member.getDormitory().getName(), member.getId());
     }
 }

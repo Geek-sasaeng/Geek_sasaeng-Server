@@ -10,6 +10,7 @@ import shop.geeksasang.config.status.BelongStatus;
 import shop.geeksasang.config.status.MatchingStatus;
 import shop.geeksasang.domain.chat.PartyChatRoom;
 import shop.geeksasang.domain.deliveryparty.DeliveryParty;
+import shop.geeksasang.domain.member.Member;
 
 
 import java.time.LocalDateTime;
@@ -28,6 +29,9 @@ public class GetDeliveryPartyDetailRes {
     @ApiModelProperty(example = "2")
     @ApiParam(value = "파티장 memberId")
     private int chiefId;
+
+    @ApiModelProperty(example = "신입생",value = "파티장 회원 등급")
+    private String chiefGrade;
 
     @ApiModelProperty(example = "http://geeksasaeng.shop/s3/neo.jpg", value = "파티장 프로필 이미지 url")
     private String chiefProfileImgUrl;
@@ -85,9 +89,20 @@ public class GetDeliveryPartyDetailRes {
     @ApiModelProperty(value = "배달 파티 채팅방 ID", example = "637fa741bba4cf6c34bc13ef")
     private String partyChatRoomId;
 
-    //빌더
-    static public GetDeliveryPartyDetailRes toDto(DeliveryParty deliveryParty, boolean authorStatus, BelongStatus belongStatus, PartyChatRoom partyChatRoom){
+    @ApiModelProperty(value = "배달 파티 채팅방 이름", example = "같이 먹어요")
+    private String partyChatRoomTitle;
 
+    @ApiModelProperty(value = "배달 파티 방장인지", example = "true")
+    private boolean authChief;
+
+    @ApiModelProperty(value = "이미 방을 나간 것인지 확인. 나간적이 있으면 false, 안나갔다면 true", example = "true")
+    private boolean activeStatus;
+
+
+    //빌더
+    static public GetDeliveryPartyDetailRes toDto(
+            DeliveryParty deliveryParty, boolean authorStatus, BelongStatus belongStatus, PartyChatRoom partyChatRoom, Member member, boolean activeStatus
+    ){
         return GetDeliveryPartyDetailRes.builder()
                 .id(deliveryParty.getId())
                 .chief(deliveryParty.getChief().getNickName())
@@ -107,16 +122,22 @@ public class GetDeliveryPartyDetailRes {
                 .storeUrl(deliveryParty.getStoreUrl())
                 .authorStatus(authorStatus)
                 .dormitory(deliveryParty.getDormitory().getId())
-                .uuid(deliveryParty.getUuid())
                 .belongStatus(belongStatus)
                 .partyChatRoomId(partyChatRoom.getId())
+                .partyChatRoomTitle(partyChatRoom.getTitle())
+                .isChief(deliveryParty.isChief(member))
+                .activeStatus(activeStatus)
+                .chiefGrade(deliveryParty.getChief().getGrade().getName())
                 .build();
     }
 
     @Builder
-    public GetDeliveryPartyDetailRes(int id, String chief, int chiefId, String chiefProfileImgUrl, String foodCategory, boolean hashTag, String title, String content,
-                                     LocalDateTime orderTime, int currentMatching, int maxMatching, MatchingStatus matchingStatus, String updatedAt, Double latitude,
-                                     Double longitude, String storeUrl, boolean authorStatus, int dormitory, String uuid, BelongStatus belongStatus, String partyChatRoomId) {
+    public GetDeliveryPartyDetailRes(
+            int id, String chief, int chiefId, String chiefProfileImgUrl, String foodCategory, boolean hashTag, String title, String content,
+            LocalDateTime orderTime, int currentMatching, int maxMatching, MatchingStatus matchingStatus, String updatedAt, Double latitude,
+            Double longitude, String storeUrl, boolean authorStatus, int dormitory, String uuid, BelongStatus belongStatus, String partyChatRoomId, String partyChatRoomTitle,
+            boolean isChief, boolean activeStatus, String chiefGrade
+    ) {
         this.id = id;
         this.chief = chief;
         this.chiefId = chiefId;
@@ -138,5 +159,9 @@ public class GetDeliveryPartyDetailRes {
         this.uuid = uuid;
         this.belongStatus = belongStatus;
         this.partyChatRoomId = partyChatRoomId;
+        this.partyChatRoomTitle = partyChatRoomTitle;
+        this.authChief = isChief;
+        this.activeStatus = activeStatus;
+        this.chiefGrade = chiefGrade;
     }
 }

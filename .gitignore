@@ -10,6 +10,7 @@ logs
 !.github/workflows/main.yml
 !appspec.yml
 dump.rdb
+firebase_service_key.json
 
 
 
@@ -43,3 +44,8 @@ out/
 
 ### VS Code ###
 .vscode/
+
+#추가
+AuthKey_QLHFNT37VK.p8
+application.properties
+**.p8

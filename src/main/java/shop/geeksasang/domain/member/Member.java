@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicUpdate;
 import shop.geeksasang.config.domain.*;
 import shop.geeksasang.config.status.LoginStatus;
 import shop.geeksasang.config.status.BaseStatus;
@@ -26,7 +27,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-//@DynamicUpdate //변경된 것만 바꿔준다.
+@DynamicUpdate //변경된 것만 바꿔준다.
 @Entity
 @Getter
 public class Member extends BaseEntity {
@@ -45,11 +46,11 @@ public class Member extends BaseEntity {
     @JoinColumn(name="university_id")
     private University university;
 
-    @OneToOne(fetch=FetchType.LAZY)
+    @OneToOne(fetch=FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name="phoneNumber_id", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private PhoneNumber phoneNumber;
 
-    @OneToOne(fetch=FetchType.LAZY)
+    @OneToOne(fetch=FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name="email_id", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private Email email;
 
@@ -92,6 +93,26 @@ public class Member extends BaseEntity {
 
     private String fcmToken; // 파이어베이스 FCM 토큰
 
+    private String appleRefreshToken;
+
+    @OneToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name = "grade_id")
+    private Grade grade; //회원등급
+
+    // 생성자
+    public Member (String loginId, String appleRefreshToken, String nickName, MemberLoginType memberLoginType, Grade grade){
+        this.loginId = loginId;
+        this.appleRefreshToken = appleRefreshToken;
+        this.nickName = nickName;
+        this.memberLoginType = memberLoginType;
+        this.perDayReportingCount=0;
+        this.reportedCount=0;
+        super.setStatus(BaseStatus.ACTIVE);
+        this.grade = grade;
+        this.loginStatus = LoginStatus.NEVER;
+        this.profileImgUrl = "https://geeksasaeng-s3.s3.ap-northeast-2.amazonaws.com/5bc8d80a-580d-455a-a414-d0d2f9af2c9f-newProfileImg.png";
+    }
+
     //-// 연관 관계 편의 메서드 //-//
     public void changeStatusToActive(){
         super.setStatus(BaseStatus.ACTIVE);
@@ -110,6 +131,8 @@ public class Member extends BaseEntity {
     // 회원 탈퇴
     public void changeStatusToInactive(){
         super.setStatus(BaseStatus.INACTIVE);
+        email.delete();
+        phoneNumber.delete();
     }
 
     // 로그인 안해본 디폴트 저장
@@ -121,6 +144,8 @@ public class Member extends BaseEntity {
     public void changeLoginStatusToNotNever(){
         this.loginStatus = LoginStatus.NOTNEVER;
     }
+
+    public void changeGrade(Grade grade){this.grade = grade;}
 
     public boolean containReportedMemberRecord(Member reportedMember) {
         for (MemberReportRecord memberReportRecord : memberReportRecords) {
@@ -177,12 +202,10 @@ public class Member extends BaseEntity {
         this.profileImgUrl = profileImgUrl;
     }
 
-    public Member update(PostMemberInfoReq dto, String imgUrl, Dormitory dormitory, String password) {
-        this.loginId = dto.getLoginId();
+    public Member update(PostMemberInfoReq dto, String imgUrl, Dormitory dormitory) {
         this.nickName = dto.getNickname();
         this.dormitory = dormitory;
         this.profileImgUrl = imgUrl;
-        this.password = password;
         return this;
     }
 
@@ -193,9 +216,11 @@ public class Member extends BaseEntity {
         super.setStatus(BaseStatus.ACTIVE);
     }
 
-    public Member(String nickName) {
+    public Member(String nickName, Email email, Grade grade) {
         this.nickName = nickName;
+        this.email = email;
         super.setStatus(BaseStatus.ACTIVE);
+        this.grade = grade;
     }
 
     public void updateDormitory(Dormitory dormitory) {
@@ -204,5 +229,38 @@ public class Member extends BaseEntity {
 
     public void updatePassword(String newPassword) {
         this.password = newPassword;
+    }
+
+
+    @Override
+    public String toString() {
+        return "Member{" +
+                "id=" + id +
+                ", loginId='" + loginId + '\'' +
+                ", nickName='" + nickName + '\'' +
+                ", password='" + password + '\'' +
+                ", university=" + university +
+                ", phoneNumber=" + phoneNumber +
+                ", email=" + email +
+                ", profileImgUrl='" + profileImgUrl + '\'' +
+                ", jwtToken='" + jwtToken + '\'' +
+                ", informationAgreeStatus='" + informationAgreeStatus + '\'' +
+                ", loginStatus=" + loginStatus +
+                ", memberLoginType=" + memberLoginType +
+                ", reportingMembers=" + reportingMembers +
+                ", reportedMembers=" + reportedMembers +
+                ", memberReportRecords=" + memberReportRecords +
+                ", deliverPartyReportRecords=" + deliverPartyReportRecords +
+                ", perDayReportingCount=" + perDayReportingCount +
+                ", reportedCount=" + reportedCount +
+                ", blocks=" + blocks +
+                ", dormitory=" + dormitory +
+                ", fcmToken='" + fcmToken + '\'' +
+                ", appleRefreshToken='" + appleRefreshToken + '\'' +
+                '}';
+    }
+
+    public void notNeberLoginStatus() {
+        this.loginStatus = LoginStatus.NOTNEVER;
     }
 }

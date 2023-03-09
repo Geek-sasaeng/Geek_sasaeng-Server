@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiParam;
 import lombok.*;
 import shop.geeksasang.config.status.BelongStatus;
 import shop.geeksasang.config.status.MatchingStatus;
+import shop.geeksasang.config.status.OrderStatus;
 import shop.geeksasang.domain.deliveryparty.DeliveryParty;
 
 import java.time.LocalDateTime;
@@ -97,6 +98,9 @@ public class PostDeliveryPartyRes {
     @ApiModelProperty(example = "신한은행", value = "은행이름")
     private String bank;
 
+    @ApiModelProperty(example = "BEFORE_ORDER", value = "주문 상태를 나타내는 값 -  주문 전: BEFORE_ORDER, 주문 완료상태: ORDER_COMPLETE, 배달 완료: DELIVERY_COMPLETE ")
+    private OrderStatus orderStatus;
+
     static public PostDeliveryPartyRes toDto(DeliveryParty deliveryParty){
         return PostDeliveryPartyRes.builder()
                 .id(deliveryParty.getId())
@@ -125,6 +129,7 @@ public class PostDeliveryPartyRes {
                 .chatRoomName(deliveryParty.getChatRoomName())
                 .accountNumber(deliveryParty.getAccountNumber())
                 .bank(deliveryParty.getBank())
+                .orderStatus(deliveryParty.getOrderStatus())
                 .build();
     }
 
@@ -132,7 +137,7 @@ public class PostDeliveryPartyRes {
     public PostDeliveryPartyRes(int id, String chief, int chiefId, String chiefProfileImgUrl, String foodCategory, boolean hashTag, String title, String content,
                                 LocalDateTime orderTime, int currentMatching, int maxMatching, MatchingStatus matchingStatus, String updatedAt, Double latitude,
                                 Double longitude, String storeUrl, boolean authorStatus, String uuid, BelongStatus belongStatus, int dormitoryId,
-                                String dormitoryName, String createdAt, String orderTimeCategoryType, String chatRoomName, String accountNumber, String bank) {
+                                String dormitoryName, String createdAt, String orderTimeCategoryType, String chatRoomName, String accountNumber, String bank, OrderStatus orderStatus) {
         this.id = id;
         this.chief = chief;
         this.chiefId = chiefId;
@@ -159,6 +164,7 @@ public class PostDeliveryPartyRes {
         this.chatRoomName = chatRoomName;
         this.accountNumber = accountNumber;
         this.bank = bank;
+        this.orderStatus = orderStatus;
     }
 
     //테스트용

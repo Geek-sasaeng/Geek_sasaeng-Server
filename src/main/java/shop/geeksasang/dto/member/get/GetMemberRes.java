@@ -1,5 +1,6 @@
 package shop.geeksasang.dto.member.get;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiParam;
 import lombok.Builder;
@@ -8,6 +9,10 @@ import lombok.Setter;
 import shop.geeksasang.config.status.LoginStatus;
 import shop.geeksasang.config.type.MemberLoginType;
 import shop.geeksasang.domain.member.Member;
+import shop.geeksasang.dto.deliveryParty.get.GetRecentOngoingPartiesRes;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -82,8 +87,22 @@ public class GetMemberRes {
     @ApiParam(value = "FCM 토큰값")
     private String fcmToken;
 
+    @ApiModelProperty(value = "최근 진행 파티 정보")
+    List<GetRecentOngoingPartiesRes> parties = new ArrayList<>();
+
+    @ApiModelProperty(example = "2022-07-11 15:30:00", value = "멤버 가입 시각")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+    private String createdAt;
+
+    @ApiModelProperty(example = "복학생", value = "현재 멤버 등급")
+    private String grade;
+
+    @ApiModelProperty(example = "졸업까지 5학점 남았어요", value = "다음 등급과 남은 학점 표시")
+    private String nextGradeAndRemainCredits;
+
+
     //빌더
-    static public GetMemberRes toDto(Member member){
+    static public GetMemberRes toDto(Member member, List<GetRecentOngoingPartiesRes> parties,String nextGradeAndRemainCredits){
         return GetMemberRes.builder()
                 .id(member.getId())
                 .loginId(member.getLoginId())
@@ -102,12 +121,17 @@ public class GetMemberRes {
                 .perDayReportingCount(member.getPerDayReportingCount())
                 .reportedCount(member.getReportedCount())
                 .fcmToken(member.getFcmToken())
+                .parties(parties)
+                .createdAt(member.getCreatedAt())
+                .grade(member.getGrade().getName())
+                .nextGradeAndRemainCredits(nextGradeAndRemainCredits)
                 .build();
     }
 
     @Builder
-
-    public GetMemberRes(int id, String loginId, String nickname, int universityId, String universityName, int emailId, String emailAddress, String phoneNumber, String profileImgUrl, String informationAgreeStatus, int dormitoryId, String dormitoryName, LoginStatus loginStatus, MemberLoginType memberLoginType, int perDayReportingCount, int reportedCount, String fcmToken) {
+    public GetMemberRes(int id, String loginId, String nickname, int universityId, String universityName, int emailId, String emailAddress, String phoneNumber, String profileImgUrl,
+                        String informationAgreeStatus, int dormitoryId, String dormitoryName, LoginStatus loginStatus, MemberLoginType memberLoginType,
+                        int perDayReportingCount, int reportedCount, String fcmToken, List<GetRecentOngoingPartiesRes> parties, String createdAt,String grade, String nextGradeAndRemainCredits) {
         this.id = id;
         this.loginId = loginId;
         this.nickname = nickname;
@@ -125,5 +149,9 @@ public class GetMemberRes {
         this.perDayReportingCount = perDayReportingCount;
         this.reportedCount = reportedCount;
         this.fcmToken = fcmToken;
+        this.parties = parties;
+        this.createdAt = createdAt;
+        this.grade = grade;
+        this.nextGradeAndRemainCredits = nextGradeAndRemainCredits;
     }
 }

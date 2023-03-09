@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
+import static shop.geeksasang.config.TransactionManagerConfig.JPA_TRANSACTION_MANAGER;
 import static shop.geeksasang.config.exception.response.BaseResponseStatus.*;
 
 @Slf4j
@@ -46,7 +47,7 @@ public class EmailService {
     private final RedisUtil redisUtil;
 
     // 인증번호 이메일 전송
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, transactionManager = JPA_TRANSACTION_MANAGER)
     public void sendEmail(PostEmailReq request) {
         // 대학교 이메일 주소 검증
         String universityName = request.getUniversity();
@@ -62,8 +63,8 @@ public class EmailService {
             throw new BaseException(BaseResponseStatus.NOT_MATCH_EMAIL);
         }
         // 이미 존재하는 이메일인지 검증
-        if(emailRepository.findEmailByAddress(email).isPresent()){
-            Email emailEntity = emailRepository.findEmailByAddress(email).get();
+        if(emailRepository.findEmailByAddressAndACTIVE(email).isPresent()){
+            Email emailEntity = emailRepository.findEmailByAddressAndACTIVE(email).get();
             // Member랑 연결 안됐으면 해당 Entity 지우기
             if(emailEntity.getMember() == null){
                 emailRepository.delete(emailEntity);
@@ -94,14 +95,14 @@ public class EmailService {
     }
 
     // 인증번호가 일치하는지 체크
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = false, transactionManager = JPA_TRANSACTION_MANAGER)
     public PostEmailCertificationRes checkEmailCertification(PostEmailCertificationReq request) {
         String address = request.getEmail();
         String key = request.getKey();
         boolean check = redisUtil.checkNumber(address, key);
         if(check){
             // 이메일 테이블에 이메일 주소 및 인증 성공 저장
-            Email email = Email.builder().address(address).emailValidStatus(ValidStatus.SUCCESS).build();
+            Email email = new Email(address);
             emailRepository.save(email);
             PostEmailCertificationRes postEmailRes = new PostEmailCertificationRes(email.getId());
             return postEmailRes;

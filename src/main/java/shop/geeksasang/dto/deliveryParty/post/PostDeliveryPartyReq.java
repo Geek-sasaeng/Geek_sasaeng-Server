@@ -97,7 +97,6 @@ public class PostDeliveryPartyReq {
 
     //테스트용
     @Builder
-
     public PostDeliveryPartyReq(int foodCategory, String title, String content, LocalDateTime orderTime, int maxMatching, String storeUrl, Double latitude, Double longitude, boolean hashTag, String bank, String accountNumber, String chatRoomName) {
         this.foodCategory = foodCategory;
         this.title = title;
