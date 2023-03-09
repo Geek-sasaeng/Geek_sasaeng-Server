@@ -26,11 +26,15 @@ public interface PartyChatRoomMemberRepository extends MongoRepository<PartyChat
     @Query(value = "{ 'memberId' : ?0, 'status' : 'ACTIVE'}")
     Slice<PartyChatRoomMember> findPartyChatRoomMemberByMemberId(int memberId, Pageable pageable);
 
-    @Query("{'_id': ?0 , 'partyChatRoom': ?1 }")
+    @Query("{'_id': ?0 , 'partyChatRoom': ?1, 'status' : 'ACTIVE'}")
     @Update("{ $set : { 'isRemittance': true } }")
     void changeRemittance(ObjectId memberId, ObjectId roomId);
 
     @Query("{'partyChatRoom' : ?0, '_id' : { $ne : ?1} , 'status' : 'ACTIVE'}")
     List<PartyChatRoomMember> findByChatRoomIdAndIdNotEqual(ObjectId chatRoomId, ObjectId chiefId);
+
+
+    @Query("{ 'memberId' : ?0 , 'partyChatRoom': ?1 , 'status' : 'WAITING_INACTIVE'}")
+    Optional<PartyChatRoomMember> findByBeforeDeletedMemberIdAndChatRoomId(int memberId, ObjectId chatRoomId);
 
 }

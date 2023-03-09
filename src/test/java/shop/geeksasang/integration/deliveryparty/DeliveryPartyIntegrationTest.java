@@ -10,6 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 import shop.geeksasang.config.status.MatchingStatus;
 import shop.geeksasang.config.status.ValidStatus;
 import shop.geeksasang.domain.auth.Email;
+import shop.geeksasang.domain.chat.ChatRoom;
+import shop.geeksasang.domain.chat.PartyChatRoom;
+import shop.geeksasang.domain.chat.PartyChatRoomMember;
 import shop.geeksasang.domain.deliveryparty.FoodCategory;
 import shop.geeksasang.domain.deliveryparty.HashTag;
 import shop.geeksasang.domain.location.Location;
@@ -32,6 +35,7 @@ import shop.geeksasang.service.deliveryparty.DeliveryPartyService;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -181,5 +185,29 @@ public class DeliveryPartyIntegrationTest extends IntegrationTest {
         //then
         assertThat(result.getCurrentMatching()).isEqualTo(3);
         assertThat(result.getMatchingStatus()).isSameAs(MatchingStatus.FINISH);
+    }
+
+
+    @Test
+    void t(){
+
+        PartyChatRoom partyChatRoom = new PartyChatRoom();
+        PartyChatRoomMember removedMember = new PartyChatRoomMember(1, LocalDateTime.now(), false, partyChatRoom, "");
+
+        partyChatRoom.addParticipants(removedMember);
+
+        chatRoomMemberRepository.save(removedMember);
+        chatRoomRepository.save(partyChatRoom);
+
+        removedMember.forceOut();
+        chatRoomMemberRepository.save(removedMember);
+
+        Optional<PartyChatRoom> byId = chatRoomRepository.findById(partyChatRoom.getId());
+        System.out.println("byId.get().toString() = " + byId.get().toString());
+        System.out.println("byId.get().getParticipants().size() = " + byId.get().getParticipants().size());
+        System.out.println("removedMember = " + removedMember.toString());
+        for (PartyChatRoomMember p : byId.get().getParticipants()) {
+            System.out.println(p.toString() + "hohoho");
+        }
     }
 }

@@ -16,6 +16,9 @@ import shop.geeksasang.domain.location.Location;
 import shop.geeksasang.domain.university.Dormitory;
 import shop.geeksasang.domain.university.University;
 import shop.geeksasang.repository.auth.EmailRepository;
+import shop.geeksasang.repository.chat.ChatRoomRepository;
+import shop.geeksasang.repository.chat.PartyChatRoomMemberRepository;
+import shop.geeksasang.repository.chat.PartyChatRoomRepository;
 import shop.geeksasang.repository.member.GradeRepository;
 import shop.geeksasang.repository.member.MemberRepository;
 import shop.geeksasang.repository.university.DormitoryRepository;
@@ -60,4 +63,10 @@ public abstract class IntegrationTest {
 
     @Autowired
     protected GradeRepository gradeRepository;
+
+    @Autowired
+    protected PartyChatRoomRepository chatRoomRepository;
+
+    @Autowired
+    protected PartyChatRoomMemberRepository chatRoomMemberRepository;
 }

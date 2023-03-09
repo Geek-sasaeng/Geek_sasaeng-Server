@@ -280,7 +280,6 @@ public class DeliveryPartyChatService {
     }
 
 
-    //TODO 몽고 트랜잭션 매니저를 달아야하는데, 트랜잭션 매니저 달면 JPA랑 충돌해서 문제가 일어나는듯
     @Transactional(readOnly = false, transactionManager = MONGO_TRANSACTION_MANAGER)
     public void removeMemberByChief(int chiefId, DeleteMemberByChiefReq dto) {
         PartyChatRoomMember chief = partyChatRoomMemberRepository
@@ -294,11 +293,11 @@ public class DeliveryPartyChatService {
                 });
     }
 
+    /**
+     * 강제 퇴장을 위한 메서드
+     */
     @Transactional(readOnly = false, transactionManager = MONGO_TRANSACTION_MANAGER)
     public void removeMember(int chiefId, DeleteMemberByChiefReq dto, PartyChatRoomMember chief, String id) {
-        PartyChatRoomMember removedMember = partyChatRoomMemberRepository
-                .findByIdAndChatRoomId(new ObjectId(id), new ObjectId(dto.getRoomId()))
-                .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTYCHATROOM_MEMBER));
 
         PartyChatRoom chatRoom = partyChatRoomRepository.findPartyChatRoomByChiefId(new ObjectId(chief.getId()))
                 .orElseThrow(() -> new BaseException(NOT_EXIST_CHAT_ROOM_CHIEF));
@@ -307,13 +306,15 @@ public class DeliveryPartyChatService {
             throw new BaseException(NOT_CHAT_ROOM_CHIEF);
         }
 
+        PartyChatRoomMember removedMember = partyChatRoomMemberRepository
+                .findByIdAndChatRoomId(new ObjectId(id), new ObjectId(dto.getRoomId()))
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTYCHATROOM_MEMBER));
+
         if (removedMember.alreadyRemit()) {
             throw new BaseException(CANT_REMOVE_REMIT_MEMBER);
         }
 
-        chatRoom.removeParticipant(removedMember);
-        partyChatRoomRepository.deleteParticipant(new ObjectId(chatRoom.getId()), new ObjectId(removedMember.getId()));
-        //partyChatRoomRepository.save(chatRoom);
+        removedMember.forceOut();
         partyChatRoomMemberRepository.save(removedMember);
 
         String nickName = memberRepository.findMemberById(removedMember.getMemberId())
@@ -382,6 +383,9 @@ public class DeliveryPartyChatService {
 
     }
 
+    /**
+     * 강제 퇴장이 아닌 자진 퇴장
+     */
     @Transactional(readOnly = false, transactionManager = MONGO_TRANSACTION_MANAGER)
     public void removeMember(int memberId, String roomId) throws JsonProcessingException {
         PartyChatRoomMember chatRoomMember = partyChatRoomMemberRepository
@@ -520,6 +524,7 @@ public class DeliveryPartyChatService {
                 .filter(deliveryParty::isNotChief)
                 .filter(deliveryParty::isNotDeleteMember)
                 .map(member -> {
+
                     PartyChatRoomMember chatRoomMember = partyChatRoomMemberRepository
                             .findByMemberIdAndChatRoomId(member.getParticipant().getId(), new ObjectId(partyUUID))
                             .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTYCHATROOM_MEMBER));
@@ -530,6 +535,7 @@ public class DeliveryPartyChatService {
 
     @Transactional(readOnly = true, transactionManager = MONGO_TRANSACTION_MANAGER)
     public GetPartyChatRoomMemberProfileRes getChatRoomMemberProfile(String chatRoomId, int userId,int memberId){
+
         //채팅방 조회
         PartyChatRoom partyChatRoom = partyChatRoomRepository.findByPartyChatRoomId(new ObjectId(chatRoomId))
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_CHAT_ROOM));
@@ -563,5 +569,16 @@ public class DeliveryPartyChatService {
         createChat(userId, partyChatRoom.getId(), "매칭이 마감되었어요", true, null, "publish", "none", false);
         return res;
     }
+
+    @Transactional(readOnly = false, transactionManager = MONGO_TRANSACTION_MANAGER)
+    public void performLastForcedExitProcess(int memberId, String roomId){
+        PartyChatRoomMember removedMember = partyChatRoomMemberRepository
+                .findByBeforeDeletedMemberIdAndChatRoomId(memberId, new ObjectId(roomId))
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTYCHATROOM_MEMBER));
+        partyChatRoomRepository.deleteParticipant(new ObjectId(roomId), new ObjectId(removedMember.getId()));
+        removedMember.delete();
+        partyChatRoomMemberRepository.save(removedMember);
+    }
+
 }
 // String exchange, String routingKey, Object message

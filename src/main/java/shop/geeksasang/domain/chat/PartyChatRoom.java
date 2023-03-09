@@ -42,6 +42,7 @@ public class PartyChatRoom extends ChatRoom{
     private OrderStatus orderStatus;
     private LocalDateTime lastChatAt; // 가장 최근 메시지 시각
 
+
     public PartyChatRoom(String title, List<Chat> chats, List<PartyChatRoomMember> participants, String accountNumber,
                          String bank, String category, Boolean isFinish, Integer maxMatching, PartyChatRoomMember chief, int deliveryPartyId, LocalDateTime lastChatAt) {
         super();
@@ -59,24 +60,6 @@ public class PartyChatRoom extends ChatRoom{
         this.lastChatAt = lastChatAt;
     }
 
-
-    @Override
-    public String toString() {
-        return "PartyChatRoom{" +
-                "title='" + title + '\'' +
-                ", chats=" + chats +
-                ", chief=" + chief +
-                ", participants=" + participants +
-                ", accountNumber='" + accountNumber + '\'' +
-                ", bank='" + bank + '\'' +
-                ", category='" + category + '\'' +
-                ", isFinish=" + isFinish +
-                ", maxMatching=" + maxMatching +
-                ", deliveryPartyId=" + deliveryPartyId +
-                ", orderStatus=" + orderStatus +
-                ", lastChatAt=" + lastChatAt +
-                '}';
-    }
 
     public void addParticipants(PartyChatRoomMember partyChatRoomMember){
         this.participants.add(partyChatRoomMember);

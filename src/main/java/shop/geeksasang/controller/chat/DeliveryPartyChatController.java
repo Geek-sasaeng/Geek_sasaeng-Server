@@ -273,7 +273,6 @@ public class DeliveryPartyChatController {
         return new BaseResponse<>(response);
     }
 
-
     @ApiOperation(value = "마감 : 배달파티 수동 매칭 마감", notes = "매칭 마감시킬 배달 파티의 아이디를 받아 배달 파티 매칭 status를 FINISH로 바꿀 수 있다.")
     @ApiResponses({
             @ApiResponse(code = 1000 ,message = "요청에 성공하였습니다."),
@@ -286,5 +285,18 @@ public class DeliveryPartyChatController {
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
         PatchDeliveryPartyMatchingStatusRes res = deliveryPartyChatService.changeMatchingStatus(partyId, jwtInfo.getUserId());
         return new BaseResponse<>(res);
+    }
+
+    @ApiOperation(value = "강제 퇴장 확인 후 진짜 퇴장", notes = "강제 퇴장을 확인해야지 나간 채팅방이 추후 채팅방 목록에서 보이지 않는다.")
+    @ApiResponses({
+            @ApiResponse(code = 1000 ,message = "요청에 성공하였습니다."),
+            @ApiResponse(code = 2208 ,message ="채팅방 멤버가 존재하지 않습니다."),
+            @ApiResponse(code = 4000 ,message = "서버 오류입니다.")
+    })
+    @PatchMapping("/force-out/confirm/{chatRoomId}")
+    public BaseResponse<SuccessCommonRes> confirmForceOutChatRoomMember(HttpServletRequest request, @PathVariable String chatRoomId){
+        JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
+        deliveryPartyChatService.performLastForcedExitProcess(jwtInfo.getUserId(), chatRoomId);
+        return new BaseResponse<>(new SuccessCommonRes());
     }
 }

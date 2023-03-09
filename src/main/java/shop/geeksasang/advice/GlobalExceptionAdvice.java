@@ -54,7 +54,7 @@ public class GlobalExceptionAdvice {
     @ExceptionHandler(BaseException.class)
     public BaseResponse<BaseResponseStatus> baseException(BaseException e) {
         log.error("Handle CommonException: {}", e.getMessage());
-        //e.printStackTrace();
+        e.printStackTrace();
         return new BaseResponse<>(e.getStatus());
     }
 
