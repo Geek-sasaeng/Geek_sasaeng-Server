@@ -17,8 +17,10 @@ import java.util.Optional;
 
 @Repository
 public interface PartyChatRoomRepository extends MongoRepository<PartyChatRoom, String> {
+
     @Query("{ '_id': ?0, 'status' : 'ACTIVE'}") // 0번째 파라미터 조건
     Optional<PartyChatRoom> findByPartyChatRoomId(ObjectId id);
+
     @Query("{ '_id': ?0, 'status' : 'ACTIVE', 'isFinish' : true}") // 0번째 파라미터 조건
     Optional<PartyChatRoom> findByPartyChatRoomIdAndIsFinish(ObjectId id);
 
@@ -53,7 +55,7 @@ public interface PartyChatRoomRepository extends MongoRepository<PartyChatRoom, 
     @Aggregation(pipeline ={
             "{ $unwind : '$participants' } ",
             "{ $lookup: { from : 'partyChatRoomMember', localField: 'participants', foreignField: '_id' , as : 'member' }} ",
-            "{ $match : { $and: [ { 'member.memberId' : { $eq : ?0 }} , { 'member.status' : { $eq : 'ACTIVE' }} ]}}"
+            "{ $match : { $and: [ { 'member.memberId' : { $eq : ?0 }} , { 'member.status' : { $ne : 'INACTIVE' }} ]}}"
     })
     Slice<PartyChatRoom> findByParticipantsIn(int memberId, Pageable pageable);
 

@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import shop.geeksasang.config.domain.BaseEntityMongo;
+import shop.geeksasang.config.status.BaseStatus;
 import shop.geeksasang.domain.chat.PartyChatRoom;
 import shop.geeksasang.domain.chat.PartyChatRoomMember;
 
@@ -27,17 +29,27 @@ public class GetPartyChatRoomRes {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime enterTime;
 
+    @ApiModelProperty(example = "true", value = "강제 퇴장 당한 상황인지")
+    private boolean forcedOut;
 
-    public GetPartyChatRoomRes(String roomId, String roomTitle, LocalDateTime lastChatTime, LocalDateTime enterTime) {
+
+    public GetPartyChatRoomRes(String roomId, String roomTitle, LocalDateTime lastChatTime, LocalDateTime enterTime, boolean forcedOut) {
         this.roomId = roomId;
         this.roomTitle = roomTitle;
         this.lastChatTime = lastChatTime;
         this.enterTime = enterTime;
+        this.forcedOut = forcedOut;
     }
 
     public static GetPartyChatRoomRes from(PartyChatRoom partyChatRoom, int memberId) {
         return new GetPartyChatRoomRes(
-                partyChatRoom.getId(), partyChatRoom.getTitle(), partyChatRoom.getLastChatAt(), partyChatRoom.findMember(memberId).getEnterTime()
+                partyChatRoom.getId(), partyChatRoom.getTitle(), partyChatRoom.getLastChatAt(), partyChatRoom.findMember(memberId).getEnterTime(),
+                checkForcedOut(partyChatRoom.findMember(memberId).getBaseEntityMongo())
         );
+    }
+
+    private static boolean checkForcedOut(BaseEntityMongo baseEntityMongo) {
+        if(baseEntityMongo.isForceOut()) return true;
+        return false;
     }
 }

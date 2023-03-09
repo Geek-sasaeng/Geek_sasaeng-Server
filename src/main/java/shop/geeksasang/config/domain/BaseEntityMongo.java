@@ -9,7 +9,6 @@ import shop.geeksasang.config.status.BaseStatus;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-@ToString
 @Getter
 public class BaseEntityMongo implements Serializable {
 
@@ -31,5 +30,22 @@ public class BaseEntityMongo implements Serializable {
 
     public void delete(){
         this.status = BaseStatus.INACTIVE;
+    }
+
+    public void forceOut(){
+        this.status = BaseStatus.WAITING_INACTIVE;
+    }
+
+    @Override
+    public String toString() {
+        return "BaseEntityMongo{" +
+                "createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", status=" + status +
+                '}';
+    }
+
+    public boolean isForceOut(){
+        return status == BaseStatus.WAITING_INACTIVE;
     }
 }

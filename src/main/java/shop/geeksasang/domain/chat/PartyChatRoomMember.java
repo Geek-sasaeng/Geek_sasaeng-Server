@@ -35,11 +35,15 @@ public class PartyChatRoomMember {
     @Unwrapped(onEmpty = Unwrapped.OnEmpty.USE_EMPTY)
     protected BaseEntityMongo baseEntityMongo;
 
+    private boolean checkedOut;
+
+
     public PartyChatRoomMember(LocalDateTime enterTime, boolean isRemittance, int memberId) {
         this.enterTime = enterTime;
         this.isRemittance = isRemittance;
         this.memberId = memberId;
         this.baseEntityMongo = new BaseEntityMongo();
+        this.checkedOut = false;
     }
 
     //이건 빼버리고 싶은데, 추후 토론.
@@ -50,6 +54,7 @@ public class PartyChatRoomMember {
         this.partyChatRoom = partyChatRoom;
         this.email = email;
         this.baseEntityMongo = new BaseEntityMongo();
+        this.checkedOut = false;
     }
 
     public boolean alreadyRemit() {
@@ -59,53 +64,32 @@ public class PartyChatRoomMember {
     public void delete() {
         this.partyChatRoom = null;
         this.baseEntityMongo.delete();
+        this.checkedOut = true;
     }
 
     public void enterRoom(PartyChatRoom chatRoom) {
         this.partyChatRoom = chatRoom;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof PartyChatRoomMember)) return false;
-
-        PartyChatRoomMember that = (PartyChatRoomMember) o;
-
-        if (getMemberId() != that.getMemberId()) return false;
-        if (isRemittance() != that.isRemittance()) return false;
-        if (getId() != null ? !getId().equals(that.getId()) : that.getId() != null) return false;
-        if (getEnterTime() != null ? !getEnterTime().equals(that.getEnterTime()) : that.getEnterTime() != null)
-            return false;
-        if (getPartyChatRoom() != null ? !getPartyChatRoom().equals(that.getPartyChatRoom()) : that.getPartyChatRoom() != null)
-            return false;
-        if (getEmail() != null ? !getEmail().equals(that.getEmail()) : that.getEmail() != null) return false;
-        return getBaseEntityMongo() != null ? getBaseEntityMongo().equals(that.getBaseEntityMongo()) : that.getBaseEntityMongo() == null;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = getId() != null ? getId().hashCode() : 0;
-        result = 31 * result + getMemberId();
-        result = 31 * result + (getEnterTime() != null ? getEnterTime().hashCode() : 0);
-        result = 31 * result + (isRemittance() ? 1 : 0);
-        result = 31 * result + (getPartyChatRoom() != null ? getPartyChatRoom().hashCode() : 0);
-        result = 31 * result + (getEmail() != null ? getEmail().hashCode() : 0);
-        result = 31 * result + (getBaseEntityMongo() != null ? getBaseEntityMongo().hashCode() : 0);
-        return result;
-    }
-
-
-    public LocalDateTime getLastChatAt(){
+    public LocalDateTime getLastChatAt() {
         return this.partyChatRoom.getLastChatAt();
     }
+
+    public void forceOut() {
+        this.baseEntityMongo.forceOut();
+    }
+
 
     @Override
     public String toString() {
         return "PartyChatRoomMember{" +
                 "id='" + id + '\'' +
                 ", memberId=" + memberId +
+                ", enterTime=" + enterTime +
+                ", isRemittance=" + isRemittance +
                 ", email='" + email + '\'' +
+                ", baseEntityMongo=" + baseEntityMongo +
+                ", checkedOut=" + checkedOut +
                 '}';
     }
 }
