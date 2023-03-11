@@ -148,11 +148,9 @@ public class MemberService {
         if (!memberRepository.findMemberByEmailId(emailId).isEmpty()) {
             throw new BaseException(ALREADY_VALID_EMAIL);
         }
-        if (!emailEntity.getEmailValidStatus().equals(ValidStatus.SUCCESS))
-            throw new BaseException(INVALID_EMAIL_MEMBER);
+        if (!emailEntity.getEmailValidStatus().equals(ValidStatus.SUCCESS)) throw new BaseException(INVALID_EMAIL_MEMBER);
 
         // 검증: 핸드폰 번호가 등록이 안되어있는지
-        Optional<PhoneNumber> sa = phoneNumberRepository.findPhoneNumberByNumber(phoneNumber);
         if (phoneNumberRepository.findPhoneNumberByNumber(phoneNumber).isPresent()) {
             throw new BaseException(DUPLICATE_USER_PHONENUMBER);
         }
@@ -418,7 +416,10 @@ public class MemberService {
             throw new BaseException(INVALID_INFORMATIONAGREE_STATUS);
         }
 
-        Email email = emailRepository.findEmailByAddressAndACTIVE(dto.getEmail()).orElseThrow(() -> new BaseException(NOT_MATCH_EMAIL));
+        Email email = emailRepository.findEmailByAddressAndACTIVE(dto.getEmail())
+                .orElseThrow(()
+                        -> new BaseException(NOT_MATCH_EMAIL)
+                );
 
         // 검증: 이메일 인증 여부
         if (!memberRepository.findMemberByEmailId(email.getId()).isEmpty()) {
@@ -428,14 +429,14 @@ public class MemberService {
         if (!email.getEmailValidStatus().equals(ValidStatus.SUCCESS)) throw new BaseException(INVALID_EMAIL_MEMBER);
 
         // 검증: 핸드폰 번호가 등록이 안되어있는지
-        if (phoneNumberRepository.findPhoneNumberByNumber(dto.getPhoneNumber()).isPresent()) {
-            throw new BaseException(DUPLICATE_USER_PHONENUMBER);
-        }
+        PhoneNumber phoneNumber = phoneNumberRepository.findPhoneNumberByNumber(dto.getPhoneNumber())
+                .orElseThrow(() ->
+                        new BaseException(INVALID_INFORMATIONAGREE_STATUS)
+                );
 
-        // 핸드폰 번호 DB에 저장
-        PhoneNumber phoneNumberEntity = smsService.savePhoneNumber(dto.getPhoneNumber());
+        if (!phoneNumber.getPhoneValidStatus().equals(ValidStatus.SUCCESS)) throw new BaseException(INVALID_PHONE_NUMBER);
 
-        Member member = dto.toEntity(email, phoneNumberEntity, dto.getNickname(), refreshToken);
+        Member member = dto.toEntity(email, phoneNumber, dto.getNickname(), refreshToken);
         University university = universityRepository
                 .findUniversityByName(dto.getUniversityName())
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_UNIVERSITY));
