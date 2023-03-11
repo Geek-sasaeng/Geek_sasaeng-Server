@@ -4,13 +4,24 @@ package shop.geeksasang.unit.service;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import org.springframework.amqp.core.*;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.rabbit.test.RabbitListenerTest;
+import org.springframework.amqp.rabbit.test.RabbitListenerTestHarness;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import shop.geeksasang.dto.chat.PostChatRes;
 import shop.geeksasang.dto.deliveryParty.post.PostDeliveryPartyReq;
 import shop.geeksasang.dto.deliveryParty.post.PostDeliveryPartyRes;
 import shop.geeksasang.factory.domain.DormitoryFactory;
@@ -30,18 +41,13 @@ import shop.geeksasang.service.deliveryparty.DeliveryPartyService;
 
 import java.util.Optional;
 
-
+@RabbitListenerTest
+@SpringBootTest
 @ExtendWith(MockitoExtension.class)
 public class DeliveryPartyServiceTest {
 
     @InjectMocks
     private DeliveryPartyService deliveryPartyService;
-
-    @Mock
-    private DeliveryPartyRepository deliveryPartyRepository;
-
-    @Mock
-    private DeliveryPartyMemberRepository deliveryPartyMemberRepository;
 
     @Mock
     private MemberRepository memberRepository;
@@ -55,11 +61,13 @@ public class DeliveryPartyServiceTest {
     @Mock
     private HashTagRepository hashTagRepository;
 
-    @Mock
-    private DeliveryPartyQueryRepository deliveryPartyQueryRepository;
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+    @Autowired
+    private AmqpAdmin amqpAdmin;
 
-    @Mock
-    private BlockRepository blockRepository;
+    @Spy
+    private ObjectMapper objectMapper;
 
     @Test
     @DisplayName("배달 파티 생성 성공 테스트")
@@ -81,6 +89,55 @@ public class DeliveryPartyServiceTest {
         assertThat(party.getTitle()).isEqualTo("party");
         assertThat(party.getContent()).isEqualTo("content");
     }
+
+    @Test
+    @DisplayName("강제 퇴장 당한 사용자에게 메시지 전송 테스트")
+    void success_sendBanMessageToBanUser(){
+        // given
+        final String memberId = "1";
+        final String chatRoomTitle = "피자 파티";
+
+        Queue userQueue = new Queue(memberId);
+        amqpAdmin.declareQueue(userQueue);
+
+        final String EXIT_EXCHANGE_NAME = "dx.exit";
+        DirectExchange exitExchange = new DirectExchange(EXIT_EXCHANGE_NAME);
+
+        final String EXIT_BINDING_KEY = memberId + ".exit";
+        Binding binding = BindingBuilder.bind(userQueue)
+                .to(exitExchange)
+                .with(EXIT_BINDING_KEY);
+        amqpAdmin.declareBinding(binding);
+
+        PostChatRes postChatRes = new PostChatRes(chatRoomTitle);
+
+        String jsonMessage = null;
+        try {
+            jsonMessage = objectMapper.writeValueAsString(postChatRes);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        // when
+        rabbitTemplate.convertAndSend(EXIT_EXCHANGE_NAME, EXIT_BINDING_KEY, jsonMessage);
+    }
+
+    // 강제 퇴장 큐 리스너 테스트
+//    @Test
+//    @DisplayName("강제 퇴장 당한 사용자에게 메시지 전송 테스트")
+//    @RabbitListener(queues = "1")
+//    public void receiveBanMessage(final String message) {
+//        // given
+//        PostChatRes postChatRes = null;
+//        try {
+//            postChatRes = objectMapper.readValue(message, PostChatRes.class);
+//        } catch (JsonProcessingException e) {
+//            e.printStackTrace();
+//        }
+//
+//        // then
+//        assertThat(postChatRes.getChatType().equals("ban"));
+//    }
 
 
 //    @Test
