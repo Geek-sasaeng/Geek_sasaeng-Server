@@ -5,18 +5,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
+import org.springframework.amqp.core.*;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.web.multipart.MultipartFile;
-import shop.geeksasang.config.TransactionManagerConfig;
 import shop.geeksasang.config.exception.BaseException;
-import shop.geeksasang.config.exception.response.BaseResponseStatus;
 import shop.geeksasang.config.status.OrderStatus;
 import shop.geeksasang.domain.chat.Chat;
 import shop.geeksasang.domain.chat.PartyChatRoomMember;
@@ -61,7 +59,6 @@ import static shop.geeksasang.config.exception.response.BaseResponseStatus.*;
 @Service
 @RequiredArgsConstructor
 public class DeliveryPartyChatService {
-
     private final ChatRepository chatRepository;
     private final PartyChatRoomMemberRepository partyChatRoomMemberRepository;
     private final PartyChatRoomRepository partyChatRoomRepository;
@@ -73,8 +70,10 @@ public class DeliveryPartyChatService {
     private final DeliveryPartyMemberService deliveryPartyMemberService;
     private final DeliveryPartyService deliveryPartyService;
 
+    private final RabbitTemplate rabbitTemplate;
     private final AwsS3Service awsS3Service;
     private final MQController mqController;
+    private final AmqpAdmin amqpAdmin;
 
     private final ObjectMapper objectMapper;
 
@@ -321,6 +320,9 @@ public class DeliveryPartyChatService {
 
         this.createChat(chiefId, dto.getRoomId(), "파티장의 강제 퇴장 요청으로 인해 '" + nickName + "'이 퇴장 처리되었습니다"
                 , true, null, "publish", "none", false);
+
+        // 해당 사용자의 큐로 강제퇴장 메시지 전송
+        sendBanMessageToBanUser(id, chatRoom.getTitle());
     }
 
     @Transactional(readOnly = false, transactionManager = MONGO_TRANSACTION_MANAGER)
@@ -405,6 +407,7 @@ public class DeliveryPartyChatService {
         chat.addReadMember(memberId);// 읽은 멤버 추가
         Chat saveChat = chatRepository.save(chat);
         int unreadMemberCnt = saveChat.getUnreadMemberCnt(); // 안읽은 멤버 수 계산
+
 
         // json 형식으로 변환 후 RabbitMQ 전송
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
@@ -562,6 +565,27 @@ public class DeliveryPartyChatService {
         partyChatRoomRepository.changeIsFinish(new ObjectId(partyChatRoom.getId()));
         createChat(userId, partyChatRoom.getId(), "매칭이 마감되었어요", true, null, "publish", "none", false);
         return res;
+    }
+
+    // 강제 퇴장당한 사용자에게 메시지 전송
+    public void sendBanMessageToBanUser(String memberId, String chatRoomTitle){
+        Queue userQueue = new Queue(memberId);
+        final String EXIT_EXCHANGE_NAME = "dx.exit";
+        DirectExchange exitExchange = new DirectExchange(EXIT_EXCHANGE_NAME);
+
+        final String EXIT_BINDING_KEY = memberId + ".exit";
+        Binding binding = BindingBuilder.bind(userQueue)
+                .to(exitExchange)
+                .with(EXIT_BINDING_KEY);
+        amqpAdmin.declareBinding(binding);
+
+        PostChatRes postChatRes = new PostChatRes(chatRoomTitle);
+        try {
+            String jsonMessage = objectMapper.writeValueAsString(postChatRes);
+            rabbitTemplate.convertAndSend(EXIT_EXCHANGE_NAME, EXIT_BINDING_KEY, jsonMessage);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
     }
 }
 // String exchange, String routingKey, Object message

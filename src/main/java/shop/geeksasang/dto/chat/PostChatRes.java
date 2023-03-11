@@ -43,6 +43,12 @@ public class PostChatRes {
 
     private Boolean isImageMessage;
 
+    // 강제 퇴장 용
+    public PostChatRes(String chatTitle){
+        this.content = chatTitle;
+        this.chatType = "ban";
+    }
+
     public PostChatRes(String chatRoomId, String content, LocalDateTime createdAt, int memberId) {
         this.chatRoomId = chatRoomId;
         this.content = content;

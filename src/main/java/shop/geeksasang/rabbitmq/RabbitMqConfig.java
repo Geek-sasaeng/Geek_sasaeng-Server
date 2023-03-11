@@ -28,6 +28,12 @@ public class RabbitMqConfig {
         return new RabbitAdmin(rabbitTemplate.getConnectionFactory());
     }
 
+    // 채팅방 강제 퇴장 수신용 DX 선언
+    @Bean
+    public DirectExchange exitExchange(){
+        return new DirectExchange("dx.exit", false, true);
+    }
+
 //    @Bean
 //    public RabbitMQTut5Receiver receiver(){
 //        return new RabbitMQTut5Receiver();
