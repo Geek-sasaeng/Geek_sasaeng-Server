@@ -19,14 +19,15 @@ public class SwaggerConfig {
 
     @Value("${request.url}")
     private String host;
-    private final String localhost = "localhost:8080"; // 로컬 호스트 테스트용
+
+//    private final String localhost = "localhost:8080"; // 로컬 호스트 테스트용
 
     @Bean
     public Docket api(){
         return new Docket(DocumentationType.SWAGGER_2)
                 .securityContexts(Arrays.asList(securityContext()))
                 .securitySchemes(Arrays.asList(apiKey()))
-                .host(localhost)
+                .host(host)
                 .apiInfo(getApiInfo())
                 .useDefaultResponseMessages(false);
     }
