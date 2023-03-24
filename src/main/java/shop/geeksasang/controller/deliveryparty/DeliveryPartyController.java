@@ -73,7 +73,7 @@ public class DeliveryPartyController {
 
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
 
-        PutDeliveryPartyRes putDeliveryPartyRes = deliveryPartyService.updateDeliveryParty(dto, jwtInfo, dormitoryId, partyId);
+        PutDeliveryPartyRes putDeliveryPartyRes = deliveryPartyService.updateDeliveryParty(dto, jwtInfo.getUserId(), dormitoryId, partyId);
         deliveryPartyChatService.updateRoom(dto.getMaxMatching(), jwtInfo.getUserId(), chatRoomId);
         return new BaseResponse<>(putDeliveryPartyRes);
     }

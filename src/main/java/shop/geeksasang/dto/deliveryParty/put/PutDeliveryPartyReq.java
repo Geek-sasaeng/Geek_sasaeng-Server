@@ -68,4 +68,7 @@ public class PutDeliveryPartyReq {
     @ApiParam(value = "해시태그 추가 여부", required = true)
     @NotNull
     private boolean hashTag;
+
+
+
 }
