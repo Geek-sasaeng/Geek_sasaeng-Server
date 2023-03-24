@@ -23,6 +23,7 @@ import shop.geeksasang.dto.chat.partychatroom.PartyChatRoomRes;
 import shop.geeksasang.dto.deliveryParty.get.GetDeliveryPartyDetailRes;
 import shop.geeksasang.dto.deliveryParty.post.PostDeliveryPartyReq;
 import shop.geeksasang.dto.deliveryParty.post.PostDeliveryPartyRes;
+import shop.geeksasang.dto.deliveryParty.put.PutDeliveryPartyReq;
 import shop.geeksasang.factory.dto.deliveryparty.PostDeliveryPartyFactory;
 import shop.geeksasang.integration.IntegrationTest;
 import shop.geeksasang.repository.auth.EmailRepository;
@@ -186,33 +187,32 @@ public class DeliveryPartyIntegrationTest extends IntegrationTest {
 
 
     @Test
-    @DisplayName("방장 교체 나가기")
-    void changeChiefAndAddMember() throws JsonProcessingException {
+    @DisplayName("배달 파티 업데이트 하기")
+    void changeStatus() throws JsonProcessingException {
 
         //given
-        PostDeliveryPartyReq dto = PostDeliveryPartyFactory.createReq(foodCategory.getId());
+        PostDeliveryPartyReq dto1 = PostDeliveryPartyFactory.createReqV2(foodCategory.getId());
 
-        PostDeliveryPartyRes deliveryParty = deliveryPartyService.registerDeliveryParty(dto, member.getId(), dormitory.getId());
-        deliveryPartyMemberService.joinDeliveryPartyMember(deliveryParty.getId(), member2.getId());
-        deliveryPartyMemberService.joinDeliveryPartyMember(deliveryParty.getId(), member3.getId());
-
+        PostDeliveryPartyRes deliveryParty = deliveryPartyService.registerDeliveryParty(dto1, member.getId(), dormitory.getId());
         PartyChatRoomRes chatRoom = deliveryPartyChatService.createChatRoom(member.getId(), "test", "111", "toss", "ex", 3, deliveryParty.getId());
+        System.out.println("chatRoom.getPartyChatRoomId() = " + chatRoom.getPartyChatRoomId());
+        deliveryPartyMemberService.joinDeliveryPartyMember(deliveryParty.getId(), member2.getId());
         deliveryPartyChatService.joinPartyChatRoom(member2.getId(), chatRoom.getPartyChatRoomId(), LocalDateTime.now());
-        deliveryPartyChatService.joinPartyChatRoom(member3.getId(), chatRoom.getPartyChatRoomId(), LocalDateTime.now());
 
         //when
-        deliveryPartyChatService.changeChief(member.getId(), chatRoom.getPartyChatRoomId());
-        deliveryPartyService.chiefLeaveDeliveryParty(deliveryParty.getId(), member.getId());
+        PutDeliveryPartyReq dto2 = new PutDeliveryPartyReq();
+        dto2.setMaxMatching(2);
+        dto2.setFoodCategory(foodCategory.getId());
+        dto2.setOrderTime(LocalDateTime.now());
 
-        deliveryPartyMemberService.patchDeliveryPartyMemberStatus(deliveryParty.getId(), member3.getId());
-        deliveryPartyChatService.removeMember(member3.getId(), chatRoom.getPartyChatRoomId());
+        deliveryPartyService.updateDeliveryParty(dto2, member.getId(), dormitory.getId(), deliveryParty.getId());
+        deliveryPartyChatService.updateRoom(2, member.getId(), chatRoom.getPartyChatRoomId());
 
-        GetDeliveryPartyDetailRes result = deliveryPartyService.getDeliveryPartyDetailById(deliveryParty.getId(), member2.getId());
-        List<GetPartyChatRoomMembersInfoRes> chatRoomMembersInfo = deliveryPartyChatService.getChatRoomMembersInfo(deliveryParty.getId(), member2.getId(), chatRoom.getPartyChatRoomId());
+        GetDeliveryPartyDetailRes result = deliveryPartyService.getDeliveryPartyDetailById(deliveryParty.getId(), member.getId());
 
         //then
-        assertThat(chatRoomMembersInfo.size()).isEqualTo(0);
-        assertThat(result.getCurrentMatching()).isEqualTo(1);
-        assertThat(result.getChiefId()).isEqualTo(member2.getId());
+        assertThat(result.getCurrentMatching()).isEqualTo(2);
+        assertThat(result.getChiefId()).isEqualTo(member.getId());
+        assertThat(result.getMatchingStatus()).isEqualTo(MatchingStatus.FINISH);
     }
 }

@@ -592,6 +592,7 @@ public class DeliveryPartyChatService {
 
     @Transactional(readOnly = false, transactionManager = MONGO_TRANSACTION_MANAGER)
     public void updateRoom(int maxMatching, int chiefId, String roomId) {
+
         PartyChatRoomMember chief = partyChatRoomMemberRepository
                 .findByMemberIdAndChatRoomId(chiefId, new ObjectId(roomId))
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTYCHATROOM_MEMBER));
@@ -607,8 +608,7 @@ public class DeliveryPartyChatService {
             createChat(chiefId, partyChatRoom.getId(), "매칭이 마감되었어요", true, null, "publish", "none", false);
         }
 
-        partyChatRoom.updateMaxMatching(maxMatching);
-        partyChatRoomRepository.save(partyChatRoom);
+        partyChatRoomRepository.updateMaxNumber(new ObjectId(roomId), maxMatching);
     }
 }
 // String exchange, String routingKey, Object message

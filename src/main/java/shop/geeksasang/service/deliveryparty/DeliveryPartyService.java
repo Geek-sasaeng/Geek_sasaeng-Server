@@ -116,11 +116,10 @@ public class DeliveryPartyService {
     }
 
     @Transactional(readOnly = false, transactionManager = JPA_TRANSACTION_MANAGER)
-    public PutDeliveryPartyRes updateDeliveryParty(PutDeliveryPartyReq dto, JwtInfo jwtInfo, int dormitoryId, int partyId){
-        int chiefId = jwtInfo.getUserId();
+    public PutDeliveryPartyRes updateDeliveryParty(PutDeliveryPartyReq dto, int memberId, int dormitoryId, int partyId){
+
 
         //요청 보낸 사용자 Member 찾기
-        int memberId = jwtInfo.getUserId();
         Member findMember = memberRepository.findMemberByIdAndStatus(memberId).
                 orElseThrow(() -> new BaseException(NOT_EXISTS_PARTICIPANT));
 
@@ -133,7 +132,7 @@ public class DeliveryPartyService {
         }
 
         //파티장
-        Member chief = memberRepository.findMemberByIdAndStatus(chiefId)
+        Member chief = memberRepository.findMemberByIdAndStatus(memberId)
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTICIPANT));
 
         //기숙사
@@ -169,7 +168,6 @@ public class DeliveryPartyService {
         DeliveryParty resDeliveryParty = deliveryParty.updateParty(dto, orderTimeCategory, dormitory, foodCategory, chief, hashTagList);
 
         return PutDeliveryPartyRes.toDto(resDeliveryParty);
-
     }
 
     //배달파티 상세조회:
