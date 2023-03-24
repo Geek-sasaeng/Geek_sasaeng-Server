@@ -323,7 +323,7 @@ public class DeliveryPartyChatService {
                 , true, null, "publish", "none", false);
 
         // 해당 사용자의 큐로 강제퇴장 메시지 전송
-        sendBanMessageToBanUser(id, chatRoom.getTitle());
+        sendBanMessageToBanUser(removedMember.getMemberId(), chatRoom.getTitle());
     }
 
     @Transactional(readOnly = false, transactionManager = MONGO_TRANSACTION_MANAGER)
@@ -570,8 +570,8 @@ public class DeliveryPartyChatService {
     }
 
     // 강제 퇴장당한 사용자에게 메시지 전송
-    public void sendBanMessageToBanUser(String memberId, String chatRoomTitle){
-        Queue userQueue = new Queue(memberId);
+    public void sendBanMessageToBanUser(int memberId, String chatRoomTitle){
+        Queue userQueue = new Queue(String.valueOf(memberId));
         final String EXIT_EXCHANGE_NAME = "dx.exit";
         DirectExchange exitExchange = new DirectExchange(EXIT_EXCHANGE_NAME);
 
