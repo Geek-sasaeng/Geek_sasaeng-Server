@@ -20,5 +20,6 @@ public class AppleLoginReq {
 
     @ApiModelProperty(example = "c1aTnbZPaWP0_KZbcSuh_h:APA91bFG4r3Z6-dw88UQFikVxkNApaUeq508RNeYxgmrj7miyGdSIy6YXMLJj3jAmCZERNqSLgLm4gn3fyhnBn2iUsra_EriXMqsOlXkyUf9ugNAKMPiKZGNYbn6gKLhMYWB3xTJoRVk")
     @ApiParam(value = "FCM 토큰값")
+    @NotEmpty
     private String fcmToken;
 }

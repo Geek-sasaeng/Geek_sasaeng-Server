@@ -79,7 +79,9 @@ public class AppleServiceImpl {
                 .universityId(0)
                 .build();
 
-        member.updateFcmToken(fcmToken);
+        if(member.getFcmToken() == null){
+            member.updateFcmToken(fcmToken);
+        }
         String jwt = jwtService.createJwt(vo);
         if(member.getLoginStatus() == LoginStatus.NEVER){
             return PostLoginRes.builder()
