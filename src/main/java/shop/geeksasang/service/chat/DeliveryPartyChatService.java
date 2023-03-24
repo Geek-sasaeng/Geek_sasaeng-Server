@@ -604,7 +604,7 @@ public class DeliveryPartyChatService {
         }
 
         else if(partyChatRoom.getParticipants().size() == maxMatching){
-            partyChatRoom.changeIsFinishToTrue();
+            partyChatRoomRepository.changeIsFinish(new ObjectId(roomId));
             createChat(chiefId, partyChatRoom.getId(), "매칭이 마감되었어요", true, null, "publish", "none", false);
         }
 

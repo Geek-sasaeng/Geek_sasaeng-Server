@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import shop.geeksasang.config.response.BaseResponse;
 import shop.geeksasang.controller.applelogin.model.*;
@@ -50,13 +51,13 @@ public class AppleController {
     @ApiOperation(value = "로그인")
     @PostMapping(value = "/log-in/apple")
     @ResponseBody
-    public BaseResponse<PostLoginRes> logInApple(@RequestBody AppleLoginReq appleLoginReq) throws NoSuchAlgorithmException {
+    public BaseResponse<PostLoginRes> logInApple(@RequestBody @Validated AppleLoginReq appleLoginReq) throws NoSuchAlgorithmException {
 
         if (appleLoginReq == null) { // TODO 예외처리
             System.out.println("요청 값이 없습니다.");
             return null;
         }
-        PostLoginRes res = appleService.login(appleLoginReq.getIdToken(), appleLoginReq.getRefreshToken());
+        PostLoginRes res = appleService.login(appleLoginReq.getIdToken(), appleLoginReq.getRefreshToken(), appleLoginReq.getFcmToken());
         return new BaseResponse<>(res);
     }
 

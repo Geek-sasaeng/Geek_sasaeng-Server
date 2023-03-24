@@ -49,3 +49,5 @@ out/
 AuthKey_QLHFNT37VK.p8
 application.properties
 **.p8
+
+**/.DS_Store
