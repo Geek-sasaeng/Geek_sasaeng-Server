@@ -192,9 +192,6 @@ public class DeliveryParty extends BaseEntity {
         this.matchingStatus = MatchingStatus.FINISH;
     }
 
-    public void changeMatchingStatusToOngoing(){
-        this.matchingStatus = MatchingStatus.ONGOING;
-    }
 
     public boolean isNotChief(Member attemptedChief){
         return attemptedChief != chief;
@@ -271,10 +268,7 @@ public class DeliveryParty extends BaseEntity {
             changeStatusToInactive();
         }
 
-        // 현재인원 == (최대인원-1) 이면 MatchingStatus를 FINISH -> ONGOING으로 수정
-        if(currentMatching < maxMatching){
-            changeMatchingStatusToOngoing();
-        }
+         //현재인원 == (최대인원-1) 이면 MatchingStatus를 FINISH -> ONGOING으로 수정
     }
 
     private void partyMemberStatusChangeToInActive(DeliveryPartyMember deliveryPartyMember) {
