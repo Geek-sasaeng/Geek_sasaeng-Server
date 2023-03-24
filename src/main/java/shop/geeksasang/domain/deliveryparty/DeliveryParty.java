@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -306,5 +307,12 @@ public class DeliveryParty extends BaseEntity {
         return deliveryPartyMembers.stream()
                 .findFirst()
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTICIPANT));
+    }
+
+
+    public long getDeliveryPartyMemberSize() {
+        return deliveryPartyMembers.stream()
+                .filter(DeliveryPartyMember::isActive)
+                .count();
     }
 }
