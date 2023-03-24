@@ -2,10 +2,7 @@ package shop.geeksasang.config.websocket;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.WebSocketSession;
@@ -14,14 +11,12 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 import shop.geeksasang.config.exception.BaseException;
 import shop.geeksasang.domain.member.Member;
 import shop.geeksasang.dto.chat.PostChatReq;
-import shop.geeksasang.dto.chat.PostChatRes;
 import shop.geeksasang.dto.login.JwtInfo;
 import shop.geeksasang.repository.member.MemberRepository;
 import shop.geeksasang.service.chat.DeliveryPartyChatService;
 import shop.geeksasang.utils.jwt.JwtService;
 
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 
 import static shop.geeksasang.config.exception.response.BaseResponseStatus.*;
 
