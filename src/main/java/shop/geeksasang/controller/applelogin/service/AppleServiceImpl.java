@@ -78,11 +78,10 @@ public class AppleServiceImpl {
                 .userId(member.getId())
                 .universityId(member.getUniversity().getId())
                 .build();
-        System.out.println("fcmToken = " + fcmToken);
+
         if(member.getFcmToken() == null){
             member.updateFcmToken(fcmToken);
         }
-
 
         String jwt = jwtService.createJwt(vo);
         if(member.getLoginStatus() == LoginStatus.NEVER){

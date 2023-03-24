@@ -399,10 +399,6 @@ public class DeliveryPartyChatService {
         PartyChatRoom partyChatRoom = partyChatRoomRepository.findByPartyChatRoomId(new ObjectId(roomId))
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_CHAT_ROOM));
 
-        if(partyChatRoom.getIsFinish()){
-            partyChatRoom.changeIsFinishToFalse();
-        }
-
         partyChatRoomRepository.save(partyChatRoom);
 
         //시스템 메시지
