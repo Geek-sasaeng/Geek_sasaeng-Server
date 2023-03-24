@@ -86,8 +86,6 @@ public class AppleServiceImpl {
                     .jwt(jwt)
                     .nickName(member.getNickName())
                     .loginStatus(member.getLoginStatus())
-                    .dormitoryId(member.getDormitory().getId())
-                    .dormitoryName(member.getDormitory().getName())
                     .profileImgUrl(member.getProfileImgUrl())
                     .fcmToken(member.getFcmToken())
                     .memberId(member.getId())
@@ -100,6 +98,8 @@ public class AppleServiceImpl {
                 .profileImgUrl(member.getProfileImgUrl())
                 .fcmToken(member.getFcmToken())
                 .memberId(member.getId())
+                .dormitoryId(member.getDormitory().getId())
+                .dormitoryName(member.getDormitory().getName())
                 .build();
     }
 
