@@ -117,6 +117,10 @@ public class PartyChatRoom extends ChatRoom{
         this.isFinish = true;
     }
 
+    public void changeIsFinishToFalse(){
+        this.isFinish = false;
+    }
+
     public PartyChatRoomMember findMember(int memberId) {
         return participants.stream()
                 .filter(partyChatRoomMember -> partyChatRoomMember.getMemberId() == memberId)

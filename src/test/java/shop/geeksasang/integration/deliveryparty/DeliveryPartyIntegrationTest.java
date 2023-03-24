@@ -182,4 +182,36 @@ public class DeliveryPartyIntegrationTest extends IntegrationTest {
         assertThat(result.getCurrentMatching()).isEqualTo(3);
         assertThat(result.getMatchingStatus()).isSameAs(MatchingStatus.FINISH);
     }
+
+
+    @Test
+    @DisplayName("방장 교체 나가기")
+    void changeChiefAndAddMember() throws JsonProcessingException {
+
+        //given
+        PostDeliveryPartyReq dto = PostDeliveryPartyFactory.createReq(foodCategory.getId());
+
+        PostDeliveryPartyRes deliveryParty = deliveryPartyService.registerDeliveryParty(dto, member.getId(), dormitory.getId());
+        deliveryPartyMemberService.joinDeliveryPartyMember(deliveryParty.getId(), member2.getId());
+        deliveryPartyMemberService.joinDeliveryPartyMember(deliveryParty.getId(), member3.getId());
+
+        PartyChatRoomRes chatRoom = deliveryPartyChatService.createChatRoom(member.getId(), "test", "111", "toss", "ex", 3, deliveryParty.getId());
+        deliveryPartyChatService.joinPartyChatRoom(member2.getId(), chatRoom.getPartyChatRoomId(), LocalDateTime.now());
+        deliveryPartyChatService.joinPartyChatRoom(member3.getId(), chatRoom.getPartyChatRoomId(), LocalDateTime.now());
+
+        //when
+        deliveryPartyChatService.changeChief(member.getId(), chatRoom.getPartyChatRoomId());
+        deliveryPartyService.chiefLeaveDeliveryParty(deliveryParty.getId(), member.getId());
+
+        deliveryPartyMemberService.patchDeliveryPartyMemberStatus(deliveryParty.getId(), member3.getId());
+        deliveryPartyChatService.removeMember(member3.getId(), chatRoom.getPartyChatRoomId());
+
+        GetDeliveryPartyDetailRes result = deliveryPartyService.getDeliveryPartyDetailById(deliveryParty.getId(), member2.getId());
+        List<GetPartyChatRoomMembersInfoRes> chatRoomMembersInfo = deliveryPartyChatService.getChatRoomMembersInfo(deliveryParty.getId(), member2.getId(), chatRoom.getPartyChatRoomId());
+
+        //then
+        assertThat(chatRoomMembersInfo.size()).isEqualTo(0);
+        assertThat(result.getCurrentMatching()).isEqualTo(1);
+        assertThat(result.getChiefId()).isEqualTo(member2.getId());
+    }
 }
