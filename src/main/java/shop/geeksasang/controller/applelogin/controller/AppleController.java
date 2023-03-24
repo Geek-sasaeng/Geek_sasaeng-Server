@@ -56,7 +56,7 @@ public class AppleController {
             System.out.println("요청 값이 없습니다.");
             return null;
         }
-        PostLoginRes res = appleService.login(appleLoginReq.getIdToken(), appleLoginReq.getRefreshToken());
+        PostLoginRes res = appleService.login(appleLoginReq.getIdToken(), appleLoginReq.getRefreshToken(), appleLoginReq.getFcmToken());
         return new BaseResponse<>(res);
     }
 
