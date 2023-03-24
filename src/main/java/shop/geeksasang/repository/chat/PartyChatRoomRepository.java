@@ -62,6 +62,8 @@ public interface PartyChatRoomRepository extends MongoRepository<PartyChatRoom, 
     @Query("{ '_id' : ?0 }")
     @Update("{ $set : { 'maxMatching' : ?1 }}")
     void updateMaxNumber(ObjectId partyChatRoomId, int maxNumber);
+
+
 //    @Aggregation(pipeline ={
 //            "{ $unwind : '$participants' } ",
 //            "{ $lookup: { from : 'partyChatRoomMember', localField: 'participants', foreignField: '_id' , as : 'member' }} ",

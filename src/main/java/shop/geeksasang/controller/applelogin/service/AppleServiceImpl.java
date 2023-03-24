@@ -60,6 +60,7 @@ public class AppleServiceImpl {
         TempDto tempDto = memberService.registerAppleMember(req, tokenResponse.getRefresh_token());
         tokenResponse.setJwt(tempDto.getJwt());
         tokenResponse.setNickName(tempDto.getNickName());
+
         return tokenResponse;
     }
 
