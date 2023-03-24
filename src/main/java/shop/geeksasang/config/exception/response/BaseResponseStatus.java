@@ -87,6 +87,8 @@ public enum BaseResponseStatus {
     EMPTY_DELIVERY_PARTY(false, 2028 , "빈 배달파티입니다."),
     FILE_SIZE_LIMIT_EXCEED(false, 2029 , "파일 사이즈가 너무 큽니다."),
     MAX_UPLOAD_SIZE_LIMIT_EXCEED(false, 2030 , "최대 업로드 크기를 초과했습니다."),
+    CANT_UPDATE_MAX_DELIVERY_PARTY_PARTICIPANT(false, 2031, "현재 파티 인원보다 작은 최대 인원수로 수정할 수 없습니다."),
+
 
 
 

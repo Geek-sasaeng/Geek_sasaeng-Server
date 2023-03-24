@@ -82,22 +82,22 @@ public class DeliveryPartyService {
 
        //신고 3번이상으로 누적된 회원은 파티를 생성할 수 없음
         if(chief.getStatus().equals(BaseStatus.REPORTED)){
-            throw new BaseException(BaseResponseStatus.CAN_NOT_CREATE_PARTY);
+            throw new BaseException(CAN_NOT_CREATE_PARTY);
         }
 
         //카테고리
         FoodCategory foodCategory = foodCategoryRepository.findFoodCategoryById(dto.getFoodCategory())
-                .orElseThrow(() ->  new BaseException(BaseResponseStatus.NOT_EXISTS_CATEGORY));
+                .orElseThrow(() ->  new BaseException(NOT_EXISTS_CATEGORY));
 
         //기숙사
         Dormitory dormitory = dormitoryRepository.findDormitoryById(dormitoryId)
-                .orElseThrow(() ->  new BaseException(BaseResponseStatus.NOT_EXISTS_DORMITORY));
+                .orElseThrow(() ->  new BaseException(NOT_EXISTS_DORMITORY));
 
         //해시태그 -- 기존 로직 유지
         List<HashTag> hashTagList = new ArrayList<>();
 
         if(dto.isHashTag()){
-            HashTag hashTag = hashTagRepository.findById(1).orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_HASHTAG));
+            HashTag hashTag = hashTagRepository.findById(1).orElseThrow(() -> new BaseException(NOT_EXISTS_HASHTAG));
             hashTagList.add(hashTag);
         }
 
@@ -122,37 +122,48 @@ public class DeliveryPartyService {
         //요청 보낸 사용자 Member 찾기
         int memberId = jwtInfo.getUserId();
         Member findMember = memberRepository.findMemberByIdAndStatus(memberId).
-                orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTICIPANT));
+                orElseThrow(() -> new BaseException(NOT_EXISTS_PARTICIPANT));
 
         DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyById(partyId).
-                orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTY));
+                orElseThrow(() -> new BaseException(NOT_EXISTS_PARTY));
 
         //요청 보낸 사용자와 파티 chief 비교
         if(!findMember.equals(deliveryParty.getChief())){
-            throw new BaseException(BaseResponseStatus.NOT_EXISTS_PERMISSION_UPDATE);
+            throw new BaseException(NOT_EXISTS_PERMISSION_UPDATE);
         }
 
         //파티장
         Member chief = memberRepository.findMemberByIdAndStatus(chiefId)
-                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTICIPANT));
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTICIPANT));
 
         //기숙사
         Dormitory dormitory = dormitoryRepository.findDormitoryById(dormitoryId)
-                .orElseThrow(() ->  new BaseException(BaseResponseStatus.NOT_EXISTS_DORMITORY));
+                .orElseThrow(() ->  new BaseException(NOT_EXISTS_DORMITORY));
 
         //카테고리
         FoodCategory foodCategory = foodCategoryRepository.findFoodCategoryById(dto.getFoodCategory())
-                .orElseThrow(() ->  new BaseException(BaseResponseStatus.NOT_EXISTS_CATEGORY));
+                .orElseThrow(() ->  new BaseException(NOT_EXISTS_CATEGORY));
 
         //해시태그 -- 기존 로직 유지
         List<HashTag> hashTagList = new ArrayList<>();
 
         if(dto.isHashTag()){
-            HashTag hashTag = hashTagRepository.findById(1).orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_HASHTAG));
+            HashTag hashTag = hashTagRepository.findById(1).orElseThrow(() -> new BaseException(NOT_EXISTS_HASHTAG));
             hashTagList.add(hashTag);
         }
         //orderTime 분류화
         OrderTimeCategoryType orderTimeCategory = OrderTimeUtils.selectOrderTime(dto.getOrderTime().getHour());
+
+        //TODO 마감되면 수정을 못함.
+
+        //파티의 수정 인원이 지금 같거나 커야지 수정이 됨.
+        if(deliveryParty.getDeliveryPartyMembers().size() > dto.getMaxMatching()){
+            throw new BaseException(CANT_UPDATE_MAX_DELIVERY_PARTY_PARTICIPANT);
+        }
+
+        else if(deliveryParty.getDeliveryPartyMembers().size() == dto.getMaxMatching()){
+            deliveryParty.changeMatchingStatusToFinish();
+        }
 
         // 파티 수정
         DeliveryParty resDeliveryParty = deliveryParty.updateParty(dto, orderTimeCategory, dormitory, foodCategory, chief, hashTagList);
@@ -173,10 +184,10 @@ public class DeliveryPartyService {
 
         //요청 보낸 사용자 Member 찾기
         Member findMember = memberRepository.findById(memberId).
-                orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTICIPANT));
+                orElseThrow(() -> new BaseException(NOT_EXISTS_PARTICIPANT));
 
         DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyByIdAndStatus(partyId).
-                orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTY));
+                orElseThrow(() -> new BaseException(NOT_EXISTS_PARTY));
 
         //주문 시간이 현재 시간보다 이전이거나 매칭 상태가 Finish 면 오직 방장만이 배달파티 상세보기를 할 수 있다.
         if((deliveryParty.getOrderTime().isBefore(LocalDateTime.now()) | deliveryParty.getMatchingStatus() == MatchingStatus.FINISH) & deliveryParty.getChief() != findMember){
@@ -210,7 +221,7 @@ public class DeliveryPartyService {
     public GetDeliveryPartiesRes getDeliveryPartiesByKeyword2(int dormitoryId, int cursor, String orderTimeCategory, Integer maxMatching, String keyword, int memberId) {
         // validation: 검색어 빈값
         if(keyword == null || keyword.isBlank()){
-            throw new BaseException(BaseResponseStatus.BLANK_KEYWORD);
+            throw new BaseException(BLANK_KEYWORD);
         }
 
         OrderTimeCategoryType orderTimeCategoryType = null;
@@ -251,7 +262,7 @@ public class DeliveryPartyService {
     //기숙사 별 default 위도, 경도
     @Transactional(readOnly = true, transactionManager = JPA_TRANSACTION_MANAGER)
     public GetDeliveryPartyDefaultLocationRes getDeliveryPartyDefaultLocation(int dormitoryId){
-        Dormitory dormitory = dormitoryRepository.findById(dormitoryId).orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_DORMITORY));
+        Dormitory dormitory = dormitoryRepository.findById(dormitoryId).orElseThrow(() -> new BaseException(NOT_EXISTS_DORMITORY));
 
         Double getLatitude = dormitory.getLocation().getLatitude(); //위도
         Double getLongitude = dormitory.getLocation().getLongitude(); //경도
@@ -312,7 +323,7 @@ public class DeliveryPartyService {
 
         //요청 보낸 사용자 Member 찾기
         memberRepository.findMemberByIdAndStatus(userId).
-                orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTICIPANT));
+                orElseThrow(() -> new BaseException(NOT_EXISTS_PARTICIPANT));
         PageRequest paging = PageRequest.of(cursor, PAGING_SIZE, Sort.by(Sort.Direction.ASC, PAGING_STANDARD));
         return deliveryPartyQueryRepository.getEndedDeliveryParties(userId, paging);
     }
@@ -334,7 +345,7 @@ public class DeliveryPartyService {
     @Transactional(readOnly = false, transactionManager = JPA_TRANSACTION_MANAGER)
     public PatchDeliveryPartyMatchingStatusRes changeMatchingStatus(Integer partyId, int userId) {
         DeliveryParty deliveryParty = deliveryPartyRepository.findDeliveryPartyByIdAndUserIdAndMatchingStatus(partyId, userId).
-                orElseThrow(() -> new BaseException(BaseResponseStatus.CAN_NOT_FINISH_DELIVERY_PARTY));
+                orElseThrow(() -> new BaseException(CAN_NOT_FINISH_DELIVERY_PARTY));
         deliveryParty.changeMatchingStatusToFinish();
 
         return PatchDeliveryPartyMatchingStatusRes.builder()
