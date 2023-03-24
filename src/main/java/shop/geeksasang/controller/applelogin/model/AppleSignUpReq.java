@@ -20,12 +20,12 @@ public class AppleSignUpReq {
 
     @ApiModelProperty(example = "긱사생")
     @ApiParam(value = "사용자 닉네임", required = true)
-    @Size(min = 3, max = 10)
+    //@Size(min = 3, max = 10)
     private String nickname;
 
     @ApiModelProperty(example = "Gachon University")
     @ApiParam(value = "사용자 대학교", required = true)
-    @NotBlank
+    //@NotBlank
     private  String universityName;
 
     @ApiModelProperty(example = "01012341234")
@@ -38,7 +38,7 @@ public class AppleSignUpReq {
 
     @ApiModelProperty(example = "Y")
     @ApiParam(value = "사용자 회원 정보 동의 여부", required = true)
-    @NotBlank(message = "회원정보동의는 Y 를 입력해야 합니다.") //Null, 빈 문자열, 스페이스만 있는 문자열 불가
+    //@NotBlank(message = "회원정보동의는 Y 를 입력해야 합니다.") //Null, 빈 문자열, 스페이스만 있는 문자열 불가
     private String informationAgreeStatus;
 
     @NotEmpty
