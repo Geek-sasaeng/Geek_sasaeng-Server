@@ -67,7 +67,7 @@ public class AppleServiceImpl {
 
 
     @Transactional(readOnly = false, transactionManager = JPA_TRANSACTION_MANAGER)
-    public PostLoginRes login(String idToken, String refreshToken) throws NoSuchAlgorithmException {
+    public PostLoginRes login(String idToken, String refreshToken, String fcmToken) throws NoSuchAlgorithmException {
         String clientSecret = getAppleClientSecret(idToken);
         TokenResponse tokenResponse = appleUtils.validateAnExistingRefreshToken(clientSecret, refreshToken);
         Member member= memberRepository.findByAppleRefreshToken(refreshToken)
@@ -79,14 +79,13 @@ public class AppleServiceImpl {
                 .universityId(0)
                 .build();
 
+        member.updateFcmToken(fcmToken);
         String jwt = jwtService.createJwt(vo);
         if(member.getLoginStatus() == LoginStatus.NEVER){
             return PostLoginRes.builder()
                     .jwt(jwt)
                     .nickName(member.getNickName())
                     .loginStatus(member.getLoginStatus())
-                    .dormitoryId(0)
-                    .dormitoryName(null)
                     .profileImgUrl(member.getProfileImgUrl())
                     .fcmToken(member.getFcmToken())
                     .memberId(member.getId())
@@ -99,6 +98,8 @@ public class AppleServiceImpl {
                 .profileImgUrl(member.getProfileImgUrl())
                 .fcmToken(member.getFcmToken())
                 .memberId(member.getId())
+                .dormitoryId(member.getDormitory().getId())
+                .dormitoryName(member.getDormitory().getName())
                 .build();
     }
 
