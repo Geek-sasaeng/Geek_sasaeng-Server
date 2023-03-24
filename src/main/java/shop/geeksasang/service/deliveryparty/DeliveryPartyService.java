@@ -156,11 +156,11 @@ public class DeliveryPartyService {
         //TODO 마감되면 수정을 못함.
 
         //파티의 수정 인원이 지금 같거나 커야지 수정이 됨.
-        if(deliveryParty.getDeliveryPartyMembers().size() > dto.getMaxMatching()){
+        if(deliveryParty.getDeliveryPartyMemberSize() > dto.getMaxMatching()){
             throw new BaseException(CANT_UPDATE_MAX_DELIVERY_PARTY_PARTICIPANT);
         }
 
-        else if(deliveryParty.getDeliveryPartyMembers().size() == dto.getMaxMatching()){
+        else if(deliveryParty.getDeliveryPartyMemberSize() == dto.getMaxMatching()){
             deliveryParty.changeMatchingStatusToFinish();
         }
 
