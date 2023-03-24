@@ -284,8 +284,7 @@ public class MemberService {
             nextGradeAndRemainCredits = "졸업까지 "+(graduateGrade.getStandard() - count)+"학점 남았어요";
         }
         if(currentGrade.getId()==3){ //졸업생
-            //todo : 기획 관련 답변 오면 수정해야 함.
-            nextGradeAndRemainCredits = "졸업까지 0학점 남았어요";
+            nextGradeAndRemainCredits = "학점 이수 끝, 긱사생 마스터";
         }
 
         return GetMemberRes.toDto(member, partiesRes,nextGradeAndRemainCredits);
