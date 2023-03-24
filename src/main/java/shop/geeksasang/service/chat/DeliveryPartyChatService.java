@@ -392,7 +392,6 @@ public class DeliveryPartyChatService {
 
         partyChatRoomRepository.deleteParticipant(new ObjectId(roomId), new ObjectId(chatRoomMember.getId()));
 
-
         chatRoomMember.delete();
         partyChatRoomMemberRepository.save(chatRoomMember);
 
@@ -401,6 +400,12 @@ public class DeliveryPartyChatService {
 
         PartyChatRoom partyChatRoom = partyChatRoomRepository.findByPartyChatRoomId(new ObjectId(roomId))
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_CHAT_ROOM));
+
+        if(partyChatRoom.getIsFinish()){
+            partyChatRoom.changeIsFinishToFalse();
+        }
+
+        partyChatRoomRepository.save(partyChatRoom);
 
         //시스템 메시지
         Chat chat = new Chat(member.getNickName() + "님이 퇴장했어요", partyChatRoom, true, null, null, new ArrayList<>());
