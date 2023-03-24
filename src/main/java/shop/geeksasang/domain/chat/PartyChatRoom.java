@@ -127,4 +127,8 @@ public class PartyChatRoom extends ChatRoom{
                 .findFirst()
                 .orElseThrow(()-> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTYCHATROOM_MEMBER));
     }
+
+    public void updateMaxMatching(int maxMatching) {
+        this.maxMatching = maxMatching;
+    }
 }

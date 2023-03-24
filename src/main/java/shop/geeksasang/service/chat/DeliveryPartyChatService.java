@@ -295,6 +295,7 @@ public class DeliveryPartyChatService {
 
     @Transactional(readOnly = false, transactionManager = MONGO_TRANSACTION_MANAGER)
     public void removeMember(int chiefId, DeleteMemberByChiefReq dto, PartyChatRoomMember chief, String id) {
+
         PartyChatRoomMember removedMember = partyChatRoomMemberRepository
                 .findByIdAndChatRoomId(new ObjectId(id), new ObjectId(dto.getRoomId()))
                 .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTYCHATROOM_MEMBER));
@@ -364,9 +365,6 @@ public class DeliveryPartyChatService {
         Member member = memberRepository.findMemberById(changeChief.getMemberId())
                 .orElseThrow(() -> new BaseException(NOT_EXIST_USER));
         String nickName = member.getNickName();
-
-
-
 
         //시스템 메시지
         Chat chat = new Chat("방장의 활동 중단에 따라 새로운 방장으로 '" + nickName + "'님이 선정되었어요", chatRoom, true, null, null, new ArrayList<>());
@@ -465,7 +463,6 @@ public class DeliveryPartyChatService {
 
         //주문 완료 시스템 메시지
         this.createChat(memberId, roomId, "주문이 완료되었어요", true, member.getProfileImgUrl(), "publish", "none", false);
-
     }
 
     @Transactional(readOnly = true, transactionManager = MONGO_TRANSACTION_MANAGER)
@@ -591,6 +588,27 @@ public class DeliveryPartyChatService {
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
+    }
+
+    @Transactional(readOnly = false, transactionManager = MONGO_TRANSACTION_MANAGER)
+    public void updateRoom(int maxMatching, int chiefId, String roomId) {
+        PartyChatRoomMember chief = partyChatRoomMemberRepository
+                .findByMemberIdAndChatRoomId(chiefId, new ObjectId(roomId))
+                .orElseThrow(() -> new BaseException(NOT_EXISTS_PARTYCHATROOM_MEMBER));
+
+        PartyChatRoom partyChatRoom = chief.getPartyChatRoom();
+
+        if(partyChatRoom.getParticipants().size() > maxMatching){
+            throw new BaseException(CANT_UPDATE_MAX_DELIVERY_PARTY_PARTICIPANT);
+        }
+
+        else if(partyChatRoom.getParticipants().size() == maxMatching){
+            partyChatRoom.changeIsFinishToTrue();
+            createChat(chiefId, partyChatRoom.getId(), "매칭이 마감되었어요", true, null, "publish", "none", false);
+        }
+
+        partyChatRoom.updateMaxMatching(maxMatching);
+        partyChatRoomRepository.save(partyChatRoom);
     }
 }
 // String exchange, String routingKey, Object message

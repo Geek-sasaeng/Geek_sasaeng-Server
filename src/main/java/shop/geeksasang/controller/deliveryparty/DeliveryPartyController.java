@@ -17,6 +17,7 @@ import shop.geeksasang.dto.deliveryParty.post.PostDeliveryPartyRes;
 import shop.geeksasang.dto.deliveryParty.put.PutDeliveryPartyReq;
 import shop.geeksasang.dto.deliveryParty.put.PutDeliveryPartyRes;
 import shop.geeksasang.dto.login.JwtInfo;
+import shop.geeksasang.service.chat.DeliveryPartyChatService;
 import shop.geeksasang.service.deliveryparty.DeliveryPartyService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,6 +30,7 @@ import java.util.List;
 public class DeliveryPartyController {
 
     private final DeliveryPartyService deliveryPartyService;
+    private final DeliveryPartyChatService deliveryPartyChatService;
 
     //배달 파티 생성
     @ApiOperation(value = "배달 파티 생성", notes = "사용자는 배달 파티를 생성할 수 있다.")
@@ -53,18 +55,26 @@ public class DeliveryPartyController {
     @ApiResponses({
             @ApiResponse(code =1000 ,message ="요청에 성공하였습니다"),
             @ApiResponse(code =2009 ,message ="존재하지 않는 멤버입니다"),
+            @ApiResponse(code =2031 ,message ="현재 파티 인원보다 작은 최대 인원수로 수정할 수 없습니다."),
             @ApiResponse(code =2606 ,message ="기숙사가 존재하지 않습니다"),
             @ApiResponse(code =2402 ,message ="존재하지 않는 카테고리입니다"),
             @ApiResponse(code = 2010, message = "존재하지 않는 파티입니다."),
             @ApiResponse(code = 2403, message = "수정권한이 없는 유저입니다."),
             @ApiResponse(code =4000 ,message = "서버 오류입니다.")
     })
-    @PutMapping("/{dormitoryId}/delivery-party/{partyId}")
-    public BaseResponse<PutDeliveryPartyRes> updateDeliveryParty(@PathVariable("dormitoryId") int dormitoryId,@PathVariable("partyId") int partyId, @Validated @RequestBody PutDeliveryPartyReq dto, HttpServletRequest request){
+    @PutMapping("/{dormitoryId}/delivery-party/{partyId}/{chatRoomId}")
+    public BaseResponse<PutDeliveryPartyRes> updateDeliveryParty(
+            @PathVariable("dormitoryId") int dormitoryId,
+            @PathVariable("partyId") int partyId,
+            @PathVariable String chatRoomId,
+            @Validated @RequestBody PutDeliveryPartyReq dto,
+            HttpServletRequest request
+    ){
 
         JwtInfo jwtInfo = (JwtInfo) request.getAttribute("jwtInfo");
 
         PutDeliveryPartyRes putDeliveryPartyRes = deliveryPartyService.updateDeliveryParty(dto, jwtInfo, dormitoryId, partyId);
+        deliveryPartyChatService.updateRoom(dto.getMaxMatching(), jwtInfo.getUserId(), chatRoomId);
         return new BaseResponse<>(putDeliveryPartyRes);
     }
 
