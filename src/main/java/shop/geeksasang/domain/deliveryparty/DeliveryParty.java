@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -191,9 +192,6 @@ public class DeliveryParty extends BaseEntity {
         this.matchingStatus = MatchingStatus.FINISH;
     }
 
-    public void changeMatchingStatusToOngoing(){
-        this.matchingStatus = MatchingStatus.ONGOING;
-    }
 
     public boolean isNotChief(Member attemptedChief){
         return attemptedChief != chief;
@@ -270,10 +268,7 @@ public class DeliveryParty extends BaseEntity {
             changeStatusToInactive();
         }
 
-        // 현재인원 == (최대인원-1) 이면 MatchingStatus를 FINISH -> ONGOING으로 수정
-        if(currentMatching < maxMatching){
-            changeMatchingStatusToOngoing();
-        }
+         //현재인원 == (최대인원-1) 이면 MatchingStatus를 FINISH -> ONGOING으로 수정
     }
 
     private void partyMemberStatusChangeToInActive(DeliveryPartyMember deliveryPartyMember) {
@@ -306,5 +301,12 @@ public class DeliveryParty extends BaseEntity {
         return deliveryPartyMembers.stream()
                 .findFirst()
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_EXISTS_PARTICIPANT));
+    }
+
+
+    public long getDeliveryPartyMemberSize() {
+        return deliveryPartyMembers.stream()
+                .filter(DeliveryPartyMember::isActive)
+                .count();
     }
 }
