@@ -109,7 +109,7 @@ public class MemberService {
         member.connectUniversity(university);
         member.changeStatusToActive();
         member.changeLoginStatusToNever(); // 로그인 안해본 상태 디폴트 저장
-        member.changeProfileImgUrl("https://geeksasaeng-s3.s3.ap-northeast-2.amazonaws.com/5bc8d80a-580d-455a-a414-d0d2f9af2c9f-newProfileImg.png");// S3기본 프로필 이미지 저장
+        member.changeProfileImgUrl("https://geeksasaeng.s3.ap-northeast-2.amazonaws.com/5bc8d80a-580d-455a-a414-d0d2f9af2c9f-newProfileImg.png");// S3기본 프로필 이미지 저장
         Grade grade = gradeRepository
                 .findById(1)
                 .orElseThrow(()-> new BaseException(NOT_EXISTS_GRADE));
@@ -165,7 +165,7 @@ public class MemberService {
         member.connectUniversity(university);
         member.changeStatusToActive();
         member.changeLoginStatusToNever(); // 로그인 안해본 상태 디폴트 저장
-        member.changeProfileImgUrl("https://geeksasaeng-s3.s3.ap-northeast-2.amazonaws.com/5bc8d80a-580d-455a-a414-d0d2f9af2c9f-newProfileImg.png");// S3기본 프로필 이미지 저장
+        member.changeProfileImgUrl("https://geeksasaeng.s3.ap-northeast-2.amazonaws.com/5bc8d80a-580d-455a-a414-d0d2f9af2c9f-newProfileImg.png");// S3기본 프로필 이미지 저장
         Grade grade = gradeRepository
                 .findById(1)
                 .orElseThrow(()-> new BaseException(NOT_EXISTS_GRADE));
@@ -442,7 +442,7 @@ public class MemberService {
         member.connectUniversity(university);
         member.changeStatusToActive();
         member.changeLoginStatusToNever(); // 로그인 안해본 상태 디폴트 저장
-        member.changeProfileImgUrl("https://geeksasaeng-s3.s3.ap-northeast-2.amazonaws.com/5bc8d80a-580d-455a-a414-d0d2f9af2c9f-newProfileImg.png");// S3기본 프로필 이미지 저장
+        member.changeProfileImgUrl("https://geeksasaeng.s3.ap-northeast-2.amazonaws.com/5bc8d80a-580d-455a-a414-d0d2f9af2c9f-newProfileImg.png");// S3기본 프로필 이미지 저장
 
 
         Grade grade = gradeRepository

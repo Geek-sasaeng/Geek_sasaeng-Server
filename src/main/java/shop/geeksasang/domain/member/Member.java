@@ -110,7 +110,7 @@ public class Member extends BaseEntity {
         super.setStatus(BaseStatus.ACTIVE);
         this.grade = grade;
         this.loginStatus = LoginStatus.NEVER;
-        this.profileImgUrl = "https://geeksasaeng-s3.s3.ap-northeast-2.amazonaws.com/5bc8d80a-580d-455a-a414-d0d2f9af2c9f-newProfileImg.png";
+        this.profileImgUrl = "https://geeksasaeng.s3.ap-northeast-2.amazonaws.com/5bc8d80a-580d-455a-a414-d0d2f9af2c9f-newProfileImg.png";
     }
 
     //-// 연관 관계 편의 메서드 //-//
