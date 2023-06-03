@@ -1,75 +1,89 @@
-# 긱사생 서버
-긱사생 Spring JPA 서버 Repository
-
-### ERD (Quick DBD) 주소
-https://app.quickdatabasediagrams.com/#/d/6Md9RW
-
-### API 명세서(PostMan) 주소
-https://documenter.getpostman.com/view/17423576/UzJETKVS
-
-# 기숙사 생을 위한 토탈 플랫폼 어플, 긱사생 🏘️
-
-<p align="center">
-    <img src="https://img.shields.io/badge/Spring Boot-6DB33F?style=for-the-badge&logo=Spring Boot&logoColor=white">
-    <img src="https://img.shields.io/badge/Amazon AWS-232F3E?style=for-the-badge&logo=Amazon AWS&logoColor=white">
-    <img src="https://img.shields.io/badge/Amazon EC2-FF9900?style=for-the-badge&logo=Amazon EC2&logoColor=white">
-    <img src="https://img.shields.io/badge/Amazon S3-569A31?style=for-the-badge&logo=Amazon S3&logoColor=white">
-    <img src="https://img.shields.io/badge/Amazon RDS-527FFF?style=for-the-badge&logo=Amazon RDS&logoColor=white">
-
-
-## 👩🏻‍💻👨🏻‍💻 Server 팀원 소개
-
+# 🏠 나의 편리한 연결 메이트, 긱사생
 <div align="center">
-  <table>
-    <tr>
-      <td>
-        <a href="https://github.com/xhaktmchl">
-          <img src="https://avatars.githubusercontent.com/u/62229967?v=4" width=200/>
-          <br>
-          <center>Spring Developer-토마스최/최태규</center>
-        </a>
-      </td>
-    </tr>
-  </table>
+    <img src="https://img.shields.io/badge/Spring_Boot-F2F4F9?style=for-the-badge&logo=spring-boot">
+    <img src="https://img.shields.io/badge/MySQL-005C84?style=for-the-badge&logo=mysql&logoColor=white">
+    <img src="https://img.shields.io/badge/rabbitmq-%23FF6600.svg?&style=for-the-badge&logo=rabbitmq&logoColor=white">
+    <img src="https://img.shields.io/badge/redis-%23DD0031.svg?&style=for-the-badge&logo=redis&logoColor=white">
+    <img src="https://img.shields.io/badge/Amazon_AWS-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white">
 </div>
-
-## 핵심 기능 ⚙️
-
-### 🛵
-
-### 배달 음식 구인기능
-
-사용자는 홈 화면에서 배달 음식을 같이 시켜먹을 인원을 찾거나, 직접 게시글을 등록하여 구할 수 있습니다.  
-게시판에서는 배달 모집 인원, 성별 선택기능, 음식점을 보여줍니다.
-
-### 💬
-
-### 채팅 기능
-
-사용자끼리 커뮤니케이션을 원활하게 하기 위해 채팅기능을 제공할 계획입니다.  
-채팅기능을 통하여 현재 주문현황을 공유하거나, 심부름 및 거래매칭이 될 시 채팅을 이용할 수 있습니다.
-
-### 🤝
-
-### 심부름, 거래 기능
-
-기숙사에 사는 사람끼리 거래를 하거나 심부름을 요청할 수 있습니다.  
-거래는 구매/판매/렌탈/ 나눔 위 4개 유형을 제공할 계획이고, 심부름은 원하는 심부름, 심부름 금액등을 입력하여 피드 형식으로 보여주게 할 계획입니다.  
 <br>
 
-## 1차 목표 기능 🔥
+**같은 학교 기숙사생들과의 배달 공유, 심부름, 거래 기능 및 단체 채팅방 기능을 제공하는 앱입니다.**
 
-- **배달 음식 구인 게시판 화면**
-- **채팅 기능**
-- **커뮤니티 기능**
-- **기숙사 공지, 식단 안내**  
-  <br>
+**AppStore:** [긱사생](https://apps.apple.com/kr/app/긱사생/id6448669700)
 
-## Goal 🎯
+![image](https://github.com/hyeong-jun-kim/RNS-Spring/assets/53989167/d89ab98c-4e17-4d60-bd04-c3116d0bae78)
 
-긱사생 어플의 `주요 타겟층`은 대학교 기숙사에서 거주하고 있는 기숙사 생입니다.  
-기숙사에서 거주하고있는 유저의 특징은 각 사용자간 거리가 밀접하고, 같은 학교이기 때문에 일반 거주자보다 신뢰성이 높다는 특징을 가지고 있습니다.  
-이런 특징들은, 배달 음식 구인 기능, 심부름 및 거래기능에 대한 접근성의 제한이 낮지 않다는 것을 의미합니다.  
-위 근거로 앞서 말한 기능을 구현할 예정이며 디벨롭 목표로 `런칭 목표`는 **학교 기숙사 생끼리 배달 음식을 공유할 수 있는 체계**를 구현하는 것이고,  
-사용자 반응을 보면서 심부름 기능, 거래기능 및 커뮤니티 기능을 디벨롭 하여 기숙사생이면 필수로 설치해야 하는 어플로 나아가게 할 계획입니다!
 
+
+## 🫂 팀 소개 
+|[PM & BE 김형준](https://github.com/hyeong-jun-kim)|[Designer 최예지](https://github.com/yewww-e)|
+|:--------:|:--------:|
+|<img src="https://github.com/hyeong-jun-kim/RNS-Spring/assets/53989167/ce09dce4-3f42-42c1-847a-0639410fe41a" width=500>|<img src="https://github.com/hyeong-jun-kim/RNS-Spring/assets/53989167/75521672-9dfe-4859-90ce-53652047c64a" width=500>|<img 
+                                                                                                                                   
+|[iOS 파트장 서은수](https://github.com/EunsuSeo01)|[iOS 개발자 조동진](https://github.com/Jodongjin)|[AOS 파트장 고지민](https://github.com/JM2308)|[AOS 개발자 이준영](https://github.com/lee-june-young)|
+|:--------:|:--------:|:--------:|:--------:|
+|<img src="https://github.com/hyeong-jun-kim/RNS-Spring/assets/53989167/be4cd305-863e-4eb5-8a3b-9b7cd5477653" width=500>|<img src="https://github.com/hyeong-jun-kim/RNS-Spring/assets/53989167/0e107db9-0c1b-4e31-b6a7-fa25626a91ba" width=500>|<img src="https://github.com/hyeong-jun-kim/RNS-Spring/assets/53989167/a0c0227f-6fa6-494a-b212-160b3a9ad6be" width=500>|<img src="https://github.com/hyeong-jun-kim/RNS-Spring/assets/53989167/dfa80041-696b-428c-95a0-848e3558518e" width=500>|
+
+|[BE 파트장 최태규](https://github.com/xhaktmchl)|[BE 개발자 안수빈](https://github.com/happysubin)|[BE 개발자 김민희](https://github.com/KimMinheee)|[BE 개발자 홍주연](https://github.com/Juyeon0526)|
+|:--------:|:--------:|:--------:|:--------:|
+|<img src="https://github.com/hyeong-jun-kim/RNS-Spring/assets/53989167/e09902bf-fb4b-46bf-a1e1-5d687bfa98f0" width=500>|<img src="https://github.com/hyeong-jun-kim/RNS-Spring/assets/53989167/f6d31054-c5cd-464c-996e-24cd66aa6c76" width=500>|<img src="https://github.com/hyeong-jun-kim/RNS-Spring/assets/53989167/8369aa59-1172-49e4-99eb-986dd41c16d1" width=500>|<img src="https://github.com/hyeong-jun-kim/RNS-Spring/assets/53989167/6331b08f-92cd-4d5d-bdcb-1cd1b48fb078" width=500>|
+
+## ⚒️ 1차 MVP 기능 소개
+### 🍚 배달공유 기능
+같은 기숙사에 사는 사람끼리 배달을 같이 시켜먹을 수 있는 기능입니다. 내가 원하는 시간, 음식, 
+인원 수를 정하고 배달 파티를 모집하거나 참여할 수 있습니다.
+
+### 💬 단체 채팅방 기능
+단체 채팅방 기능을 통해 앱에서 제공하는 모든 기능들을 원활하게 사용할 수 있습니다.
+배달공유 단체 채팅방에서는 송금완료, 주문확인, 배달확인 기능을 통해 파티원끼리 원활하게 배달 음식을 시켜먹을 수 있도록 도움을 줍니다.
+
+|||
+|:-:|:-:|
+|<img src="https://github.com/Send-Rabbit-Team/RNS-Spring/assets/53989167/dee076f2-dea5-4614-9ef3-d079cd88d071">|<img src="https://github.com/Send-Rabbit-Team/RNS-Spring/assets/53989167/da7560e5-5ac6-47a4-b991-f51e660a13ab">|
+
+|||
+|:-:|:-:|
+|<img src="https://github.com/Send-Rabbit-Team/RNS-Spring/assets/53989167/dfddc8aa-34b2-41a1-b1ea-199bca12a4c7">|<img src="https://github.com/Send-Rabbit-Team/RNS-Spring/assets/53989167/ce1dd8ec-f3e4-4f0f-81c4-846b85727738">|
+
+### 서버 개발 현황
+- **인증**
+    - 일반/카카오/애플 회원가입 및 로그인
+    - 학교 이메일, 핸드폰 인증
+- **배달파티**
+    - 배달파티 목록
+        - 배달파티 인피니티 스크롤 조회 API
+        - 인원/시간 필터 조회 API
+        - 배달파티 마감시간 계산 및 마감 처리
+    - 배달파티 검색
+    - 배달파티 생성
+    - 배달파티 수정
+    - 배달파티 상세조회
+        - 배달파티 신청
+            - 단체 채팅방 초대
+        - 배달파티 신고
+- **단체 채팅방**
+    - 채팅방 목록
+        - 가장 최근에 이루어진 채팅기준 오름차순으로 정렬
+        - 안 읽은 메시지 카운트
+    - 단체 채팅방
+        - 메시지 발신 (WebSocket + MongoDB + RabbitMQ)
+        - 메시지 읽음 처리
+        - 채팅방 이미지 전송
+        - 시스템 메시지 처리
+        - 채팅 나가기
+        - 송금 완료 / 주문 완료 / 배달 완료 알림 보내기
+        - 강제 퇴장
+        - 매칭 마감하기
+- **마이 페이지**
+    - 진행했던 활동 보기
+    - 내 정보 수정
+    - 로그아웃
+    - 회원 탈퇴
+- **API 명세서**
+    - Swagger API 명세서 작성
+
+
+### 긱사생 관련 Repository
+<a href="https://github.com/Geek-sasaeng/Geek_sasaeng-iOS"><strong>Geek_sasaeng-iOS</strong></a></br>
+<a href="https://github.com/Geek-sasaeng/Geek_sasaeng-Android"><strong>Geek_sasaeng-Android</strong></a></br>
