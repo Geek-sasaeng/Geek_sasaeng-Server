@@ -8,26 +8,24 @@
 </div>
 <br>
 
-**같은 학교 기숙사생들과의 배달 공유, 심부름, 거래 기능 및 단체 채팅방 기능을 제공하는 앱입니다.**
+### 같은 학교 기숙사생들과의 배달 공유, 심부름, 거래 기능 및 단체 채팅방 기능을 제공하는 앱입니다.
 
 **AppStore:** [긱사생](https://apps.apple.com/kr/app/긱사생/id6448669700)
 
-![image](https://github.com/hyeong-jun-kim/RNS-Spring/assets/53989167/d89ab98c-4e17-4d60-bd04-c3116d0bae78)
-
-
+<img src="https://github.com/hyeong-jun-kim/RNS-Spring/assets/53989167/d89ab98c-4e17-4d60-bd04-c3116d0bae78" width=60% height=60%>
 
 ## 🫂 팀 소개 
 |[PM & BE 김형준](https://github.com/hyeong-jun-kim)|[Designer 최예지](https://github.com/yewww-e)|
 |:--------:|:--------:|
-|<img src="https://github.com/hyeong-jun-kim/RNS-Spring/assets/53989167/ce09dce4-3f42-42c1-847a-0639410fe41a" width=500>|<img src="https://github.com/hyeong-jun-kim/RNS-Spring/assets/53989167/75521672-9dfe-4859-90ce-53652047c64a" width=500>|<img 
+|<img src="https://github.com/hyeong-jun-kim/RNS-Spring/assets/53989167/ce09dce4-3f42-42c1-847a-0639410fe41a" width=200>|<img src="https://github.com/hyeong-jun-kim/RNS-Spring/assets/53989167/75521672-9dfe-4859-90ce-53652047c64a" width=200>|<img 
                                                                                                                                    
 |[iOS 파트장 서은수](https://github.com/EunsuSeo01)|[iOS 개발자 조동진](https://github.com/Jodongjin)|[AOS 파트장 고지민](https://github.com/JM2308)|[AOS 개발자 이준영](https://github.com/lee-june-young)|
 |:--------:|:--------:|:--------:|:--------:|
-|<img src="https://github.com/hyeong-jun-kim/RNS-Spring/assets/53989167/be4cd305-863e-4eb5-8a3b-9b7cd5477653" width=500>|<img src="https://github.com/hyeong-jun-kim/RNS-Spring/assets/53989167/0e107db9-0c1b-4e31-b6a7-fa25626a91ba" width=500>|<img src="https://github.com/hyeong-jun-kim/RNS-Spring/assets/53989167/a0c0227f-6fa6-494a-b212-160b3a9ad6be" width=500>|<img src="https://github.com/hyeong-jun-kim/RNS-Spring/assets/53989167/dfa80041-696b-428c-95a0-848e3558518e" width=500>|
+|<img src="https://github.com/hyeong-jun-kim/RNS-Spring/assets/53989167/be4cd305-863e-4eb5-8a3b-9b7cd5477653" width=200>|<img src="https://github.com/hyeong-jun-kim/RNS-Spring/assets/53989167/0e107db9-0c1b-4e31-b6a7-fa25626a91ba" width=200>|<img src="https://github.com/hyeong-jun-kim/RNS-Spring/assets/53989167/a0c0227f-6fa6-494a-b212-160b3a9ad6be" width=200>|<img src="https://github.com/hyeong-jun-kim/RNS-Spring/assets/53989167/dfa80041-696b-428c-95a0-848e3558518e" width=200>|
 
 |[BE 파트장 최태규](https://github.com/xhaktmchl)|[BE 개발자 안수빈](https://github.com/happysubin)|[BE 개발자 김민희](https://github.com/KimMinheee)|[BE 개발자 홍주연](https://github.com/Juyeon0526)|
 |:--------:|:--------:|:--------:|:--------:|
-|<img src="https://github.com/hyeong-jun-kim/RNS-Spring/assets/53989167/e09902bf-fb4b-46bf-a1e1-5d687bfa98f0" width=500>|<img src="https://github.com/hyeong-jun-kim/RNS-Spring/assets/53989167/f6d31054-c5cd-464c-996e-24cd66aa6c76" width=500>|<img src="https://github.com/hyeong-jun-kim/RNS-Spring/assets/53989167/8369aa59-1172-49e4-99eb-986dd41c16d1" width=500>|<img src="https://github.com/hyeong-jun-kim/RNS-Spring/assets/53989167/6331b08f-92cd-4d5d-bdcb-1cd1b48fb078" width=500>|
+|<img src="https://github.com/hyeong-jun-kim/RNS-Spring/assets/53989167/e09902bf-fb4b-46bf-a1e1-5d687bfa98f0" width=200>|<img src="https://github.com/hyeong-jun-kim/RNS-Spring/assets/53989167/f6d31054-c5cd-464c-996e-24cd66aa6c76" width=200>|<img src="https://github.com/hyeong-jun-kim/RNS-Spring/assets/53989167/8369aa59-1172-49e4-99eb-986dd41c16d1" width=200>|<img src="https://github.com/hyeong-jun-kim/RNS-Spring/assets/53989167/6331b08f-92cd-4d5d-bdcb-1cd1b48fb078" width=200>|
 
 ## ⚒️ 1차 MVP 기능 소개
 ### 🍚 배달공유 기능
@@ -38,13 +36,9 @@
 단체 채팅방 기능을 통해 앱에서 제공하는 모든 기능들을 원활하게 사용할 수 있습니다.
 배달공유 단체 채팅방에서는 송금완료, 주문확인, 배달확인 기능을 통해 파티원끼리 원활하게 배달 음식을 시켜먹을 수 있도록 도움을 줍니다.
 
-|||
-|:-:|:-:|
-|<img src="https://github.com/Send-Rabbit-Team/RNS-Spring/assets/53989167/dee076f2-dea5-4614-9ef3-d079cd88d071">|<img src="https://github.com/Send-Rabbit-Team/RNS-Spring/assets/53989167/da7560e5-5ac6-47a4-b991-f51e660a13ab">|
-
-|||
-|:-:|:-:|
-|<img src="https://github.com/Send-Rabbit-Team/RNS-Spring/assets/53989167/dfddc8aa-34b2-41a1-b1ea-199bca12a4c7">|<img src="https://github.com/Send-Rabbit-Team/RNS-Spring/assets/53989167/ce1dd8ec-f3e4-4f0f-81c4-846b85727738">|
+|||||
+|:-:|:-:|:-:|:-:|
+|<img src="https://github.com/Send-Rabbit-Team/RNS-Spring/assets/53989167/dee076f2-dea5-4614-9ef3-d079cd88d071">|<img src="https://github.com/Send-Rabbit-Team/RNS-Spring/assets/53989167/da7560e5-5ac6-47a4-b991-f51e660a13ab">|<img src="https://github.com/Send-Rabbit-Team/RNS-Spring/assets/53989167/dfddc8aa-34b2-41a1-b1ea-199bca12a4c7">|<img src="https://github.com/Send-Rabbit-Team/RNS-Spring/assets/53989167/ce1dd8ec-f3e4-4f0f-81c4-846b85727738">
 
 ### 서버 개발 현황
 - **인증**
